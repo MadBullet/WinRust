@@ -55,11 +55,21 @@ jobs:
             --title "WinRust $TAG" \
             --notes "Windows 10/11 system components rewritten in Rust: Explorer, Task Manager, Services, system utilities and the core library.
 
+          **Launcher \`WinRust.exe\` is now a selective installer**
+
+          * one checkbox per component — install only what you want
+          * per component: Portable / IFEO redirect / replace system binary / custom shell
+          * System Restore point (\`SRSetRestorePointW\`) and file-level backup in
+            \`%ProgramData%\WinRust\backup\`, both on by default
+          * backup browser with one-click rollback; installed state persisted in
+            \`HKLM\SOFTWARE\WinRust\Installed\`
+          * everything logged in the window
+
           **Downloads**
           * \`WinRust-windows-x64.zip\` — all five executables plus README.
           * Or grab a single .exe below.
 
-          Run the component you need; elevation (Run as administrator) is required for service control and for managing other users' processes." \
+          Run the component you need; elevation (Run as administrator) is required for service control, for managing other users' processes, and for any install action." \
             dist/WinRust.exe \
             dist/winrust-explorer.exe \
             dist/winrust-taskmgr.exe \
