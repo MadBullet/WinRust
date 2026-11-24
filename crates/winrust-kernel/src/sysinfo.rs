@@ -45,7 +45,11 @@ impl QueryBuffer {
         // it zeroes the allocation (POOL_FLAG_NON_PAGED does not, so we also
         // zero defensively below) and returns null on failure.
         let ptr = unsafe {
-            ExAllocatePool2(POOL_FLAG_NON_PAGED, len as u64, u32::from_le_bytes(*b"RnuW"))
+            ExAllocatePool2(
+                POOL_FLAG_NON_PAGED,
+                len as u64,
+                u32::from_le_bytes(*b"RnuW"),
+            )
         }
         .cast::<u8>();
         if ptr.is_null() {
@@ -75,7 +79,12 @@ fn query_with<T>(class: u32, mut f: impl FnMut(&[u8]) -> T) -> Option<T> {
         let buffer = QueryBuffer::allocate(size)?;
         let mut returned: u32 = 0;
         let status: NTSTATUS = unsafe {
-            ZwQuerySystemInformation(class, buffer.ptr.cast(), buffer.len as u32, &raw mut returned)
+            ZwQuerySystemInformation(
+                class,
+                buffer.ptr.cast(),
+                buffer.len as u32,
+                &raw mut returned,
+            )
         };
         if status == STATUS_SUCCESS {
             // Some classes leave `returned` at zero while filling the buffer;
@@ -190,7 +199,10 @@ pub fn for_each_process(mut f: impl FnMut(ProcessRow, &[u8])) -> bool {
         while offset + PROC_HEADER_SIZE <= bytes.len() {
             let entry = unsafe {
                 core::ptr::read_unaligned(
-                    bytes.as_ptr().add(offset).cast::<SystemProcessInformation>(),
+                    bytes
+                        .as_ptr()
+                        .add(offset)
+                        .cast::<SystemProcessInformation>(),
                 )
             };
             // The kernel usually points `Buffer` inside the same allocation,
@@ -278,7 +290,11 @@ pub fn for_each_module(mut f: impl FnMut(ModuleRow, &[u8])) -> bool {
                 break;
             }
             let entry = &bytes[start..start + MOD_ENTRY_SIZE];
-            let base = usize::from_le_bytes(entry[MOD_OFF_BASE..MOD_OFF_BASE + 8].try_into().unwrap_or([0; 8]));
+            let base = usize::from_le_bytes(
+                entry[MOD_OFF_BASE..MOD_OFF_BASE + 8]
+                    .try_into()
+                    .unwrap_or([0; 8]),
+            );
             let size = u32::from_le_bytes(
                 entry[MOD_OFF_SIZE..MOD_OFF_SIZE + 4]
                     .try_into()

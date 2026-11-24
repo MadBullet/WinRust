@@ -134,7 +134,10 @@ fn install(path: Option<&str>) -> Result<(), String> {
         let _ = service::stop();
     } else {
         service::install(&image).map_err(|e| format!("CreateService failed: {e}"))?;
-        println!("service : {SERVICE_NAME} registered", SERVICE_NAME = service::SERVICE_NAME);
+        println!(
+            "service : {SERVICE_NAME} registered",
+            SERVICE_NAME = service::SERVICE_NAME
+        );
     }
     service::start().map_err(|e| format!("start failed: {e}"))?;
     println!("started : driver is loading");

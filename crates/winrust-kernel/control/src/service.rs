@@ -37,7 +37,10 @@ pub fn is_installed() -> bool {
     ScManager::connect()
         .ok()
         .and_then(|scm| scm.enumerate().ok())
-        .map(|list| list.iter().any(|s| s.name.eq_ignore_ascii_case(SERVICE_NAME)))
+        .map(|list| {
+            list.iter()
+                .any(|s| s.name.eq_ignore_ascii_case(SERVICE_NAME))
+        })
         .unwrap_or(false)
 }
 
@@ -83,9 +86,7 @@ pub fn remove() -> Result<()> {
 
 /// Queue `path` for deletion at next boot via `MOVEFILE_DELAY_UNTIL_REBOOT`.
 fn schedule_delete(path: &Path) {
-    use windows_sys::Win32::Storage::FileSystem::{
-        MoveFileExW, MOVEFILE_DELAY_UNTIL_REBOOT,
-    };
+    use windows_sys::Win32::Storage::FileSystem::{MoveFileExW, MOVEFILE_DELAY_UNTIL_REBOOT};
     let wide = winrust_core::wide::to_wide(path);
     unsafe {
         MoveFileExW(wide.as_ptr(), std::ptr::null(), MOVEFILE_DELAY_UNTIL_REBOOT);

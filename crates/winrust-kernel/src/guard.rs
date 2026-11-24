@@ -123,7 +123,11 @@ unsafe fn image_name(buffer: *const u16, length: usize) -> Option<String> {
 /// The signature is a private detail of the binding: the addresses are handed
 /// to `PsSetCreateProcessNotifyRoutineEx` as a `*mut c_void`, which is exactly
 /// what the WDK does in C (`(PVOID)callback`).
-extern "C" fn notify(_parent: *mut core::ffi::c_void, _pid: *mut core::ffi::c_void, info: *mut PS_CREATE_NOTIFY_INFO) {
+extern "C" fn notify(
+    _parent: *mut core::ffi::c_void,
+    _pid: *mut core::ffi::c_void,
+    info: *mut PS_CREATE_NOTIFY_INFO,
+) {
     // SAFETY: the kernel guarantees a valid `PS_CREATE_NOTIFY_INFO` while the
     // callback runs when `info` is non-null; process *exit* notifications pass
     // null, which is why the check comes first.

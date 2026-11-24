@@ -171,5 +171,5 @@ pub struct Performance {
 ///
 /// Always `size_of::<ResponseHeader>() + MAX_RECORDS * max(record size)`, so a
 /// single allocation covers every query.
-pub const RESPONSE_SIZE: usize = core::mem::size_of::<ResponseHeader>()
-    + MAX_RECORDS * (core::mem::size_of::<ProcessRecord>());
+pub const RESPONSE_SIZE: usize =
+    core::mem::size_of::<ResponseHeader>() + MAX_RECORDS * (core::mem::size_of::<ProcessRecord>());

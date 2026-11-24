@@ -65,16 +65,44 @@ use wdk_sys::{
 
 /// `\Device\WinRust`, as UTF-16 without the terminating NUL.
 pub(crate) const ABI_DEVICE_NAME: &[u16] = &[
-    b'\\' as u16, b'D' as u16, b'e' as u16, b'v' as u16, b'i' as u16, b'c' as u16, b'e' as u16,
-    b'\\' as u16, b'W' as u16, b'i' as u16, b'n' as u16, b'R' as u16, b'u' as u16, b's' as u16,
+    b'\\' as u16,
+    b'D' as u16,
+    b'e' as u16,
+    b'v' as u16,
+    b'i' as u16,
+    b'c' as u16,
+    b'e' as u16,
+    b'\\' as u16,
+    b'W' as u16,
+    b'i' as u16,
+    b'n' as u16,
+    b'R' as u16,
+    b'u' as u16,
+    b's' as u16,
     b't' as u16,
 ];
 
 /// `\DosDevices\WinRust`, the link user mode opens as `\\.\WinRust`.
 pub(crate) const ABI_SYMBOLIC_LINK: &[u16] = &[
-    b'\\' as u16, b'D' as u16, b'o' as u16, b's' as u16, b'D' as u16, b'e' as u16, b'v' as u16,
-    b'i' as u16, b'c' as u16, b'e' as u16, b's' as u16, b'\\' as u16, b'W' as u16, b'i' as u16,
-    b'n' as u16, b'R' as u16, b'u' as u16, b's' as u16, b't' as u16,
+    b'\\' as u16,
+    b'D' as u16,
+    b'o' as u16,
+    b's' as u16,
+    b'D' as u16,
+    b'e' as u16,
+    b'v' as u16,
+    b'i' as u16,
+    b'c' as u16,
+    b'e' as u16,
+    b's' as u16,
+    b'\\' as u16,
+    b'W' as u16,
+    b'i' as u16,
+    b'n' as u16,
+    b'R' as u16,
+    b'u' as u16,
+    b's' as u16,
+    b't' as u16,
 ];
 
 /// The WDF device handle, stored so the unload path can remove the link.

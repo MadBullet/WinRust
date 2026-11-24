@@ -13,7 +13,7 @@ use alloc::vec::Vec;
 use wdk::println;
 use wdk_sys::{
     call_unsafe_wdf_function_binding, NTSTATUS, PVOID, STATUS_BUFFER_TOO_SMALL,
-    STATUS_INVALID_DEVICE_REQUEST, STATUS_INVALID_PARAMETER, STATUS_SUCCESS, WDFREQUEST, WDFQUEUE,
+    STATUS_INVALID_DEVICE_REQUEST, STATUS_INVALID_PARAMETER, STATUS_SUCCESS, WDFQUEUE, WDFREQUEST,
 };
 use winrust_kernel_abi::{
     ModuleRecord, Performance, ProcessRecord, Query, Request, ResponseHeader,
@@ -100,7 +100,11 @@ fn read_request(request: WDFREQUEST) -> Option<Request> {
 }
 
 /// Copy `header` plus `payload` into the caller's output buffer.
-fn write_response(request: WDFREQUEST, header: &ResponseHeader, payload: &[u8]) -> Result<usize, NTSTATUS> {
+fn write_response(
+    request: WDFREQUEST,
+    header: &ResponseHeader,
+    payload: &[u8],
+) -> Result<usize, NTSTATUS> {
     let mut output: PVOID = core::ptr::null_mut();
     let mut capacity: usize = 0;
     let status = unsafe {
@@ -122,7 +126,9 @@ fn write_response(request: WDFREQUEST, header: &ResponseHeader, payload: &[u8]) 
     // SAFETY: `output` is a kernel buffer of `capacity >= needed` bytes.
     unsafe {
         core::ptr::write_unaligned(output.cast::<ResponseHeader>(), *header);
-        let body = output.cast::<u8>().add(core::mem::size_of::<ResponseHeader>());
+        let body = output
+            .cast::<u8>()
+            .add(core::mem::size_of::<ResponseHeader>());
         core::ptr::copy_nonoverlapping(payload.as_ptr(), body, payload.len());
     }
     Ok(needed)
@@ -165,7 +171,9 @@ fn answer(
                     let chars = (row.name_len / 2).min(ProcessRecord::NAME_CHARS - 1);
                     let end = row.name_offset + chars * 2;
                     if end <= bytes.len() {
-                        for (index, chunk) in bytes[row.name_offset..end].chunks_exact(2).enumerate() {
+                        for (index, chunk) in
+                            bytes[row.name_offset..end].chunks_exact(2).enumerate()
+                        {
                             name[index] = u16::from_le_bytes([chunk[0], chunk[1]]);
                         }
                     }
@@ -278,11 +286,18 @@ fn answer(
 }
 
 /// Serialise a record slice as bytes and hand it to [`write_response`].
-fn write_records<T: Copy>(request: WDFREQUEST, header: &ResponseHeader, records: &[T]) -> Result<usize, NTSTATUS> {
+fn write_records<T: Copy>(
+    request: WDFREQUEST,
+    header: &ResponseHeader,
+    records: &[T],
+) -> Result<usize, NTSTATUS> {
     // SAFETY: `records` is a live slice of `Copy` values; the cast to `u8` is
     // valid for the duration of the borrow and `write_response` copies it out.
     let bytes = unsafe {
-        core::slice::from_raw_parts(records.as_ptr().cast::<u8>(), core::mem::size_of_val(records))
+        core::slice::from_raw_parts(
+            records.as_ptr().cast::<u8>(),
+            core::mem::size_of_val(records),
+        )
     };
     write_response(request, header, bytes)
 }

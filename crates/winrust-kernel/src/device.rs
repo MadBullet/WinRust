@@ -64,7 +64,11 @@ pub extern "C" fn evt_device_add(driver: WDFDRIVER, device_init: PWDFDEVICE_INIT
 
     // A software device: no hardware ids, no resources.
     let status = unsafe {
-        call_unsafe_wdf_function_binding!(WdfDeviceInitSetDeviceType, device_init, FILE_DEVICE_UNKNOWN)
+        call_unsafe_wdf_function_binding!(
+            WdfDeviceInitSetDeviceType,
+            device_init,
+            FILE_DEVICE_UNKNOWN
+        )
     };
     if !wdk::nt_success(status) {
         println!("WinRust: SetDeviceType failed {status:#010X}");

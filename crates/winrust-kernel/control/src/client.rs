@@ -5,16 +5,16 @@
 //! ACL decides who may open it, and every operation is a read.
 
 use std::fmt;
-use winrust_kernel_abi::{
-    ModuleRecord, Performance, ProcessRecord, Query, Request, ResponseHeader, IOCTL_WINRUST_QUERY,
-    MAX_RECORDS,
-};
-use winrust_core::wide::to_wide;
 use windows_sys::Win32::Foundation::{CloseHandle, HANDLE, INVALID_HANDLE_VALUE};
 use windows_sys::Win32::Storage::FileSystem::{
     CreateFileW, FILE_SHARE_READ, FILE_SHARE_WRITE, OPEN_EXISTING,
 };
 use windows_sys::Win32::System::IO::DeviceIoControl;
+use winrust_core::wide::to_wide;
+use winrust_kernel_abi::{
+    ModuleRecord, Performance, ProcessRecord, Query, Request, ResponseHeader, IOCTL_WINRUST_QUERY,
+    MAX_RECORDS,
+};
 
 /// `GENERIC_READ` - the device only needs read access for queries.
 const GENERIC_READ: u32 = 0x8000_0000;
@@ -105,7 +105,9 @@ impl Driver {
         // and reported at least that many bytes.
         let header = unsafe { std::ptr::read_unaligned(payload.as_ptr().cast::<ResponseHeader>()) };
         if header.status != 0 {
-            return Err(DriverError::Status { status: header.status });
+            return Err(DriverError::Status {
+                status: header.status,
+            });
         }
         if header.version == 0 {
             return Err(DriverError::Protocol("driver reports version 0".into()));
@@ -128,9 +130,7 @@ impl Driver {
 
     /// Every process, paging through the table `MAX_RECORDS` at a time.
     pub fn processes(&self) -> Result<Vec<ProcessRecord>, DriverError> {
-        self.paged(Query::Processes, |bytes| {
-            from_bytes::<ProcessRecord>(bytes)
-        })
+        self.paged(Query::Processes, |bytes| from_bytes::<ProcessRecord>(bytes))
     }
 
     /// Every loaded kernel module.
@@ -151,7 +151,10 @@ impl Driver {
         if header.count == 0 {
             return Err(DriverError::Protocol("no performance record".into()));
         }
-        Ok(from_bytes::<Performance>(&buffer[header_bytes()..]).first().copied().unwrap_or_default())
+        Ok(from_bytes::<Performance>(&buffer[header_bytes()..])
+            .first()
+            .copied()
+            .unwrap_or_default())
     }
 
     fn paged<T: Copy>(
