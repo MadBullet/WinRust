@@ -46,7 +46,7 @@ def digest_file(path: str) -> list[str]:
         semi = src.find(";", m.end())
         if semi != -1 and (brace == -1 or semi < brace):
             name_m = re.match(r"pub (?:struct|union) ([A-Za-z0-9_]+)", src[m.start():])
-        out.append("ST  " + (name_m.group(1) if name_m else "?") + " = " + squeeze(src[m.start():semi + 1], 260))
+            out.append("ST  " + (name_m.group(1) if name_m else "?") + " = " + squeeze(src[m.start():semi + 1], 260))
             continue
         if brace == -1:
             continue
