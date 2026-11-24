@@ -6,7 +6,7 @@ members = [
     "crates/winrust-taskmgr",
     "crates/winrust-services",
     "crates/winrust-sysctl",
-    "crates/winrust/src-tauri",
+    "crates/winrust-launcher",
 ]
 
 [workspace.package]

@@ -1,0 +1,21 @@
+[package]
+name = "winrust-launcher"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "WinRust launcher — one entry point for every reimplemented component"
+
+[[bin]]
+name = "WinRust"
+path = "src/main.rs"
+
+[dependencies]
+winrust-core.workspace = true
+eframe.workspace = true
+egui.workspace = true
+env_logger.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-sys.workspace = true
