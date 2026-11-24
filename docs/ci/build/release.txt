@@ -1,197 +1,227 @@
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
    Compiling cfg-if v1.0.5
    Compiling log v0.4.35
-   Compiling syn v3.0.10
    Compiling stable_deref_trait v1.2.1
+   Compiling syn v3.0.10
    Compiling windows-link v0.2.1
-   Compiling simd-adler32 v0.3.10
    Compiling smallvec v1.16.6
-   Compiling adler2 v2.0.1
+   Compiling simd-adler32 v0.3.10
    Compiling crc32fast v1.5.6
+   Compiling adler2 v2.0.1
    Compiling windows_x86_64_msvc v0.52.6
    Compiling litemap v0.8.3
-   Compiling writeable v0.6.4
+   Compiling once_cell v1.21.4
    Compiling utf_types v1.0.0
-   Compiling utf8_iter v1.1.0
+   Compiling writeable v0.6.4
    Compiling synstructure v0.14.0
+   Compiling utf8_iter v1.1.0
    Compiling miniz_oxide v0.9.1
    Compiling zerofrom-derive v0.1.8
    Compiling yoke-derive v0.8.4
    Compiling zerofrom v0.1.8
-   Compiling zerovec-derive v0.11.7
-   Compiling yoke v0.8.4
    Compiling bytemuck_derive v1.12.1
-   Compiling zerovec v0.11.9
-   Compiling displaydoc v0.2.7
+   Compiling yoke v0.8.4
+   Compiling zerovec-derive v0.11.7
    Compiling bytemuck v1.25.2
-   Compiling potential_utf v0.1.6
-   Compiling icu_properties_data v2.4.0
+   Compiling displaydoc v0.2.7
+   Compiling zerovec v0.11.9
+   Compiling zerotrie v0.2.5
    Compiling tinystr v0.8.5
    Compiling icu_locale_core v2.4.0
-   Compiling zerotrie v0.2.5
-   Compiling khronos_api v3.1.0
+   Compiling potential_utf v0.1.6
+   Compiling icu_properties_data v2.4.0
    Compiling icu_normalizer_data v2.4.0
-   Compiling once_cell v1.21.4
-   Compiling icu_provider v2.4.0
+   Compiling khronos_api v3.1.0
    Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
    Compiling flate2 v1.1.11
+   Compiling windows-targets v0.52.6
    Compiling autocfg v1.5.1
    Compiling cfg_aliases v0.2.2
-   Compiling windows-targets v0.52.6
-   Compiling xml-rs v0.8.29
-   Compiling icu_normalizer v2.4.0
-   Compiling gl_generator v0.14.0
-   Compiling icu_properties v2.4.0
-   Compiling parking_lot_core v0.9.12
-   Compiling find-msvc-tools v0.1.15
    Compiling version_check v0.9.5
+   Compiling parking_lot_core v0.9.12
    Compiling zerocopy v0.8.65
-   Compiling shlex v2.0.1
-   Compiling cc v1.11.3
+   Compiling xml-rs v0.8.29
    Compiling ahash v0.8.13
-   Compiling idna_adapter v1.2.2
-   Compiling windows-sys v0.61.2
-   Compiling serde_core v1.0.229
-   Compiling percent-encoding v2.3.2
-   Compiling memchr v2.8.3
-   Compiling ttf-parser v0.25.1
-   Compiling bitflags v2.13.2
+   Compiling gl_generator v0.14.0
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling find-msvc-tools v0.1.15
    Compiling scopeguard v1.2.0
-   Compiling lock_api v0.4.14
-   Compiling form_urlencoded v1.2.3
-   Compiling ring v0.17.14
+   Compiling memchr v2.8.3
+   Compiling shlex v2.0.1
+   Compiling ttf-parser v0.25.1
+   Compiling serde_core v1.0.229
+   Compiling cc v1.11.3
    Compiling owned_ttf_parser v0.25.1
-   Compiling idna v1.1.0
+   Compiling lock_api v0.4.14
+   Compiling idna_adapter v1.2.2
    Compiling emath v0.29.1
+   Compiling windows-sys v0.61.2
+   Compiling syn v2.0.119
+   Compiling percent-encoding v2.3.2
+   Compiling ab_glyph_rasterizer v0.1.10
+   Compiling bitflags v2.13.2
+   Compiling ab_glyph v0.2.32
+   Compiling form_urlencoded v1.2.3
+   Compiling ecolor v0.29.1
+   Compiling parking_lot v0.12.5
+   Compiling idna v1.1.0
+   Compiling ring v0.17.14
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
-   Compiling syn v2.0.119
+   Compiling serde v1.0.229
+   Compiling nohash-hasher v0.2.0
+   Compiling arrayvec v0.7.8
    Compiling zeroize v1.9.2
    Compiling float-cmp v0.9.0
-   Compiling ab_glyph_rasterizer v0.1.10
-   Compiling arrayvec v0.7.8
-   Compiling ab_glyph v0.2.32
+   Compiling epaint_default_fonts v0.29.1
+   Compiling epaint v0.29.1
    Compiling strict-num v0.1.1
    Compiling rustls-pki-types v1.16.0
-   Compiling ecolor v0.29.1
    Compiling url v2.5.9
-   Compiling parking_lot v0.12.5
    Compiling num-traits v0.2.19
    Compiling windows-sys v0.52.0
-   Compiling nohash-hasher v0.2.0
-   Compiling epaint_default_fonts v0.29.1
+   Compiling serde_derive v1.0.229
+   Compiling raw-window-handle v0.6.2
    Compiling arrayref v0.3.9
-   Compiling serde v1.0.229
+   Compiling zmij v1.0.23
    Compiling tiny-skia-path v0.11.4
-   Compiling epaint v0.29.1
+   Compiling egui v0.29.1
    Compiling kurbo v0.9.5
    Compiling aho-corasick v1.1.5
-   Compiling glutin_wgl_sys v0.6.1
    Compiling glutin_egl_sys v0.7.1
+   Compiling glutin_wgl_sys v0.6.1
    Compiling winit v0.30.13
-   Compiling serde_derive v1.0.229
    Compiling getrandom v0.2.17
-   Compiling siphasher v1.0.4
-   Compiling unicase v2.10.0
-   Compiling raw-window-handle v0.6.2
-   Compiling zmij v1.0.23
-   Compiling siphasher v0.3.11
+   Compiling thiserror v1.0.69
+   Compiling tracing-core v0.1.36
    Compiling pin-project-lite v0.2.18
    Compiling untrusted v0.9.0
+   Compiling serde_json v1.0.154
+   Compiling siphasher v0.3.11
    Compiling regex-syntax v0.8.12
-   Compiling tracing-core v0.1.36
-   Compiling tracing v0.1.44
+   Compiling unicase v2.10.0
+   Compiling siphasher v1.0.4
+   Compiling phf_shared v0.11.3
    Compiling regex-automata v0.4.19
    Compiling svgtypes v0.13.0
-   Compiling phf_shared v0.11.3
-   Compiling egui v0.29.1
+   Compiling tracing v0.1.44
+   Compiling thiserror-impl v1.0.69
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
-   Compiling thiserror v1.0.69
-   Compiling serde_json v1.0.154
-   Compiling litrs v1.1.0
    Compiling weezl v0.1.12
-   Compiling cursor-icon v1.2.0
    Compiling utf8parse v0.2.2
-   Compiling dpi v0.1.2
+   Compiling cursor-icon v1.2.0
    Compiling once_cell_polyfill v1.70.2
-   Compiling smol_str v0.2.2
-   Compiling pxfm v0.1.30
    Compiling anstyle v1.0.14
-   Compiling unicode-segmentation v1.13.3
-   Compiling error-code v3.4.0
-   Compiling rustls v0.23.46
-   Compiling color_quant v1.1.0
+   Compiling smol_str v0.2.2
    Compiling rctree v0.5.0
-   Compiling usvg-tree v0.37.0
+   Compiling pxfm v0.1.30
+   Compiling rustls v0.23.46
+   Compiling unicode-segmentation v1.13.3
+   Compiling dpi v0.1.2
+   Compiling error-code v3.4.0
+   Compiling itoa v1.0.19
+   Compiling litrs v1.1.0
+   Compiling color_quant v1.1.0
    Compiling gif v0.14.2
-   Compiling clipboard-win v5.4.3
-   Compiling anstyle-wincon v3.0.11
    Compiling moxcms v0.8.1
-   Compiling anstyle-parse v1.0.0
    Compiling document-features v0.2.12
-   Compiling phf v0.11.3
+   Compiling clipboard-win v5.4.3
+   Compiling usvg-tree v0.37.0
+   Compiling anstyle-wincon v3.0.11
+   Compiling anstyle-parse v1.0.0
    Compiling rustls-webpki v0.103.17
    Compiling regex v1.13.2
+   Compiling phf v0.11.3
    Compiling webpki-roots v1.0.12
-   Compiling thiserror-impl v1.0.69
    Compiling png v0.18.1
    Compiling anstyle-query v1.1.5
    Compiling glutin-winit v0.5.0
+   Compiling windows-sys v0.59.0
    Compiling libloading v0.8.9
    Compiling simplecss v0.2.2
-   Compiling is_terminal_polyfill v1.70.2
-   Compiling bitflags v1.3.2
-   Compiling winapi v0.3.9
-   Compiling roxmltree v0.19.0
-   Compiling colorchoice v1.0.5
    Compiling data-url v0.3.2
-   Compiling subtle v2.6.1
-   Compiling itoa v1.0.19
-   Compiling byteorder-lite v0.1.0
-   Compiling imagesize v0.12.0
+   Compiling bitflags v1.3.2
    Compiling jiff-core v1.0.2
+   Compiling winapi v0.3.9
+   Compiling colorchoice v1.0.5
+   Compiling subtle v2.6.1
+   Compiling imagesize v0.12.0
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling byteorder-lite v0.1.0
+   Compiling roxmltree v0.19.0
    Compiling usvg-parser v0.37.0
-   Compiling jiff v1.0.3
-   Compiling image v0.25.10
-   Compiling anstream v1.0.0
-   Compiling png v0.17.16
-   Compiling webpki-roots v0.26.11
-   Compiling env_filter v2.1.0
-   Compiling mime_guess2 v2.3.1
-   Compiling arboard v3.7.0
-   Compiling webbrowser v1.2.7
-   Compiling windows-sys v0.59.0
-   Compiling pico-args v0.5.0
-   Compiling base64 v0.22.1
-   Compiling glow v0.14.2
-   Compiling web-time v1.1.0
-   Compiling base64 v0.21.7
-   Compiling xmlwriter v0.1.0
-   Compiling usvg v0.37.0
-   Compiling egui-winit v0.29.1
-   Compiling egui_glow v0.29.1
    Compiling winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-   Compiling ureq v2.12.1
-   Compiling env_logger v0.11.12
-   Compiling tiny-skia v0.11.4
-   Compiling enum-map-derive v0.17.0
-   Compiling rgb v0.8.53
-   Compiling mime v0.3.18
-   Compiling static_assertions v1.1.0
-   Compiling eframe v0.29.1
-   Compiling resvg v0.37.0
-   Compiling enum-map v2.7.3
-   Compiling ehttp v0.5.0
-   Compiling winrust-kernel-abi v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-   Compiling egui_extras v0.29.1
-   Compiling winrust-kernel-control v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-   Compiling winrust-sysctl v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
-   Compiling winrust-services v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-services)
-   Compiling winrust-taskmgr v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
-   Compiling winrust-explorer v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
-   Compiling winrust-launcher v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
-    Finished `release` profile [optimized] target(s) in 5m 49s
-exit=True
+error[E0433]: cannot find module or crate `winrust_core` in this scope
+ --> crates\winrust-core\src\i18n\lang.rs:7:5
+  |
+7 | use winrust_core::registry::{self, Root};
+  |     ^^^^^^^^^^^^ use of unresolved module or unlinked crate `winrust_core`
+  |
+  = help: if you wanted to use a crate named `winrust_core`, use `cargo add winrust_core` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `winrust_core` in this scope
+ --> crates\winrust-core\src\i18n\settings.rs:7:5
+  |
+7 | use winrust_core::registry::{self, Root};
+  |     ^^^^^^^^^^^^ use of unresolved module or unlinked crate `winrust_core`
+  |
+  = help: if you wanted to use a crate named `winrust_core`, use `cargo add winrust_core` to add it to your `Cargo.toml`
+
+error[E0432]: unresolved import `windows_sys::Win32::System::Performance`
+  --> crates\winrust-core\src\gpu.rs:14:37
+   |
+14 |     use windows_sys::Win32::System::Performance::{
+   |                                     ^^^^^^^^^^^ could not find `Performance` in `System`
+   |
+note: found an item that was configured out
+  --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\System\mod.rs:78:9
+   |
+77 | #[cfg(feature = "Win32_System_Performance")]
+   |       ------------------------------------ the item is gated behind the `Win32_System_Performance` feature
+78 | pub mod Performance;
+   |         ^^^^^^^^^^^
+
+error[E0119]: conflicting implementations of trait `Default` for type `Appearance`
+  --> crates\winrust-core\src\i18n\settings.rs:12:45
+   |
+12 | #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+   |                                             ^^^^^^^ conflicting implementation for `Appearance`
+...
+24 | impl Default for Appearance {
+   | --------------------------- first implementation here
+
+error[E0277]: the size for values of type `str` cannot be known at compilation time
+  --> crates\winrust-core\src\i18n\lang.rs:62:20
+   |
+62 |         .and_then(|v| Lang::parse(&v))
+   |                    ^ doesn't have a size known at compile-time
+   |
+   = help: the trait `Sized` is not implemented for `str`
+   = note: all function arguments must have a statically known size
+
+error[E0433]: cannot find module or crate `winrust_core` in this scope
+  --> crates\winrust-core\src\i18n\lang.rs:67:28
+   |
+67 | pub fn save(lang: Lang) -> winrust_core::Result<()> {
+   |                            ^^^^^^^^^^^^ use of unresolved module or unlinked crate `winrust_core`
+   |
+   = help: if you wanted to use a crate named `winrust_core`, use `cargo add winrust_core` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `winrust_core` in this scope
+  --> crates\winrust-core\src\i18n\settings.rs:80:32
+   |
+80 | pub fn save(a: &Appearance) -> winrust_core::Result<()> {
+   |                                ^^^^^^^^^^^^ use of unresolved module or unlinked crate `winrust_core`
+   |
+   = help: if you wanted to use a crate named `winrust_core`, use `cargo add winrust_core` to add it to your `Cargo.toml`
+
+Some errors have detailed explanations: E0119, E0277, E0432, E0433.
+For more information about an error, try `rustc --explain E0119`.
+error: could not compile `winrust-core` (lib) due to 7 previous errors
+warning: build failed, waiting for other jobs to finish...
+exit=False
