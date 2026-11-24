@@ -37,15 +37,15 @@ jobs:
 
       - name: cargo build (debug)
         continue-on-error: true
-        run: cargo build --workspace > build.txt 2>&1; echo "exit=$?" >> build.txt
+        run: cargo build --workspace --exclude winrust-kernel > build.txt 2>&1; echo "exit=$?" >> build.txt
 
       - name: cargo clippy
         continue-on-error: true
-        run: cargo clippy --workspace --all-targets > clippy.txt 2>&1; echo "exit=$?" >> clippy.txt
+        run: cargo clippy --workspace --all-targets --exclude winrust-kernel > clippy.txt 2>&1; echo "exit=$?" >> clippy.txt
 
       - name: cargo build (release binaries)
         continue-on-error: true
-        run: cargo build --workspace --release > release.txt 2>&1; echo "exit=$?" >> release.txt
+        run: cargo build --workspace --exclude winrust-kernel --release > release.txt 2>&1; echo "exit=$?" >> release.txt
 
       - name: collect diagnostics
         if: always()

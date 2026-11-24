@@ -20,7 +20,7 @@ mod service;
 
 use client::Driver;
 use std::process::ExitCode;
-use winrust_kernel_abi::{ModuleRecord, ProcessRecord};
+use winrust_kernel_abi::{GuardAction, ModuleRecord, ProcessRecord};
 
 fn usage() -> &'static str {
     "winrust-driver - WinRust kernel driver console
@@ -35,7 +35,9 @@ COMMANDS:
     processes [limit]   process table straight from kernel memory
     modules [limit]     loaded kernel modules with base address and size
     perf                aggregate CPU / object counters
-    blocked [name]      list the process block list, or add a name to it
+    block <name>        refuse future starts of this image (RAM only)
+    allow <name>        stop refusing it
+    unblock-all         clear the block list
     json                full snapshot as JSON (for scripting)
 
 NOTES:
@@ -58,7 +60,10 @@ fn main() -> ExitCode {
         "processes" => processes(parse_limit(&args)),
         "modules" => modules(parse_limit(&args)),
         "perf" => perf(),
-        "blocked" => blocked(args.get(1).map(String::as_str)),
+        "blocked" => blocked(),
+        "block" => guard(GuardAction::Block, args.get(1).map(String::as_str)),
+        "allow" => guard(GuardAction::Allow, args.get(1).map(String::as_str)),
+        "unblock-all" => guard(GuardAction::Clear, None),
         "json" => json(),
         "-h" | "--help" | "help" => {
             println!("{}", usage());
@@ -222,19 +227,35 @@ fn perf() -> Result<(), String> {
     Ok(())
 }
 
-fn blocked(extra: Option<&str>) -> Result<(), String> {
-    let driver = Driver::connect().map_err(|e| e.to_string())?;
-    // The block list lives in the driver; adding to it needs a control IOCTL,
-    // which the read-only device deliberately does not expose.  Report state.
-    let perf = driver.performance().map_err(|e| e.to_string())?;
-    if let Some(name) = extra {
+fn guard(action: GuardAction, name: Option<&str>) -> Result<(), String> {
+    let name = name.unwrap_or("");
+    if action != GuardAction::Clear && name.is_empty() {
+        return Err("this command needs an image name, e.g. `notepad.exe`".into());
+    }
+    if action != GuardAction::Clear && (name.contains(['\\', '/']) || !name.is_ascii()) {
         return Err(format!(
-            "adding {name:?} to the block list needs a reboot-scoped policy file; \
-             the read-only device does not accept writes ({} processes are visible).",
-            perf.process_count
+            "{name:?} must be a bare ASCII image name, without a directory"
         ));
     }
-    println!("block list is off by default; the driver only blocks what the launcher asks for");
+    let driver = Driver::connect().map_err(|e| e.to_string())?;
+    let status = driver.guard(action, name).map_err(|e| e.to_string())?;
+    if status.active == 0 {
+        println!("warning: the process guard is not registered in the driver");
+    }
+    match action {
+        GuardAction::Block => println!("blocked {name:?}"),
+        GuardAction::Allow => println!("allowed {name:?} again"),
+        GuardAction::Clear => println!("block list cleared"),
+    }
+    println!("{} name(s) blocked", status.blocked_count);
+    Ok(())
+}
+
+fn blocked() -> Result<(), String> {
+    let driver = Driver::connect().map_err(|e| e.to_string())?;
+    println!("the driver keeps the list in RAM; use `block <name>` to add entries");
+    let perf = driver.performance().map_err(|e| e.to_string())?;
+    println!("{} processes currently visible from kernel mode", perf.process_count);
     Ok(())
 }
 

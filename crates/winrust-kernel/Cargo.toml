@@ -27,9 +27,7 @@ wdk-panic = "0.5"
 [build-dependencies]
 wdk-build = "0.6"
 
-# Kernel mode forbids unwinding: a panic has nowhere to return to.
-[profile.dev]
-panic = "abort"
-
-[profile.release]
-panic = "abort"
+# NOTE: `panic = "abort"` cannot be set here - Cargo ignores profiles in
+# non-root packages.  The driver is built with
+# `-C panic=abort` from .github/workflows/kernel.yml, and the workspace
+# `[profile.release]` block is inherited for everything else.

@@ -58,7 +58,7 @@ fn blocked_mut<R>(f: impl FnOnce(&mut Vec<String>) -> R) -> R {
 fn is_blocked(image: &str) -> bool {
     with_lock(|| {
         // SAFETY: see `blocked_mut`.
-        let slot = unsafe { core::ptr::addr_of!(BLOCKED) };
+        let slot = core::ptr::addr_of!(BLOCKED);
         match unsafe { &*slot } {
             Some(list) => list.iter().any(|entry| entry.eq_ignore_ascii_case(image)),
             None => false,
@@ -73,6 +73,11 @@ pub fn block(image: &str) {
             list.push(String::from(image));
         }
     });
+}
+
+/// Remove every blocked name.
+pub fn clear() {
+    blocked_mut(Vec::clear);
 }
 
 /// Remove a name from the block list.

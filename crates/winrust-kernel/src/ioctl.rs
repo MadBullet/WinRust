@@ -10,14 +10,14 @@
 
 use crate::sysinfo;
 use alloc::vec::Vec;
-use wdk::println;
 use wdk_sys::{
     call_unsafe_wdf_function_binding, NTSTATUS, PVOID, STATUS_BUFFER_TOO_SMALL,
     STATUS_INVALID_DEVICE_REQUEST, STATUS_INVALID_PARAMETER, STATUS_SUCCESS, WDFQUEUE, WDFREQUEST,
 };
 use winrust_kernel_abi::{
-    ModuleRecord, Performance, ProcessRecord, Query, Request, ResponseHeader,
-    IOCTL_WINRUST_GET_VERSION, IOCTL_WINRUST_QUERY, MAX_RECORDS,
+    GuardAction, GuardRequest, GuardStatus, ModuleRecord, Performance, ProcessRecord, Query,
+    Request, ResponseHeader, IOCTL_WINRUST_GET_VERSION, IOCTL_WINRUST_QUERY,
+    IOCTL_WINRUST_SET_GUARD, MAX_RECORDS,
 };
 
 /// Driver protocol version reported to the client.
@@ -73,8 +73,86 @@ fn dispatch(request: WDFREQUEST, ioctl_code: u32) -> Result<usize, NTSTATUS> {
             let kind = Query::from_raw(query.query).ok_or(STATUS_INVALID_PARAMETER)?;
             answer(request, kind, &query, page_size, processors)
         }
+        IOCTL_WINRUST_SET_GUARD => handle_guard(request),
         _ => Err(STATUS_INVALID_DEVICE_REQUEST),
     }
+}
+
+/// Apply one [`GuardRequest`] and report the resulting state.
+///
+/// This is the only write path in the driver, and it can only ever add or
+/// remove a name from an in-RAM list: nothing persists past unload/reboot.
+fn handle_guard(request: WDFREQUEST) -> Result<usize, NTSTATUS> {
+    let mut input: PVOID = core::ptr::null_mut();
+    let mut length: usize = 0;
+    let status = unsafe {
+        call_unsafe_wdf_function_binding!(
+            WdfRequestRetrieveInputBuffer,
+            request,
+            core::mem::size_of::<GuardRequest>(),
+            &raw mut input,
+            &raw mut length
+        )
+    };
+    if !wdk::nt_success(status) || input.is_null() || length < core::mem::size_of::<GuardRequest>() {
+        return Err(STATUS_INVALID_PARAMETER);
+    }
+    // SAFETY: at least `size_of::<GuardRequest>()` bytes were copied into this
+    // kernel buffer (checked above) and the type is `repr(C)` integers.
+    let guard = unsafe { core::ptr::read_unaligned(input.cast::<GuardRequest>()) };
+    let action = GuardAction::from_raw(guard.action).ok_or(STATUS_INVALID_PARAMETER)?;
+
+    match action {
+        GuardAction::Clear => {
+            // Clearing needs no name; the driver keeps a `Vec<String>`.
+            crate::guard::clear();
+        }
+        GuardAction::Block | GuardAction::Allow => {
+            let end = guard
+                .name
+                .iter()
+                .position(|u| *u == 0)
+                .unwrap_or(GuardRequest::NAME_CHARS);
+            if end == 0 {
+                return Err(STATUS_INVALID_PARAMETER);
+            }
+            // Names are ASCII in practice; reject anything else rather than
+            // silently mangling a path.
+            let mut name = alloc::string::String::with_capacity(end);
+            for unit in &guard.name[..end] {
+                if *unit > 0x7F || *unit == u16::from(b'\\') || *unit == u16::from(b'/') {
+                    return Err(STATUS_INVALID_PARAMETER);
+                }
+                name.push(char::from(*unit as u8));
+            }
+            match action {
+                GuardAction::Block => crate::guard::block(&name),
+                _ => crate::guard::allow(&name),
+            }
+        }
+    }
+
+    let status = GuardStatus {
+        active: u32::from(crate::guard::is_active()),
+        blocked_count: crate::guard::count() as u32,
+    };
+    let bytes = unsafe {
+        core::slice::from_raw_parts(
+            core::ptr::from_ref(&status).cast::<u8>(),
+            core::mem::size_of::<GuardStatus>(),
+        )
+    };
+    let header = ResponseHeader {
+        status: 0,
+        query: 0,
+        count: 1,
+        total: 1,
+        version: PROTOCOL_VERSION,
+        processors: 0,
+        page_size: 0,
+        reserved: 0,
+    };
+    write_response(request, &header, bytes)
 }
 
 /// Read the caller's [`Request`] from the buffered input.

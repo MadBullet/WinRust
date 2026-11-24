@@ -21,10 +21,10 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
-  # Kernel code has no C runtime to link against: wdk-build refuses to build
-  # without the static CRT (`StaticCrtNotEnabled`).  Microsoft's own driver CI
-  # sets exactly this.
-  RUSTFLAGS: "-C target-feature=+crt-static"
+  # Kernel code cannot unwind and has no C runtime to link against:
+  # wdk-build refuses to build without the static CRT
+  # (`StaticCrtNotEnabled`), and Microsoft's own driver CI sets exactly this.
+  RUSTFLAGS: "-C target-feature=+crt-static -C panic=abort"
 
 jobs:
   kmdf:

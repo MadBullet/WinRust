@@ -12,8 +12,8 @@ use windows_sys::Win32::Storage::FileSystem::{
 use windows_sys::Win32::System::IO::DeviceIoControl;
 use winrust_core::wide::to_wide;
 use winrust_kernel_abi::{
-    ModuleRecord, Performance, ProcessRecord, Query, Request, ResponseHeader, IOCTL_WINRUST_QUERY,
-    MAX_RECORDS,
+    GuardAction, GuardRequest, GuardStatus, ModuleRecord, Performance, ProcessRecord, Query,
+    Request, ResponseHeader, IOCTL_WINRUST_QUERY, IOCTL_WINRUST_SET_GUARD, MAX_RECORDS,
 };
 
 /// `GENERIC_READ` - the device only needs read access for queries.
@@ -155,6 +155,47 @@ impl Driver {
             .first()
             .copied()
             .unwrap_or_default())
+    }
+
+    /// Apply one guard action and return the resulting driver state.
+    pub fn guard(&self, action: GuardAction, name: &str) -> Result<GuardStatus, DriverError> {
+        let mut request = GuardRequest {
+            action: action as u32,
+            ..GuardRequest::default()
+        };
+        for (slot, unit) in request
+            .name
+            .iter_mut()
+            .zip(name.encode_utf16().take(GuardRequest::NAME_CHARS - 1))
+        {
+            *slot = unit;
+        }
+        let mut output = vec![0u8; winrust_kernel_abi::RESPONSE_SIZE];
+        let mut returned: u32 = 0;
+        let ok = unsafe {
+            DeviceIoControl(
+                self.handle,
+                IOCTL_WINRUST_SET_GUARD,
+                (&raw const request).cast(),
+                std::mem::size_of::<GuardRequest>() as u32,
+                output.as_mut_ptr().cast(),
+                output.len() as u32,
+                &raw mut returned,
+                std::ptr::null_mut(),
+            )
+        };
+        if ok == 0 {
+            return Err(DriverError::Status {
+                status: std::io::Error::last_os_error().raw_os_error().unwrap_or(0),
+            });
+        }
+        if (returned as usize) < std::mem::size_of::<ResponseHeader>() + std::mem::size_of::<GuardStatus>() {
+            return Err(DriverError::Protocol("short guard response".into()));
+        }
+        let offset = std::mem::size_of::<ResponseHeader>();
+        Ok(unsafe {
+            std::ptr::read_unaligned(output.as_ptr().add(offset).cast::<GuardStatus>())
+        })
     }
 
     fn paged<T: Copy>(

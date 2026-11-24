@@ -25,7 +25,34 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: cargo build (release)
-        run: cargo build --workspace --release
+        run: cargo build --workspace --release --exclude winrust-kernel
+
+      # The kernel driver needs the WDK's NuGet packages; see kernel.yml.
+      - name: install WDK from NuGet
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $sdkVersion = "10.0.26100"
+          $root = "C:\packages"
+          New-Item -ItemType Directory -Force $root | Out-Null
+          $index = Invoke-RestMethod "https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/index.json"
+          $candidates = @($index.versions | Where-Object { $_ -like "$sdkVersion.*" })
+          $version = ($candidates | Sort-Object { [version]$_ } | Select-Object -Last 1)
+          nuget install Microsoft.Windows.WDK.x64 -Version $version -OutputDirectory $root
+          nuget install Microsoft.Windows.SDK.CPP -Version $version -OutputDirectory $root
+          $dirs = Get-ChildItem $root -Directory
+          $wdk = ($dirs | Where-Object { $_.Name -like "Microsoft.Windows.WDK.x64.*" } | Select-Object -First 1).FullName
+          $sdk = ($dirs | Where-Object { $_.Name -like "Microsoft.Windows.SDK.CPP.$version*" } | Select-Object -First 1).FullName
+          "WDKContentRoot=$wdk\c" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "WDKBinRoot=$wdk\c\bin\$sdkVersion.0" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "WindowsSdkBinPath=$sdk\c\bin" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "Version_Number=$sdkVersion.0" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+
+      - name: cargo build (kernel driver)
+        shell: pwsh
+        env:
+          RUSTFLAGS: "-C target-feature=+crt-static -C panic=abort"
+        run: cargo build -p winrust-kernel --release --target x86_64-pc-windows-msvc
 
       - name: stage binaries
         shell: bash
@@ -36,6 +63,9 @@ jobs:
           cp target/release/winrust-taskmgr.exe dist/ || true
           cp target/release/winrust-services.exe dist/ || true
           cp target/release/winrust-sysctl.exe dist/ || true
+          cp target/release/winrust-driver.exe dist/ || true
+          cp target/x86_64-pc-windows-msvc/release/winrust_kernel.dll dist/WinRustKernel.sys || true
+          cp crates/winrust-kernel/WinRustKernel.inx dist/WinRustKernel.inf || true
           cp README.md dist/ || true
           ls -la dist
 
@@ -66,7 +96,18 @@ jobs:
           * everything logged in the window
 
           **Downloads**
-          * \`WinRust-windows-x64.zip\` — all five executables plus README.
+          **Kernel driver (new)**
+          * \`WinRustKernel.sys\` — KMDF driver built with the WDK from Rust sources.
+            Kernel-side process and module tables (works for PPL processes too) and
+            an in-RAM process-creation block list.
+          * \`winrust-driver.exe\` — console: \`install\`, \`status\`, \`processes\`,
+            \`modules\`, \`perf\`, \`block <name>\`, \`remove\`.
+          * Install: \`winrust-driver install WinRustKernel.sys\` from an elevated prompt,
+            then \`winrust-driver processes\`.  \`winrust-driver remove\` unloads and
+            unregisters it.  The driver is test-signed by CI; see the README before
+            deploying it to a machine you care about.
+
+          * \`WinRust-windows-x64.zip\` — all executables, the driver and README.
           * Or grab a single .exe below.
 
           Run the component you need; elevation (Run as administrator) is required for service control, for managing other users' processes, and for any install action." \
@@ -75,4 +116,6 @@ jobs:
             dist/winrust-taskmgr.exe \
             dist/winrust-services.exe \
             dist/winrust-sysctl.exe \
+            dist/winrust-driver.exe \
+            dist/WinRustKernel.sys \
             WinRust-windows-x64.zip

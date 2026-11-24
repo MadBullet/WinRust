@@ -201,6 +201,63 @@ pub struct Performance {
     pub nonpaged_pool_bytes: u64,
 }
 
+/// Action for [`IOCTL_WINRUST_SET_GUARD`].
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum GuardAction {
+    /// Refuse future starts of `GuardRequest::name`.
+    Block = 0,
+    /// Stop refusing that name.
+    Allow = 1,
+    /// Remove every entry (driver unload does this anyway).
+    Clear = 2,
+}
+
+impl GuardAction {
+    #[must_use]
+    pub const fn from_raw(value: u32) -> Option<Self> {
+        match value {
+            0 => Some(Self::Block),
+            1 => Some(Self::Allow),
+            2 => Some(Self::Clear),
+            _ => None,
+        }
+    }
+}
+
+/// Input for [`IOCTL_WINRUST_SET_GUARD`]: the action plus a bare image name
+/// (`notepad.exe`), UTF-16, zero padded.  `Clear` ignores the name.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuardRequest {
+    pub action: u32,
+    pub reserved: u32,
+    pub name: [u16; Self::NAME_CHARS],
+}
+
+impl GuardRequest {
+    pub const NAME_CHARS: usize = 64;
+}
+
+impl Default for GuardRequest {
+    fn default() -> Self {
+        Self {
+            action: 0,
+            reserved: 0,
+            name: [0; Self::NAME_CHARS],
+        }
+    }
+}
+
+/// Output for [`IOCTL_WINRUST_SET_GUARD`]: how many names are blocked now.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default)]
+pub struct GuardStatus {
+    /// 1 when the notify callback is registered.
+    pub active: u32,
+    pub blocked_count: u32,
+}
+
 /// Size of the response buffer the client must provide.
 ///
 /// Always `size_of::<ResponseHeader>() + MAX_RECORDS * max(record size)`, so a
