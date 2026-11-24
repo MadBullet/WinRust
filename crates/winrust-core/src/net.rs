@@ -236,28 +236,24 @@ pub fn net_bytes_per_pid() -> std::collections::HashMap<u32, u64> {
     out
 }
 
-fn estats_row(row: &MIB_TCPROW_OWNER_PID) -> MIB_TCPROW_LH {
-    MIB_TCPROW_LH {
-        Anonymous: windows_sys::Win32::NetworkManagement::IpHelper::MIB_TCPROW_LH_0 {
-            dwState: row.dwState,
-            State: row.dwState as i32,
-        },
-        dwLocalAddr: row.dwLocalAddr,
-        dwLocalPort: row.dwLocalPort,
-        dwRemoteAddr: row.dwRemoteAddr,
-        dwRemotePort: row.dwRemotePort,
-    }
+/// `MIB_TCPROW_LH` (the classic TCP row) is a strict prefix of
+/// `MIB_TCPROW_OWNER_PID`: both start with state/local/remote fields as `u32`s.
+/// Rather than building the union by hand we simply reuse the row's bytes,
+/// which is exactly what the API expects.
+fn estats_row(row: &MIB_TCPROW_OWNER_PID) -> *const MIB_TCPROW_LH {
+    row as *const MIB_TCPROW_OWNER_PID as *const MIB_TCPROW_LH
 }
 
 fn tcp_bytes_for_row(row: &MIB_TCPROW_OWNER_PID) -> Option<u64> {
     let lh = estats_row(row);
+    debug_assert!(std::mem::size_of::<MIB_TCPROW_LH>() <= std::mem::size_of::<MIB_TCPROW_OWNER_PID>());
     const NO_ERROR_CODE: u32 = 0;
     // 1. Make sure collection is on; ignore the result (it fails harmlessly when
     //    already enabled for this connection).
     let rw = TCP_ESTATS_DATA_RW_v0 { EnableCollection: 1u8 };
     unsafe {
         SetPerTcpConnectionEStats(
-            &lh,
+            lh,
             TcpConnectionEstatsData,
             &rw as *const TCP_ESTATS_DATA_RW_v0 as *const u8,
             0,
@@ -269,7 +265,7 @@ fn tcp_bytes_for_row(row: &MIB_TCPROW_OWNER_PID) -> Option<u64> {
     let mut rod: TCP_ESTATS_DATA_ROD_v0 = unsafe { std::mem::zeroed() };
     let rc = unsafe {
         GetPerTcpConnectionEStats(
-            &lh,
+            lh,
             TcpConnectionEstatsData,
             std::ptr::null_mut(),
             0,

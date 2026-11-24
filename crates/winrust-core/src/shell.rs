@@ -307,7 +307,7 @@ pub fn version_info(path: impl AsRef<Path>) -> VersionInfo {
     // Fixed block: gives us the numeric version.
     let mut fixed_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
     let mut fixed_len = 0u32;
-    if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\"), &mut fixed_ptr, &mut fixed_len) } != 0
+    if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\").as_ptr(), &mut fixed_ptr, &mut fixed_len) } != 0
         && fixed_len as usize >= std::mem::size_of::<VS_FIXEDFILEINFO>()
     {
         let ffi = unsafe { &*(fixed_ptr as *const VS_FIXEDFILEINFO) };
@@ -319,7 +319,7 @@ pub fn version_info(path: impl AsRef<Path>) -> VersionInfo {
     // Strings live in `\StringFileInfo\<langcodepage>\<name>`.
     let mut trans_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
     let mut trans_len = 0u32;
-    if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\VarFileInfo\\Translation"), &mut trans_ptr, &mut trans_len) } != 0
+    if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\VarFileInfo\\Translation").as_ptr(), &mut trans_ptr, &mut trans_len) } != 0
         && trans_len >= 4
     {
         let words = unsafe { std::slice::from_raw_parts(trans_ptr as *const u16, trans_len as usize / 2) };
@@ -333,7 +333,7 @@ pub fn version_info(path: impl AsRef<Path>) -> VersionInfo {
             let sub = format!("\\StringFileInfo\\{lang:04x}{cp:04x}\\{key}");
             let mut p: *mut std::ffi::c_void = std::ptr::null_mut();
             let mut len = 0u32;
-            if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w(&sub), &mut p, &mut len) } != 0 && len > 0 {
+            if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w(&sub).as_ptr(), &mut p, &mut len) } != 0 && len > 0 {
                 let chars = unsafe { std::slice::from_raw_parts(p as *const u16, len as usize) };
                 *slot = crate::wide::from_wide(chars, chars.len()).trim_end_matches('\0').to_string();
             }
