@@ -1,180 +1,180 @@
  Downloading crates ...
-  Downloaded pin-project-lite v0.2.18
   Downloaded ab_glyph v0.2.32
-  Downloaded ahash v0.8.13
-  Downloaded arrayref v0.3.9
-  Downloaded base64 v0.21.7
-  Downloaded crc32fast v1.5.6
-  Downloaded anstyle-query v1.1.5
-  Downloaded autocfg v1.5.1
-  Downloaded arrayvec v0.7.8
-  Downloaded bitflags v1.3.2
-  Downloaded bytemuck v1.25.2
-  Downloaded colorchoice v1.0.5
-  Downloaded cfg_aliases v0.2.2
-  Downloaded clipboard-win v5.4.3
-  Downloaded regex-automata v0.4.19
-  Downloaded cfg-if v1.0.5
-  Downloaded arboard v3.7.0
-  Downloaded cursor-icon v1.2.0
-  Downloaded displaydoc v0.2.7
-  Downloaded form_urlencoded v1.2.3
-  Downloaded glutin_wgl_sys v0.6.1
-  Downloaded glutin_egl_sys v0.7.1
-  Downloaded idna_adapter v1.2.2
-  Downloaded is_terminal_polyfill v1.70.2
-  Downloaded jobserver v0.1.35
-  Downloaded regex-syntax v0.8.12
-  Downloaded data-url v0.3.2
-  Downloaded dpi v0.1.2
-  Downloaded ecolor v0.29.1
-  Downloaded memoffset v0.9.1
-  Downloaded miniz_oxide v0.9.1
-  Downloaded eframe v0.29.1
-  Downloaded egui-winit v0.29.1
-  Downloaded egui_glow v0.29.1
-  Downloaded enum-map v2.7.3
-  Downloaded egui_extras v0.29.1
-  Downloaded rustls v0.23.46
-  Downloaded rustls-pki-types v1.16.0
-  Downloaded potential_utf v0.1.6
-  Downloaded rgb v0.8.53
-  Downloaded rustls-webpki v0.103.17
-  Downloaded scopeguard v1.2.0
-  Downloaded shlex v2.0.1
-  Downloaded simd-adler32 v0.3.10
-  Downloaded smallvec v1.16.6
-  Downloaded static_assertions v1.1.0
-  Downloaded subtle v2.6.1
-  Downloaded tiny-skia v0.11.4
-  Downloaded stable_deref_trait v1.2.1
-  Downloaded tracing v0.1.44
-  Downloaded tracing-core v0.1.36
-  Downloaded ttf-parser v0.25.1
-  Downloaded unicode-segmentation v1.13.3
-  Downloaded untrusted v0.9.0
-  Downloaded version_check v0.9.5
-  Downloaded web-time v1.1.0
-  Downloaded windows-link v0.2.1
-  Downloaded zerofrom v0.1.8
-  Downloaded zerofrom-derive v0.1.8
   Downloaded adler2 v2.0.1
-  Downloaded aho-corasick v1.1.5
   Downloaded anstream v1.0.0
+  Downloaded anstyle-wincon v3.0.11
+  Downloaded base64 v0.21.7
+  Downloaded ab_glyph_rasterizer v0.1.10
   Downloaded anstyle v1.0.14
-  Downloaded anstyle-parse v1.0.0
-  Downloaded base64 v0.22.1
-  Downloaded bitflags v2.13.2
-  Downloaded cc v1.11.3
+  Downloaded anstyle-query v1.1.5
+  Downloaded arrayref v0.3.9
+  Downloaded byteorder-lite v0.1.0
   Downloaded document-features v0.2.12
-  Downloaded fdeflate v0.3.7
-  Downloaded find-msvc-tools v0.1.15
-  Downloaded flate2 v1.1.11
-  Downloaded getrandom v0.2.17
-  Downloaded getrandom v0.4.3
-  Downloaded icu_locale_core v2.4.0
-  Downloaded icu_normalizer_data v2.4.0
-  Downloaded rand_core v0.6.4
-  Downloaded icu_collections v2.4.0
-  Downloaded image v0.25.10
-  Downloaded synstructure v0.14.0
-  Downloaded tinystr v0.8.5
-  Downloaded url v2.5.9
+  Downloaded glutin_egl_sys v0.7.1
+  Downloaded autocfg v1.5.1
+  Downloaded bitflags v1.3.2
+  Downloaded cfg-if v1.0.5
+  Downloaded clipboard-win v5.4.3
+  Downloaded color_quant v1.1.0
+  Downloaded colorchoice v1.0.5
+  Downloaded cursor-icon v1.2.0
+  Downloaded anstyle-parse v1.0.0
+  Downloaded arrayvec v0.7.8
+  Downloaded cfg_aliases v0.2.2
+  Downloaded data-url v0.3.2
+  Downloaded displaydoc v0.2.7
+  Downloaded dpi v0.1.2
+  Downloaded egui-winit v0.29.1
+  Downloaded ehttp v0.5.0
+  Downloaded enum-map v2.7.3
+  Downloaded env_filter v2.1.0
+  Downloaded error-code v3.4.0
+  Downloaded form_urlencoded v1.2.3
+  Downloaded memoffset v0.9.1
+  Downloaded phf_shared v0.11.3
   Downloaded utf8_iter v1.1.0
   Downloaded utf8parse v0.2.2
   Downloaded utf_types v1.0.0
+  Downloaded version_check v0.9.5
+  Downloaded web-time v1.1.0
   Downloaded webpki-roots v0.26.11
+  Downloaded weezl v0.1.12
+  Downloaded windows-link v0.2.1
   Downloaded writeable v0.6.4
   Downloaded yoke v0.8.4
   Downloaded yoke-derive v0.8.4
-  Downloaded zerotrie v0.2.5
-  Downloaded icu_properties v2.4.0
-  Downloaded icu_properties_data v2.4.0
+  Downloaded zerofrom v0.1.8
+  Downloaded ahash v0.8.13
+  Downloaded arboard v3.7.0
+  Downloaded base64 v0.22.1
+  Downloaded bitflags v2.13.2
+  Downloaded bytemuck v1.25.2
+  Downloaded bytemuck_derive v1.12.1
+  Downloaded crc32fast v1.5.6
+  Downloaded ecolor v0.29.1
+  Downloaded egui_extras v0.29.1
+  Downloaded egui_glow v0.29.1
+  Downloaded emath v0.29.1
+  Downloaded enum-map-derive v0.17.0
+  Downloaded find-msvc-tools v0.1.15
+  Downloaded float-cmp v0.9.0
+  Downloaded gif v0.14.2
+  Downloaded glutin-winit v0.5.0
+  Downloaded glutin_wgl_sys v0.6.1
+  Downloaded idna_adapter v1.2.2
+  Downloaded imagesize v0.12.0
+  Downloaded is_terminal_polyfill v1.70.2
+  Downloaded nohash-hasher v0.2.0
+  Downloaded once_cell_polyfill v1.70.2
+  Downloaded owned_ttf_parser v0.25.1
+  Downloaded percent-encoding v2.3.2
+  Downloaded phf_generator v0.11.3
+  Downloaded pico-args v0.5.0
+  Downloaded potential_utf v0.1.6
+  Downloaded scopeguard v1.2.0
+  Downloaded untrusted v0.9.0
+  Downloaded webbrowser v1.2.7
+  Downloaded webpki-roots v1.0.12
+  Downloaded xml-rs v0.8.29
+  Downloaded xmlwriter v0.1.0
+  Downloaded zerofrom-derive v0.1.8
+  Downloaded zeroize v1.9.2
+  Downloaded zerovec-derive v0.11.7
+  Downloaded fdeflate v0.3.7
+  Downloaded getrandom v0.4.3
+  Downloaded gl_generator v0.14.0
   Downloaded icu_provider v2.4.0
-  Downloaded idna v1.1.0
+  Downloaded jobserver v0.1.35
   Downloaded libloading v0.8.9
   Downloaded litemap v0.8.3
+  Downloaded litrs v1.1.0
   Downloaded lock_api v0.4.14
   Downloaded mime v0.3.18
-  Downloaded miniz_oxide v0.8.9
-  Downloaded once_cell v1.21.4
-  Downloaded parking_lot_core v0.9.12
-  Downloaded percent-encoding v2.3.2
-  Downloaded rand v0.8.8
-  Downloaded raw-window-handle v0.6.2
-  Downloaded regex v1.13.2
-  Downloaded zerovec v0.11.9
-  Downloaded zerovec-derive v0.11.7
-  Downloaded gl_generator v0.14.0
   Downloaded mime_guess2 v2.3.1
-  Downloaded moxcms v0.8.1
-  Downloaded num-traits v0.2.19
-  Downloaded once_cell_polyfill v1.70.2
+  Downloaded once_cell v1.21.4
   Downloaded parking_lot v0.12.5
   Downloaded phf v0.11.3
-  Downloaded phf_generator v0.11.3
   Downloaded phf_macros v0.11.3
-  Downloaded phf_shared v0.11.3
-  Downloaded smol_str v0.2.2
-  Downloaded strict-num v0.1.1
-  Downloaded tiny-skia-path v0.11.4
-  Downloaded zeroize v1.9.2
-  Downloaded ab_glyph_rasterizer v0.1.10
-  Downloaded anstyle-wincon v3.0.11
-  Downloaded bytemuck_derive v1.12.1
-  Downloaded byteorder-lite v0.1.0
-  Downloaded color_quant v1.1.0
-  Downloaded gif v0.14.2
-  Downloaded glutin v0.32.3
-  Downloaded pico-args v0.5.0
-  Downloaded webpki-roots v1.0.12
-  Downloaded enum-map-derive v0.17.0
-  Downloaded env_filter v2.1.0
-  Downloaded error-code v3.4.0
-  Downloaded siphasher v0.3.11
-  Downloaded emath v0.29.1
-  Downloaded epaint v0.29.1
-  Downloaded float-cmp v0.9.0
-  Downloaded glutin-winit v0.5.0
-  Downloaded litrs v1.1.0
-  Downloaded nohash-hasher v0.2.0
-  Downloaded owned_ttf_parser v0.25.1
-  Downloaded png v0.17.16
-  Downloaded png v0.18.1
-  Downloaded simplecss v0.2.2
-  Downloaded siphasher v1.0.4
-  Downloaded unicase v2.10.0
-  Downloaded webbrowser v1.2.7
-  Downloaded weezl v0.1.12
-  Downloaded zlib-rs v0.6.9
-  Downloaded icu_normalizer v2.4.0
-  Downloaded jiff-core v1.0.2
-  Downloaded ureq v2.12.1
-  Downloaded xml-rs v0.8.29
-  Downloaded env_logger v0.11.12
-  Downloaded glow v0.14.2
-  Downloaded xmlwriter v0.1.0
-  Downloaded khronos_api v3.1.0
-  Downloaded ring v0.17.14
-  Downloaded zerocopy v0.8.65
-  Downloaded ehttp v0.5.0
-  Downloaded rctree v0.5.0
-  Downloaded epaint_default_fonts v0.29.1
-  Downloaded egui v0.29.1
-  Downloaded jiff v1.0.3
-  Downloaded pxfm v0.1.30
-  Downloaded imagesize v0.12.0
-  Downloaded windows-sys v0.61.2
-  Downloaded roxmltree v0.19.0
-  Downloaded winapi v0.3.9
+  Downloaded pin-project-lite v0.2.18
+  Downloaded rustls-pki-types v1.16.0
+  Downloaded shlex v2.0.1
   Downloaded usvg v0.37.0
   Downloaded usvg-tree v0.37.0
-  Downloaded windows-sys v0.52.0
+  Downloaded zerotrie v0.2.5
+  Downloaded zerovec v0.11.9
+  Downloaded eframe v0.29.1
+  Downloaded env_logger v0.11.12
+  Downloaded getrandom v0.2.17
+  Downloaded glutin v0.32.3
+  Downloaded icu_locale_core v2.4.0
+  Downloaded miniz_oxide v0.9.1
+  Downloaded num-traits v0.2.19
+  Downloaded parking_lot_core v0.9.12
+  Downloaded roxmltree v0.19.0
+  Downloaded siphasher v1.0.4
+  Downloaded stable_deref_trait v1.2.1
+  Downloaded usvg-parser v0.37.0
+  Downloaded aho-corasick v1.1.5
+  Downloaded cc v1.11.3
+  Downloaded miniz_oxide v0.8.9
+  Downloaded png v0.17.16
+  Downloaded rustls-webpki v0.103.17
+  Downloaded url v2.5.9
+  Downloaded zlib-rs v0.6.9
+  Downloaded epaint v0.29.1
+  Downloaded flate2 v1.1.11
+  Downloaded icu_collections v2.4.0
+  Downloaded icu_normalizer_data v2.4.0
+  Downloaded kurbo v0.9.5
+  Downloaded moxcms v0.8.1
+  Downloaded png v0.18.1
+  Downloaded smallvec v1.16.6
+  Downloaded unicode-segmentation v1.13.3
+  Downloaded ureq v2.12.1
+  Downloaded icu_properties v2.4.0
+  Downloaded idna v1.1.0
+  Downloaded jiff-core v1.0.2
+  Downloaded static_assertions v1.1.0
+  Downloaded glow v0.14.2
+  Downloaded icu_properties_data v2.4.0
+  Downloaded simd-adler32 v0.3.10
+  Downloaded smol_str v0.2.2
+  Downloaded strict-num v0.1.1
+  Downloaded siphasher v0.3.11
+  Downloaded tinystr v0.8.5
+  Downloaded zerocopy v0.8.65
+  Downloaded image v0.25.10
+  Downloaded rand v0.8.8
+  Downloaded simplecss v0.2.2
+  Downloaded subtle v2.6.1
+  Downloaded synstructure v0.14.0
+  Downloaded tiny-skia-path v0.11.4
+  Downloaded egui v0.29.1
+  Downloaded rctree v0.5.0
+  Downloaded rgb v0.8.53
+  Downloaded raw-window-handle v0.6.2
+  Downloaded unicase v2.10.0
+  Downloaded rand_core v0.6.4
+  Downloaded rustls v0.23.46
+  Downloaded tracing-core v0.1.36
   Downloaded winit v0.30.13
   Downloaded svgtypes v0.13.0
-  Downloaded usvg-parser v0.37.0
   Downloaded resvg v0.37.0
-  Downloaded kurbo v0.9.5
+  Downloaded tiny-skia v0.11.4
+  Downloaded regex v1.13.2
+  Downloaded ttf-parser v0.25.1
+  Downloaded icu_normalizer v2.4.0
+  Downloaded khronos_api v3.1.0
+  Downloaded jiff v1.0.3
+  Downloaded regex-syntax v0.8.12
+  Downloaded epaint_default_fonts v0.29.1
+  Downloaded tracing v0.1.44
+  Downloaded regex-automata v0.4.19
+  Downloaded winapi v0.3.9
+  Downloaded pxfm v0.1.30
+  Downloaded ring v0.17.14
+  Downloaded windows-sys v0.61.2
+  Downloaded windows-sys v0.52.0
    Compiling cfg-if v1.0.5
    Compiling syn v3.0.10
    Compiling log v0.4.35
@@ -182,11 +182,11 @@
    Compiling windows-link v0.2.1
    Compiling simd-adler32 v0.3.10
    Compiling smallvec v1.16.6
-   Compiling adler2 v2.0.1
    Compiling crc32fast v1.5.6
+   Compiling adler2 v2.0.1
    Compiling litemap v0.8.3
-   Compiling utf_types v1.0.0
    Compiling writeable v0.6.4
+   Compiling utf_types v1.0.0
    Compiling utf8_iter v1.1.0
    Compiling synstructure v0.14.0
    Compiling miniz_oxide v0.9.1
@@ -197,40 +197,40 @@
    Compiling yoke v0.8.4
    Compiling zerovec-derive v0.11.7
    Compiling bytemuck v1.25.2
-   Compiling zerovec v0.11.9
    Compiling displaydoc v0.2.7
+   Compiling zerovec v0.11.9
    Compiling potential_utf v0.1.6
-   Compiling once_cell v1.21.4
    Compiling tinystr v0.8.5
    Compiling zerotrie v0.2.5
    Compiling icu_locale_core v2.4.0
-   Compiling khronos_api v3.1.0
-   Compiling icu_properties_data v2.4.0
    Compiling icu_normalizer_data v2.4.0
-   Compiling icu_collections v2.4.0
+   Compiling once_cell v1.21.4
+   Compiling icu_properties_data v2.4.0
+   Compiling khronos_api v3.1.0
    Compiling icu_provider v2.4.0
+   Compiling icu_collections v2.4.0
    Compiling flate2 v1.1.11
-   Compiling autocfg v1.5.1
    Compiling cfg_aliases v0.2.2
+   Compiling autocfg v1.5.1
    Compiling xml-rs v0.8.29
-   Compiling icu_normalizer v2.4.0
-   Compiling gl_generator v0.14.0
    Compiling icu_properties v2.4.0
-   Compiling shlex v2.0.1
+   Compiling gl_generator v0.14.0
+   Compiling icu_normalizer v2.4.0
    Compiling parking_lot_core v0.9.12
-   Compiling find-msvc-tools v0.1.15
-   Compiling zerocopy v0.8.65
+   Compiling shlex v2.0.1
    Compiling version_check v0.9.5
-   Compiling idna_adapter v1.2.2
+   Compiling zerocopy v0.8.65
+   Compiling find-msvc-tools v0.1.15
    Compiling ahash v0.8.13
    Compiling cc v1.11.3
+   Compiling idna_adapter v1.2.2
    Compiling windows-sys v0.61.2
-   Compiling bitflags v2.13.2
    Compiling ttf-parser v0.25.1
-   Compiling percent-encoding v2.3.2
    Compiling scopeguard v1.2.0
-   Compiling lock_api v0.4.14
+   Compiling percent-encoding v2.3.2
+   Compiling bitflags v2.13.2
    Compiling form_urlencoded v1.2.3
+   Compiling lock_api v0.4.14
    Compiling ring v0.17.14
    Compiling owned_ttf_parser v0.25.1
    Compiling idna v1.1.0
@@ -238,15 +238,15 @@
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
    Compiling arrayvec v0.7.8
-   Compiling float-cmp v0.9.0
-   Compiling zeroize v1.9.2
    Compiling ab_glyph_rasterizer v0.1.10
-   Compiling ab_glyph v0.2.32
-   Compiling rustls-pki-types v1.16.0
+   Compiling zeroize v1.9.2
+   Compiling float-cmp v0.9.0
    Compiling strict-num v0.1.1
+   Compiling rustls-pki-types v1.16.0
+   Compiling ab_glyph v0.2.32
    Compiling ecolor v0.29.1
-   Compiling url v2.5.9
    Compiling parking_lot v0.12.5
+   Compiling url v2.5.9
    Compiling num-traits v0.2.19
    Compiling windows-sys v0.52.0
    Compiling arrayref v0.3.9
@@ -256,48 +256,48 @@
    Compiling tiny-skia-path v0.11.4
    Compiling kurbo v0.9.5
    Compiling aho-corasick v1.1.5
-   Compiling glutin_egl_sys v0.7.1
    Compiling glutin_wgl_sys v0.6.1
+   Compiling glutin_egl_sys v0.7.1
    Compiling winit v0.30.13
    Compiling serde_derive v1.0.229
    Compiling getrandom v0.2.17
-   Compiling regex-syntax v0.8.12
    Compiling raw-window-handle v0.6.2
    Compiling siphasher v1.0.4
-   Compiling siphasher v0.3.11
-   Compiling pin-project-lite v0.2.18
    Compiling tracing-core v0.1.36
-   Compiling untrusted v0.9.0
+   Compiling regex-syntax v0.8.12
+   Compiling pin-project-lite v0.2.18
    Compiling unicase v2.10.0
+   Compiling untrusted v0.9.0
+   Compiling siphasher v0.3.11
+   Compiling svgtypes v0.13.0
    Compiling phf_shared v0.11.3
    Compiling tracing v0.1.44
-   Compiling svgtypes v0.13.0
    Compiling serde v1.0.229
    Compiling regex-automata v0.4.19
    Compiling egui v0.29.1
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
-   Compiling anstyle v1.0.14
-   Compiling dpi v0.1.2
-   Compiling error-code v3.4.0
-   Compiling color_quant v1.1.0
-   Compiling cursor-icon v1.2.0
-   Compiling utf8parse v0.2.2
-   Compiling litrs v1.1.0
-   Compiling once_cell_polyfill v1.70.2
    Compiling smol_str v0.2.2
-   Compiling pxfm v0.1.30
+   Compiling cursor-icon v1.2.0
    Compiling rustls v0.23.46
+   Compiling once_cell_polyfill v1.70.2
+   Compiling utf8parse v0.2.2
    Compiling weezl v0.1.12
    Compiling rctree v0.5.0
+   Compiling color_quant v1.1.0
+   Compiling anstyle v1.0.14
+   Compiling dpi v0.1.2
    Compiling unicode-segmentation v1.13.3
-   Compiling usvg-tree v0.37.0
-   Compiling gif v0.14.2
+   Compiling litrs v1.1.0
+   Compiling error-code v3.4.0
+   Compiling pxfm v0.1.30
    Compiling moxcms v0.8.1
-   Compiling anstyle-wincon v3.0.11
-   Compiling document-features v0.2.12
-   Compiling anstyle-parse v1.0.0
    Compiling clipboard-win v5.4.3
+   Compiling document-features v0.2.12
+   Compiling anstyle-wincon v3.0.11
+   Compiling gif v0.14.2
+   Compiling usvg-tree v0.37.0
+   Compiling anstyle-parse v1.0.0
    Compiling regex v1.13.2
    Compiling rustls-webpki v0.103.17
    Compiling phf v0.11.3
@@ -307,18 +307,18 @@
    Compiling glutin-winit v0.5.0
    Compiling libloading v0.8.9
    Compiling simplecss v0.2.2
-   Compiling roxmltree v0.19.0
+   Compiling subtle v2.6.1
+   Compiling winapi v0.3.9
    Compiling bitflags v1.3.2
    Compiling colorchoice v1.0.5
    Compiling byteorder-lite v0.1.0
-   Compiling winapi v0.3.9
-   Compiling jiff-core v1.0.2
    Compiling imagesize v0.12.0
-   Compiling subtle v2.6.1
+   Compiling jiff-core v1.0.2
+   Compiling roxmltree v0.19.0
    Compiling data-url v0.3.2
    Compiling is_terminal_polyfill v1.70.2
-   Compiling usvg-parser v0.37.0
    Compiling anstream v1.0.0
+   Compiling usvg-parser v0.37.0
    Compiling jiff v1.0.3
    Compiling image v0.25.10
    Compiling png v0.17.16
@@ -327,16 +327,16 @@
    Compiling env_filter v2.1.0
    Compiling arboard v3.7.0
    Compiling webbrowser v1.2.7
-   Compiling xmlwriter v0.1.0
-   Compiling base64 v0.22.1
+   Compiling glow v0.14.2
    Compiling base64 v0.21.7
    Compiling pico-args v0.5.0
-   Compiling glow v0.14.2
    Compiling web-time v1.1.0
-   Compiling egui-winit v0.29.1
-   Compiling egui_glow v0.29.1
+   Compiling base64 v0.22.1
+   Compiling xmlwriter v0.1.0
    Compiling usvg v0.37.0
    Compiling ureq v2.12.1
+   Compiling egui-winit v0.29.1
+   Compiling egui_glow v0.29.1
    Compiling winrust-core v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-core)
    Compiling env_logger v0.11.12
    Compiling tiny-skia v0.11.4
@@ -344,17 +344,17 @@
    Compiling rgb v0.8.53
    Compiling mime v0.3.18
    Compiling static_assertions v1.1.0
-   Compiling eframe v0.29.1
    Compiling resvg v0.37.0
+   Compiling eframe v0.29.1
    Compiling enum-map v2.7.3
    Compiling ehttp v0.5.0
    Compiling egui_extras v0.29.1
    Compiling winrust-kernel-abi v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
    Compiling winrust-kernel-control v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
    Compiling winrust-sysctl v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
-   Compiling winrust-services v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-services)
    Compiling winrust-explorer v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
    Compiling winrust-taskmgr v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
+   Compiling winrust-services v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-services)
    Compiling winrust-launcher v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2m 51s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2m 49s
 exit=True
