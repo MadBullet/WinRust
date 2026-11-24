@@ -242,7 +242,7 @@ pub fn list_sessions() -> Vec<BackupSession> {
             }
         }
     }
-    out.sort_by(|a, b| b.created_unix.cmp(&a.created_unix));
+    out.sort_by_key(|s| std::cmp::Reverse(s.created_unix));
     out
 }
 
