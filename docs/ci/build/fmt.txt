@@ -2986,32 +2986,20 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:324:
 [0m         if let Some((i, value)) = edit {
              self.env_edit = Some((i, value));
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:355:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:359:
                  .resizable(true)
                  .default_width(700.0)
                  .show(ui.ctx(), |ui| {
-[31m-                    ui.add(egui::TextEdit::multiline(&mut value).desired_rows(6).desired_width(660.0));
+[31m-                    ui.add(egui::TextEdit::multiline(&mut draft).desired_rows(6).desired_width(660.0));
 [0m[32m+                    ui.add(
-[0m[32m+                        egui::TextEdit::multiline(&mut value)
+[0m[32m+                        egui::TextEdit::multiline(&mut draft)
 [0m[32m+                            .desired_rows(6)
 [0m[32m+                            .desired_width(660.0),
 [0m[32m+                    );
 [0m                     ui.horizontal(|ui| {
                          if ui.button("Save").clicked() {
-                             let name = self.env[i].name.clone();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:363:
-                             let result = if scope == "User" {
-                                 registry::set_user_env(&name, &value)
-                             } else {
-[31m-                                match registry::open_for_write(Root::LocalMachine, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment") {
-[0m[32m+                                match registry::open_for_write(
-[0m[32m+                                    Root::LocalMachine,
-[0m[32m+                                    r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment",
-[0m[32m+                                ) {
-[0m                                     Ok(key) => key.set_string(&name, &value),
-                                     Err(e) => Err(e),
-                                 }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:434:
+                             action = Some("save");
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:441:
  
      fn power_section(&mut self, ui: &mut egui::Ui) {
          ui.heading("Power plans");
@@ -3024,7 +3012,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:434:
 [0m         ui.separator();
          let mut pick: Option<String> = None;
          for (guid, name, active) in &self.power_plans {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:454:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:461:
          ui.label(RichText::new("Session power").strong());
          egui::Grid::new("power_grid").num_columns(2).show(ui, |ui| {
              ui.label("Battery present:");
@@ -3037,7 +3025,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:454:
 [0m             ui.end_row();
              ui.label("Idle time:");
              ui.label(format!("{} s", system::idle_seconds().unwrap_or(0)));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:480:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:487:
              ui.label(&self.os.hostname);
              ui.end_row();
              ui.label(RichText::new("Domain").strong());
@@ -3050,7 +3038,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:480:
 [0m             ui.end_row();
          });
          ui.add_space(8.0);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:494:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:501:
          ui.label(RichText::new("Enumerated from the kernel/service database — the same list Device Manager's 'drivers' tab uses.").small().weak());
          ui.separator();
          let mut filter = String::new();
@@ -3061,7 +3049,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:494:
 [0m         filter.push_str(&filter_copy);
          ui.horizontal(|ui| {
              ui.add(egui::TextEdit::singleline(&mut filter).hint_text("🔍 Filter drivers"));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:508:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:515:
          let rows: Vec<&DriverRow> = self
              .drivers
              .iter()
@@ -3072,9 +3060,9 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:508:
 [0m[32m+                    || d.name.to_lowercase().contains(&needle)
 [0m[32m+            })
 [0m             .collect();
-         let mut table = TableBuilder::new(ui)
+         let table = TableBuilder::new(ui)
              .striped(true)
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:535:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:542:
                      ui.label(RichText::new(&d.name).monospace().small());
                  });
                  row.col(|ui| {
@@ -3087,7 +3075,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:535:
 [0m                     ui.label(RichText::new(&d.state).color(color));
                  });
                  row.col(|ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:571:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:578:
          ui.separator();
          let report = self.report.clone();
          egui::ScrollArea::both().show(ui, |ui| {
@@ -3101,7 +3089,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:571:
 [0m         });
      }
  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:587:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:594:
                      ui.label(RichText::new(&self.status).small());
                  }
                  ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -3114,7 +3102,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:587:
 [0m                 });
              });
          });
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:597:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:604:
              .width_range(170.0..=320.0)
              .show(ctx, |ui| self.sidebar(ui));
          egui::CentralPanel::default().show(ctx, |ui| {
