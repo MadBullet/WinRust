@@ -1630,7 +1630,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:390:
          }
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:411:
  
-     fn top_bar(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+     fn top_bar(&mut self, ui: &mut egui::Ui) {
          ui.horizontal(|ui| {
 [31m-            if ui.add_enabled(self.current().can_back(), egui::Button::new("◀")).on_hover_text("Back").clicked() {
 [0m[32m+            if ui
@@ -1782,7 +1782,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:589:
 [0m                     self.creating_folder = true;
                      self.new_folder_buffer = "New folder".into();
                  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:690:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:689:
              .resizable(true)
              .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
              .column(Column::initial(28.0).at_least(24.0).clip(true))
@@ -1797,7 +1797,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:690:
 [0m             .column(Column::initial(120.0).at_least(60.0).clip(true))
              .column(Column::initial(160.0).at_least(90.0).clip(true))
              .column(Column::remainder().at_least(80.0).clip(true))
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:709:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:708:
              ] {
                  header.col(|ui| {
                      let arrow = if sort_key == key {
@@ -1810,7 +1810,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:709:
 [0m                     } else {
                          ""
                      };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:716:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:715:
 [31m-                    if ui.add(egui::Button::new(RichText::new(format!("{name}{arrow}")).strong()).frame(false)).clicked() {
 [0m[32m+                    if ui
 [0m[32m+                        .add(
@@ -1819,7 +1819,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:716:
 [0m[32m+                        )
 [0m[32m+                        .clicked()
 [0m[32m+                    {
-[0m                         clicked_sort = Some(key);
+[0m                         clicked_cell.set(Some(key));
                      }
                  });
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:728:
