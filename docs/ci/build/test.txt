@@ -6,15 +6,15 @@
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
-  Downloaded serde_core v1.0.229
-  Downloaded proc-macro2 v1.0.107
+  Downloaded quote v1.0.47
+  Downloaded serde_derive v1.0.229
   Downloaded windows-targets v0.52.6
   Downloaded thiserror v1.0.69
-  Downloaded unicode-ident v1.0.27
-  Downloaded quote v1.0.47
   Downloaded thiserror-impl v1.0.69
+  Downloaded serde_core v1.0.229
+  Downloaded unicode-ident v1.0.27
   Downloaded log v0.4.35
-  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
   Downloaded serde v1.0.229
   Downloaded syn v2.0.119
   Downloaded syn v3.0.10
@@ -28,45 +28,51 @@
    Compiling serde v1.0.229
    Compiling thiserror v1.0.69
    Compiling windows-targets v0.52.6
-   Compiling syn v2.0.119
    Compiling syn v3.0.10
+   Compiling syn v2.0.119
+   Compiling serde_derive v1.0.229
    Compiling thiserror-impl v1.0.69
    Compiling windows-sys v0.59.0
-   Compiling serde_derive v1.0.229
    Compiling log v0.4.35
    Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-error[E0432]: unresolved import `windows_sys::Win32::System::DataExchange::CF_UNICODETEXT`
-  --> crates\winrust-core\src\shell.rs:12:88
-   |
-12 |     CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData, CF_UNICODETEXT,
-   |                                                                                        ^^^^^^^^^^^^^^ no `CF_UNICODETEXT` in `Win32::System::DataExchange`
-
-error[E0425]: cannot find value `SHGFI_LARGEICON` in this scope
-    --> crates\winrust-core\src\shell.rs:271:22
-     |
- 271 |             flags |= SHGFI_LARGEICON;
-     |                      ^^^^^^^^^^^^^^^ not found in this scope
-     |
-note: similarly named constant `SHGFI_ICON` defined here
-    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\UI\Shell\mod.rs:3574:1
-     |
-3574 | pub const SHGFI_ICON: SHGFI_FLAGS = 256u32;
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-help: a constant with a similar name exists
-     |
- 271 -             flags |= SHGFI_LARGEICON;
- 271 +             flags |= SHGFI_ICON;
-     |
-
-error[E0425]: cannot find value `SHGFI_SYSICONINDEX` in this scope
-   --> crates\winrust-core\src\shell.rs:274:22
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\shell.rs:376:39
     |
-274 |             flags |= SHGFI_SYSICONINDEX;
-    |                      ^^^^^^^^^^^^^^^^^^ not found in this scope
+376 |         let handle = GetClipboardData(CF_UNICODETEXT);
+    |                      ---------------- ^^^^^^^^^^^^^^ expected `u32`, found `u16`
+    |                      |
+    |                      arguments to this function are incorrect
+    |
+note: function defined here
+   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\System\DataExchange\mod.rs:51:49
+    |
+ 51 | windows_targets::link!("user32.dll" "system" fn GetClipboardData(uformat : u32) -> super::super::Foundation:: HANDLE);
+    |                                                 ^^^^^^^^^^^^^^^^
+help: you can convert a `u16` to a `u32`
+    |
+376 |         let handle = GetClipboardData(CF_UNICODETEXT.into());
+    |                                                     +++++++
 
-Some errors have detailed explanations: E0425, E0432.
-For more information about an error, try `rustc --explain E0425`.
-error: could not compile `winrust-core` (lib) due to 3 previous errors
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\shell.rs:415:36
+    |
+415 |         let ok = !SetClipboardData(CF_UNICODETEXT, mem).is_null();
+    |                   ---------------- ^^^^^^^^^^^^^^ expected `u32`, found `u16`
+    |                   |
+    |                   arguments to this function are incorrect
+    |
+note: function defined here
+   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\System\DataExchange\mod.rs:78:49
+    |
+ 78 | windows_targets::link!("user32.dll" "system" fn SetClipboardData(uformat : u32, hmem : super::super::Foundation:: HANDLE) -> super:...
+    |                                                 ^^^^^^^^^^^^^^^^
+help: you can convert a `u16` to a `u32`
+    |
+415 |         let ok = !SetClipboardData(CF_UNICODETEXT.into(), mem).is_null();
+    |                                                  +++++++
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `winrust-core` (lib) due to 2 previous errors
 warning: build failed, waiting for other jobs to finish...
-error: could not compile `winrust-core` (lib test) due to 3 previous errors
+error: could not compile `winrust-core` (lib test) due to 2 previous errors
 exit=False

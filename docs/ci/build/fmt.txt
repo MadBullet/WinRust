@@ -1421,24 +1421,24 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:7:
 [0m[32m+    GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO,
 [0m[32m+};
 [0m use windows_sys::Win32::System::DataExchange::{
-[31m-    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData, CF_UNICODETEXT,
-[0m[32m+    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData,
-[0m[32m+    CF_UNICODETEXT,
-[0m };
- use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
- use windows_sys::Win32::UI::Shell::{
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:16:
+     CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData,
+ };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:14:
+[31m-use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
+[0m use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
+[32m+use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
+[0m use windows_sys::Win32::UI::Shell::{
      SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
 [31m-    SHFILEINFOW, SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
 [0m[31m-    FOF_NOERRORUI, FOF_WANTNUKEWARNING, SEE_MASK_INVOKEIDLIST, SEE_MASK_NOCLOSEPROCESS,
-[0m[31m-    SEE_MASK_NOASYNC, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_SMALLICON, SHGFI_TYPENAME,
+[0m[31m-    SEE_MASK_NOASYNC, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_LARGEICON, SHGFI_SMALLICON,
 [0m[32m+    FOF_ALLOWUNDO, FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_WANTNUKEWARNING, FO_DELETE,
 [0m[32m+    SEE_MASK_INVOKEIDLIST, SEE_MASK_NOASYNC, SEE_MASK_NOCLOSEPROCESS, SHELLEXECUTEINFOW,
-[0m[32m+    SHFILEINFOW, SHFILEOPSTRUCTW, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_SMALLICON, SHGFI_TYPENAME,
-[0m     SHGFI_USEFILEATTRIBUTES,
+[0m[32m+    SHFILEINFOW, SHFILEOPSTRUCTW, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_LARGEICON, SHGFI_SMALLICON,
+[0m     SHGFI_SYSICONINDEX, SHGFI_TYPENAME, SHGFI_USEFILEATTRIBUTES,
  };
  use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:106:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:107:
          unsafe {
              windows_sys::Win32::System::Com::CoTaskMemFree(psz as *const c_void);
          }
@@ -1451,7 +1451,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:106:
 [0m     }
  
      /// Everything Explorer lists in its sidebar tree.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:140:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:141:
          )
      };
      // ShellExecuteW returns a value > 32 on success.
@@ -1467,7 +1467,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:140:
 [0m }
  
  /// Open with an explicit verb: "edit", "runas" (UAC elevation), "properties".
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:157:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:158:
              SW_SHOWNORMAL,
          )
      };
@@ -1483,7 +1483,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:157:
 [0m }
  
  /// Show the shell's "Properties" dialog for a path.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:176:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:177:
  /// Launch an executable with command-line arguments, waiting for the handle.
  ///
  /// Returns the process id when the shell reports one.
@@ -1496,7 +1496,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:176:
 [0m     let mut info: SHELLEXECUTEINFOW = unsafe { std::mem::zeroed() };
      info.cbSize = std::mem::size_of::<SHELLEXECUTEINFOW>() as u32;
      info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:196:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:197:
          let pid = unsafe { windows_sys::Win32::System::Threading::GetProcessId(info.hProcess) };
          // wrap in an owned handle so it closes when scope ends
          let _owned = Handle::new(info.hProcess);
@@ -1509,7 +1509,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:196:
 [0m     };
      Ok(pid)
  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:220:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:221:
      op.fFlags = (FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_WANTNUKEWARNING) as u16;
      let rc = unsafe { SHFileOperationW(&mut op) };
      if rc != 0 {
@@ -1520,7 +1520,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:220:
 [0m     }
      if op.fAnyOperationsAborted != 0 {
          return Err(WinError::Other("delete was cancelled".into()));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:361:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:362:
          )
      };
      if ok == 0 {
@@ -1533,7 +1533,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:361:
 [0m     }
      from_wide(&info.szTypeName, info.szTypeName.len())
  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:381:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:382:
                  while *ptr.add(len) != 0 {
                      len += 1;
                  }
@@ -1544,7 +1544,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:381:
 [0m                 GlobalUnlock(handle);
              }
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:446:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:447:
      // Fixed block: gives us the numeric version.
      let mut fixed_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
      let mut fixed_len = 0u32;
@@ -1560,7 +1560,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:446:
 [0m         && fixed_len as usize >= std::mem::size_of::<VS_FIXEDFILEINFO>()
      {
          let ffi = unsafe { &*(fixed_ptr as *const VS_FIXEDFILEINFO) };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:458:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:459:
      // Strings live in `\StringFileInfo\<langcodepage>\<name>`.
      let mut trans_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
      let mut trans_len = 0u32;
@@ -1581,7 +1581,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:458:
 [0m         let lang = words[0];
          let cp = words[1];
          for (key, slot) in [
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:472:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:473:
              let sub = format!("\\StringFileInfo\\{lang:04x}{cp:04x}\\{key}");
              let mut p: *mut std::ffi::c_void = std::ptr::null_mut();
              let mut len = 0u32;
@@ -1599,7 +1599,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:472:
 [0m             }
          }
      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:508:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:509:
              SW_SHOWNORMAL,
          )
      };
@@ -3835,4 +3835,4 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:150:
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:166:
                      self.drivers.push(DriverRow {
                          name: s.name,
-                         display
+                    
