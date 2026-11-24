@@ -153,11 +153,12 @@ impl Component {
         }
     }
 
-    const ALL: [Component; 4] = [
+    const ALL: [Component; 5] = [
         Component::Explorer,
         Component::TaskManager,
         Component::Services,
         Component::SystemControl,
+        Component::KernelDriver,
     ];
 }
 
