@@ -198,6 +198,9 @@ def main() -> None:
             ("System/Pipes", "win-pipes.txt"),
             ("System/Memory", "win-memory.txt"),
             ("System/Memory/NonVolatile", "win-nvmem.txt"),
+            ("System/Com", "win-com.txt"),
+            ("UI/Controls", "win-controls.txt"),
+            ("System/WinRT", "win-winrt.txt"),
         ]:
             sys.argv = ["build_digest.py", root, os.path.join(OUT_DIR, out_name), rel]
             bd["main"]()

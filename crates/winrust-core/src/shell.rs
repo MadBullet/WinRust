@@ -248,26 +248,75 @@ pub struct ShellItemInfo {
 ///
 /// The icon is converted to raw RGBA here (GDI → `GetDIBits`) so UI crates do
 /// not need GDI code of their own.
-pub fn file_info(path: impl AsRef<Path>, want_icon: bool) -> ShellItemInfo {
-    let w = to_wide(path.as_ref());
+///
+/// `icon_size` selects the source icon: 16 for the details/list views and 32
+/// for tiles/medium icons (Explorer uses 16/32/48/256).  0 disables the icon.
+/// Unlike a first implementation this does **not** pass
+/// `SHGFI_USEFILEATTRIBUTES`: the shell must look at the real file to pick
+/// per-file icons (extracted exe icons, document thumbnails, folder art).
+pub fn file_info_sized(path: impl AsRef<Path>, icon_size: u32) -> ShellItemInfo {
+    let path = path.as_ref();
+    let w = to_wide(path);
     let mut info: SHFILEINFOW = unsafe { std::mem::zeroed() };
-    let flags = SHGFI_DISPLAYNAME | SHGFI_TYPENAME | if want_icon { SHGFI_ICON | SHGFI_SMALLICON } else { 0 };
+    let mut flags = SHGFI_DISPLAYNAME | SHGFI_TYPENAME;
+    if icon_size > 0 {
+        flags |= SHGFI_ICON;
+        if icon_size <= 16 {
+            flags |= SHGFI_SMALLICON;
+        } else if icon_size <= 32 {
+            flags |= SHGFI_LARGEICON;
+        } else {
+            // 48 px and above come from the system image list added in Vista.
+            flags |= SHGFI_SYSICONINDEX;
+        }
+    }
     let ok = unsafe {
         SHGetFileInfoW(
             w.as_ptr(),
-            if want_icon { 0x80 /* FILE_ATTRIBUTE_NORMAL */ } else { 0 },
+            0,
             &mut info,
             std::mem::size_of::<SHFILEINFOW>() as u32,
-            flags | if want_icon { SHGFI_USEFILEATTRIBUTES } else { 0 },
+            flags,
         )
     };
     if ok == 0 {
-        return ShellItemInfo::default();
+        // Fall back to attribute-only lookup (works for paths that are not
+        // currently reachable, e.g. a disconnected network drive).
+        let attr = if path.is_dir() { 0x10 } else { 0x80 };
+        let ok2 = unsafe {
+            SHGetFileInfoW(
+                w.as_ptr(),
+                attr,
+                &mut info,
+                std::mem::size_of::<SHFILEINFOW>() as u32,
+                SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES,
+            )
+        };
+        if ok2 == 0 {
+            return ShellItemInfo::default();
+        }
+        return ShellItemInfo {
+            display_name: from_wide(&info.szDisplayName, info.szDisplayName.len()),
+            type_name: from_wide(&info.szTypeName, info.szTypeName.len()),
+            icon_rgba: None,
+        };
     }
-    let icon_rgba = if want_icon && !info.hIcon.is_null() {
-        let rgba = unsafe { crate::icon::hicon_to_rgba(info.hIcon, 16, 16) };
-        unsafe { windows_sys::Win32::UI::WindowsAndMessaging::DestroyIcon(info.hIcon) };
-        rgba
+    let icon_rgba = if icon_size > 0 {
+        if icon_size <= 32 {
+            let rgba = if info.hIcon.is_null() {
+                None
+            } else {
+                let px = if icon_size <= 16 { 16 } else { 32 };
+                let r = unsafe { crate::icon::hicon_to_rgba(info.hIcon, px, px) };
+                unsafe { windows_sys::Win32::UI::WindowsAndMessaging::DestroyIcon(info.hIcon) };
+                r
+            };
+            rgba
+        } else {
+            // System image list: 0 = small, 1 = large, 2 = extra large (48),
+            // 4 = jumbo (256).  We take 48 for tiles and 256 for thumbnails.
+            crate::icon::system_icon_rgba(info.iIcon, icon_size)
+        }
     } else {
         None
     };
@@ -276,6 +325,41 @@ pub fn file_info(path: impl AsRef<Path>, want_icon: bool) -> ShellItemInfo {
         type_name: from_wide(&info.szTypeName, info.szTypeName.len()),
         icon_rgba,
     }
+}
+
+/// Backwards-compatible 16 px wrapper.
+pub fn file_info(path: impl AsRef<Path>, want_icon: bool) -> ShellItemInfo {
+    file_info_sized(path, if want_icon { 16 } else { 0 })
+}
+
+/// Explorer's localized "Type" text for a *file extension* — one shell call per
+/// extension instead of one per file, so a 50 000-file folder does a handful.
+pub fn type_name_for_extension(ext: &str, is_dir: bool) -> String {
+    // `SHGetFileInfoW` on a fake `*.ext` name with USEFILEATTRIBUTES makes the
+    // shell resolve the association without touching the disk.
+    let probe = if is_dir {
+        "folder".to_string()
+    } else if ext.is_empty() {
+        "file".to_string()
+    } else {
+        format!("probe.{ext}")
+    };
+    let w = to_wide(&probe);
+    let mut info: SHFILEINFOW = unsafe { std::mem::zeroed() };
+    let attr = if is_dir { 0x10 } else { 0x80 };
+    let ok = unsafe {
+        SHGetFileInfoW(
+            w.as_ptr(),
+            attr,
+            &mut info,
+            std::mem::size_of::<SHFILEINFOW>() as u32,
+            SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES,
+        )
+    };
+    if ok == 0 {
+        return if is_dir { "File folder".into() } else { "File".into() };
+    }
+    from_wide(&info.szTypeName, info.szTypeName.len())
 }
 
 /// Resolve a shell item's display name only (cheap, no GDI).
