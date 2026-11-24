@@ -9,15 +9,16 @@ use std::path::Path;
 use windows_sys::Win32::Foundation::HWND;
 use windows_sys::Win32::Storage::FileSystem::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO};
 use windows_sys::Win32::System::DataExchange::{
-    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData, CF_UNICODETEXT,
+    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData,
 };
+use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
 use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
 use windows_sys::Win32::UI::Shell::{
     SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
     SHFILEINFOW, SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
     FOF_NOERRORUI, FOF_WANTNUKEWARNING, SEE_MASK_INVOKEIDLIST, SEE_MASK_NOCLOSEPROCESS,
-    SEE_MASK_NOASYNC, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_SMALLICON, SHGFI_TYPENAME,
-    SHGFI_USEFILEATTRIBUTES,
+    SEE_MASK_NOASYNC, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_LARGEICON, SHGFI_SMALLICON,
+    SHGFI_SYSICONINDEX, SHGFI_TYPENAME, SHGFI_USEFILEATTRIBUTES,
 };
 use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
 
