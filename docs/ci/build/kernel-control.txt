@@ -9,43 +9,43 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
-  Downloaded anstyle-parse v1.0.0
-  Downloaded anstream v1.0.0
-  Downloaded anstyle v1.0.14
-  Downloaded itoa v1.0.19
   Downloaded env_filter v2.1.0
-  Downloaded aho-corasick v1.1.5
-  Downloaded anstyle-wincon v3.0.11
-  Downloaded anstyle-query v1.1.5
-  Downloaded windows-link v0.2.1
-  Downloaded colorchoice v1.0.5
-  Downloaded quote v1.0.47
-  Downloaded once_cell_polyfill v1.70.2
-  Downloaded windows-targets v0.52.6
-  Downloaded log v0.4.35
-  Downloaded proc-macro2 v1.0.107
-  Downloaded is_terminal_polyfill v1.70.2
-  Downloaded utf8parse v0.2.2
-  Downloaded thiserror-impl v1.0.69
-  Downloaded zmij v1.0.23
-  Downloaded env_logger v0.11.12
-  Downloaded thiserror v1.0.69
-  Downloaded jiff-core v1.0.2
   Downloaded serde_derive v1.0.229
+  Downloaded once_cell_polyfill v1.70.2
+  Downloaded anstyle-wincon v3.0.11
+  Downloaded utf8parse v0.2.2
+  Downloaded anstyle-query v1.1.5
+  Downloaded itoa v1.0.19
   Downloaded unicode-ident v1.0.27
-  Downloaded serde_core v1.0.229
-  Downloaded memchr v2.8.3
-  Downloaded serde v1.0.229
-  Downloaded regex v1.13.2
-  Downloaded serde_json v1.0.154
-  Downloaded syn v3.0.10
-  Downloaded regex-syntax v0.8.12
+  Downloaded thiserror-impl v1.0.69
+  Downloaded anstyle v1.0.14
+  Downloaded quote v1.0.47
+  Downloaded thiserror v1.0.69
+  Downloaded zmij v1.0.23
+  Downloaded anstyle-parse v1.0.0
+  Downloaded colorchoice v1.0.5
   Downloaded syn v2.0.119
+  Downloaded regex v1.13.2
+  Downloaded aho-corasick v1.1.5
+  Downloaded serde_core v1.0.229
+  Downloaded jiff-core v1.0.2
+  Downloaded serde_json v1.0.154
+  Downloaded windows-targets v0.52.6
+  Downloaded env_logger v0.11.12
+  Downloaded log v0.4.35
+  Downloaded serde v1.0.229
   Downloaded jiff v1.0.3
+  Downloaded proc-macro2 v1.0.107
   Downloaded regex-automata v0.4.19
-  Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
   Downloaded windows-sys v0.61.2
+  Downloaded windows_x86_64_msvc v0.52.6
+  Downloaded anstream v1.0.0
+  Downloaded is_terminal_polyfill v1.70.2
+  Downloaded windows-link v0.2.1
+  Downloaded memchr v2.8.3
+  Downloaded syn v3.0.10
+  Downloaded regex-syntax v0.8.12
    Compiling proc-macro2 v1.0.107
    Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
@@ -58,33 +58,33 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
    Compiling regex-syntax v0.8.12
    Compiling zmij v1.0.23
    Compiling regex-automata v0.4.19
-   Compiling syn v3.0.10
    Compiling syn v2.0.119
-   Compiling serde_json v1.0.154
+   Compiling syn v3.0.10
    Compiling thiserror v1.0.69
-   Compiling anstyle v1.0.14
    Compiling log v0.4.35
-   Compiling serde v1.0.229
+   Compiling anstyle v1.0.14
+   Compiling serde_json v1.0.154
    Compiling utf8parse v0.2.2
    Compiling once_cell_polyfill v1.70.2
-   Compiling anstyle-parse v1.0.0
+   Compiling serde v1.0.229
    Compiling anstyle-wincon v3.0.11
-   Compiling thiserror-impl v1.0.69
+   Compiling anstyle-parse v1.0.0
    Compiling serde_derive v1.0.229
-   Compiling windows-targets v0.52.6
+   Compiling thiserror-impl v1.0.69
    Compiling regex v1.13.2
+   Compiling windows-targets v0.52.6
    Compiling anstyle-query v1.1.5
    Compiling is_terminal_polyfill v1.70.2
-   Compiling jiff-core v1.0.2
    Compiling itoa v1.0.19
+   Compiling jiff-core v1.0.2
    Compiling colorchoice v1.0.5
    Compiling anstream v1.0.0
    Compiling jiff v1.0.3
-   Compiling env_filter v2.1.0
    Compiling windows-sys v0.59.0
+   Compiling env_filter v2.1.0
    Compiling env_logger v0.11.12
    Compiling winrust-kernel-abi v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
    Compiling winrust-core v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-core)
    Compiling winrust-kernel-control v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-    Finished `release` profile [optimized] target(s) in 1m 24s
+    Finished `release` profile [optimized] target(s) in 1m 07s
 exit=True
