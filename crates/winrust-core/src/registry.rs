@@ -187,6 +187,27 @@ impl Key {
         }
     }
 
+    /// 32-bit value (`REG_DWORD`), used for the shared WinRust settings.
+    pub fn set_u32(&self, name: &str, value: u32) -> Result<()> {
+        let wname = str_to_wide(name);
+        let bytes = value.to_le_bytes();
+        let rc = unsafe {
+            RegSetValueExW(
+                self.raw(),
+                wname.as_ptr(),
+                0,
+                REG_DWORD,
+                bytes.as_ptr(),
+                bytes.len() as u32,
+            )
+        };
+        if rc == ERROR_SUCCESS {
+            Ok(())
+        } else {
+            Err(WinError::from_code(rc, "RegSetValueExW(dword)"))
+        }
+    }
+
     /// Arbitrary binary value (`REG_BINARY`), used for the `StartupApproved`
     /// enable/disable blobs that Task Manager writes.
     pub fn set_binary(&self, name: &str, data: &[u8]) -> Result<()> {

@@ -7,6 +7,7 @@ members = [
     "crates/winrust-services",
     "crates/winrust-sysctl",
     "crates/winrust-launcher",
+    "crates/winrust-ui",
     "crates/winrust-kernel-abi",
     "crates/winrust-kernel/control",
 ]
@@ -26,6 +27,7 @@ repository = "https://github.com/MadBullet/WinRust"
 
 [workspace.dependencies]
 winrust-core = { path = "crates/winrust-core" }
+winrust-ui = { path = "crates/winrust-ui" }
 winrust-kernel-abi = { path = "crates/winrust-kernel-abi" }
 windows-sys = { version = "0.59", features = [
     "Win32_Foundation",
@@ -50,6 +52,7 @@ windows-sys = { version = "0.59", features = [
     "Win32_UI_WindowsAndMessaging",
     "Win32_UI_Controls",
     "Win32_Graphics_Gdi",
+    "Win32_Graphics_Dwm",
     "Win32_NetworkManagement_IpHelper",
     "Win32_Networking_WinSock",
     "Win32_Globalization",

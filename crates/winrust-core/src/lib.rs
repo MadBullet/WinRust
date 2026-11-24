@@ -9,6 +9,8 @@
 //! -------\n//! * [`wide`]        — UTF-16 buffer helpers
 //! * [`error`]       — `WinError`, the single error type used across the project
 //! * [`handle`]      — RAII ownership for kernel handles
+//! * [`gpu`]         — per-adapter GPU utilisation through PDH
+//! * [`i18n`]        — the shared English/Russian translation layer
 //! * [`process`]     — process enumeration, inspection, termination
 //! * [`system`]      — memory, uptime, computer name, OS build
 //! * [`disk`]        — volumes, free space, file-system walk / file operations
@@ -29,7 +31,9 @@ compile_error!("winrust-core targets Windows only. Build it on Windows or in CI.
 
 pub mod disk;
 pub mod error;
+pub mod gpu;
 pub mod handle;
+pub mod i18n;
 pub mod icon;
 pub mod install;
 pub mod net;
@@ -44,6 +48,7 @@ pub mod wide;
 
 pub use error::{Result, WinError};
 pub use handle::Handle;
+pub use i18n::{t, ts, Lang};
 
 /// Format a Win32 error code into a readable message (falls back to the code).
 pub fn format_error(code: u32) -> String {

@@ -1,0 +1,17 @@
+[package]
+name = "winrust-ui"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Shared theme and window-transparency support for WinRust components"
+
+[dependencies]
+winrust-core.workspace = true
+log.workspace = true
+egui.workspace = true
+raw-window-handle = "0.6"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { workspace = true }

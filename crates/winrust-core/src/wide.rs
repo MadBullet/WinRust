@@ -64,3 +64,25 @@ mod tests {
         assert_eq!(from_wide(&w, w.len()), "abc");
     }
 }
+
+/// Read a NUL-terminated UTF-16 string from a raw pointer (PDH instance names,
+/// registry buffers).  Returns an empty string for a null pointer.
+///
+/// # Safety
+/// `p` must point to a valid NUL-terminated UTF-16 buffer.
+pub unsafe fn from_wide_ptr(p: *const u16) -> String {
+    if p.is_null() {
+        return String::new();
+    }
+    let mut len = 0usize;
+    while *p.add(len) != 0 {
+        len += 1;
+        if len > 4096 {
+            break;
+        }
+    }
+    if len == 0 {
+        return String::new();
+    }
+    String::from_utf16_lossy(std::slice::from_raw_parts(p, len))
+}
