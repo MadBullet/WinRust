@@ -389,6 +389,112 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:241:
 [0m     if rc < 0 || hicon.is_null() {
          return None;
      }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:61:
+         }
+     }
+     pub fn requires_admin(self) -> bool {
+[31m-        matches!(self, Integration::Hijack | Integration::Replace | Integration::Shell)
+[0m[32m+        matches!(
+[0m[32m+            self,
+[0m[32m+            Integration::Hijack | Integration::Replace | Integration::Shell
+[0m[32m+        )
+[0m     }
+ 
+     /// Only a desktop shell can be a sign-in shell.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:134:
+     let mut actions = Vec::new();
+     let result = (|| -> Result<()> {
+         if !source.is_file() {
+[31m-            return Err(WinError::Other(format!("source binary missing: {}", source.display())));
+[0m[32m+            return Err(WinError::Other(format!(
+[0m[32m+                "source binary missing: {}",
+[0m[32m+                source.display()
+[0m[32m+            )));
+[0m         }
+         match integration {
+             Integration::Portable => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:159:
+                     "Winlogon Shell = \"{}\" (sign-in starts WinRust)",
+                     source.display()
+                 ));
+[31m-                actions.push("explorer.exe is untouched — remove the override to get it back".into());
+[0m[32m+                actions
+[0m[32m+                    .push("explorer.exe is untouched — remove the override to get it back".into());
+[0m                 Ok(())
+             }
+             Integration::Replace => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:166:
+[31m-                let target = spec
+[0m[31m-                    .system_path
+[0m[31m-                    .clone()
+[0m[31m-                    .ok_or_else(|| WinError::Other(format!("{} not found on this system", spec.exe)))?;
+[0m[32m+                let target = spec.system_path.clone().ok_or_else(|| {
+[0m[32m+                    WinError::Other(format!("{} not found on this system", spec.exe))
+[0m[32m+                })?;
+[0m                 // The backup itself happens in `restore::backup_files` before
+                 // this call; here we only swap the file.
+                 match std::fs::copy(source, &target) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:173:
+                     Ok(_) => {
+[31m-                        actions.push(format!("Replaced {} with {}", target.display(), source.display()));
+[0m[32m+                        actions.push(format!(
+[0m[32m+                            "Replaced {} with {}",
+[0m[32m+                            target.display(),
+[0m[32m+                            source.display()
+[0m[32m+                        ));
+[0m                     }
+                     Err(_) => {
+                         // A running shell binary cannot be overwritten in place
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:191:
+                             return Err(WinError::Other(format!(
+                                 "replace {}: file is in use and the reboot swap was refused ({})",
+                                 target.display(),
+[31m-                                crate::format_error(std::io::Error::last_os_error().raw_os_error().unwrap_or(0) as u32)
+[0m[32m+                                crate::format_error(
+[0m[32m+                                    std::io::Error::last_os_error().raw_os_error().unwrap_or(0)
+[0m[32m+                                        as u32
+[0m[32m+                                )
+[0m                             )));
+                         }
+                         actions.push(format!(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:259:
+             Integration::Replace => {
+                 let Some(session) = backup else {
+                     return Err(WinError::Other(
+[31m-                        "no backup recorded for this component — restore it from System Restore".into(),
+[0m[32m+                        "no backup recorded for this component — restore it from System Restore"
+[0m[32m+                            .into(),
+[0m                     ));
+                 };
+                 let log = crate::restore::restore_session(session)?;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:307:
+ /// Copy our binary next to the target under a `<name>.winrust` name, so the
+ /// original file name stays free for the swap.  Used by [`Integration::Replace`].
+ pub fn side_load(source: &Path, target: &Path) -> Result<PathBuf> {
+[31m-    let dir = target.parent().ok_or_else(|| WinError::Other("target has no directory".into()))?;
+[0m[32m+    let dir = target
+[0m[32m+        .parent()
+[0m[32m+        .ok_or_else(|| WinError::Other("target has no directory".into()))?;
+[0m     let name = target
+         .file_name()
+         .map(|n| n.to_string_lossy().to_string())
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\install.rs:420:
+ /// paths keyed by component id.
+ pub fn stage_binaries(sources: &[(String, PathBuf)]) -> Result<Vec<(String, PathBuf)>> {
+     let dir = install_dir();
+[31m-    std::fs::create_dir_all(&dir).map_err(|e| WinError::Other(format!("create {}: {e}", dir.display())))?;
+[0m[32m+    std::fs::create_dir_all(&dir)
+[0m[32m+        .map_err(|e| WinError::Other(format!("create {}: {e}", dir.display())))?;
+[0m     let mut out = Vec::with_capacity(sources.len());
+     for (id, src) in sources {
+[31m-        let dst = dir.join(src.file_name().unwrap_or_else(|| std::ffi::OsStr::new("winrust.exe")));
+[0m[32m+        let dst = dir.join(
+[0m[32m+            src.file_name()
+[0m[32m+                .unwrap_or_else(|| std::ffi::OsStr::new("winrust.exe")),
+[0m[32m+        );
+[0m         std::fs::copy(src, &dst)
+             .map_err(|e| WinError::Other(format!("stage {}: {e}", src.display())))?;
+         out.push((id.clone(), dst));
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:2:
  //! "Network" and the Resource Monitor's "Network" tab.
  
@@ -1044,6 +1150,46 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:275:
 [0m[32m+    }
 [0m }
  
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:144:
+ /// Copy every `path` that exists into a fresh timestamped backup directory and
+ /// write `session.json`.  Missing files are recorded with `existed: false` so a
+ /// rollback knows to delete a file that WinRust created from scratch.
+[31m-pub fn backup_files(paths: &[PathBuf], label: &str, restore_sequence: Option<i64>) -> Result<BackupSession> {
+[0m[32m+pub fn backup_files(
+[0m[32m+    paths: &[PathBuf],
+[0m[32m+    label: &str,
+[0m[32m+    restore_sequence: Option<i64>,
+[0m[32m+) -> Result<BackupSession> {
+[0m     let created = now_unix();
+     let dir = backup_root().join(created.to_string());
+[31m-    std::fs::create_dir_all(&dir).map_err(|e| WinError::Other(format!("create backup dir: {e}")))?;
+[0m[32m+    std::fs::create_dir_all(&dir)
+[0m[32m+        .map_err(|e| WinError::Other(format!("create backup dir: {e}")))?;
+[0m 
+     let mut entries = Vec::with_capacity(paths.len());
+     for (index, path) in paths.iter().enumerate() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:186:
+         restore_sequence,
+         entries,
+     };
+[31m-    let json = serde_json::to_string_pretty(&session).map_err(|e| WinError::Other(e.to_string()))?;
+[0m[32m+    let json =
+[0m[32m+        serde_json::to_string_pretty(&session).map_err(|e| WinError::Other(e.to_string()))?;
+[0m     std::fs::write(dir.join("session.json"), json)
+         .map_err(|e| WinError::Other(format!("write manifest: {e}")))?;
+     Ok(session)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:207:
+         } else if entry.original.exists() {
+             match std::fs::remove_file(&entry.original) {
+                 Ok(()) => log.push(format!("removed {}", entry.original.display())),
+[31m-                Err(e) => log.push(format!("FAILED to remove {}: {e}", entry.original.display())),
+[0m[32m+                Err(e) => log.push(format!(
+[0m[32m+                    "FAILED to remove {}: {e}",
+[0m[32m+                    entry.original.display()
+[0m[32m+                )),
+[0m             }
+         }
+     }
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:10:
  use serde::{Deserialize, Serialize};
  use windows_sys::Win32::System::Services::{
@@ -3254,7 +3400,196 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2467:
 [0m         if self.preview_open {
              egui::SidePanel::right("preview")
                  .resizable(true)
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:105:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:129:
+                 Integration::Shell,
+                 Integration::Replace,
+             ],
+[31m-            Component::TaskManager => &[Integration::Portable, Integration::Hijack, Integration::Replace],
+[0m[32m+            Component::TaskManager => &[
+[0m[32m+                Integration::Portable,
+[0m[32m+                Integration::Hijack,
+[0m[32m+                Integration::Replace,
+[0m[32m+            ],
+[0m             _ => &[Integration::Portable],
+         }
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:240:
+                 let integration = install::read_state(c.id())
+                     .or_else(|| match &target {
+                         Some(spec) if install::hijack_active(spec) => Some(Integration::Hijack),
+[31m-                        Some(spec) if install::replacement_active(spec) => Some(Integration::Replace),
+[0m[32m+                        Some(spec) if install::replacement_active(spec) => {
+[0m[32m+                            Some(Integration::Replace)
+[0m[32m+                        }
+[0m                         _ => None,
+                     })
+                     .unwrap_or(Integration::Portable);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:290:
+     }
+ 
+     fn log(&mut self, kind: LogKind, text: impl Into<String>) {
+[31m-        self.log.push(LogLine { at: Instant::now(), text: text.into(), kind });
+[0m[32m+        self.log.push(LogLine {
+[0m[32m+            at: Instant::now(),
+[0m[32m+            text: text.into(),
+[0m[32m+            kind,
+[0m[32m+        });
+[0m         if self.log.len() > 500 {
+             self.log.remove(0);
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:325:
+             if let Ok(scm) = ScManager::connect() {
+                 if let Ok(list) = scm.enumerate() {
+                     self.services_total = list.len();
+[31m-                    self.services_running =
+[0m[31m-                        list.iter().filter(|s| s.state == Some(ServiceState::Running)).count();
+[0m[32m+                    self.services_running = list
+[0m[32m+                        .iter()
+[0m[32m+                        .filter(|s| s.state == Some(ServiceState::Running))
+[0m[32m+                        .count();
+[0m                 }
+             }
+             self.last_services = Instant::now();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:348:
+             return;
+         }
+         let Some(path) = path else {
+[31m-            let msg = format!("{} not found — build it with: cargo build --release -p {}", c.exe(), c.pkg());
+[0m[32m+            let msg = format!(
+[0m[32m+                "{} not found — build it with: cargo build --release -p {}",
+[0m[32m+                c.exe(),
+[0m[32m+                c.pkg()
+[0m[32m+            );
+[0m             self.status = msg.clone();
+             self.log(LogKind::Warn, msg);
+             return;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:374:
+             return;
+         }
+         if !self.user.elevated {
+[31m-            let msg = "Administrator rights are required to install. Relaunch WinRust as administrator.";
+[0m[32m+            let msg =
+[0m[32m+                "Administrator rights are required to install. Relaunch WinRust as administrator.";
+[0m             self.status = msg.into();
+             self.log(LogKind::Error, msg);
+             return;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:443:
+             Ok(v) => {
+                 self.log(
+                     LogKind::Ok,
+[31m-                    format!("Staged {} binary(ies) into {}", v.len(), install::install_dir().display()),
+[0m[32m+                    format!(
+[0m[32m+                        "Staged {} binary(ies) into {}",
+[0m[32m+                        v.len(),
+[0m[32m+                        install::install_dir().display()
+[0m[32m+                    ),
+[0m                 );
+                 v
+             }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:492:
+         let mut installed = 0usize;
+         let mut failed = 0usize;
+         for c in &components {
+[31m-            let Some(st_index) = self.components.iter().position(|s| s.component == *c) else { continue };
+[0m[32m+            let Some(st_index) = self.components.iter().position(|s| s.component == *c) else {
+[0m[32m+                continue;
+[0m[32m+            };
+[0m             let integration = self.components[st_index].integration;
+             let Some(spec) = self.components[st_index].target.clone() else {
+                 self.log(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:499:
+                     LogKind::Info,
+[31m-                    format!("{}: no system binary to replace — available from the launcher", c.title()),
+[0m[32m+                    format!(
+[0m[32m+                        "{}: no system binary to replace — available from the launcher",
+[0m[32m+                        c.title()
+[0m[32m+                    ),
+[0m                 );
+                 continue;
+             };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:507:
+                 .map(|(_, p)| p.clone())
+                 .or_else(|| self.components[st_index].path.clone());
+             let Some(source) = staged_path else {
+[31m-                self.log(LogKind::Warn, format!("{}: binary not found, skipped", c.title()));
+[0m[32m+                self.log(
+[0m[32m+                    LogKind::Warn,
+[0m[32m+                    format!("{}: binary not found, skipped", c.title()),
+[0m[32m+                );
+[0m                 failed += 1;
+                 continue;
+             };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:522:
+                 if integration != Integration::Portable {
+                     let target = spec.system_path.as_deref();
+                     if let Err(e) = install::record_state(c.id(), integration, target) {
+[31m-                        self.log(LogKind::Warn, format!("{}: state not saved ({e})", c.title()));
+[0m[32m+                        self.log(
+[0m[32m+                            LogKind::Warn,
+[0m[32m+                            format!("{}: state not saved ({e})", c.title()),
+[0m[32m+                        );
+[0m                     }
+                 } else {
+                     let _ = install::clear_state(c.id());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:556:
+         }
+         let backup = session.or_else(|| {
+             // Fall back to the most recent session that mentions this binary.
+[31m-            self.backups.iter().find(|s| {
+[0m[31m-                spec.as_ref()
+[0m[31m-                    .and_then(|sp| sp.system_path.as_ref())
+[0m[31m-                    .map(|p| s.entries.iter().any(|e| &e.original == p))
+[0m[31m-                    .unwrap_or(false)
+[0m[31m-            })
+[0m[31m-            .cloned()
+[0m[32m+            self.backups
+[0m[32m+                .iter()
+[0m[32m+                .find(|s| {
+[0m[32m+                    spec.as_ref()
+[0m[32m+                        .and_then(|sp| sp.system_path.as_ref())
+[0m[32m+                        .map(|p| s.entries.iter().any(|e| &e.original == p))
+[0m[32m+                        .unwrap_or(false)
+[0m[32m+                })
+[0m[32m+                .cloned()
+[0m         });
+         let Some(spec) = spec else {
+             self.status = format!("{} has no undo information", c.title());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:579:
+                 st.installed_at = None;
+             }
+             if let Err(e) = install::clear_state(c.id()) {
+[31m-                self.log(LogKind::Warn, format!("{}: recorded state not cleared ({e})", c.title()));
+[0m[32m+                self.log(
+[0m[32m+                    LogKind::Warn,
+[0m[32m+                    format!("{}: recorded state not cleared ({e})", c.title()),
+[0m[32m+                );
+[0m             }
+             self.status = format!("{} restored", c.title());
+         } else {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:586:
+             let msg = report.error.unwrap_or_else(|| "unknown error".into());
+[31m-            self.log(LogKind::Error, format!("{}: uninstall failed — {msg}", c.title()));
+[0m[32m+            self.log(
+[0m[32m+                LogKind::Error,
+[0m[32m+                format!("{}: uninstall failed — {msg}", c.title()),
+[0m[32m+            );
+[0m             self.status = format!("{}: uninstall failed", c.title());
+         }
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:598:
+     }
+ 
+     fn block_with_explorer(&mut self) {
+[31m-        let path = match self.components.iter().find(|s| s.component == Component::Explorer) {
+[0m[32m+        let path = match self
+[0m[32m+            .components
+[0m[32m+            .iter()
+[0m[32m+            .find(|s| s.component == Component::Explorer)
+[0m[32m+        {
+[0m             Some(st) => st.path.clone(),
+             None => None,
+         };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:630:
  
  fn find_component(exe: &str) -> Option<PathBuf> {
      let dirs = [
@@ -3263,19 +3598,9 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:105:
 [0m[32m+            .ok()
 [0m[32m+            .and_then(|p| p.parent().map(Path::to_path_buf)),
 [0m         std::env::current_dir().ok(),
+         Some(install::install_dir()),
      ];
-     for dir in dirs.into_iter().flatten() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:112:
-[31m-        for candidate in [dir.join(exe), dir.join("target").join("release").join(exe), dir.join("target").join("debug").join(exe)] {
-[0m[32m+        for candidate in [
-[0m[32m+            dir.join(exe),
-[0m[32m+            dir.join("target").join("release").join(exe),
-[0m[32m+            dir.join("target").join("debug").join(exe),
-[0m[32m+        ] {
-[0m             if candidate.is_file() {
-                 return Some(candidate);
-             }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:131:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:660:
  fn pid_of(exe: &str) -> Option<u32> {
      let procs = process::enumerate().ok()?;
      let target = exe.to_lowercase();
@@ -3286,170 +3611,220 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:131:
 [0m[32m+        .map(|p| p.pid)
 [0m }
  
- impl LauncherApp {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:142:
-             .map(|c| {
-                 let path = find_component(c.exe());
-                 let pid = path.as_ref().and_then(|_| pid_of(c.exe()));
-[31m-                ComponentStatus { component: *c, path, running: pid.is_some(), pid }
-[0m[32m+                ComponentStatus {
-[0m[32m+                    component: *c,
-[0m[32m+                    path,
-[0m[32m+                    running: pid.is_some(),
-[0m[32m+                    pid,
-[0m[32m+                }
-[0m             })
-             .collect();
-         Self {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:185:
-             if let Ok(scm) = ScManager::connect() {
-                 if let Ok(list) = scm.enumerate() {
-                     self.services_total = list.len();
-[31m-                    self.services_running = list.iter().filter(|s| s.state == Some(ServiceState::Running)).count();
-[0m[32m+                    self.services_running = list
-[0m[32m+                        .iter()
-[0m[32m+                        .filter(|s| s.state == Some(ServiceState::Running))
-[0m[32m+                        .count();
-[0m                 }
-             }
-             self.last_services = Instant::now();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:193:
-     }
+ // ---------------------------------------------------------------------------
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:680:
+                     let (color, text) = if self.user.elevated {
+                         (Color32::from_rgb(120, 220, 120), "administrator")
+                     } else {
+[31m-                        (Color32::from_rgb(230, 170, 120), "standard user — install disabled")
+[0m[32m+                        (
+[0m[32m+                            Color32::from_rgb(230, 170, 120),
+[0m[32m+                            "standard user — install disabled",
+[0m[32m+                        )
+[0m                     };
+                     ui.label(RichText::new(text).small().color(color));
+                     ui.separator();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:763:
+         let mut change_integration: Option<(Component, Integration)> = None;
+         let elevated = self.user.elevated;
  
-     fn launch(&mut self, c: Component) {
-[31m-        let Some(status) = self.components.iter().find(|s| s.component == c) else { return };
-[0m[32m+        let Some(status) = self.components.iter().find(|s| s.component == c) else {
-[0m[32m+            return;
-[0m[32m+        };
-[0m         if status.running {
-             self.status = format!("{} is already running", c.title());
-             return;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:200:
-         }
-         let Some(path) = status.path.clone() else {
-[31m-            self.status = format!("{} not found — build it with: cargo build --release -p {}", c.exe(), pkg_name(c));
-[0m[32m+            self.status = format!(
-[0m[32m+                "{} not found — build it with: cargo build --release -p {}",
-[0m[32m+                c.exe(),
-[0m[32m+                pkg_name(c)
-[0m[32m+            );
-[0m             return;
-         };
-         match shell::execute(&path, "", None) {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:212:
-         // "Replace Explorer" is implemented as a deliberate, explicit action:
-         // it starts the WinRust shell and stops the system shell, which Windows
-         // restarts automatically at logon unless it is replaced system-wide.
-[31m-        let Some(status) = self.components.iter().find(|s| s.component == Component::Explorer) else { return };
-[0m[32m+        let Some(status) = self
-[0m[32m+            .components
-[0m[32m+            .iter()
-[0m[32m+            .find(|s| s.component == Component::Explorer)
-[0m[32m+        else {
-[0m[32m+            return;
-[0m[32m+        };
-[0m         let Some(path) = status.path.clone() else {
-             self.status = "WinRust Explorer binary not found".into();
-             return;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:305:
-                     frame.show(&mut cols[0], |ui| {
-                         ui.horizontal(|ui| {
-                             ui.vertical(|ui| {
-[31m-                                ui.label(RichText::new(status.component.title()).strong().size(15.0));
-[0m[31m-                                ui.label(RichText::new(format!("replaces {}", status.component.replaces())).small().weak());
-[0m[32m+                                ui.label(
-[0m[32m+                                    RichText::new(status.component.title()).strong().size(15.0),
-[0m[32m+                                );
-[0m[32m+                                ui.label(
-[0m[32m+                                    RichText::new(format!(
-[0m[32m+                                        "replaces {}",
-[0m[32m+                                        status.component.replaces()
-[0m[32m+                                    ))
-[0m[32m+                                    .small()
-[0m[32m+                                    .weak(),
-[0m[32m+                                );
-[0m                             });
-[31m-                            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-[0m[31m-                                if status.running {
+[31m-        egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
+[0m[31m-            for idx in 0..self.components.len() {
+[0m[31m-                let (component, running, integration, path_ok) = {
+[0m[31m-                    let st = &self.components[idx];
+[0m[31m-                    (st.component, st.running, st.integration, st.path.is_some())
+[0m[31m-                };
+[0m[31m-                let selected = self.selected == component;
+[0m[31m-                let (status_label, status_color) = self.components[idx].status_text();
+[0m[31m-                let frame = egui::Frame::group(ui.style())
+[0m[31m-                    .fill(if selected { Color32::from_rgb(40, 46, 60) } else { Color32::from_rgb(28, 30, 36) });
+[0m[31m-                frame.show(ui, |ui| {
+[0m[31m-                    ui.horizontal(|ui| {
+[0m[31m-                        // Batch checkbox
+[0m[31m-                        let mut ticked = self.components[idx].selected;
+[0m[31m-                        if ui.checkbox(&mut ticked, "").changed() {
+[0m[31m-                            toggle_selected = Some(component);
+[0m[31m-                        }
+[0m[31m-                        ui.vertical(|ui| {
+[0m[31m-                            ui.horizontal(|ui| {
+[0m[31m-                                ui.label(RichText::new(format!("{}  {}", component.glyph(), component.title())).strong().size(15.0));
+[0m[31m-                                ui.label(RichText::new(status_label).small().color(status_color));
+[0m[31m-                                if running {
 [0m[31m-                                    ui.label(RichText::new("running").small().color(Color32::from_rgb(120, 220, 120)));
-[0m[31m-                                } else if status.path.is_none() {
-[0m[31m-                                    ui.label(RichText::new("not built").small().color(Color32::from_rgb(230, 170, 120)));
-[0m[31m-                                } else {
-[0m[31m-                                    ui.label(RichText::new("ready").small().weak());
 [0m[31m-                                }
-[0m[31m-                                let btn = ui.add_enabled(!status.running && status.path.is_some(), egui::Button::new("Launch"));
-[0m[31m-                                if btn.clicked() {
-[0m[31m-                                    launch = Some(status.component);
-[0m[31m-                                }
-[0m[31m-                            });
-[0m[32m+                            ui.with_layout(
-[0m[32m+                                egui::Layout::right_to_left(egui::Align::Center),
-[0m[32m+                                |ui| {
-[0m[32m+                                    if status.running {
+[0m[32m+        egui::ScrollArea::vertical()
+[0m[32m+            .auto_shrink([false, false])
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                for idx in 0..self.components.len() {
+[0m[32m+                    let (component, running, integration, path_ok) = {
+[0m[32m+                        let st = &self.components[idx];
+[0m[32m+                        (st.component, st.running, st.integration, st.path.is_some())
+[0m[32m+                    };
+[0m[32m+                    let selected = self.selected == component;
+[0m[32m+                    let (status_label, status_color) = self.components[idx].status_text();
+[0m[32m+                    let frame = egui::Frame::group(ui.style()).fill(if selected {
+[0m[32m+                        Color32::from_rgb(40, 46, 60)
+[0m[32m+                    } else {
+[0m[32m+                        Color32::from_rgb(28, 30, 36)
+[0m[32m+                    });
+[0m[32m+                    frame.show(ui, |ui| {
+[0m[32m+                        ui.horizontal(|ui| {
+[0m[32m+                            // Batch checkbox
+[0m[32m+                            let mut ticked = self.components[idx].selected;
+[0m[32m+                            if ui.checkbox(&mut ticked, "").changed() {
+[0m[32m+                                toggle_selected = Some(component);
+[0m[32m+                            }
+[0m[32m+                            ui.vertical(|ui| {
+[0m[32m+                                ui.horizontal(|ui| {
+[0m[32m+                                    ui.label(
+[0m[32m+                                        RichText::new(format!(
+[0m[32m+                                            "{}  {}",
+[0m[32m+                                            component.glyph(),
+[0m[32m+                                            component.title()
+[0m[32m+                                        ))
+[0m[32m+                                        .strong()
+[0m[32m+                                        .size(15.0),
+[0m[32m+                                    );
+[0m[32m+                                    ui.label(
+[0m[32m+                                        RichText::new(status_label).small().color(status_color),
+[0m[32m+                                    );
+[0m[32m+                                    if running {
 [0m[32m+                                        ui.label(
 [0m[32m+                                            RichText::new("running")
 [0m[32m+                                                .small()
 [0m[32m+                                                .color(Color32::from_rgb(120, 220, 120)),
 [0m[32m+                                        );
-[0m[32m+                                    } else if status.path.is_none() {
-[0m[32m+                                        ui.label(
-[0m[32m+                                            RichText::new("not built")
-[0m[32m+                                                .small()
-[0m[32m+                                                .color(Color32::from_rgb(230, 170, 120)),
-[0m[32m+                                        );
-[0m[32m+                                    } else {
-[0m[32m+                                        ui.label(RichText::new("ready").small().weak());
 [0m[32m+                                    }
-[0m[32m+                                    let btn = ui.add_enabled(
-[0m[32m+                                        !status.running && status.path.is_some(),
-[0m[32m+                                        egui::Button::new("Launch"),
-[0m[32m+                                    );
-[0m[32m+                                    if btn.clicked() {
-[0m[32m+                                        launch = Some(status.component);
+[0m[32m+                                });
+[0m[32m+                                ui.label(
+[0m[32m+                                    RichText::new(format!("replaces {}", component.replaces()))
+[0m[32m+                                        .small()
+[0m[32m+                                        .weak(),
+[0m[32m+                                );
+[0m                             });
+[31m-                            ui.label(
+[0m[31m-                                RichText::new(format!("replaces {}", component.replaces()))
+[0m[31m-                                    .small()
+[0m[31m-                                    .weak(),
+[0m[32m+                            ui.with_layout(
+[0m[32m+                                egui::Layout::right_to_left(egui::Align::Center),
+[0m[32m+                                |ui| {
+[0m[32m+                                    if integration == Integration::Portable {
+[0m[32m+                                        if ui
+[0m[32m+                                            .add_enabled(
+[0m[32m+                                                !running && path_ok,
+[0m[32m+                                                egui::Button::new("Launch"),
+[0m[32m+                                            )
+[0m[32m+                                            .clicked()
+[0m[32m+                                        {
+[0m[32m+                                            launch = Some(component);
+[0m[32m+                                        }
+[0m[32m+                                    } else if ui
+[0m[32m+                                        .button("Restore")
+[0m[32m+                                        .on_hover_text("Undo the installation")
+[0m[32m+                                        .clicked()
+[0m[32m+                                    {
+[0m[32m+                                        uninstall = Some(component);
+[0m[32m+                                    }
+[0m[32m+                                    if ui.button("Details").clicked() {
+[0m[32m+                                        select = Some(component);
 [0m[32m+                                    }
 [0m[32m+                                },
-[0m[32m+                            );
-[0m                         });
-                     });
-                     if cols[0]
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:352:
-                         .and_then(|s| s.path.clone());
-                     match path {
-                         Some(p) => {
-[31m-                            cols[1].label(RichText::new(format!("Binary: {}", p.display())).small().weak());
-[0m[32m+                            cols[1].label(
-[0m[32m+                                RichText::new(format!("Binary: {}", p.display()))
-[0m[32m+                                    .small()
-[0m[32m+                                    .weak(),
-[0m[32m+                            );
-[0m                         }
-                         None => {
-                             cols[1].label(
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:359:
-[31m-                                RichText::new(format!("Build with: cargo build --release -p {}", pkg_name(sel)))
-[0m[31m-                                    .small()
-[0m[31m-                                    .color(Color32::from_rgb(240, 190, 110)),
-[0m[32m+                                RichText::new(format!(
-[0m[32m+                                    "Build with: cargo build --release -p {}",
-[0m[32m+                                    pkg_name(sel)
-[0m[32m+                                ))
-[0m[32m+                                .small()
-[0m[32m+                                .color(Color32::from_rgb(240, 190, 110)),
 [0m                             );
-                         }
+                         });
+[31m-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+[0m[31m-                            if integration == Integration::Portable {
+[0m[31m-                                if ui
+[0m[31m-                                    .add_enabled(!running && path_ok, egui::Button::new("Launch"))
+[0m[31m-                                    .clicked()
+[0m[31m-                                {
+[0m[31m-                                    launch = Some(component);
+[0m[31m-                                }
+[0m[31m-                            } else if ui.button("Restore").on_hover_text("Undo the installation").clicked() {
+[0m[31m-                                uninstall = Some(component);
+[0m[31m-                            }
+[0m[31m-                            if ui.button("Details").clicked() {
+[0m[31m-                                select = Some(component);
+[0m[31m-                            }
+[0m[31m-                        });
+[0m[31m-                    });
+[0m 
+[31m-                    // Integration selector
+[0m[31m-                    if self.components[idx].target.is_some() {
+[0m[31m-                        ui.horizontal(|ui| {
+[0m[31m-                            ui.label(RichText::new("Integration:").small().weak());
+[0m[31m-                            for &level in component.levels() {
+[0m[31m-                                let enabled = !level.requires_admin() || elevated;
+[0m[31m-                                let resp = ui.add_enabled(
+[0m[31m-                                    enabled && !self.busy,
+[0m[31m-                                    egui::RadioButton::new(integration == level, level.label()),
+[0m[31m-                                );
+[0m[31m-                                if resp.on_hover_text(level.hint()).clicked() {
+[0m[31m-                                    change_integration = Some((component, level));
+[0m[32m+                        // Integration selector
+[0m[32m+                        if self.components[idx].target.is_some() {
+[0m[32m+                            ui.horizontal(|ui| {
+[0m[32m+                                ui.label(RichText::new("Integration:").small().weak());
+[0m[32m+                                for &level in component.levels() {
+[0m[32m+                                    let enabled = !level.requires_admin() || elevated;
+[0m[32m+                                    let resp = ui.add_enabled(
+[0m[32m+                                        enabled && !self.busy,
+[0m[32m+                                        egui::RadioButton::new(integration == level, level.label()),
+[0m[32m+                                    );
+[0m[32m+                                    if resp.on_hover_text(level.hint()).clicked() {
+[0m[32m+                                        change_integration = Some((component, level));
+[0m[32m+                                    }
+[0m                                 }
+[31m-                            }
+[0m[31m-                        });
+[0m[31m-                    } else {
+[0m[31m-                        ui.label(
+[0m[32m+                            });
+[0m[32m+                        } else {
+[0m[32m+                            ui.label(
+[0m                             RichText::new(
+                                 "No single system binary — this component runs from the launcher.",
+                             )
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:834:
+                             .small()
+                             .weak(),
+                         );
+[31m-                    }
+[0m[31m-                });
+[0m[31m-                ui.add_space(4.0);
+[0m[31m-            }
+[0m[31m-        });
+[0m[32m+                        }
+[0m[32m+                    });
+[0m[32m+                    ui.add_space(4.0);
+[0m[32m+                }
+[0m[32m+            });
+[0m 
+         if let Some(c) = select {
+             self.selected = c;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:1001:
+     }
+ 
+     fn confirm_modal(&mut self, ctx: &egui::Context) {
+[31m-        let Some(pending) = self.confirm.as_mut() else { return };
+[0m[32m+        let Some(pending) = self.confirm.as_mut() else {
+[0m[32m+            return;
+[0m[32m+        };
+[0m         let mut go = false;
+         let mut cancel = false;
+         egui::Window::new(pending.title.as_str())
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:1090:
+         if let Some(session) = restore_now {
+             match restore::restore_session(&session) {
+                 Ok(log) => {
+[31m-                    self.log(LogKind::Ok, format!("Restored backup #{}", session.created_unix));
+[0m[32m+                    self.log(
+[0m[32m+                        LogKind::Ok,
+[0m[32m+                        format!("Restored backup #{}", session.created_unix),
+[0m[32m+                    );
+[0m                     for line in log {
+                         self.log(LogKind::Info, line);
                      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:374:
-                     )
-                     .small(),
-                 );
-[31m-                if cols[1].add(egui::Button::new("Start WinRust Explorer as shell")).clicked() {
-[0m[32m+                if cols[1]
-[0m[32m+                    .add(egui::Button::new("Start WinRust Explorer as shell"))
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     self.block_with_explorer();
-                 }
-                 cols[1].add_space(10.0);
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:67:
              None => {
                  self.scm = ScManager::connect().ok();
@@ -3458,383 +3833,4 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:67:
 [0m[32m+                    self.status =
 [0m[32m+                        "Cannot open the Service Control Manager — run WinRust elevated.".into();
 [0m                 }
-             }
-         }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:116:
-         };
-         match scm.open_service(&dlg.name, winrust_core::service::ACCESS_CHANGE_CONFIG) {
-             Ok(svc) => {
-[31m-                let bin = if dlg.binary_path.is_empty() { None } else { Some(dlg.binary_path.as_str()) };
-[0m[32m+                let bin = if dlg.binary_path.is_empty() {
-[0m[32m+                    None
-[0m[32m+                } else {
-[0m[32m+                    Some(dlg.binary_path.as_str())
-[0m[32m+                };
-[0m                 let result = svc
-                     .set_start_type(dlg.start_type, bin)
-                     .and_then(|()| svc.set_description(&dlg.description));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:146:
-             }
-             ui.separator();
-             let enabled = self.selected.is_some();
-[31m-            if ui.add_enabled(enabled, egui::Button::new("▶ Start")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(enabled, egui::Button::new("▶ Start"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.do_action(ServiceAction::Start);
-             }
-[31m-            if ui.add_enabled(enabled, egui::Button::new("⏹ Stop")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(enabled, egui::Button::new("⏹ Stop"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.do_action(ServiceAction::Stop);
-             }
-[31m-            if ui.add_enabled(enabled, egui::Button::new("⏸ Pause")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(enabled, egui::Button::new("⏸ Pause"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.do_action(ServiceAction::Pause);
-             }
-[31m-            if ui.add_enabled(enabled, egui::Button::new("⏵ Resume")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(enabled, egui::Button::new("⏵ Resume"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.do_action(ServiceAction::Resume);
-             }
-[31m-            if ui.add_enabled(enabled, egui::Button::new("⟲ Restart")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(enabled, egui::Button::new("⟲ Restart"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.do_action(ServiceAction::Stop);
-                 self.do_action(ServiceAction::Start);
-             }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:165:
-[31m-            if ui.add_enabled(enabled, egui::Button::new("Properties…")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(enabled, egui::Button::new("Properties…"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.open_props();
-             }
-             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:169:
-[31m-                ui.add_sized([220.0, 22.0], egui::TextEdit::singleline(&mut self.filter).hint_text("🔍 Filter services"));
-[0m[32m+                ui.add_sized(
-[0m[32m+                    [220.0, 22.0],
-[0m[32m+                    egui::TextEdit::singleline(&mut self.filter).hint_text("🔍 Filter services"),
-[0m[32m+                );
-[0m             });
-         });
-         if !self.user.elevated {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:247:
-                     ui.label(s.start_type.map(|x| x.label()).unwrap_or("—"));
-                 });
-                 row.col(|ui| {
-[31m-                    let acct = if s.logon_account.is_empty() { "—" } else { &s.logon_account };
-[0m[32m+                    let acct = if s.logon_account.is_empty() {
-[0m[32m+                        "—"
-[0m[32m+                    } else {
-[0m[32m+                        &s.logon_account
-[0m[32m+                    };
-[0m                     ui.label(RichText::new(acct).weak());
-                 });
-                 row.col(|ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:254:
-[31m-                    let desc = if s.description.is_empty() { String::new() } else { shorten(&s.description, 70) };
-[0m[32m+                    let desc = if s.description.is_empty() {
-[0m[32m+                        String::new()
-[0m[32m+                    } else {
-[0m[32m+                        shorten(&s.description, 70)
-[0m[32m+                    };
-[0m                     ui.label(RichText::new(desc).weak());
-                 });
-             });
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:276:
-             ui.heading(RichText::new(&entry.display_name).size(16.0));
-             ui.label(RichText::new(&entry.name).monospace().weak());
-             ui.add_space(6.0);
-[31m-            egui::Grid::new("svc_details").num_columns(2).spacing([16.0, 6.0]).show(ui, |ui| {
-[0m[31m-                ui.label(RichText::new("Service name").strong());
-[0m[31m-                ui.label(&entry.name);
-[0m[31m-                ui.end_row();
-[0m[31m-                ui.label(RichText::new("Display name").strong());
-[0m[31m-                ui.label(&entry.display_name);
-[0m[31m-                ui.end_row();
-[0m[31m-                ui.label(RichText::new("Description").strong());
-[0m[31m-                if ui.button("Show").clicked() {
-[0m[31m-                    // Description is shown inline below; this button exists so the
-[0m[31m-                    // layout stays identical to services.msc.
-[0m[31m-                }
-[0m[31m-                ui.end_row();
-[0m[31m-                ui.label(RichText::new("Path to executable").strong());
-[0m[31m-                ui.label(RichText::new(&entry.binary_path).monospace());
-[0m[31m-                ui.end_row();
-[0m[31m-                ui.label(RichText::new("Start type").strong());
-[0m[31m-                ui.label(entry.start_type.map(|x| x.label()).unwrap_or("—"));
-[0m[31m-                ui.end_row();
-[0m[31m-                ui.label(RichText::new("Log On As").strong());
-[0m[31m-                ui.label(if entry.logon_account.is_empty() { "—" } else { &entry.logon_account });
-[0m[31m-                ui.end_row();
-[0m[31m-                ui.label(RichText::new("Process ID").strong());
-[0m[31m-                ui.label(if entry.pid == 0 { "—".to_string() } else { entry.pid.to_string() });
-[0m[31m-                ui.end_row();
-[0m[31m-            });
-[0m[32m+            egui::Grid::new("svc_details")
-[0m[32m+                .num_columns(2)
-[0m[32m+                .spacing([16.0, 6.0])
-[0m[32m+                .show(ui, |ui| {
-[0m[32m+                    ui.label(RichText::new("Service name").strong());
-[0m[32m+                    ui.label(&entry.name);
-[0m[32m+                    ui.end_row();
-[0m[32m+                    ui.label(RichText::new("Display name").strong());
-[0m[32m+                    ui.label(&entry.display_name);
-[0m[32m+                    ui.end_row();
-[0m[32m+                    ui.label(RichText::new("Description").strong());
-[0m[32m+                    if ui.button("Show").clicked() {
-[0m[32m+                        // Description is shown inline below; this button exists so the
-[0m[32m+                        // layout stays identical to services.msc.
-[0m[32m+                    }
-[0m[32m+                    ui.end_row();
-[0m[32m+                    ui.label(RichText::new("Path to executable").strong());
-[0m[32m+                    ui.label(RichText::new(&entry.binary_path).monospace());
-[0m[32m+                    ui.end_row();
-[0m[32m+                    ui.label(RichText::new("Start type").strong());
-[0m[32m+                    ui.label(entry.start_type.map(|x| x.label()).unwrap_or("—"));
-[0m[32m+                    ui.end_row();
-[0m[32m+                    ui.label(RichText::new("Log On As").strong());
-[0m[32m+                    ui.label(if entry.logon_account.is_empty() {
-[0m[32m+                        "—"
-[0m[32m+                    } else {
-[0m[32m+                        &entry.logon_account
-[0m[32m+                    });
-[0m[32m+                    ui.end_row();
-[0m[32m+                    ui.label(RichText::new("Process ID").strong());
-[0m[32m+                    ui.label(if entry.pid == 0 {
-[0m[32m+                        "—".to_string()
-[0m[32m+                    } else {
-[0m[32m+                        entry.pid.to_string()
-[0m[32m+                    });
-[0m[32m+                    ui.end_row();
-[0m[32m+                });
-[0m             if !entry.description.is_empty() {
-                 ui.add_space(6.0);
-                 ui.label(RichText::new("Description").strong());
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:317:
-             ui.add_space(8.0);
-             ui.horizontal(|ui| {
-                 let state = entry.state.unwrap_or(ServiceState::Stopped);
-[31m-                if ui.add_enabled(state == ServiceState::Stopped, egui::Button::new("Start")).clicked() {
-[0m[32m+                if ui
-[0m[32m+                    .add_enabled(state == ServiceState::Stopped, egui::Button::new("Start"))
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     self.do_action(ServiceAction::Start);
-                 }
-[31m-                if ui.add_enabled(state == ServiceState::Running && entry.accepts_stop, egui::Button::new("Stop")).clicked() {
-[0m[32m+                if ui
-[0m[32m+                    .add_enabled(
-[0m[32m+                        state == ServiceState::Running && entry.accepts_stop,
-[0m[32m+                        egui::Button::new("Stop"),
-[0m[32m+                    )
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     self.do_action(ServiceAction::Stop);
-                 }
-[31m-                if ui.add_enabled(state == ServiceState::Running && entry.can_pause, egui::Button::new("Pause")).clicked() {
-[0m[32m+                if ui
-[0m[32m+                    .add_enabled(
-[0m[32m+                        state == ServiceState::Running && entry.can_pause,
-[0m[32m+                        egui::Button::new("Pause"),
-[0m[32m+                    )
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     self.do_action(ServiceAction::Pause);
-                 }
-[31m-                if ui.add_enabled(state == ServiceState::Paused, egui::Button::new("Resume")).clicked() {
-[0m[32m+                if ui
-[0m[32m+                    .add_enabled(state == ServiceState::Paused, egui::Button::new("Resume"))
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     self.do_action(ServiceAction::Resume);
-                 }
-                 if ui.button("Properties…").clicked() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:337:
-     }
- 
-     fn props_modal(&mut self, ctx: &egui::Context) {
-[31m-        let Some(mut dlg) = self.props.take() else { return };
-[0m[32m+        let Some(mut dlg) = self.props.take() else {
-[0m[32m+            return;
-[0m[32m+        };
-[0m         let mut apply = false;
-         let mut cancel = false;
-         egui::Window::new(format!("{} Properties", dlg.display_name))
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:346:
-             .default_width(520.0)
-             .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-             .show(ctx, |ui| {
-[31m-                egui::Grid::new("props_grid").num_columns(2).spacing([12.0, 8.0]).show(ui, |ui| {
-[0m[31m-                    ui.label("Service name:");
-[0m[31m-                    ui.label(RichText::new(&dlg.name).monospace());
-[0m[31m-                    ui.end_row();
-[0m[31m-                    ui.label("Display name:");
-[0m[31m-                    ui.label(&dlg.display_name);
-[0m[31m-                    ui.end_row();
-[0m[31m-                    ui.label("Path to executable:");
-[0m[31m-                    ui.add(egui::TextEdit::singleline(&mut dlg.binary_path).desired_width(380.0));
-[0m[31m-                    ui.end_row();
-[0m[31m-                    ui.label("Startup type:");
-[0m[31m-                    egui::ComboBox::from_id_salt("starttype")
-[0m[31m-                        .selected_text(dlg.start_type.label())
-[0m[31m-                        .show_ui(ui, |ui| {
-[0m[31m-                            for opt in StartType::OPTIONS {
-[0m[31m-                                if ui.selectable_label(dlg.start_type == opt, opt.label()).clicked() {
-[0m[31m-                                    dlg.start_type = opt;
-[0m[32m+                egui::Grid::new("props_grid")
-[0m[32m+                    .num_columns(2)
-[0m[32m+                    .spacing([12.0, 8.0])
-[0m[32m+                    .show(ui, |ui| {
-[0m[32m+                        ui.label("Service name:");
-[0m[32m+                        ui.label(RichText::new(&dlg.name).monospace());
-[0m[32m+                        ui.end_row();
-[0m[32m+                        ui.label("Display name:");
-[0m[32m+                        ui.label(&dlg.display_name);
-[0m[32m+                        ui.end_row();
-[0m[32m+                        ui.label("Path to executable:");
-[0m[32m+                        ui.add(
-[0m[32m+                            egui::TextEdit::singleline(&mut dlg.binary_path).desired_width(380.0),
-[0m[32m+                        );
-[0m[32m+                        ui.end_row();
-[0m[32m+                        ui.label("Startup type:");
-[0m[32m+                        egui::ComboBox::from_id_salt("starttype")
-[0m[32m+                            .selected_text(dlg.start_type.label())
-[0m[32m+                            .show_ui(ui, |ui| {
-[0m[32m+                                for opt in StartType::OPTIONS {
-[0m[32m+                                    if ui
-[0m[32m+                                        .selectable_label(dlg.start_type == opt, opt.label())
-[0m[32m+                                        .clicked()
-[0m[32m+                                    {
-[0m[32m+                                        dlg.start_type = opt;
-[0m[32m+                                    }
-[0m                                 }
-[31m-                            }
-[0m[32m+                            });
-[0m[32m+                        ui.end_row();
-[0m[32m+                        ui.label("Log on as:");
-[0m[32m+                        ui.label(if dlg.logon_account.is_empty() {
-[0m[32m+                            "—"
-[0m[32m+                        } else {
-[0m[32m+                            &dlg.logon_account
-[0m                         });
-[31m-                    ui.end_row();
-[0m[31m-                    ui.label("Log on as:");
-[0m[31m-                    ui.label(if dlg.logon_account.is_empty() { "—" } else { &dlg.logon_account });
-[0m[31m-                    ui.end_row();
-[0m[31m-                    ui.label("Description:");
-[0m[31m-                    ui.add(
-[0m[31m-                        egui::TextEdit::multiline(&mut dlg.description)
-[0m[31m-                            .desired_rows(3)
-[0m[31m-                            .desired_width(380.0),
-[0m[31m-                    );
-[0m[31m-                    ui.end_row();
-[0m[31m-                });
-[0m[32m+                        ui.end_row();
-[0m[32m+                        ui.label("Description:");
-[0m[32m+                        ui.add(
-[0m[32m+                            egui::TextEdit::multiline(&mut dlg.description)
-[0m[32m+                                .desired_rows(3)
-[0m[32m+                                .desired_width(380.0),
-[0m[32m+                        );
-[0m[32m+                        ui.end_row();
-[0m[32m+                    });
-[0m                 ui.add_space(8.0);
-                 if self.action_busy {
-                     ui.horizontal(|ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:386:
-                     });
-                 }
-                 ui.horizontal(|ui| {
-[31m-                    if ui.add_enabled(!self.action_busy, egui::Button::new("Apply")).clicked() {
-[0m[32m+                    if ui
-[0m[32m+                        .add_enabled(!self.action_busy, egui::Button::new("Apply"))
-[0m[32m+                        .clicked()
-[0m[32m+                    {
-[0m                         apply = true;
-                     }
-                     if ui.button("Cancel").clicked() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:413:
-                     RichText::new(format!(
-                         "{} services · logged in as {}{} · {}",
-                         self.services.len(),
-[31m-                        if self.user.domain.is_empty() { String::new() } else { format!("{}\\", self.user.domain) },
-[0m[31m-                        if self.user.account.is_empty() { "user".into() } else { self.user.account.clone() },
-[0m[32m+                        if self.user.domain.is_empty() {
-[0m[32m+                            String::new()
-[0m[32m+                        } else {
-[0m[32m+                            format!("{}\\", self.user.domain)
-[0m[32m+                        },
-[0m[32m+                        if self.user.account.is_empty() {
-[0m[32m+                            "user".into()
-[0m[32m+                        } else {
-[0m[32m+                            self.user.account.clone()
-[0m[32m+                        },
-[0m                         self.user.integrity
-                     ))
-                     .small()
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:128:
- 
-     fn reload_env(&mut self) {
-         self.env.clear();
-[31m-        for name in ["PATH", "TEMP", "TMP", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "SystemRoot", "ComSpec"] {
-[0m[32m+        for name in [
-[0m[32m+            "PATH",
-[0m[32m+            "TEMP",
-[0m[32m+            "TMP",
-[0m[32m+            "USERPROFILE",
-[0m[32m+            "APPDATA",
-[0m[32m+            "LOCALAPPDATA",
-[0m[32m+            "SystemRoot",
-[0m[32m+            "ComSpec",
-[0m[32m+        ] {
-[0m             if let Ok(v) = std::env::var(name) {
-[31m-                self.env.push(EnvVar { scope: "User", name: name.to_string(), value: v });
-[0m[32m+                self.env.push(EnvVar {
-[0m[32m+                    scope: "User",
-[0m[32m+                    name: name.to_string(),
-[0m[32m+                    value: v,
-[0m[32m+                });
-[0m             }
-         }
-[31m-        if let Some(path) = registry::read_machine_string(r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", "Path") {
-[0m[31m-            self.env.push(EnvVar { scope: "System", name: "PATH".into(), value: path });
-[0m[32m+        if let Some(path) = registry::read_machine_string(
-[0m[32m+            r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment",
-[0m[32m+            "Path",
-[0m[32m+        ) {
-[0m[32m+            self.env.push(EnvVar {
-[0m[32m+                scope: "System",
-[0m[32m+                name: "PATH".into(),
-[0m[32m+                value: path,
-[0m[32m+            });
-[0m         }
-     }
- 
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:141:
-     fn reload_startup(&mut self) {
-         self.startup.clear();
-         for (root, path, label) in [
-[31m-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKCU Run"),
-[0m[31m-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKLM Run"),
-[0m[32m+            (
-[0m[32m+                Root::CurrentUser,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
-[0m[32m+                "HKCU Run",
-[0m[32m+            ),
-[0m[32m+            (
-[0m[32m+                Root::LocalMachine,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVer
+            
