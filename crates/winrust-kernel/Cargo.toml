@@ -1,0 +1,34 @@
+[package]
+name = "winrust-kernel"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+description = "WinRust kernel-mode driver (KMDF): system telemetry, driver inventory, process trust enforcement"
+
+# A KMDF driver is a DLL that the WDF loader turns into a .sys image.
+[lib]
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[package.metadata.wdk.driver-model]
+driver-type = "KMDF"
+kmdf-version-major = 1
+target-kmdf-version-minor = 33
+
+[dependencies]
+winrust-kernel-abi.workspace = true
+wdk = "0.5"
+wdk-sys = "0.5"
+wdk-alloc = "0.4"
+
+[build-dependencies]
+wdk-build = "0.6"
+
+# Kernel mode forbids unwinding: a panic has nowhere to return to.
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"

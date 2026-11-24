@@ -1,0 +1,12 @@
+[package]
+name = "winrust-kernel-abi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+description = "Wire protocol shared by the WinRust kernel driver and its user-mode client"
+
+# No dependencies at all: the driver is no_std and this crate has to compile
+# for the kernel crate as well as for ordinary user-mode binaries.
+[dependencies]

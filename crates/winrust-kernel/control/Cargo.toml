@@ -1,0 +1,24 @@
+[package]
+name = "winrust-kernel-control"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+description = "WinRust driver console: install, query and remove the WinRust kernel driver"
+
+[[bin]]
+name = "winrust-driver"
+path = "src/main.rs"
+
+[dependencies]
+winrust-core.workspace = true
+winrust-kernel-abi.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+env_logger.workspace = true
+log.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-sys.workspace = true
