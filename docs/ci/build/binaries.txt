@@ -1,1 +1,2 @@
-1.6G	target
+-rwxr-xr-x 2 runneradmin 197121 4117504 Nov 24 15:01 target/release/winrust-sysctl.exe
+1.8G	target
