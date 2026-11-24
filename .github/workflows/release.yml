@@ -84,47 +84,7 @@ jobs:
           gh release delete "$TAG" --yes || true
           gh release create "$TAG" \
             --title "WinRust $TAG" \
-            --notes "Windows 10/11 system components rewritten in Rust: Explorer, Task Manager, Services, system utilities and the core library.
-
-          **Kernel driver (new in 0.4.0)**
-          * \`WinRustKernel.sys\` - KMDF driver built from Rust with the WDK: kernel-side
-            process and module tables (sees PPL-protected processes too) and an
-            in-RAM process-creation block list.
-          * \`winrust-driver.exe\` - console: \`install\`, \`status\`, \`processes\`,
-            \`modules\`, \`perf\`, \`block <name>\`, \`remove\`.
-          * Install with \`winrust-driver install WinRustKernel.sys\` from an elevated
-            prompt, or from the launcher's "Kernel driver" panel.
-          * The image is built but **not** production-signed: to load it on your own
-            machine enable test signing (\`bcdedit /set testsigning on\`, reboot) or
-            sign it with your own certificate.  This is a real kernel driver - it can
-            bugcheck the machine, so try it in a VM first.
-
-          **Launcher \`WinRust.exe\` is a selective installer**
-
-          * one checkbox per component — install only what you want
-          * per component: Portable / IFEO redirect / replace system binary / custom shell
-          * System Restore point (\`SRSetRestorePointW\`) and file-level backup in
-            \`%ProgramData%\WinRust\backup\`, both on by default
-          * backup browser with one-click rollback; installed state persisted in
-            \`HKLM\SOFTWARE\WinRust\Installed\`
-          * everything logged in the window
-
-          **Downloads**
-          **Kernel driver (new)**
-          * \`WinRustKernel.sys\` — KMDF driver built with the WDK from Rust sources.
-            Kernel-side process and module tables (works for PPL processes too) and
-            an in-RAM process-creation block list.
-          * \`winrust-driver.exe\` — console: \`install\`, \`status\`, \`processes\`,
-            \`modules\`, \`perf\`, \`block <name>\`, \`remove\`.
-          * Install: \`winrust-driver install WinRustKernel.sys\` from an elevated prompt,
-            then \`winrust-driver processes\`.  \`winrust-driver remove\` unloads and
-            unregisters it.  The driver is test-signed by CI; see the README before
-            deploying it to a machine you care about.
-
-          * \`WinRust-windows-x64.zip\` — all executables, the driver and README.
-          * Or grab a single .exe below.
-
-          Run the component you need; elevation (Run as administrator) is required for service control, for managing other users' processes, and for any install action." \
+            --notes-file docs/release/notes.md \
             dist/WinRust.exe \
             dist/winrust-explorer.exe \
             dist/winrust-taskmgr.exe \
