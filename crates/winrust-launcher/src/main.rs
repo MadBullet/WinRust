@@ -661,12 +661,8 @@ impl LauncherApp {
     /// Re-probe the driver service and, if reachable, its version line.
     fn refresh_kernel_driver(&mut self) {
         self.kernel_installed = kernel_service_installed();
-        self.kernel_status = run_driver_console("status").map(|out| {
-            out.lines()
-                .take(4)
-                .collect::<Vec<_>>()
-                .join(" | ")
-        });
+        self.kernel_status = run_driver_console("status")
+            .map(|out| out.lines().take(4).collect::<Vec<_>>().join(" | "));
         self.log(
             LogKind::Info,
             format!(
@@ -759,14 +755,19 @@ fn kernel_service_installed() -> bool {
     ScManager::connect()
         .ok()
         .and_then(|scm| scm.enumerate().ok())
-        .map(|list| list.iter().any(|s| s.name.eq_ignore_ascii_case("WinRustKernel")))
+        .map(|list| {
+            list.iter()
+                .any(|s| s.name.eq_ignore_ascii_case("WinRustKernel"))
+        })
         .unwrap_or(false)
 }
 
 /// `WinRustKernel.sys` next to the launcher (or in the install folder).
 fn driver_image_path() -> Option<PathBuf> {
     let dirs = [
-        std::env::current_exe().ok().and_then(|p| p.parent().map(Path::to_path_buf)),
+        std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(Path::to_path_buf)),
         Some(install::install_dir()),
     ];
     for dir in dirs.into_iter().flatten() {
@@ -781,7 +782,10 @@ fn driver_image_path() -> Option<PathBuf> {
 /// Run `winrust-driver <args>` and capture its stdout.
 fn run_driver_console_with(args: &[&str]) -> Option<String> {
     let console = find_component("winrust-driver.exe")?;
-    let output = std::process::Command::new(console).args(args).output().ok()?;
+    let output = std::process::Command::new(console)
+        .args(args)
+        .output()
+        .ok()?;
     let text = String::from_utf8_lossy(&output.stdout).to_string();
     if output.status.success() {
         Some(text)
