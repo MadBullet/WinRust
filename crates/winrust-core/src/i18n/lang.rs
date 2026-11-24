@@ -4,7 +4,7 @@
 //! in `HKCU\SOFTWARE\WinRust` as a `REG_SZ` value, so no elevation is needed and
 //! a portable (uninstalled) copy works exactly the same.
 
-use winrust_core::registry::{self, Root};
+use crate::registry::{self, Root};
 
 const KEY: &str = r"SOFTWARE\WinRust";
 
@@ -59,12 +59,12 @@ impl std::fmt::Display for Lang {
 /// The stored language, falling back to English.
 pub fn load() -> Lang {
     registry::read_user_string(KEY, "Lang")
-        .and_then(|v| Lang::parse(&v))
+        .as_deref().and_then(Lang::parse)
         .unwrap_or_default()
 }
 
 /// Persist the language so every component picks it up on its next start.
-pub fn save(lang: Lang) -> winrust_core::Result<()> {
+pub fn save(lang: Lang) -> crate::Result<()> {
     let key = registry::open_for_write(Root::CurrentUser, KEY)?;
     key.set_string("Lang", lang.code())
 }

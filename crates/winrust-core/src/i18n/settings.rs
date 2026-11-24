@@ -4,12 +4,12 @@
 //! on every frame, so the default is *off* and the values only change when the
 //! user drags a slider.
 
-use winrust_core::registry::{self, Root};
+use crate::registry::{self, Root};
 
 const KEY: &str = r"SOFTWARE\WinRust";
 
 /// Which window chrome style a component should use.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Appearance {
     /// Window background opacity, 30..=100 (%). Only used when `transparent`.
     pub opacity: u8,
@@ -80,7 +80,7 @@ pub fn load() -> Appearance {
 }
 
 /// Write the appearance block back (no elevation required).
-pub fn save(a: &Appearance) -> winrust_core::Result<()> {
+pub fn save(a: &Appearance) -> crate::Result<()> {
     let a = a.sanitized();
     let key = registry::open_for_write(Root::CurrentUser, KEY)?;
     key.set_u32("Opacity", a.opacity as u32)?;
