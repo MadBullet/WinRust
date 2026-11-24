@@ -1655,7 +1655,7 @@ impl ExplorerApp {
                         ui.painter().rect_stroke(
                             resp.rect.expand(1.0),
                             2.0,
-                            egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+                            egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
                         );
                     }
                     if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
@@ -1754,7 +1754,7 @@ impl ExplorerApp {
                                     ui.painter().rect_stroke(
                                         resp.rect.expand(1.0),
                                         2.0,
-                                        egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+                                        egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
                                     );
                                 }
                                 if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
@@ -1838,7 +1838,7 @@ impl ExplorerApp {
                                     ui.painter().rect_stroke(
                                         resp.rect.expand(1.0),
                                         2.0,
-                                        egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+                                        egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
                                     );
                                 }
                                 if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
