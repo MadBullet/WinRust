@@ -395,7 +395,7 @@ impl ExplorerApp {
             return entry.texture.as_ref().map(|t| t.id());
         }
         let rgba = fetch();
-        let texture = rgba.map(|mut rgba| {
+        let texture = rgba.map(|rgba| {
             // egui wants RGBA; winrust-core already produces that.
             let image = egui::ColorImage::from_rgba_unmultiplied([16, 16], &rgba);
             ctx.load_texture(key.to_string(), image, egui::TextureOptions::LINEAR)
@@ -409,7 +409,7 @@ impl ExplorerApp {
     // Panels
     // ------------------------------------------------------------------
 
-    fn top_bar(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+    fn top_bar(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
             if ui.add_enabled(self.current().can_back(), egui::Button::new("◀")).on_hover_text("Back").clicked() {
                 self.go_back();
@@ -683,7 +683,6 @@ impl ExplorerApp {
         let mut menu: Option<(PathBuf, ActionRequest)> = None;
         let sort_key = self.current().sort_key;
         let sort_asc = self.current().sort_asc;
-        let mut clicked_sort: Option<SortKeySerde> = None;
 
         let mut table = TableBuilder::new(ui)
             .striped(true)
@@ -696,8 +695,8 @@ impl ExplorerApp {
             .column(Column::remainder().at_least(80.0).clip(true))
             .min_scrolled_height(0.0);
 
-        let clicked_ref = &mut clicked_sort;
-        table = table.header(22.0, |mut header| {
+        let clicked_cell = std::cell::Cell::new(None::<SortKeySerde>);
+        let table = table.header(22.0, |mut header| {
             header.col(|ui| {
                 ui.label("");
             });
@@ -714,12 +713,13 @@ impl ExplorerApp {
                         ""
                     };
                     if ui.add(egui::Button::new(RichText::new(format!("{name}{arrow}")).strong()).frame(false)).clicked() {
-                        clicked_sort = Some(key);
+                        clicked_cell.set(Some(key));
                     }
                 });
             }
         });
 
+        let clicked_sort = clicked_cell.get();
         table.body(|body| {
             body.rows(24.0, entries.len(), |mut row| {
                 let idx = row.index();
@@ -1045,10 +1045,10 @@ impl ExplorerApp {
         if let Some(sel) = self.current().selected.clone() {
             if f2 {
                 self.rename_buffer = file_name_of(&sel);
-                self.rename_target = Some(sel);
+                self.rename_target = Some(sel.clone());
             }
             if del {
-                self.delete_confirm = vec![sel];
+                self.delete_confirm = vec![sel.clone()];
             }
             if ctrl_c {
                 self.status = format!("Selected: {}", sel.display());
@@ -1149,7 +1149,7 @@ impl eframe::App for ExplorerApp {
         self.keyboard(ctx);
 
         egui::TopBottomPanel::top("tabs").show(ctx, |ui| self.tab_bar(ui));
-        egui::TopBottomPanel::top("toolbar").show(ctx, |ui| self.top_bar(ui, ctx));
+        egui::TopBottomPanel::top("toolbar").show(ctx, |ui| self.top_bar(ui));
         egui::TopBottomPanel::bottom("status").show(ctx, |ui| self.status_bar(ui));
         egui::SidePanel::left("sidebar")
             .resizable(true)
