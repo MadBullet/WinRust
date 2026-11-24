@@ -1898,7 +1898,7 @@ impl ExplorerApp {
                     ui.painter().rect_stroke(
                         rect,
                         3.0,
-                        egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
+                        egui::Stroke::new(1.0_f32, ui.visuals().widgets.hovered.bg_stroke.color),
                     );
                 }
                 let icon_rect = egui::Rect::from_min_size(rect.min + egui::vec2(6.0, 8.0), egui::vec2(36.0, 36.0));
