@@ -466,6 +466,45 @@ pub fn unique_destination(path: impl AsRef<Path>) -> std::path::PathBuf {
     path.to_path_buf()
 }
 
+/// Aggregate size / count of everything inside a folder, as Explorer's status
+/// bar and Properties dialog show it.  `budget` caps the number of entries
+/// visited so a huge tree cannot block the UI thread forever.
+pub fn folder_stats(dir: impl AsRef<Path>, budget: &mut u32, show_hidden: bool) -> (u64, u64) {
+    let mut bytes = 0u64;
+    let mut count = 0u64;
+    if *budget == 0 {
+        return (0, 0);
+    }
+    let Ok(entries) = read_dir(dir.as_ref(), show_hidden) else {
+        return (0, 0);
+    };
+    for e in entries {
+        if *budget == 0 {
+            break;
+        }
+        *budget -= 1;
+        count += 1;
+        if e.is_dir {
+            let (b, c) = folder_stats(&e.path, budget, show_hidden);
+            bytes += b;
+            count += c;
+        } else {
+            bytes += e.size;
+        }
+    }
+    (bytes, count)
+}
+
+/// Delete permanently (bypasses the Recycle Bin) — Shift+Delete.
+pub fn delete_permanent(path: impl AsRef<Path>) -> Result<()> {
+    let p = path.as_ref();
+    if p.is_dir() {
+        std::fs::remove_dir_all(p).map_err(|e| WinError::Other(e.to_string()))
+    } else {
+        std::fs::remove_file(p).map_err(|e| WinError::Other(e.to_string()))
+    }
+}
+
 pub fn attributes(path: impl AsRef<Path>) -> Result<u32> {
     let w = to_wide(path.as_ref());
     let a = unsafe { GetFileAttributesW(w.as_ptr()) };

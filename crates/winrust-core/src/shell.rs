@@ -9,7 +9,7 @@ use std::path::Path;
 use windows_sys::Win32::Foundation::HWND;
 use windows_sys::Win32::Storage::FileSystem::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO};
 use windows_sys::Win32::System::DataExchange::{
-    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData,
+    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData, CF_UNICODETEXT,
 };
 use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
 use windows_sys::Win32::UI::Shell::{
@@ -372,7 +372,7 @@ pub fn clipboard_text() -> Option<String> {
         if OpenClipboard(std::ptr::null_mut()) == 0 {
             return None;
         }
-        let handle = GetClipboardData(CF_UNICODETEXT as u32);
+        let handle = GetClipboardData(CF_UNICODETEXT);
         let mut out = None;
         if !handle.is_null() {
             let ptr = GlobalLock(handle) as *const u16;
@@ -411,7 +411,7 @@ pub fn set_clipboard_text(text: &str) -> bool {
         }
         std::ptr::copy_nonoverlapping(wide.as_ptr(), dst, wide.len());
         GlobalUnlock(mem);
-        let ok = !SetClipboardData(CF_UNICODETEXT as u32, mem).is_null();
+        let ok = !SetClipboardData(CF_UNICODETEXT, mem).is_null();
         CloseClipboard();
         ok
     }

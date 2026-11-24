@@ -10,7 +10,8 @@ use windows_sys::Win32::Graphics::Gdi::{
     ReleaseDC, SelectObject, BITMAPINFO, BITMAPINFOHEADER, BI_RGB, DIB_RGB_COLORS, HBITMAP, HDC,
     HGDIOBJ,
 };
-use windows_sys::Win32::UI::WindowsAndMessaging::{DrawIconEx, GetIconInfo, ICONINFO, DI_MASK, DI_NORMAL};
+use std::ffi::c_void;
+use windows_sys::Win32::UI::WindowsAndMessaging::{DrawIconEx, GetIconInfo, HICON, ICONINFO, DI_MASK, DI_NORMAL};
 
 /// Convert an icon into tightly packed RGBA8 pixels (row-major, top-down).
 ///
@@ -129,4 +130,131 @@ pub fn placeholder_rgba(w: u32, h: u32, rgba: [u8; 4]) -> Vec<u8> {
 #[allow(dead_code)]
 fn _reserve(dc: HDC) -> HBITMAP {
     unsafe { CreateCompatibleBitmap(dc, 1, 1) }
+}
+
+
+// ---------------------------------------------------------------------------
+// System image list (large icons: 32 / 48 / 256 px)
+// ---------------------------------------------------------------------------
+
+/// RAII COM apartment for the calling thread.
+///
+/// The shell image-list APIs are COM objects, so they need an initialized
+/// apartment.  `eframe` does not initialize COM for us, and calling
+/// `CoInitializeEx` twice on one thread is legal (it returns `S_FALSE`), so the
+/// guard is cheap to create around each call.
+pub struct ComGuard {
+    should_uninit: bool,
+}
+
+impl ComGuard {
+    pub fn new() -> Self {
+        let hr = unsafe {
+            windows_sys::Win32::System::Com::CoInitializeEx(
+                std::ptr::null(),
+                windows_sys::Win32::System::Com::COINIT_APARTMENTTHREADED as u32,
+            )
+        };
+        // S_OK (0) and S_FALSE (1) both mean "usable"; RPC_E_CHANGED_MODE
+        // (0x80010106) means another apartment already exists — also usable.
+        Self { should_uninit: hr == 0 || hr == 1 }
+    }
+}
+
+impl Default for ComGuard {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Drop for ComGuard {
+    fn drop(&mut self) {
+        if self.should_uninit {
+            unsafe { windows_sys::Win32::System::Com::CoUninitialize() };
+        }
+    }
+}
+
+/// Minimal `IImageList` vtable — only the slots we call.
+///
+/// `IImageList` has no binding in `windows-sys` 0.59, but its ABI is stable and
+/// documented.  The public vtable is `IUnknown` (3 slots) followed by:
+/// `Add`, `ReplaceIcon`, `SetOverlayImage`, `Replace`, `AddMasked`, `Draw`,
+/// `Remove`, `GetIcon`.  So `GetIcon` is slot 3+8 = 11.
+#[repr(C)]
+struct IImageListVtbl {
+    query_interface: unsafe extern "system" fn(*mut c_void, *const windows_sys::core::GUID, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut c_void) -> u32,
+    release: unsafe extern "system" fn(*mut c_void) -> u32,
+    // Add(HBITMAP hbmImage, HBITMAP hbmMask, int *pi)
+    add: unsafe extern "system" fn(*mut c_void, *mut c_void, *mut c_void, *mut i32) -> i32,
+    // ReplaceIcon(int i, HICON hicon, int *pi)
+    replace_icon: unsafe extern "system" fn(*mut c_void, i32, HICON, *mut i32) -> i32,
+    // SetOverlayImage(int iImage, int iOverlay)
+    set_overlay_image: unsafe extern "system" fn(*mut c_void, i32, i32) -> i32,
+    // Replace(int i, HBITMAP hbmImage, HBITMAP hbmMask)
+    replace: unsafe extern "system" fn(*mut c_void, i32, *mut c_void, *mut c_void) -> i32,
+    // AddMasked(HBITMAP hbmImage, COLORREF crMask, int *pi)
+    add_masked: unsafe extern "system" fn(*mut c_void, *mut c_void, u32, *mut i32) -> i32,
+    // Draw(IMAGELISTDRAWPARAMS *pimldp)
+    draw: unsafe extern "system" fn(*mut c_void, *mut c_void) -> i32,
+    // Remove(int i)
+    remove: unsafe extern "system" fn(*mut c_void, i32) -> i32,
+    // GetIcon(int i, uint flags, HICON *picon)
+    get_icon: unsafe extern "system" fn(*mut c_void, i32, u32, *mut HICON) -> i32,
+}
+
+/// `IID_IImageList` — `{46EB5926-582E-4017-9FDF-E8998DAA0950}`.
+const IID_IIMAGE_LIST: windows_sys::core::GUID = windows_sys::core::GUID {
+    data1: 0x46EB5926,
+    data2: 0x582E,
+    data3: 0x4017,
+    data4: [0x9F, 0xDF, 0xE8, 0x99, 0x8D, 0xAA, 0x09, 0x50],
+};
+
+/// Render icon `index` from the system image list at `size` px (32, 48 or 256).
+pub fn system_icon_rgba(index: i32, size: u32) -> Option<Vec<u8>> {
+    if index < 0 {
+        return None;
+    }
+    let _com = ComGuard::new();
+    // SHIL_LARGE = 0 (32 px), SHIL_EXTRALARGE = 2 (48 px), SHIL_JUMBO = 4 (256 px)
+    let shil = match size {
+        0..=32 => 0u32,
+        33..=48 => 2u32,
+        _ => 4u32,
+    };
+    let mut list: *mut c_void = std::ptr::null_mut();
+    let hr = unsafe {
+        windows_sys::Win32::UI::Shell::SHGetImageList(
+            shil as i32,
+            &IID_IIMAGE_LIST,
+            &mut list,
+        )
+    };
+    if hr < 0 || list.is_null() {
+        return None;
+    }
+    let vtbl = unsafe { *(list as *mut *const IImageListVtbl) };
+    if vtbl.is_null() {
+        return None;
+    }
+    let mut hicon: HICON = std::ptr::null_mut();
+    let get_icon = unsafe { (*vtbl).get_icon };
+    let rc = unsafe { get_icon(list, index, 0x00000001 /* ILD_TRANSPARENT */, &mut hicon) };
+    if rc < 0 || hicon.is_null() {
+        return None;
+    }
+    let px = match size {
+        0..=32 => 32,
+        33..=48 => 48,
+        _ => 256,
+    };
+    let rgba = unsafe { hicon_to_rgba(hicon, px, px) };
+    unsafe {
+        windows_sys::Win32::UI::WindowsAndMessaging::DestroyIcon(hicon);
+        let release = (*vtbl).release;
+        release(list);
+    }
+    rgba
 }
