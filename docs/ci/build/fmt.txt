@@ -1,16 +1,23 @@
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:13:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:11:
+ use std::path::{Path, PathBuf};
+ use windows_sys::Win32::Foundation::INVALID_HANDLE_VALUE;
  use windows_sys::Win32::Storage::FileSystem::{
-     FindClose, FindFirstFileW, FindNextFileW, GetDiskFreeSpaceExW, GetDriveTypeW,
-     GetFileAttributesW, GetLogicalDrives, GetVolumeInformationW, MoveFileExW, SetFileAttributesW,
-[31m-    WIN32_FIND_DATAW, FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_READONLY,
-[0m[31m-    FILE_ATTRIBUTE_SYSTEM, MOVEFILE_COPY_ALLOWED, MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH,
+[31m-    FindClose, FindFirstFileExW, FindNextFileW, GetDiskFreeSpaceExW, GetDriveTypeW,
+[0m[31m-    GetFileAttributesW, GetLogicalDrives, GetVolumeInformationW, MoveFileExW, SetFileAttributesW,
+[0m[31m-    WIN32_FIND_DATAW, FILE_ATTRIBUTE_COMPRESSED, FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_HIDDEN,
+[0m[31m-    FILE_ATTRIBUTE_READONLY, FILE_ATTRIBUTE_REPARSE_POINT, FILE_ATTRIBUTE_SYSTEM,
+[0m[31m-    FIND_FIRST_EX_LARGE_FETCH, FindExInfoBasic, FindExSearchNameMatch,
+[0m[31m-    MOVEFILE_COPY_ALLOWED, MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH,
+[0m[32m+    FindClose, FindExInfoBasic, FindExSearchNameMatch, FindFirstFileExW, FindNextFileW,
+[0m[32m+    GetDiskFreeSpaceExW, GetDriveTypeW, GetFileAttributesW, GetLogicalDrives,
+[0m[32m+    GetVolumeInformationW, MoveFileExW, SetFileAttributesW, FILE_ATTRIBUTE_COMPRESSED,
 [0m[32m+    FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_READONLY,
-[0m[32m+    FILE_ATTRIBUTE_SYSTEM, MOVEFILE_COPY_ALLOWED, MOVEFILE_REPLACE_EXISTING,
-[0m[32m+    MOVEFILE_WRITE_THROUGH, WIN32_FIND_DATAW,
+[0m[32m+    FILE_ATTRIBUTE_REPARSE_POINT, FILE_ATTRIBUTE_SYSTEM, FIND_FIRST_EX_LARGE_FETCH,
+[0m[32m+    MOVEFILE_COPY_ALLOWED, MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH, WIN32_FIND_DATAW,
 [0m };
  
  #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:117:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:119:
  
          out.push(VolumeInfo {
              root,
@@ -29,20 +36,99 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:117:
 [0m             kind: Some(kind),
              total_bytes: total,
              free_bytes: free,
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:270:
-                 .cmp(&extension(&b.name).to_lowercase())
-                 .then_with(|| a.name.to_lowercase().cmp(&b.name.to_lowercase())),
-         };
-[31m-        if ascending { inner } else { inner.reverse() }
-[0m[32m+        if ascending {
-[0m[32m+            inner
-[0m[32m+        } else {
-[0m[32m+            inner.reverse()
-[0m[32m+        }
-[0m     });
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:311:
+             let lname: Vec<String> = entries.iter().map(|e| e.name.to_lowercase()).collect();
+             order.sort_unstable_by(|&a, &b| {
+                 let (a, b) = (a as usize, b as usize);
+[31m-                entries[b]
+[0m[31m-                    .is_dir
+[0m[31m-                    .cmp(&entries[a].is_dir)
+[0m[31m-                    .then_with(|| if ascending { lname[a].cmp(&lname[b]) } else { lname[b].cmp(&lname[a]) })
+[0m[32m+                entries[b].is_dir.cmp(&entries[a].is_dir).then_with(|| {
+[0m[32m+                    if ascending {
+[0m[32m+                        lname[a].cmp(&lname[b])
+[0m[32m+                    } else {
+[0m[32m+                        lname[b].cmp(&lname[a])
+[0m[32m+                    }
+[0m[32m+                })
+[0m             });
+         }
+         SortKey::Type => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:322:
+             let lfull: Vec<String> = entries.iter().map(|e| e.name.to_lowercase()).collect();
+             order.sort_unstable_by(|&a, &b| {
+                 let (a, b) = (a as usize, b as usize);
+[31m-                let by_type = if ascending { lname[a].cmp(lname[b]) } else { lname[b].cmp(lname[a]) };
+[0m[31m-                let by_name = if ascending { lfull[a].cmp(&lfull[b]) } else { lfull[b].cmp(&lfull[a]) };
+[0m[31m-                entries[b].is_dir.cmp(&entries[a].is_dir).then(by_type).then(by_name)
+[0m[32m+                let by_type = if ascending {
+[0m[32m+                    lname[a].cmp(lname[b])
+[0m[32m+                } else {
+[0m[32m+                    lname[b].cmp(lname[a])
+[0m[32m+                };
+[0m[32m+                let by_name = if ascending {
+[0m[32m+                    lfull[a].cmp(&lfull[b])
+[0m[32m+                } else {
+[0m[32m+                    lfull[b].cmp(&lfull[a])
+[0m[32m+                };
+[0m[32m+                entries[b]
+[0m[32m+                    .is_dir
+[0m[32m+                    .cmp(&entries[a].is_dir)
+[0m[32m+                    .then(by_type)
+[0m[32m+                    .then(by_name)
+[0m             });
+         }
+         SortKey::Size => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:331:
+             order.sort_unstable_by(|&a, &b| {
+                 let (a, b) = (a as usize, b as usize);
+[31m-                let by = if ascending { entries[a].size.cmp(&entries[b].size) } else { entries[b].size.cmp(&entries[a].size) };
+[0m[32m+                let by = if ascending {
+[0m[32m+                    entries[a].size.cmp(&entries[b].size)
+[0m[32m+                } else {
+[0m[32m+                    entries[b].size.cmp(&entries[a].size)
+[0m[32m+                };
+[0m                 entries[b].is_dir.cmp(&entries[a].is_dir).then(by)
+             });
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:337:
+         SortKey::Modified => {
+             order.sort_unstable_by(|&a, &b| {
+                 let (a, b) = (a as usize, b as usize);
+[31m-                let by = if ascending { entries[a].modified.cmp(&entries[b].modified) } else { entries[b].modified.cmp(&entries[a].modified) };
+[0m[32m+                let by = if ascending {
+[0m[32m+                    entries[a].modified.cmp(&entries[b].modified)
+[0m[32m+                } else {
+[0m[32m+                    entries[b].modified.cmp(&entries[a].modified)
+[0m[32m+                };
+[0m                 entries[b].is_dir.cmp(&entries[a].is_dir).then(by)
+             });
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:349:
+         moved.push(Some(std::mem::take(e)));
+     }
+     for (slot, &src) in entries.iter_mut().zip(order.iter()) {
+[31m-        *slot = moved[src as usize].take().expect("permutation is a bijection");
+[0m[32m+        *slot = moved[src as usize]
+[0m[32m+            .take()
+[0m[32m+            .expect("permutation is a bijection");
+[0m     }
  }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:323:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:380:
+     let b = bytes as f64;
+     fn trimmed(v: f64, unit: &str, decimals: usize) -> String {
+         let s = format!("{v:.decimals$}");
+[31m-        let s = if s.contains('.') { s.trim_end_matches('0').trim_end_matches('.').to_string() } else { s };
+[0m[32m+        let s = if s.contains('.') {
+[0m[32m+            s.trim_end_matches('0').trim_end_matches('.').to_string()
+[0m[32m+        } else {
+[0m[32m+            s
+[0m[32m+        };
+[0m         format!("{s} {unit}")
+     }
+     if b < KB {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:409:
      if replace {
          flags |= MOVEFILE_REPLACE_EXISTING;
      }
@@ -53,7 +139,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:323:
 [0m }
  
  /// Copy a file or a whole directory tree, like Explorer's Ctrl+C / Ctrl+V.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:349:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:435:
          let f = to_wide(from);
          let t = to_wide(to);
          let fail_if_exists = if overwrite { 0 } else { 1 };
@@ -71,7 +157,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:349:
 [0m         Ok(1)
      }
  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:364:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:450:
      if !path.exists() {
          return path.to_path_buf();
      }
@@ -83,7 +169,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:364:
 [0m     let ext = path.extension().map(|s| s.to_string_lossy().to_string());
      let parent = path.parent().map(|p| p.to_path_buf()).unwrap_or_default();
      for n in 2..10_000 {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:396:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:521:
      if cur == u32::MAX {
          return Err(WinError::from_last_error("GetFileAttributesW"));
      }
@@ -161,9 +247,12 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\handle.rs:1:
 [0m use windows_sys::Win32::Foundation::{CloseHandle, HANDLE, INVALID_HANDLE_VALUE};
  
  /// An owned kernel handle.  Dropping it calls `CloseHandle` exactly once.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:6:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:4:
+ //! renders the icon into a 32-bit top-down DIB with GDI and reads the pixels
+ //! back, handling the mask for legacy icons that have no alpha channel.
  
- use windows_sys::Win32::Foundation::HWND;
+[32m+use std::ffi::c_void;
+[0m use windows_sys::Win32::Foundation::HWND;
  use windows_sys::Win32::Graphics::Gdi::{
 [31m-    CreateCompatibleDC, CreateCompatibleBitmap, CreateDIBSection, DeleteDC, DeleteObject, GetDC,
 [0m[32m+    CreateCompatibleBitmap, CreateCompatibleDC, CreateDIBSection, DeleteDC, DeleteObject, GetDC,
@@ -171,14 +260,15 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:6:
      HGDIOBJ,
  };
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:13:
-[31m-use windows_sys::Win32::UI::WindowsAndMessaging::{DrawIconEx, GetIconInfo, ICONINFO, DI_MASK, DI_NORMAL};
+[31m-use std::ffi::c_void;
+[0m[31m-use windows_sys::Win32::UI::WindowsAndMessaging::{DrawIconEx, GetIconInfo, HICON, ICONINFO, DI_MASK, DI_NORMAL};
 [0m[32m+use windows_sys::Win32::UI::WindowsAndMessaging::{
-[0m[32m+    DrawIconEx, GetIconInfo, DI_MASK, DI_NORMAL, ICONINFO,
+[0m[32m+    DrawIconEx, GetIconInfo, DI_MASK, DI_NORMAL, HICON, ICONINFO,
 [0m[32m+};
 [0m 
  /// Convert an icon into tightly packed RGBA8 pixels (row-major, top-down).
  ///
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:18:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:19:
  ///
  /// # Safety
  /// `hicon` must be a valid icon handle that stays alive for the call.
@@ -191,7 +281,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:18:
 [0m     if hicon.is_null() || w == 0 || h == 0 {
          return None;
      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:49:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:50:
          };
  
          let mut bits: *mut std::ffi::c_void = std::ptr::null_mut();
@@ -207,7 +297,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:49:
 [0m         if dib.is_null() || bits.is_null() {
              DeleteDC(mem);
              ReleaseDC(std::ptr::null_mut() as HWND, screen);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:62:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:63:
          std::ptr::write_bytes(bits as *mut u8, 0, (w * h * 4) as usize);
  
          // Draw the icon (DI_NORMAL blends color+mask with alpha).
@@ -240,6 +330,65 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:62:
 [0m         }
  
          let mut rgba = vec![0u8; (w * h * 4) as usize];
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:132:
+     unsafe { CreateCompatibleBitmap(dc, 1, 1) }
+ }
+ 
+[31m-
+[0m // ---------------------------------------------------------------------------
+ // System image list (large icons: 32 / 48 / 256 px)
+ // ---------------------------------------------------------------------------
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:157:
+         };
+         // S_OK (0) and S_FALSE (1) both mean "usable"; RPC_E_CHANGED_MODE
+         // (0x80010106) means another apartment already exists — also usable.
+[31m-        Self { should_uninit: hr == 0 || hr == 1 }
+[0m[32m+        Self {
+[0m[32m+            should_uninit: hr == 0 || hr == 1,
+[0m[32m+        }
+[0m     }
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:183:
+ /// `Remove`, `GetIcon`.  So `GetIcon` is slot 3+8 = 11.
+ #[repr(C)]
+ struct IImageListVtbl {
+[31m-    query_interface: unsafe extern "system" fn(*mut c_void, *const windows_sys::core::GUID, *mut *mut c_void) -> i32,
+[0m[32m+    query_interface: unsafe extern "system" fn(
+[0m[32m+        *mut c_void,
+[0m[32m+        *const windows_sys::core::GUID,
+[0m[32m+        *mut *mut c_void,
+[0m[32m+    ) -> i32,
+[0m     add_ref: unsafe extern "system" fn(*mut c_void) -> u32,
+     release: unsafe extern "system" fn(*mut c_void) -> u32,
+     // Add(HBITMAP hbmImage, HBITMAP hbmMask, int *pi)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:226:
+     };
+     let mut list: *mut c_void = std::ptr::null_mut();
+     let hr = unsafe {
+[31m-        windows_sys::Win32::UI::Shell::SHGetImageList(
+[0m[31m-            shil as i32,
+[0m[31m-            &IID_IIMAGE_LIST,
+[0m[31m-            &mut list,
+[0m[31m-        )
+[0m[32m+        windows_sys::Win32::UI::Shell::SHGetImageList(shil as i32, &IID_IIMAGE_LIST, &mut list)
+[0m     };
+     if hr < 0 || list.is_null() {
+         return None;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:241:
+     }
+     let mut hicon: HICON = std::ptr::null_mut();
+     let get_icon = unsafe { (*vtbl).get_icon };
+[31m-    let rc = unsafe { get_icon(list, index, 0x00000001 /* ILD_TRANSPARENT */, &mut hicon) };
+[0m[32m+    let rc = unsafe {
+[0m[32m+        get_icon(
+[0m[32m+            list, index, 0x00000001, /* ILD_TRANSPARENT */
+[0m[32m+            &mut hicon,
+[0m[32m+        )
+[0m[32m+    };
+[0m     if rc < 0 || hicon.is_null() {
+         return None;
+     }
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:2:
  //! "Network" and the Resource Monitor's "Network" tab.
  
@@ -1271,7 +1420,14 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:7:
 [0m[32m+use windows_sys::Win32::Storage::FileSystem::{
 [0m[32m+    GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO,
 [0m[32m+};
-[0m use windows_sys::Win32::UI::Shell::{
+[0m use windows_sys::Win32::System::DataExchange::{
+[31m-    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData, CF_UNICODETEXT,
+[0m[32m+    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData,
+[0m[32m+    CF_UNICODETEXT,
+[0m };
+ use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
+ use windows_sys::Win32::UI::Shell::{
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:16:
      SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
 [31m-    SHFILEINFOW, SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
 [0m[31m-    FOF_NOERRORUI, FOF_WANTNUKEWARNING, SEE_MASK_INVOKEIDLIST, SEE_MASK_NOCLOSEPROCESS,
@@ -1282,7 +1438,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:7:
 [0m     SHGFI_USEFILEATTRIBUTES,
  };
  use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:102:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:106:
          unsafe {
              windows_sys::Win32::System::Com::CoTaskMemFree(psz as *const c_void);
          }
@@ -1295,7 +1451,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:102:
 [0m     }
  
      /// Everything Explorer lists in its sidebar tree.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:136:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:140:
          )
      };
      // ShellExecuteW returns a value > 32 on success.
@@ -1311,7 +1467,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:136:
 [0m }
  
  /// Open with an explicit verb: "edit", "runas" (UAC elevation), "properties".
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:153:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:157:
              SW_SHOWNORMAL,
          )
      };
@@ -1327,7 +1483,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:153:
 [0m }
  
  /// Show the shell's "Properties" dialog for a path.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:172:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:176:
  /// Launch an executable with command-line arguments, waiting for the handle.
  ///
  /// Returns the process id when the shell reports one.
@@ -1340,7 +1496,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:172:
 [0m     let mut info: SHELLEXECUTEINFOW = unsafe { std::mem::zeroed() };
      info.cbSize = std::mem::size_of::<SHELLEXECUTEINFOW>() as u32;
      info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:192:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:196:
          let pid = unsafe { windows_sys::Win32::System::Threading::GetProcessId(info.hProcess) };
          // wrap in an owned handle so it closes when scope ends
          let _owned = Handle::new(info.hProcess);
@@ -1353,7 +1509,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:192:
 [0m     };
      Ok(pid)
  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:216:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:220:
      op.fFlags = (FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_WANTNUKEWARNING) as u16;
      let rc = unsafe { SHFileOperationW(&mut op) };
      if rc != 0 {
@@ -1364,41 +1520,31 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:216:
 [0m     }
      if op.fAnyOperationsAborted != 0 {
          return Err(WinError::Other("delete was cancelled".into()));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:251:
- pub fn file_info(path: impl AsRef<Path>, want_icon: bool) -> ShellItemInfo {
-     let w = to_wide(path.as_ref());
-     let mut info: SHFILEINFOW = unsafe { std::mem::zeroed() };
-[31m-    let flags = SHGFI_DISPLAYNAME | SHGFI_TYPENAME | if want_icon { SHGFI_ICON | SHGFI_SMALLICON } else { 0 };
-[0m[32m+    let flags = SHGFI_DISPLAYNAME
-[0m[32m+        | SHGFI_TYPENAME
-[0m[32m+        | if want_icon {
-[0m[32m+            SHGFI_ICON | SHGFI_SMALLICON
-[0m[32m+        } else {
-[0m[32m+            0
-[0m[32m+        };
-[0m     let ok = unsafe {
-         SHGetFileInfoW(
-             w.as_ptr(),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:258:
-[31m-            if want_icon { 0x80 /* FILE_ATTRIBUTE_NORMAL */ } else { 0 },
-[0m[32m+            if want_icon {
-[0m[32m+                0x80 /* FILE_ATTRIBUTE_NORMAL */
-[0m[32m+            } else {
-[0m[32m+                0
-[0m[32m+            },
-[0m             &mut info,
-             std::mem::size_of::<SHFILEINFOW>() as u32,
-[31m-            flags | if want_icon { SHGFI_USEFILEATTRIBUTES } else { 0 },
-[0m[32m+            flags
-[0m[32m+                | if want_icon {
-[0m[32m+                    SHGFI_USEFILEATTRIBUTES
-[0m[32m+                } else {
-[0m[32m+                    0
-[0m[32m+                },
-[0m         )
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:361:
+         )
      };
      if ok == 0 {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:307:
+[31m-        return if is_dir { "File folder".into() } else { "File".into() };
+[0m[32m+        return if is_dir {
+[0m[32m+            "File folder".into()
+[0m[32m+        } else {
+[0m[32m+            "File".into()
+[0m[32m+        };
+[0m     }
+     from_wide(&info.szTypeName, info.szTypeName.len())
+ }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:381:
+                 while *ptr.add(len) != 0 {
+                     len += 1;
+                 }
+[31m-                out = Some(String::from_utf16_lossy(std::slice::from_raw_parts(ptr, len)));
+[0m[32m+                out = Some(String::from_utf16_lossy(std::slice::from_raw_parts(
+[0m[32m+                    ptr, len,
+[0m[32m+                )));
+[0m                 GlobalUnlock(handle);
+             }
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:446:
      // Fixed block: gives us the numeric version.
      let mut fixed_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
      let mut fixed_len = 0u32;
@@ -1414,7 +1560,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:307:
 [0m         && fixed_len as usize >= std::mem::size_of::<VS_FIXEDFILEINFO>()
      {
          let ffi = unsafe { &*(fixed_ptr as *const VS_FIXEDFILEINFO) };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:319:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:458:
      // Strings live in `\StringFileInfo\<langcodepage>\<name>`.
      let mut trans_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
      let mut trans_len = 0u32;
@@ -1435,7 +1581,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:319:
 [0m         let lang = words[0];
          let cp = words[1];
          for (key, slot) in [
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:333:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:472:
              let sub = format!("\\StringFileInfo\\{lang:04x}{cp:04x}\\{key}");
              let mut p: *mut std::ffi::c_void = std::ptr::null_mut();
              let mut len = 0u32;
@@ -1453,7 +1599,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:333:
 [0m             }
          }
      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:369:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:508:
              SW_SHOWNORMAL,
          )
      };
@@ -1755,35 +1901,22 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:168:
 [0m         match rid {
              0x0000 => "Untrusted",
              0x1000 => "Low",
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:37:
-             ViewMode::SmallIcons => "Small icons",
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:49:
+             ViewMode::Content => "Content",
          }
      }
-[31m-    const ALL: [ViewMode; 4] = [ViewMode::Details, ViewMode::List, ViewMode::Tiles, ViewMode::SmallIcons];
+[31m-    const ALL: [ViewMode; 4] = [ViewMode::Details, ViewMode::List, ViewMode::Tiles, ViewMode::Content];
 [0m[32m+    const ALL: [ViewMode; 4] = [
 [0m[32m+        ViewMode::Details,
 [0m[32m+        ViewMode::List,
 [0m[32m+        ViewMode::Tiles,
-[0m[32m+        ViewMode::SmallIcons,
+[0m[32m+        ViewMode::Content,
 [0m[32m+    ];
 [0m }
  
- #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:164:
-         Some(n) => n.to_string_lossy().to_string(),
-         None => {
-             let s = p.to_string_lossy().to_string();
-[31m-            if s.is_empty() { "This PC".into() } else { s }
-[0m[32m+            if s.is_empty() {
-[0m[32m+                "This PC".into()
-[0m[32m+            } else {
-[0m[32m+                s
-[0m[32m+            }
-[0m         }
-     }
- }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:215:
-         cc.egui_ctx.set_visuals(egui::Visuals::dark());
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:317:
+         style(&cc.egui_ctx);
  
          let persisted = load_state();
 [31m-        let default_start = KnownFolder::Profile.path().unwrap_or_else(|| PathBuf::from("C:\\"));
@@ -1793,7 +1926,20 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:215:
 [0m         let tabs: Vec<Tab> = if persisted.tabs.is_empty() {
              vec![Tab::new(default_start)]
          } else {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:283:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:371:
+             job_rx,
+             job_tx,
+             preview_open: persisted.preview_open,
+[31m-            sidebar_width: if persisted.sidebar_width > 0.0 { persisted.sidebar_width } else { 230.0 },
+[0m[32m+            sidebar_width: if persisted.sidebar_width > 0.0 {
+[0m[32m+                persisted.sidebar_width
+[0m[32m+            } else {
+[0m[32m+                230.0
+[0m[32m+            },
+[0m             search_path: PathBuf::new(),
+             search_results: None,
+             search_rx,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:410:
          let tx = self.tx.clone();
          std::thread::spawn(move || {
              let result = disk::read_dir(&path, show_hidden).map_err(|e| e.to_string());
@@ -1804,10 +1950,12 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:283:
 [0m[32m+                result,
 [0m[32m+            });
 [0m         });
-     }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:290:
-     fn navigate(&mut self, path: PathBuf) {
+         // Folder sizes are only meaningful for single-folder views; ask the
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:436:
+             self.select_in_parent(path);
+             return;
+         }
 [31m-        let prefs = self.folders.get(&path.to_string_lossy().to_string()).cloned();
 [0m[32m+        let prefs = self
 [0m[32m+            .folders
@@ -1816,232 +1964,508 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:290:
 [0m         {
              let tab = self.current_mut();
              tab.history.truncate(tab.history_pos + 1);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:386:
-         }
-     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:568:
+     // ------------------------------------------------------------------
  
-[31m-    fn icon_for(&mut self, ctx: &egui::Context, key: &str, fetch: impl FnOnce() -> Option<Vec<u8>>) -> Option<egui::TextureId> {
+     /// Load (once) and draw an icon for `entry`. `size` is 16, 32 or 48 px.
+[31m-    fn icon_for(&mut self, ctx: &egui::Context, entry: &DirEntry, size: u32) -> Option<egui::TextureId> {
 [0m[32m+    fn icon_for(
 [0m[32m+        &mut self,
 [0m[32m+        ctx: &egui::Context,
-[0m[32m+        key: &str,
-[0m[32m+        fetch: impl FnOnce() -> Option<Vec<u8>>,
+[0m[32m+        entry: &DirEntry,
+[0m[32m+        size: u32,
 [0m[32m+    ) -> Option<egui::TextureId> {
-[0m         if let Some(entry) = self.icons.get(key) {
-             return entry.texture.as_ref().map(|t| t.id());
-         }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:407:
- 
-     fn top_bar(&mut self, ui: &mut egui::Ui) {
-         ui.horizontal(|ui| {
-[31m-            if ui.add_enabled(self.current().can_back(), egui::Button::new("◀")).on_hover_text("Back").clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(self.current().can_back(), egui::Button::new("◀"))
-[0m[32m+                .on_hover_text("Back")
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.go_back();
-             }
-[31m-            if ui.add_enabled(self.current().can_forward(), egui::Button::new("▶")).on_hover_text("Forward").clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(self.current().can_forward(), egui::Button::new("▶"))
-[0m[32m+                .on_hover_text("Forward")
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.go_forward();
-             }
-             if ui.button("▲").on_hover_text("Up one level").clicked() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:443:
-                 }
+[0m         let key = if entry.is_dir {
+             format!("dir:{size}")
+         } else if entry.ext.is_empty() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:593:
              } else {
-                 let mut target: Option<PathBuf> = None;
-[31m-                egui::ScrollArea::horizontal().id_salt("breadcrumb").show(ui, |ui| {
-[0m[31m-                    ui.horizontal(|ui| {
-[0m[31m-                        let path = self.current().path.clone();
-[0m[31m-                        let mut acc = PathBuf::new();
-[0m[31m-                        ui.label(RichText::new("🗀").size(15.0));
-[0m[31m-                        for (idx, comp) in path.components().enumerate() {
-[0m[31m-                            acc.push(comp);
-[0m[31m-                            let label = comp.as_os_str().to_string_lossy().to_string();
-[0m[31m-                            let text = if label.is_empty() {
-[0m[31m-                                path.display().to_string()
-[0m[31m-                            } else if idx == 0 {
-[0m[31m-                                // Drive letters already read well on their own.
-[0m[31m-                                label
-[0m[31m-                            } else {
-[0m[31m-                                label
-[0m[31m-                            };
-[0m[31m-                            if ui.link(text).clicked() {
-[0m[31m-                                target = Some(acc.clone());
-[0m[32m+                egui::ScrollArea::horizontal()
-[0m[32m+                    .id_salt("breadcrumb")
-[0m[32m+                    .show(ui, |ui| {
-[0m[32m+                        ui.horizontal(|ui| {
-[0m[32m+                            let path = self.current().path.clone();
-[0m[32m+                            let mut acc = PathBuf::new();
-[0m[32m+                            ui.label(RichText::new("🗀").size(15.0));
-[0m[32m+                            for (idx, comp) in path.components().enumerate() {
-[0m[32m+                                acc.push(comp);
-[0m[32m+                                let label = comp.as_os_str().to_string_lossy().to_string();
-[0m[32m+                                let text = if label.is_empty() {
-[0m[32m+                                    path.display().to_string()
-[0m[32m+                                } else if idx == 0 {
-[0m[32m+                                    // Drive letters already read well on their own.
-[0m[32m+                                    label
-[0m[32m+                                } else {
-[0m[32m+                                    label
-[0m[32m+                                };
-[0m[32m+                                if ui.link(text).clicked() {
-[0m[32m+                                    target = Some(acc.clone());
-[0m[32m+                                }
-[0m[32m+                                ui.label("›");
-[0m                             }
-[31m-                            ui.label("›");
-[0m[31m-                        }
-[0m[31m-                        if ui.small_button("✎").on_hover_text("Type a path").clicked() {
-[0m[31m-                            let p = self.current().path.display().to_string();
-[0m[31m-                            self.current_mut().address_edit = Some(p);
-[0m[31m-                        }
-[0m[32m+                            if ui.small_button("✎").on_hover_text("Type a path").clicked() {
-[0m[32m+                                let p = self.current().path.display().to_string();
-[0m[32m+                                self.current_mut().address_edit = Some(p);
-[0m[32m+                            }
-[0m[32m+                        });
-[0m                     });
-[31m-                });
-[0m                 if let Some(t) = target {
-                     self.navigate(t);
-                 }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:501:
-         for folder in KnownFolder::sidebar() {
-             let label = folder.label();
-             let selected = self.nav_selected == Some(*folder);
-[31m-            if ui.selectable_label(selected, format!("  {label}")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .selectable_label(selected, format!("  {label}"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.nav_selected = Some(*folder);
-                 if let Some(p) = folder.path() {
-                     nav = Some(p);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:516:
-         for drive in &self.drives {
-             let p = PathBuf::from(&drive.root);
-             let name = if drive.label.is_empty() {
-[31m-                format!("{} {}", drive.root.trim_end_matches('\\'), drive.kind.map(|k| k.label()).unwrap_or(""))
-[0m[32m+                format!(
-[0m[32m+                    "{} {}",
-[0m[32m+                    drive.root.trim_end_matches('\\'),
-[0m[32m+                    drive.kind.map(|k| k.label()).unwrap_or("")
-[0m[32m+                )
-[0m             } else {
-                 format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
+                 entry.ext.clone()
              };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:525:
-             } else {
-                 0.0
-             };
-[31m-            let resp = ui.add(egui::Button::new(RichText::new(format!("  💽 {name}")).size(13.0)).frame(false));
-[0m[32m+            let resp = ui.add(
-[0m[32m+                egui::Button::new(RichText::new(format!("  💽 {name}")).size(13.0)).frame(false),
+[31m-            self.type_names.entry(type_key).or_insert(info.type_name.clone());
+[0m[32m+            self.type_names
+[0m[32m+                .entry(type_key)
+[0m[32m+                .or_insert(info.type_name.clone());
+[0m         }
+         let texture = info.icon_rgba.and_then(|rgba| {
+             let expected = (px * px * 4) as usize;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:600:
+             if rgba.len() < expected {
+                 return None;
+             }
+[31m-            let image = egui::ColorImage::from_rgba_unmultiplied([px as usize, px as usize], &rgba[..expected]);
+[0m[32m+            let image = egui::ColorImage::from_rgba_unmultiplied(
+[0m[32m+                [px as usize, px as usize],
+[0m[32m+                &rgba[..expected],
 [0m[32m+            );
-[0m             ui.add(
-                 egui::ProgressBar::new(1.0 - frac)
-                     .desired_height(4.0)
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:548:
-                     "{}  ·  {}  ·  {}",
-                     who,
-                     self.user.integrity,
-[31m-                    if self.user.elevated { "admin" } else { "standard" }
-[0m[32m+                    if self.user.elevated {
-[0m[32m+                        "admin"
-[0m[32m+                    } else {
-[0m[32m+                        "standard"
-[0m[32m+                    }
-[0m                 ))
-                 .small()
-                 .weak(),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:555:
-             );
-             if !self.user.elevated {
-[31m-                ui.label(RichText::new("Tip: run elevated for protected folders").small().weak());
-[0m[32m+                ui.label(
-[0m[32m+                    RichText::new("Tip: run elevated for protected folders")
-[0m[32m+                        .small()
-[0m[32m+                        .weak(),
-[0m[32m+                );
-[0m             }
+[0m             Some(ctx.load_texture(key.clone(), image, egui::TextureOptions::LINEAR))
          });
+         let id = texture.as_ref().map(|t| t.id());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:609:
+     }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:588:
+     fn type_text(&mut self, entry: &DirEntry) -> String {
+[31m-        let key = if entry.is_dir { "dir".to_string() } else { entry.ext.clone() };
+[0m[32m+        let key = if entry.is_dir {
+[0m[32m+            "dir".to_string()
+[0m[32m+        } else {
+[0m[32m+            entry.ext.clone()
+[0m[32m+        };
+[0m         if let Some(t) = self.type_names.get(&key) {
+             return t.clone();
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:635:
+ /// fonts when the system font cannot be read.
+ fn install_fonts(ctx: &egui::Context) {
+     let mut fonts = egui::FontDefinitions::default();
+[31m-    let candidates = ["C:\\Windows\\Fonts\\segoeui.ttf", "C:\\Windows\\Fonts\\SegoeUI.ttf"];
+[0m[32m+    let candidates = [
+[0m[32m+        "C:\\Windows\\Fonts\\segoeui.ttf",
+[0m[32m+        "C:\\Windows\\Fonts\\SegoeUI.ttf",
+[0m[32m+    ];
+[0m     for path in candidates {
+         if let Ok(bytes) = std::fs::read(path) {
+[31m-            fonts.font_data.insert("segoe".to_string(), egui::FontData::from_owned(bytes));
+[0m             fonts
+[32m+                .font_data
+[0m[32m+                .insert("segoe".to_string(), egui::FontData::from_owned(bytes));
+[0m[32m+            fonts
+[0m                 .families
+                 .entry(egui::FontFamily::Proportional)
+                 .or_default()
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:730:
                  }
-                 let has_sel = self.current().selected.is_some();
-                 let has_clip = self.clipboard.is_some();
-[31m-                if ui.add_enabled(has_sel, egui::Button::new("Copy")).on_hover_text("Ctrl+C").clicked() {
-[0m[32m+                if ui
-[0m[32m+                    .add_enabled(has_sel, egui::Button::new("Copy"))
-[0m[32m+                    .on_hover_text("Ctrl+C")
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     if let Some(sel) = self.current().selected.clone() {
-[31m-                        self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: false });
-[0m[32m+                        self.clipboard = Some(FileClipboard {
-[0m[32m+                            paths: vec![sel.clone()],
-[0m[32m+                            cut: false,
-[0m[32m+                        });
-[0m                         self.status = format!("Copied: {}", sel.display());
-                     }
+             }
+             Command::Copy => {
+[31m-                self.clipboard = Some(FileClipboard { paths: vec![path.clone()], cut: false });
+[0m[32m+                self.clipboard = Some(FileClipboard {
+[0m[32m+                    paths: vec![path.clone()],
+[0m[32m+                    cut: false,
+[0m[32m+                });
+[0m                 self.status = format!("Copied: {}", file_name_of(&path));
+             }
+             Command::Cut => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:737:
+[31m-                self.clipboard = Some(FileClipboard { paths: vec![path.clone()], cut: true });
+[0m[32m+                self.clipboard = Some(FileClipboard {
+[0m[32m+                    paths: vec![path.clone()],
+[0m[32m+                    cut: true,
+[0m[32m+                });
+[0m                 self.status = format!("Cut: {}", file_name_of(&path));
+             }
+             Command::Paste => self.paste_clipboard(),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:810:
+             Command::InvertSelection => self.run(PathBuf::new(), cmd),
+             Command::Refresh => self.refresh(),
+             Command::Copy => {
+[31m-                self.clipboard = Some(FileClipboard { paths: sel.clone(), cut: false });
+[0m[32m+                self.clipboard = Some(FileClipboard {
+[0m[32m+                    paths: sel.clone(),
+[0m[32m+                    cut: false,
+[0m[32m+                });
+[0m                 self.status = format!("Copied {} item(s)", sel.len());
+             }
+             Command::Cut => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:817:
+[31m-                self.clipboard = Some(FileClipboard { paths: sel.clone(), cut: true });
+[0m[32m+                self.clipboard = Some(FileClipboard {
+[0m[32m+                    paths: sel.clone(),
+[0m[32m+                    cut: true,
+[0m[32m+                });
+[0m                 self.status = format!("Cut {} item(s)", sel.len());
+             }
+             Command::Delete => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:848:
+         }
+         let mut jobs: Vec<(PathBuf, PathBuf)> = Vec::new();
+         for src in &clip.paths {
+[31m-            let Some(name) = src.file_name() else { continue };
+[0m[32m+            let Some(name) = src.file_name() else {
+[0m[32m+                continue;
+[0m[32m+            };
+[0m             let mut dest = dest_dir.join(name);
+             if dest.exists() {
+                 dest = disk::unique_destination(&dest);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:920:
+                         Ok(mut entries) => {
+                             // Fill the localized type text once per extension.
+                             for e in &mut entries {
+[31m-                                let key = if e.is_dir { "dir".to_string() } else { e.ext.clone() };
+[0m[32m+                                let key = if e.is_dir {
+[0m[32m+                                    "dir".to_string()
+[0m[32m+                                } else {
+[0m[32m+                                    e.ext.clone()
+[0m[32m+                                };
+[0m                                 if let Some(t) = self.type_names.get(&key) {
+                                     e.type_name = t.clone();
+                                 } else {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:966:
+                     self.status = if errors.is_empty() {
+                         format!("Done: {done} item(s)")
+                     } else {
+[31m-                        format!("{done} done, {} error(s): {}", errors.len(), errors.join("; "))
+[0m[32m+                        format!(
+[0m[32m+                            "{done} done, {} error(s): {}",
+[0m[32m+                            errors.len(),
+[0m[32m+                            errors.join("; ")
+[0m[32m+                        )
+[0m                     };
+                     if self.tabs.get(refresh_tab).is_some() {
+                         self.start_load(refresh_tab);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1019:
+                 if budget == 0 {
+                     break;
                  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:597:
-[31m-                if ui.add_enabled(has_sel, egui::Button::new("Cut")).on_hover_text("Ctrl+X").clicked() {
-[0m[32m+                if ui
-[0m[32m+                    .add_enabled(has_sel, egui::Button::new("Cut"))
-[0m[32m+                    .on_hover_text("Ctrl+X")
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     if let Some(sel) = self.current().selected.clone() {
-[31m-                        self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: true });
-[0m[32m+                        self.clipboard = Some(FileClipboard {
-[0m[32m+                            paths: vec![sel.clone()],
-[0m[32m+                            cut: true,
-[0m[32m+                        });
-[0m                         self.status = format!("Cut: {}", sel.display());
-                     }
+[31m-                let Ok(entries) = disk::read_dir(&dir, show_hidden) else { continue };
+[0m[32m+                let Ok(entries) = disk::read_dir(&dir, show_hidden) else {
+[0m[32m+                    continue;
+[0m[32m+                };
+[0m                 for e in entries {
+                     budget = budget.saturating_sub(1);
+                     if budget == 0 {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1097:
+         // Row 1: navigation + address + search
+         ui.horizontal(|ui| {
+             if ui
+[31m-                .add_enabled(self.current().can_back(), egui::Button::new(RichText::new("◀").size(14.0)))
+[0m[32m+                .add_enabled(
+[0m[32m+                    self.current().can_back(),
+[0m[32m+                    egui::Button::new(RichText::new("◀").size(14.0)),
+[0m[32m+                )
+[0m                 .on_hover_text("Back (Alt+←)")
+                 .clicked()
+             {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1104:
+                 self.go_back();
+             }
+             if ui
+[31m-                .add_enabled(self.current().can_forward(), egui::Button::new(RichText::new("▶").size(14.0)))
+[0m[32m+                .add_enabled(
+[0m[32m+                    self.current().can_forward(),
+[0m[32m+                    egui::Button::new(RichText::new("▶").size(14.0)),
+[0m[32m+                )
+[0m                 .on_hover_text("Forward (Alt+→)")
+                 .clicked()
+             {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1124:
+                 let mut buf = self.current().address_edit.clone().unwrap_or_default();
+                 let response = ui.add_sized(
+                     [addr_w, 24.0],
+[31m-                    egui::TextEdit::singleline(&mut buf).hint_text("Type a path or URL and press Enter"),
+[0m[32m+                    egui::TextEdit::singleline(&mut buf)
+[0m[32m+                        .hint_text("Type a path or URL and press Enter"),
+[0m                 );
+                 self.current_mut().address_edit = Some(buf.clone());
+                 if response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1159:
+                                 } else {
+                                     label
+                                 };
+[31m-                                if ui.add(egui::Button::new(RichText::new(text).size(13.0)).frame(false)).clicked() {
+[0m[32m+                                if ui
+[0m[32m+                                    .add(
+[0m[32m+                                        egui::Button::new(RichText::new(text).size(13.0))
+[0m[32m+                                            .frame(false),
+[0m[32m+                                    )
+[0m[32m+                                    .clicked()
+[0m[32m+                                {
+[0m                                     target = Some(acc.clone());
+                                 }
+                                 if acc != path {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1166:
+                                     ui.label(RichText::new("›").weak());
+                                 }
+                             }
+[31m-                            if ui.small_button("✎").on_hover_text("Edit address (Ctrl+L)").clicked() {
+[0m[32m+                            if ui
+[0m[32m+                                .small_button("✎")
+[0m[32m+                                .on_hover_text("Edit address (Ctrl+L)")
+[0m[32m+                                .clicked()
+[0m[32m+                            {
+[0m                                 start_edit = true;
+                             }
+                         });
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1209:
+                     ui.close_menu();
                  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:603:
-[31m-                if ui.add_enabled(has_clip, egui::Button::new("Paste")).on_hover_text("Ctrl+V").clicked() {
-[0m[32m+                if ui
-[0m[32m+                    .add_enabled(has_clip, egui::Button::new("Paste"))
-[0m[32m+                    .on_hover_text("Ctrl+V")
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     self.paste_clipboard();
+                 if ui.button("📄 Text document").clicked() {
+[31m-                    let target = disk::unique_destination(self.current().path.join("New Text Document.txt"));
+[0m[32m+                    let target =
+[0m[32m+                        disk::unique_destination(self.current().path.join("New Text Document.txt"));
+[0m                     match std::fs::write(&target, b"") {
+                         Ok(()) => {
+                             self.status = format!("Created {}", file_name_of(&target));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1233:
+                 .on_hover_text("Ctrl+X")
+                 .clicked()
+             {
+[31m-                self.clipboard = Some(FileClipboard { paths: multiselection.clone(), cut: true });
+[0m[32m+                self.clipboard = Some(FileClipboard {
+[0m[32m+                    paths: multiselection.clone(),
+[0m[32m+                    cut: true,
+[0m[32m+                });
+[0m                 self.status = format!("Cut {} item(s)", multiselection.len());
+             }
+             if ui
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1241:
+                 .on_hover_text("Ctrl+C")
+                 .clicked()
+             {
+[31m-                self.clipboard = Some(FileClipboard { paths: multiselection.clone(), cut: false });
+[0m[32m+                self.clipboard = Some(FileClipboard {
+[0m[32m+                    paths: multiselection.clone(),
+[0m[32m+                    cut: false,
+[0m[32m+                });
+[0m                 self.status = format!("Copied {} item(s)", multiselection.len());
+             }
+             let has_clip = self.clipboard.is_some();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1271:
+                 self.delete_permanent = false;
+             }
+             ui.separator();
+[31m-            if ui.button("⤴ Share").on_hover_text("Open sharing options").clicked() {
+[0m[32m+            if ui
+[0m[32m+                .button("⤴ Share")
+[0m[32m+                .on_hover_text("Open sharing options")
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 if let Some(one) = multiselection.first() {
+                     let _ = shell::open_verb(one, "share");
+                 } else {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1360:
+         let mut status_msg: Option<String> = None;
+         let drives = self.drives.clone();
+ 
+[31m-        egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
+[0m[31m-            ui.add_space(4.0);
+[0m[31m-            ui.label(RichText::new("QUICK ACCESS").small().weak());
+[0m[31m-            for folder in KnownFolder::sidebar() {
+[0m[31m-                let label = folder.label();
+[0m[31m-                let path = folder.path();
+[0m[31m-                let active = match &path {
+[0m[31m-                    Some(p) => cur_path == *p,
+[0m[31m-                    None => nav_selected == Some(*folder),
+[0m[31m-                };
+[0m[31m-                let text = RichText::new(format!("{}  {}", sidebar_glyph(*folder), label)).size(13.0);
+[0m[31m-                let text = if active { text.strong() } else { text };
+[0m[31m-                if ui.add(egui::Button::new(text).frame(active)).clicked() {
+[0m[31m-                    nav_selected = Some(*folder);
+[0m[31m-                    match path {
+[0m[31m-                        Some(p) => nav = Some(p),
+[0m[31m-                        None => status_msg = Some(format!("{label} is a virtual folder")),
+[0m[32m+        egui::ScrollArea::vertical()
+[0m[32m+            .auto_shrink([false, false])
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                ui.add_space(4.0);
+[0m[32m+                ui.label(RichText::new("QUICK ACCESS").small().weak());
+[0m[32m+                for folder in KnownFolder::sidebar() {
+[0m[32m+                    let label = folder.label();
+[0m[32m+                    let path = folder.path();
+[0m[32m+                    let active = match &path {
+[0m[32m+                        Some(p) => cur_path == *p,
+[0m[32m+                        None => nav_selected == Some(*folder),
+[0m[32m+                    };
+[0m[32m+                    let text =
+[0m[32m+                        RichText::new(format!("{}  {}", sidebar_glyph(*folder), label)).size(13.0);
+[0m[32m+                    let text = if active { text.strong() } else { text };
+[0m[32m+                    if ui.add(egui::Button::new(text).frame(active)).clicked() {
+[0m[32m+                        nav_selected = Some(*folder);
+[0m[32m+                        match path {
+[0m[32m+                            Some(p) => nav = Some(p),
+[0m[32m+                            None => status_msg = Some(format!("{label} is a virtual folder")),
+[0m[32m+                        }
+[0m                     }
                  }
-[31m-                if ui.button("New folder").on_hover_text("Ctrl+Shift+N").clicked() {
-[0m[32m+                if ui
-[0m[32m+                    .button("New folder")
-[0m[32m+                    .on_hover_text("Ctrl+Shift+N")
-[0m[32m+                    .clicked()
-[0m[32m+                {
-[0m                     self.creating_folder = true;
-                     self.new_folder_buffer = "New folder".into();
+[31m-            }
+[0m 
+[31m-            ui.add_space(10.0);
+[0m[31m-            ui.label(RichText::new("THIS PC").small().weak());
+[0m[31m-            for drive in &drives {
+[0m[31m-                let p = PathBuf::from(&drive.root);
+[0m[31m-                let name = if drive.label.is_empty() {
+[0m[31m-                    format!("{} ({})", drive.kind.map(|k| k.label()).unwrap_or("Drive"), drive.root.trim_end_matches('\\'))
+[0m[31m-                } else {
+[0m[31m-                    format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
+[0m[31m-                };
+[0m[31m-                let frac = if drive.total_bytes > 0 {
+[0m[31m-                    drive.free_bytes as f32 / drive.total_bytes as f32
+[0m[31m-                } else {
+[0m[31m-                    0.0
+[0m[31m-                };
+[0m[31m-                let active = cur_path.starts_with(&p);
+[0m[31m-                let text = RichText::new(format!("💽  {name}")).size(13.0);
+[0m[31m-                let text = if active { text.strong() } else { text };
+[0m[31m-                let resp = ui.add(egui::Button::new(text).frame(active));
+[0m[31m-                if resp.clicked() {
+[0m[31m-                    nav = Some(p);
+[0m[32m+                ui.add_space(10.0);
+[0m[32m+                ui.label(RichText::new("THIS PC").small().weak());
+[0m[32m+                for drive in &drives {
+[0m[32m+                    let p = PathBuf::from(&drive.root);
+[0m[32m+                    let name = if drive.label.is_empty() {
+[0m[32m+                        format!(
+[0m[32m+                            "{} ({})",
+[0m[32m+                            drive.kind.map(|k| k.label()).unwrap_or("Drive"),
+[0m[32m+                            drive.root.trim_end_matches('\\')
+[0m[32m+                        )
+[0m[32m+                    } else {
+[0m[32m+                        format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
+[0m[32m+                    };
+[0m[32m+                    let frac = if drive.total_bytes > 0 {
+[0m[32m+                        drive.free_bytes as f32 / drive.total_bytes as f32
+[0m[32m+                    } else {
+[0m[32m+                        0.0
+[0m[32m+                    };
+[0m[32m+                    let active = cur_path.starts_with(&p);
+[0m[32m+                    let text = RichText::new(format!("💽  {name}")).size(13.0);
+[0m[32m+                    let text = if active { text.strong() } else { text };
+[0m[32m+                    let resp = ui.add(egui::Button::new(text).frame(active));
+[0m[32m+                    if resp.clicked() {
+[0m[32m+                        nav = Some(p);
+[0m[32m+                    }
+[0m[32m+                    resp.on_hover_text(format!(
+[0m[32m+                        "{} · free {} of {}",
+[0m[32m+                        drive.fs_name,
+[0m[32m+                        disk::format_size(drive.free_bytes),
+[0m[32m+                        disk::format_size(drive.total_bytes)
+[0m[32m+                    ));
+[0m[32m+                    if drive.total_bytes > 0 {
+[0m[32m+                        ui.add(
+[0m[32m+                            egui::ProgressBar::new(1.0 - frac)
+[0m[32m+                                .desired_width((ui.available_width() - 8.0).max(40.0))
+[0m[32m+                                .desired_height(3.0)
+[0m[32m+                                .fill(Color32::from_rgb(0, 120, 215)),
+[0m[32m+                        );
+[0m[32m+                    }
+[0m                 }
+[31m-                resp.on_hover_text(format!(
+[0m[31m-                    "{} · free {} of {}",
+[0m[31m-                    drive.fs_name,
+[0m[31m-                    disk::format_size(drive.free_bytes),
+[0m[31m-                    disk::format_size(drive.total_bytes)
+[0m[31m-                ));
+[0m[31m-                if drive.total_bytes > 0 {
+[0m[31m-                    ui.add(
+[0m[31m-                        egui::ProgressBar::new(1.0 - frac)
+[0m[31m-                            .desired_width((ui.available_width() - 8.0).max(40.0))
+[0m[31m-                            .desired_height(3.0)
+[0m[31m-                            .fill(Color32::from_rgb(0, 120, 215)),
+[0m[31m-                    );
+[0m[31m-                }
+[0m[31m-            }
+[0m 
+[31m-            ui.add_space(10.0);
+[0m[31m-            ui.label(RichText::new("FOLDERS IN THIS VIEW").small().weak());
+[0m[31m-            if subfolders.is_empty() {
+[0m[31m-                ui.label(RichText::new("   (no sub-folders)").size(11.0).weak());
+[0m[31m-            }
+[0m[31m-            for (name, path) in &subfolders {
+[0m[31m-                if ui
+[0m[31m-                    .add(egui::Button::new(RichText::new(format!("📁  {name}")).size(12.0)).frame(false))
+[0m[31m-                    .clicked()
+[0m[31m-                {
+[0m[31m-                    nav = Some(path.clone());
+[0m[32m+                ui.add_space(10.0);
+[0m[32m+                ui.label(RichText::new("FOLDERS IN THIS VIEW").small().weak());
+[0m[32m+                if subfolders.is_empty() {
+[0m[32m+                    ui.label(RichText::new("   (no sub-folders)").size(11.0).weak());
+[0m                 }
+[31m-            }
+[0m[31m-        });
+[0m[32m+                for (name, path) in &subfolders {
+[0m[32m+                    if ui
+[0m[32m+                        .add(
+[0m[32m+                            egui::Button::new(RichText::new(format!("📁  {name}")).size(12.0))
+[0m[32m+                                .frame(false),
+[0m[32m+                        )
+[0m[32m+                        .clicked()
+[0m[32m+                    {
+[0m[32m+                        nav = Some(path.clone());
+[0m[32m+                    }
+[0m[32m+                }
+[0m[32m+            });
+[0m         let _ = ctx;
+         self.nav_selected = nav_selected;
+         if let Some(msg) = status_msg {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1468:
+         if let Some(err) = self.current().error.clone() {
+             ui.add_space(20.0);
+             ui.vertical_centered(|ui| {
+[31m-                ui.label(RichText::new("⚠").size(28.0).color(Color32::from_rgb(240, 160, 90)));
+[0m[32m+                ui.label(
+[0m[32m+                    RichText::new("⚠")
+[0m[32m+                        .size(28.0)
+[0m[32m+                        .color(Color32::from_rgb(240, 160, 90)),
+[0m[32m+                );
+[0m                 ui.label(RichText::new(&err).color(Color32::from_rgb(240, 140, 120)));
+                 ui.add_space(6.0);
+                 if ui.button("Retry").clicked() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1490:
                  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:703:
+                 let commit = ui.input(|i| i.key_pressed(egui::Key::Enter));
+                 if ui.button("Create").clicked() || commit {
+[31m-                    let target = disk::unique_destination(self.current().path.join(&self.new_folder_buffer));
+[0m[32m+                    let target =
+[0m[32m+                        disk::unique_destination(self.current().path.join(&self.new_folder_buffer));
+[0m                     match disk::create_dir_all(&target) {
+                         Ok(()) => {
+                             self.status = format!("Created {}", file_name_of(&target));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1540:
+                 if self.current().filter.is_empty() {
+                     ui.label(RichText::new("This folder is empty").size(15.0).weak());
+                 } else {
+[31m-                    ui.label(RichText::new("No items match your search").size(15.0).weak());
+[0m[32m+                    ui.label(
+[0m[32m+                        RichText::new("No items match your search")
+[0m[32m+                            .size(15.0)
+[0m[32m+                            .weak(),
+[0m[32m+                    );
+[0m                 }
+             });
+             return;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1555:
+     }
+ 
+     /// Shared selection logic: plain click replaces, Ctrl toggles, Shift extends.
+[31m-    fn apply_click(&mut self, index: usize, path: &Path, modifiers: egui::Modifiers, entries: &[DirEntry]) {
+[0m[32m+    fn apply_click(
+[0m[32m+        &mut self,
+[0m[32m+        index: usize,
+[0m[32m+        path: &Path,
+[0m[32m+        modifiers: egui::Modifiers,
+[0m[32m+        entries: &[DirEntry],
+[0m[32m+    ) {
+[0m         let ctrl = modifiers.ctrl || modifiers.command;
+         let shift = modifiers.shift;
+         let tab = self.current_mut();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1562:
+         if shift {
+             if let Some(anchor) = tab.anchor {
+[31m-                let (lo, hi) = if anchor <= index { (anchor, index) } else { (index, anchor) };
+[0m[32m+                let (lo, hi) = if anchor <= index {
+[0m[32m+                    (anchor, index)
+[0m[32m+                } else {
+[0m[32m+                    (index, anchor)
+[0m[32m+                };
+[0m                 tab.selection = entries[lo..=hi].iter().map(|e| e.path.clone()).collect();
+                 return;
+             }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1589:
              .resizable(true)
              .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
-             .column(Column::initial(28.0).at_least(24.0).clip(true))
-[31m-            .column(Column::initial(300.0).at_least(140.0).clip(true).resizable(true).range(120.0..=1200.0))
+             .column(Column::initial(26.0).at_least(24.0).clip(true))
+[31m-            .column(Column::initial(320.0).at_least(140.0).clip(true).resizable(true).range(120.0..=1400.0))
 [0m[32m+            .column(
-[0m[32m+                Column::initial(300.0)
+[0m[32m+                Column::initial(320.0)
 [0m[32m+                    .at_least(140.0)
 [0m[32m+                    .clip(true)
 [0m[32m+                    .resizable(true)
-[0m[32m+                    .range(120.0..=1200.0),
+[0m[32m+                    .range(120.0..=1400.0),
 [0m[32m+            )
-[0m             .column(Column::initial(120.0).at_least(60.0).clip(true))
-             .column(Column::initial(160.0).at_least(90.0).clip(true))
-             .column(Column::remainder().at_least(80.0).clip(true))
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:722:
+[0m             .column(Column::initial(96.0).at_least(70.0).clip(true))
+             .column(Column::initial(150.0).at_least(90.0).clip(true))
+             .column(Column::initial(150.0).at_least(90.0).clip(true))
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1610:
              ] {
                  header.col(|ui| {
                      let arrow = if sort_key == key {
@@ -2054,34 +2478,9 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:722:
 [0m                     } else {
                          ""
                      };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:729:
-[31m-                    if ui.add(egui::Button::new(RichText::new(format!("{name}{arrow}")).strong()).frame(false)).clicked() {
-[0m[32m+                    if ui
-[0m[32m+                        .add(
-[0m[32m+                            egui::Button::new(RichText::new(format!("{name}{arrow}")).strong())
-[0m[32m+                                .frame(false),
-[0m[32m+                        )
-[0m[32m+                        .clicked()
-[0m[32m+                    {
-[0m                         clicked_cell.set(Some(key));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1684:
                      }
                  });
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:742:
-                 row.set_selected(selected);
- 
-                 row.col(|ui| {
-[31m-                    let key = if entry.is_dir { "dir".to_string() } else { format!("ext:{}", disk::extension(&entry.name).to_lowercase()) };
-[0m[32m+                    let key = if entry.is_dir {
-[0m[32m+                        "dir".to_string()
-[0m[32m+                    } else {
-[0m[32m+                        format!("ext:{}", disk::extension(&entry.name).to_lowercase())
-[0m[32m+                    };
-[0m                     let id = self.icon_for(ctx, &key, || {
-                         let info = shell::file_info(&entry.path, true);
-                         info.icon_rgba
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:805:
-                 });
- 
                  row.col(|ui| {
 [31m-                    let size = if entry.is_dir { String::new() } else { disk::format_size(entry.size) };
 [0m[32m+                    let size = if entry.is_dir {
@@ -2092,213 +2491,109 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:805:
 [0m                     ui.label(RichText::new(size).monospace());
                  });
                  row.col(|ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:831:
-     fn list_view(&mut self, ui: &mut egui::Ui, entries: &[DirEntry]) {
-         let mut open: Option<DirEntry> = None;
-         let mut menu: Option<(PathBuf, ActionRequest)> = None;
-[31m-        egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1733:
+         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
+         let mut drag_started: Option<PathBuf> = None;
+         let mut drop_on: Option<PathBuf> = None;
+[31m-        egui::ScrollArea::both().id_salt("listview").auto_shrink([false, false]).show(ui, |ui| {
 [0m[31m-            let width = ui.available_width().max(600.0);
-[0m[31m-            let cols = ((width / 220.0).floor() as usize).max(1);
-[0m[31m-            for chunk in entries.chunks(cols) {
+[0m[31m-            let cols = ((width / 230.0).floor() as usize).max(1);
+[0m[31m-            let cell_w = width / cols as f32 - 6.0;
+[0m[31m-            for chunk_start in (0..entries.len()).step_by(cols) {
+[0m[31m-                let chunk = &entries[chunk_start..(chunk_start + cols).min(entries.len())];
 [0m[31m-                ui.horizontal(|ui| {
-[0m[31m-                    for entry in chunk {
-[0m[31m-                        let selected = self.current().selected.as_deref() == Some(entry.path.as_path());
-[0m[31m-                        let label = format!("{} {}", if entry.is_dir { "🗀" } else { "🗎" }, entry.name);
-[0m[31m-                        let resp = ui.add_sized([width / cols as f32 - 8.0, 20.0], egui::Button::new(label).selected(selected).frame(false));
-[0m[31m-                        if resp.clicked() {
-[0m[31m-                            self.current_mut().selected = Some(entry.path.clone());
-[0m[31m-                        }
-[0m[31m-                        if resp.double_clicked() {
-[0m[31m-                            open = Some(entry.clone());
-[0m[31m-                        }
-[0m[31m-                        resp.context_menu(|ui| {
-[0m[31m-                            if ui.button("Open").clicked() {
-[0m[31m-                                menu = Some((entry.path.clone(), ActionRequest::Open));
-[0m[31m-                                ui.close_menu();
+[0m[31m-                    for (offset, entry) in chunk.iter().enumerate() {
+[0m[31m-                        let idx = chunk_start + offset;
+[0m[31m-                        let selected = self.current().is_selected(&entry.path);
+[0m[31m-                        ui.allocate_ui(egui::vec2(cell_w, 20.0), |ui| {
+[0m[31m-                            ui.horizontal(|ui| {
+[0m[31m-                                if let Some(id) = self.icon_for(ctx, entry, 16) {
+[0m[31m-                                    ui.add(egui::Image::new((id, egui::vec2(16.0, 16.0))));
+[0m[31m-                                }
+[0m[31m-                                let mut text = RichText::new(truncate_middle(&entry.name, 30)).size(12.0);
+[0m[31m-                                if entry.hidden {
+[0m[31m-                                    text = text.weak();
+[0m[31m-                                }
+[0m[31m-                                let mut local: Vec<Command> = Vec::new();
+[0m[31m-                                let resp = ui.add(egui::Button::new(text).selected(selected).frame(false));
+[0m[31m-                                resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
+[0m[31m-                                commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+[0m[31m-                                if resp.drag_started() {
+[0m[31m-                                    drag_started = Some(entry.path.clone());
+[0m[31m-                                }
+[0m[31m-                                if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty() {
+[0m[31m-                                    drop_on = Some(entry.path.clone());
+[0m[31m-                                    ui.painter().rect_stroke(
+[0m[31m-                                        resp.rect.expand(1.0),
+[0m[31m-                                        2.0,
+[0m[31m-                                        egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
 [0m[32m+        egui::ScrollArea::both()
+[0m[32m+            .id_salt("listview")
 [0m[32m+            .auto_shrink([false, false])
 [0m[32m+            .show(ui, |ui| {
 [0m[32m+                let width = ui.available_width().max(600.0);
-[0m[32m+                let cols = ((width / 220.0).floor() as usize).max(1);
-[0m[32m+                for chunk in entries.chunks(cols) {
+[0m[32m+                let cols = ((width / 230.0).floor() as usize).max(1);
+[0m[32m+                let cell_w = width / cols as f32 - 6.0;
+[0m[32m+                for chunk_start in (0..entries.len()).step_by(cols) {
+[0m[32m+                    let chunk = &entries[chunk_start..(chunk_start + cols).min(entries.len())];
 [0m[32m+                    ui.horizontal(|ui| {
-[0m[32m+                        for entry in chunk {
-[0m[32m+                            let selected =
-[0m[32m+                                self.current().selected.as_deref() == Some(entry.path.as_path());
-[0m[32m+                            let label =
-[0m[32m+                                format!("{} {}", if entry.is_dir { "🗀" } else { "🗎" }, entry.name);
-[0m[32m+                            let resp = ui.add_sized(
-[0m[32m+                                [width / cols as f32 - 8.0, 20.0],
-[0m[32m+                                egui::Button::new(label).selected(selected).frame(false),
-[0m[32m+                            );
-[0m[32m+                            if resp.clicked() {
-[0m[32m+                                self.current_mut().selected = Some(entry.path.clone());
-[0m                             }
-[31m-                            if ui.button("Delete").clicked() {
-[0m[31m-                                menu = Some((entry.path.clone(), ActionRequest::Delete));
-[0m[31m-                                ui.close_menu();
-[0m[32m+                            if resp.double_clicked() {
-[0m[32m+                                open = Some(entry.clone());
-[0m                             }
-[31m-                            if ui.button("Properties").clicked() {
-[0m[31m-                                menu = Some((entry.path.clone(), ActionRequest::Properties));
-[0m[31m-                                ui.close_menu();
-[0m[31m-                            }
-[0m[31m-                        });
-[0m[31m-                        // pad to keep columns aligned
-[0m[31m-                        let used = ui.available_width();
-[0m[31m-                        let _ = used;
-[0m[31m-                    }
-[0m[31m-                });
-[0m[31m-            }
-[0m[31m-        });
-[0m[32m+                            resp.context_menu(|ui| {
-[0m[32m+                                if ui.button("Open").clicked() {
-[0m[32m+                                    menu = Some((entry.path.clone(), ActionRequest::Open));
-[0m[32m+                                    ui.close_menu();
-[0m[32m+                                }
-[0m[32m+                                if ui.button("Delete").clicked() {
-[0m[32m+                                    menu = Some((entry.path.clone(), ActionRequest::Delete));
-[0m[32m+                                    ui.close_menu();
-[0m[32m+                                }
-[0m[32m+                                if ui.button("Properties").clicked() {
-[0m[32m+                                    menu = Some((entry.path.clone(), ActionRequest::Properties));
-[0m[32m+                                    ui.close_menu();
-[0m[32m+                                }
-[0m[32m+                            });
-[0m[32m+                            // pad to keep columns aligned
-[0m[32m+                            let used = ui.available_width();
-[0m[32m+                            let _ = used;
-[0m[32m+                        }
-[0m[32m+                    });
-[0m[32m+                }
-[0m[32m+            });
-[0m         if let Some(entry) = open {
-             self.open_entry(&entry);
-         }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:875:
-         }
-     }
- 
-[31m-    fn tiles_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry], tile_h: f32) {
-[0m[32m+    fn tiles_view(
-[0m[32m+        &mut self,
-[0m[32m+        ui: &mut egui::Ui,
-[0m[32m+        ctx: &egui::Context,
-[0m[32m+        entries: &[DirEntry],
-[0m[32m+        tile_h: f32,
-[0m[32m+    ) {
-[0m         let mut open: Option<DirEntry> = None;
-         let mut menu: Option<(PathBuf, ActionRequest)> = None;
-[31m-        egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
-[0m[31m-            let avail = ui.available_width().max(320.0);
-[0m[31m-            let icon_size = tile_h - 34.0;
-[0m[31m-            let cols = ((avail / 128.0).floor() as usize).max(1);
-[0m[31m-            for chunk in entries.chunks(cols) {
-[0m[31m-                ui.horizontal(|ui| {
-[0m[31m-                    for entry in chunk {
-[0m[31m-                        let selected = self.current().selected.as_deref() == Some(entry.path.as_path());
-[0m[31m-                        ui.allocate_ui(egui::vec2(124.0, tile_h), |ui| {
-[0m[31m-                            ui.vertical_centered(|ui| {
-[0m[31m-                                let key = if entry.is_dir { "dir".to_string() } else { format!("ext:{}", disk::extension(&entry.name).to_lowercase()) };
-[0m[31m-                                let id = self.icon_for(ctx, &key, || {
-[0m[31m-                                    let info = shell::file_info(&entry.path, true);
-[0m[31m-                                    info.icon_rgba
-[0m[31m-                                });
-[0m[31m-                                let resp = if let Some(id) = id {
-[0m[31m-                                    ui.add(egui::ImageButton::new(egui::Image::new((id, egui::vec2(icon_size, icon_size)))).selected(selected))
-[0m[31m-                                } else {
-[0m[31m-                                    let t = if entry.is_dir { "🗀" } else { "🗎" };
-[0m[31m-                                    ui.add(egui::Button::new(RichText::new(t).size(icon_size * 0.7)).selected(selected))
-[0m[31m-                                };
+[0m[32m+                        for (offset, entry) in chunk.iter().enumerate() {
+[0m[32m+                            let idx = chunk_start + offset;
+[0m[32m+                            let selected = self.current().is_selected(&entry.path);
+[0m[32m+                            ui.allocate_ui(egui::vec2(cell_w, 20.0), |ui| {
+[0m[32m+                                ui.horizontal(|ui| {
+[0m[32m+                                    if let Some(id) = self.icon_for(ctx, entry, 16) {
+[0m[32m+                                        ui.add(egui::Image::new((id, egui::vec2(16.0, 16.0))));
+[0m[32m+                                    }
+[0m[32m+                                    let mut text =
+[0m[32m+                                        RichText::new(truncate_middle(&entry.name, 30)).size(12.0);
+[0m[32m+                                    if entry.hidden {
+[0m[32m+                                        text = text.weak();
+[0m[32m+                                    }
+[0m[32m+                                    let mut local: Vec<Command> = Vec::new();
+[0m[32m+                                    let resp = ui.add(
+[0m[32m+                                        egui::Button::new(text).selected(selected).frame(false),
+[0m                                     );
+[31m-                                }
+[0m[31m-                                if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
+[0m[31m-                                    drop_on = Some(entry.path.clone());
+[0m[31m-                                }
 [0m[31m-                                if resp.clicked() {
-[0m[31m-                                    self.current_mut().selected = Some(entry.path.clone());
+[0m[31m-                                    clicked = Some((idx, entry.path.clone()));
 [0m[31m-                                }
 [0m[31m-                                if resp.double_clicked() {
-[0m[31m-                                    open = Some(entry.clone());
+[0m[31m-                                    opened = Some(entry.clone());
 [0m[31m-                                }
-[0m[31m-                                resp.context_menu(|ui| {
-[0m[31m-                                    if ui.button("Open").clicked() {
-[0m[31m-                                        menu = Some((entry.path.clone(), ActionRequest::Open));
-[0m[31m-                                        ui.close_menu();
-[0m[32m+        egui::ScrollArea::both()
-[0m[32m+            .auto_shrink([false, false])
-[0m[32m+            .show(ui, |ui| {
-[0m[32m+                let avail = ui.available_width().max(320.0);
-[0m[32m+                let icon_size = tile_h - 34.0;
-[0m[32m+                let cols = ((avail / 128.0).floor() as usize).max(1);
-[0m[32m+                for chunk in entries.chunks(cols) {
-[0m[32m+                    ui.horizontal(|ui| {
-[0m[32m+                        for entry in chunk {
-[0m[32m+                            let selected =
-[0m[32m+                                self.current().selected.as_deref() == Some(entry.path.as_path());
-[0m[32m+                            ui.allocate_ui(egui::vec2(124.0, tile_h), |ui| {
-[0m[32m+                                ui.vertical_centered(|ui| {
-[0m[32m+                                    let key = if entry.is_dir {
-[0m[32m+                                        "dir".to_string()
-[0m[32m+                                    } else {
-[0m[32m+                                        format!(
-[0m[32m+                                            "ext:{}",
-[0m[32m+                                            disk::extension(&entry.name).to_lowercase()
-[0m[32m+                                        )
-[0m[32m+                                    };
-[0m[32m+                                    let id = self.icon_for(ctx, &key, || {
-[0m[32m+                                        let info = shell::file_info(&entry.path, true);
-[0m[32m+                                        info.icon_rgba
-[0m[32m+                                    });
-[0m[32m+                                    let resp = if let Some(id) = id {
-[0m[32m+                                        ui.add(
-[0m[32m+                                            egui::ImageButton::new(egui::Image::new((
-[0m[32m+                                                id,
-[0m[32m+                                                egui::vec2(icon_size, icon_size),
-[0m[32m+                                            )))
-[0m[32m+                                            .selected(selected),
-[0m[32m+                                        )
-[0m[32m+                                    } else {
-[0m[32m+                                        let t = if entry.is_dir { "🗀" } else { "🗎" };
-[0m[32m+                                        ui.add(
-[0m[32m+                                            egui::Button::new(
-[0m[32m+                                                RichText::new(t).size(icon_size * 0.7),
-[0m[32m+                                            )
-[0m[32m+                                            .selected(selected),
-[0m[32m+                                        )
-[0m[32m+                                    };
-[0m[32m+                                    if resp.clicked() {
-[0m[32m+                                        self.current_mut().selected = Some(entry.path.clone());
-[0m                                     }
-[31m-                                    if ui.button("Delete").clicked() {
-[0m[31m-                                        menu = Some((entry.path.clone(), ActionRequest::Delete));
-[0m[31m-                                        ui.close_menu();
-[0m[32m+                                    if resp.double_clicked() {
-[0m[32m+                                        open = Some(entry.clone());
-[0m                                     }
-[31m-                                    if ui.button("Properties").clicked() {
-[0m[31m-                                        menu = Some((entry.path.clone(), ActionRequest::Properties));
-[0m[31m-                                        ui.close_menu();
-[0m[31m-                                    }
 [0m[32m+                                    resp.context_menu(|ui| {
-[0m[32m+                                        if ui.button("Open").clicked() {
-[0m[32m+                                            menu = Some((entry.path.clone(), ActionRequest::Open));
-[0m[32m+                                            ui.close_menu();
-[0m[32m+                                        }
-[0m[32m+                                        if ui.button("Delete").clicked() {
-[0m[32m+                                            menu =
-[0m[32m+                                                Some((entry.path.clone(), ActionRequest::Delete));
-[0m[32m+                                            ui.close_menu();
-[0m[32m+                                        }
-[0m[32m+                                        if ui.button("Properties").clicked() {
-[0m[32m+                                            menu = Some((
-[0m[32m+                                                entry.path.clone(),
-[0m[32m+                                                ActionRequest::Properties,
-[0m[32m+                                            ));
-[0m[32m+                                            ui.close_menu();
-[0m[32m+                                        }
+[0m[32m+                                        simple_context_menu(ui, entry, &mut local)
 [0m[32m+                                    });
-[0m[32m+                                    let short = truncate_middle(&entry.name, 18);
-[0m[32m+                                    ui.label(RichText::new(short).size(11.0));
-[0m                                 });
-[31m-                                let short = truncate_middle(&entry.name, 18);
-[0m[31m-                                ui.label(RichText::new(short).size(11.0));
+[0m[32m+                                    commands
+[0m[32m+                                        .extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+[0m[32m+                                    if resp.drag_started() {
+[0m[32m+                                        drag_started = Some(entry.path.clone());
+[0m[32m+                                    }
+[0m[32m+                                    if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty()
+[0m[32m+                                    {
+[0m[32m+                                        drop_on = Some(entry.path.clone());
+[0m[32m+                                        ui.painter().rect_stroke(
+[0m[32m+                                            resp.rect.expand(1.0),
+[0m[32m+                                            2.0,
+[0m[32m+                                            egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+[0m[32m+                                        );
+[0m[32m+                                    }
+[0m[32m+                                    if resp.drag_stopped()
+[0m[32m+                                        && entry.is_dir
+[0m[32m+                                        && !self.drag_paths.is_empty()
+[0m[32m+                                    {
+[0m[32m+                                        drop_on = Some(entry.path.clone());
+[0m[32m+                                    }
+[0m[32m+                                    if resp.clicked() {
+[0m[32m+                                        clicked = Some((idx, entry.path.clone()));
+[0m[32m+                                    }
+[0m[32m+                                    if resp.double_clicked() {
+[0m[32m+                                        opened = Some(entry.clone());
+[0m[32m+                                    }
+[0m[32m+                                });
 [0m                             });
 [31m-                        });
 [0m[31m-                    }
@@ -2309,44 +2604,482 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:875:
 [0m[32m+                    });
 [0m[32m+                }
 [0m[32m+            });
-[0m         if let Some(entry) = open {
-             self.open_entry(&entry);
+[0m         if let Some((idx, path)) = clicked {
+             let mods = ctx.input(|i| i.modifiers);
+             self.apply_click(idx, &path, mods, entries);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1803:
+     }
+ 
+     /// Large icons (Explorer's "Large icons" view) with 48 px shell icons.
+[31m-    fn tiles_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry], icon: u32) {
+[0m[32m+    fn tiles_view(
+[0m[32m+        &mut self,
+[0m[32m+        ui: &mut egui::Ui,
+[0m[32m+        ctx: &egui::Context,
+[0m[32m+        entries: &[DirEntry],
+[0m[32m+        icon: u32,
+[0m[32m+    ) {
+[0m         let mut clicked: Option<(usize, PathBuf)> = None;
+         let mut opened: Option<DirEntry> = None;
+         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1811:
+         let mut drop_on: Option<PathBuf> = None;
+         let cell_w = 116.0;
+         let cell_h = icon as f32 + 34.0;
+[31m-        egui::ScrollArea::vertical().id_salt("tiles").auto_shrink([false, false]).show(ui, |ui| {
+[0m[31m-            let avail = ui.available_width().max(320.0);
+[0m[31m-            let cols = ((avail / cell_w).floor() as usize).max(1);
+[0m[31m-            for chunk_start in (0..entries.len()).step_by(cols) {
+[0m[31m-                let chunk = &entries[chunk_start..(chunk_start + cols).min(entries.len())];
+[0m[31m-                ui.horizontal(|ui| {
+[0m[31m-                    for (offset, entry) in chunk.iter().enumerate() {
+[0m[31m-                        let idx = chunk_start + offset;
+[0m[31m-                        let selected = self.current().is_selected(&entry.path);
+[0m[31m-                        ui.allocate_ui(egui::vec2(cell_w, cell_h), |ui| {
+[0m[31m-                            ui.vertical_centered(|ui| {
+[0m[31m-                                let id = self.icon_for(ctx, entry, icon);
+[0m[31m-                                let resp = if let Some(id) = id {
+[0m[31m-                                    ui.add(
+[0m[31m-                                        egui::ImageButton::new(egui::Image::new((id, egui::vec2(icon as f32, icon as f32))))
+[0m[32m+        egui::ScrollArea::vertical()
+[0m[32m+            .id_salt("tiles")
+[0m[32m+            .auto_shrink([false, false])
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                let avail = ui.available_width().max(320.0);
+[0m[32m+                let cols = ((avail / cell_w).floor() as usize).max(1);
+[0m[32m+                for chunk_start in (0..entries.len()).step_by(cols) {
+[0m[32m+                    let chunk = &entries[chunk_start..(chunk_start + cols).min(entries.len())];
+[0m[32m+                    ui.horizontal(|ui| {
+[0m[32m+                        for (offset, entry) in chunk.iter().enumerate() {
+[0m[32m+                            let idx = chunk_start + offset;
+[0m[32m+                            let selected = self.current().is_selected(&entry.path);
+[0m[32m+                            ui.allocate_ui(egui::vec2(cell_w, cell_h), |ui| {
+[0m[32m+                                ui.vertical_centered(|ui| {
+[0m[32m+                                    let id = self.icon_for(ctx, entry, icon);
+[0m[32m+                                    let resp = if let Some(id) = id {
+[0m[32m+                                        ui.add(
+[0m[32m+                                            egui::ImageButton::new(egui::Image::new((
+[0m[32m+                                                id,
+[0m[32m+                                                egui::vec2(icon as f32, icon as f32),
+[0m[32m+                                            )))
+[0m                                             .selected(selected)
+                                             .frame(false),
+[31m-                                    )
+[0m[31m-                                } else {
+[0m[31m-                                    let t = if entry.is_dir { "🗀" } else { "🗎" };
+[0m[31m-                                    ui.add(
+[0m[31m-                                        egui::Button::new(RichText::new(t).size(icon as f32 * 0.7))
+[0m[32m+                                        )
+[0m[32m+                                    } else {
+[0m[32m+                                        let t = if entry.is_dir { "🗀" } else { "🗎" };
+[0m[32m+                                        ui.add(
+[0m[32m+                                            egui::Button::new(
+[0m[32m+                                                RichText::new(t).size(icon as f32 * 0.7),
+[0m[32m+                                            )
+[0m                                             .selected(selected)
+                                             .frame(false),
+[31m-                                    )
+[0m[31m-                                };
+[0m[31m-                                let mut local: Vec<Command> = Vec::new();
+[0m[31m-                                resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
+[0m[31m-                                commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+[0m[31m-                                if resp.drag_started() {
+[0m[31m-                                    drag_started = Some(entry.path.clone());
+[0m[31m-                                }
+[0m[31m-                                if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty() {
+[0m[31m-                                    drop_on = Some(entry.path.clone());
+[0m[31m-                                    ui.painter().rect_stroke(
+[0m[31m-                                        resp.rect.expand(1.0),
+[0m[31m-                                        2.0,
+[0m[31m-                                        egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+[0m[31m-                                    );
+[0m[31m-                                }
+[0m[31m-                                if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
+[0m[31m-                                    drop_on = Some(entry.path.clone());
+[0m[31m-                                }
+[0m[31m-                                if resp.clicked() {
+[0m[31m-                                    clicked = Some((idx, entry.path.clone()));
+[0m[31m-                                }
+[0m[31m-                                if resp.double_clicked() {
+[0m[31m-                                    opened = Some(entry.clone());
+[0m[31m-                                }
+[0m[31m-                                let name = RichText::new(truncate_middle(&entry.name, 16)).size(11.0);
+[0m[31m-                                let name = if entry.hidden { name.weak() } else { name };
+[0m[31m-                                ui.label(name);
+[0m[32m+                                        )
+[0m[32m+                                    };
+[0m[32m+                                    let mut local: Vec<Command> = Vec::new();
+[0m[32m+                                    resp.context_menu(|ui| {
+[0m[32m+                                        simple_context_menu(ui, entry, &mut local)
+[0m[32m+                                    });
+[0m[32m+                                    commands
+[0m[32m+                                        .extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+[0m[32m+                                    if resp.drag_started() {
+[0m[32m+                                        drag_started = Some(entry.path.clone());
+[0m[32m+                                    }
+[0m[32m+                                    if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty()
+[0m[32m+                                    {
+[0m[32m+                                        drop_on = Some(entry.path.clone());
+[0m[32m+                                        ui.painter().rect_stroke(
+[0m[32m+                                            resp.rect.expand(1.0),
+[0m[32m+                                            2.0,
+[0m[32m+                                            egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+[0m[32m+                                        );
+[0m[32m+                                    }
+[0m[32m+                                    if resp.drag_stopped()
+[0m[32m+                                        && entry.is_dir
+[0m[32m+                                        && !self.drag_paths.is_empty()
+[0m[32m+                                    {
+[0m[32m+                                        drop_on = Some(entry.path.clone());
+[0m[32m+                                    }
+[0m[32m+                                    if resp.clicked() {
+[0m[32m+                                        clicked = Some((idx, entry.path.clone()));
+[0m[32m+                                    }
+[0m[32m+                                    if resp.double_clicked() {
+[0m[32m+                                        opened = Some(entry.clone());
+[0m[32m+                                    }
+[0m[32m+                                    let name =
+[0m[32m+                                        RichText::new(truncate_middle(&entry.name, 16)).size(11.0);
+[0m[32m+                                    let name = if entry.hidden { name.weak() } else { name };
+[0m[32m+                                    ui.label(name);
+[0m[32m+                                });
+[0m                             });
+[31m-                        });
+[0m[31m-                    }
+[0m[31m-                });
+[0m[31m-            }
+[0m[31m-        });
+[0m[32m+                        }
+[0m[32m+                    });
+[0m[32m+                }
+[0m[32m+            });
+[0m         if let Some((idx, path)) = clicked {
+             let mods = ctx.input(|i| i.modifiers);
+             self.apply_click(idx, &path, mods, entries);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1894:
+         let mut clicked: Option<(usize, PathBuf)> = None;
+         let mut opened: Option<DirEntry> = None;
+         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
+[31m-        egui::ScrollArea::vertical().id_salt("content").auto_shrink([false, false]).show(ui, |ui| {
+[0m[31m-            for (idx, entry) in entries.iter().enumerate() {
+[0m[31m-                let selected = self.current().is_selected(&entry.path);
+[0m[31m-                let (rect, resp) = ui.allocate_exact_size(
+[0m[31m-                    egui::vec2(ui.available_width(), 52.0),
+[0m[31m-                    egui::Sense::click(),
+[0m[31m-                );
+[0m[31m-                if selected {
+[0m[31m-                    ui.painter().rect_filled(rect, 3.0, ui.visuals().selection.bg_fill);
+[0m[31m-                }
+[0m[31m-                if resp.hovered() {
+[0m[31m-                    ui.painter().rect_stroke(
+[0m[31m-                        rect,
+[0m[31m-                        3.0,
+[0m[31m-                        egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
+[0m[32m+        egui::ScrollArea::vertical()
+[0m[32m+            .id_salt("content")
+[0m[32m+            .auto_shrink([false, false])
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                for (idx, entry) in entries.iter().enumerate() {
+[0m[32m+                    let selected = self.current().is_selected(&entry.path);
+[0m[32m+                    let (rect, resp) = ui.allocate_exact_size(
+[0m[32m+                        egui::vec2(ui.available_width(), 52.0),
+[0m[32m+                        egui::Sense::click(),
+[0m                     );
+[31m-                }
+[0m[31m-                let icon_rect = egui::Rect::from_min_size(rect.min + egui::vec2(6.0, 8.0), egui::vec2(36.0, 36.0));
+[0m[31m-                if let Some(id) = self.icon_for(ctx, entry, 32) {
+[0m[31m-                    ui.put(icon_rect, egui::Image::new((id, egui::vec2(36.0, 36.0))));
+[0m[31m-                } else {
+[0m[31m-                    ui.put(icon_rect, egui::Label::new(if entry.is_dir { "🗀" } else { "🗎" }));
+[0m[31m-                }
+[0m[31m-                let name_pos = rect.min + egui::vec2(52.0, 8.0);
+[0m[31m-                ui.painter().text(
+[0m[31m-                    name_pos,
+[0m[31m-                    egui::Align2::LEFT_TOP,
+[0m[31m-                    &entry.name,
+[0m[31m-                    egui::FontId::proportional(13.0),
+[0m                     if selected {
+[31m-                        Color32::WHITE
+[0m[32m+                        ui.painter()
+[0m[32m+                            .rect_filled(rect, 3.0, ui.visuals().selection.bg_fill);
+[0m[32m+                    }
+[0m[32m+                    if resp.hovered() {
+[0m[32m+                        ui.painter().rect_stroke(
+[0m[32m+                            rect,
+[0m[32m+                            3.0,
+[0m[32m+                            egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
+[0m[32m+                        );
+[0m[32m+                    }
+[0m[32m+                    let icon_rect = egui::Rect::from_min_size(
+[0m[32m+                        rect.min + egui::vec2(6.0, 8.0),
+[0m[32m+                        egui::vec2(36.0, 36.0),
+[0m[32m+                    );
+[0m[32m+                    if let Some(id) = self.icon_for(ctx, entry, 32) {
+[0m[32m+                        ui.put(icon_rect, egui::Image::new((id, egui::vec2(36.0, 36.0))));
+[0m                     } else {
+[31m-                        ui.visuals().text_color()
+[0m[31m-                    },
+[0m[31m-                );
+[0m[31m-                let meta = if entry.is_dir {
+[0m[31m-                    String::new()
+[0m[31m-                } else {
+[0m[31m-                    format!(
+[0m[31m-                        "{} · {}",
+[0m[31m-                        disk::format_size(entry.size),
+[0m[31m-                        entry.modified_display()
+[0m[31m-                    )
+[0m[31m-                };
+[0m[31m-                ui.painter().text(
+[0m[31m-                    name_pos + egui::vec2(0.0, 18.0),
+[0m[31m-                    egui::Align2::LEFT_TOP,
+[0m[31m-                    &meta,
+[0m[31m-                    egui::FontId::proportional(11.0),
+[0m[31m-                    Color32::from_gray(160),
+[0m[31m-                );
+[0m[31m-                let mut local: Vec<Command> = Vec::new();
+[0m[31m-                resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
+[0m[31m-                commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+[0m[31m-                if resp.clicked() {
+[0m[31m-                    clicked = Some((idx, entry.path.clone()));
+[0m[32m+                        ui.put(
+[0m[32m+                            icon_rect,
+[0m[32m+                            egui::Label::new(if entry.is_dir { "🗀" } else { "🗎" }),
+[0m[32m+                        );
+[0m[32m+                    }
+[0m[32m+                    let name_pos = rect.min + egui::vec2(52.0, 8.0);
+[0m[32m+                    ui.painter().text(
+[0m[32m+                        name_pos,
+[0m[32m+                        egui::Align2::LEFT_TOP,
+[0m[32m+                        &entry.name,
+[0m[32m+                        egui::FontId::proportional(13.0),
+[0m[32m+                        if selected {
+[0m[32m+                            Color32::WHITE
+[0m[32m+                        } else {
+[0m[32m+                            ui.visuals().text_color()
+[0m[32m+                        },
+[0m[32m+                    );
+[0m[32m+                    let meta = if entry.is_dir {
+[0m[32m+                        String::new()
+[0m[32m+                    } else {
+[0m[32m+                        format!(
+[0m[32m+                            "{} · {}",
+[0m[32m+                            disk::format_size(entry.size),
+[0m[32m+                            entry.modified_display()
+[0m[32m+                        )
+[0m[32m+                    };
+[0m[32m+                    ui.painter().text(
+[0m[32m+                        name_pos + egui::vec2(0.0, 18.0),
+[0m[32m+                        egui::Align2::LEFT_TOP,
+[0m[32m+                        &meta,
+[0m[32m+                        egui::FontId::proportional(11.0),
+[0m[32m+                        Color32::from_gray(160),
+[0m[32m+                    );
+[0m[32m+                    let mut local: Vec<Command> = Vec::new();
+[0m[32m+                    resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
+[0m[32m+                    commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+[0m[32m+                    if resp.clicked() {
+[0m[32m+                        clicked = Some((idx, entry.path.clone()));
+[0m[32m+                    }
+[0m[32m+                    if resp.double_clicked() {
+[0m[32m+                        opened = Some(entry.clone());
+[0m[32m+                    }
+[0m                 }
+[31m-                if resp.double_clicked() {
+[0m[31m-                    opened = Some(entry.clone());
+[0m[31m-                }
+[0m[31m-            }
+[0m[31m-        });
+[0m[32m+            });
+[0m         if let Some((idx, path)) = clicked {
+             let mods = ctx.input(|i| i.modifiers);
+             self.apply_click(idx, &path, mods, entries);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1992:
+             out.push(Command::RunAsAdmin);
+             ui.close_menu();
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:950:
-                 }
+[31m-        if matches!(entry.ext.as_str(), "zip" | "7z" | "rar" | "tar" | "gz" | "cab")
+[0m[31m-            && ui.button("Extract All…").clicked()
+[0m[32m+        if matches!(
+[0m[32m+            entry.ext.as_str(),
+[0m[32m+            "zip" | "7z" | "rar" | "tar" | "gz" | "cab"
+[0m[32m+        ) && ui.button("Extract All…").clicked()
+[0m         {
+             out.push(Command::ExtractHere);
+             ui.close_menu();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2046:
+ impl ExplorerApp {
+     /// Runs after any view: applies queued context-menu commands, handles
+     /// drag-and-drop between rows/folders and repaints while a job runs.
+[31m-    fn finish_drag_and_commands(&mut self, ctx: &egui::Context, _entries: &[DirEntry], commands: Vec<(PathBuf, Command)>) {
+[0m[32m+    fn finish_drag_and_commands(
+[0m[32m+        &mut self,
+[0m[32m+        ctx: &egui::Context,
+[0m[32m+        _entries: &[DirEntry],
+[0m[32m+        commands: Vec<(PathBuf, Command)>,
+[0m[32m+    ) {
+[0m         // Context-menu commands (the path is the row they were invoked on).
+         for (path, cmd) in commands {
+             // Explorer acts on the whole selection when the clicked row is part
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2107:
+ 
+         let meta = std::fs::metadata(&path).ok();
+         if let Some(meta) = &meta {
+[31m-            egui::Grid::new("preview_meta").num_columns(2).spacing([8.0, 4.0]).show(ui, |ui| {
+[0m[31m-                ui.label(RichText::new("Type").weak());
+[0m[31m-                let entry = self.current().entries.iter().find(|e| e.path == path).cloned();
+[0m[31m-                let t = match entry {
+[0m[31m-                    Some(e) => self.type_text(&e),
+[0m[31m-                    None => "File".to_string(),
+[0m[31m-                };
+[0m[31m-                ui.label(t);
+[0m[31m-                ui.end_row();
+[0m[31m-                ui.label(RichText::new("Size").weak());
+[0m[31m-                ui.label(disk::format_size(meta.len()));
+[0m[31m-                ui.end_row();
+[0m[31m-                if let Ok(modified) = meta.modified() {
+[0m[31m-                    if let Ok(dur) = modified.duration_since(std::time::UNIX_EPOCH) {
+[0m[31m-                        ui.label(RichText::new("Modified").weak());
+[0m[31m-                        ui.label(disk::format_local(dur.as_secs()));
+[0m[31m-                        ui.end_row();
+[0m[32m+            egui::Grid::new("preview_meta")
+[0m[32m+                .num_columns(2)
+[0m[32m+                .spacing([8.0, 4.0])
+[0m[32m+                .show(ui, |ui| {
+[0m[32m+                    ui.label(RichText::new("Type").weak());
+[0m[32m+                    let entry = self
+[0m[32m+                        .current()
+[0m[32m+                        .entries
+[0m[32m+                        .iter()
+[0m[32m+                        .find(|e| e.path == path)
+[0m[32m+                        .cloned();
+[0m[32m+                    let t = match entry {
+[0m[32m+                        Some(e) => self.type_text(&e),
+[0m[32m+                        None => "File".to_string(),
+[0m[32m+                    };
+[0m[32m+                    ui.label(t);
+[0m[32m+                    ui.end_row();
+[0m[32m+                    ui.label(RichText::new("Size").weak());
+[0m[32m+                    ui.label(disk::format_size(meta.len()));
+[0m[32m+                    ui.end_row();
+[0m[32m+                    if let Ok(modified) = meta.modified() {
+[0m[32m+                        if let Ok(dur) = modified.duration_since(std::time::UNIX_EPOCH) {
+[0m[32m+                            ui.label(RichText::new("Modified").weak());
+[0m[32m+                            ui.label(disk::format_local(dur.as_secs()));
+[0m[32m+                            ui.end_row();
+[0m[32m+                        }
+[0m                     }
+[31m-                }
+[0m[31m-                ui.label(RichText::new("Path").weak());
+[0m[31m-                ui.label(RichText::new(truncate_middle(&path.display().to_string(), 46)).small().weak());
+[0m[31m-                ui.end_row();
+[0m[31m-            });
+[0m[32m+                    ui.label(RichText::new("Path").weak());
+[0m[32m+                    ui.label(
+[0m[32m+                        RichText::new(truncate_middle(&path.display().to_string(), 46))
+[0m[32m+                            .small()
+[0m[32m+                            .weak(),
+[0m[32m+                    );
+[0m[32m+                    ui.end_row();
+[0m[32m+                });
+[0m             ui.separator();
+             // Text preview for small text files, like Explorer's preview pane.
+[31m-            let ext = path.extension().map(|e| e.to_string_lossy().to_lowercase()).unwrap_or_default();
+[0m[32m+            let ext = path
+[0m[32m+                .extension()
+[0m[32m+                .map(|e| e.to_string_lossy().to_lowercase())
+[0m[32m+                .unwrap_or_default();
+[0m             let is_text = matches!(
+                 ext.as_str(),
+[31m-                "txt" | "md" | "log" | "json" | "toml" | "yaml" | "yml" | "csv" | "rs" | "c" | "h" | "cpp" | "hpp"
+[0m[31m-                    | "py" | "js" | "ts" | "html" | "css" | "xml" | "ini" | "cfg" | "conf" | "sh" | "bat" | "ps1"
+[0m[32m+                "txt"
+[0m[32m+                    | "md"
+[0m[32m+                    | "log"
+[0m[32m+                    | "json"
+[0m[32m+                    | "toml"
+[0m[32m+                    | "yaml"
+[0m[32m+                    | "yml"
+[0m[32m+                    | "csv"
+[0m[32m+                    | "rs"
+[0m[32m+                    | "c"
+[0m[32m+                    | "h"
+[0m[32m+                    | "cpp"
+[0m[32m+                    | "hpp"
+[0m[32m+                    | "py"
+[0m[32m+                    | "js"
+[0m[32m+                    | "ts"
+[0m[32m+                    | "html"
+[0m[32m+                    | "css"
+[0m[32m+                    | "xml"
+[0m[32m+                    | "ini"
+[0m[32m+                    | "cfg"
+[0m[32m+                    | "conf"
+[0m[32m+                    | "sh"
+[0m[32m+                    | "bat"
+[0m[32m+                    | "ps1"
+[0m             );
+             if is_text && meta.len() <= 64 * 1024 {
+                 if let Ok(text) = std::fs::read_to_string(&path) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2143:
+                     let head: String = text.lines().take(60).collect::<Vec<_>>().join("\n");
+[31m-                    egui::ScrollArea::vertical().max_height(260.0).show(ui, |ui| {
+[0m[31m-                        ui.add(
+[0m[31m-                            egui::Label::new(RichText::new(head).monospace().size(11.0))
+[0m[31m-                                .wrap_mode(egui::TextWrapMode::Truncate),
+[0m[31m-                        );
+[0m[31m-                    });
+[0m[32m+                    egui::ScrollArea::vertical()
+[0m[32m+                        .max_height(260.0)
+[0m[32m+                        .show(ui, |ui| {
+[0m[32m+                            ui.add(
+[0m[32m+                                egui::Label::new(RichText::new(head).monospace().size(11.0))
+[0m[32m+                                    .wrap_mode(egui::TextWrapMode::Truncate),
+[0m[32m+                            );
+[0m[32m+                        });
+[0m                 }
              }
-             ActionRequest::OpenWith => {
-[31m-                if let Err(e) = shell::launch("rundll32.exe", &format!("shell32.dll,OpenAs_RunDLL {}", path.display())) {
-[0m[32m+                if let Err(e) = shell::launch(
-[0m[32m+                    "rundll32.exe",
-[0m[32m+                    &format!("shell32.dll,OpenAs_RunDLL {}", path.display()),
-[0m[32m+                ) {
-[0m                     self.status = format!("Open with failed: {e}");
-                 }
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2153:
+     }
+ 
+     /// Icon for an arbitrary path (used by the preview pane).
+[31m-    fn icon_for_path(&mut self, ctx: &egui::Context, path: &Path, size: u32) -> Option<egui::TextureId> {
+[0m[32m+    fn icon_for_path(
+[0m[32m+        &mut self,
+[0m[32m+        ctx: &egui::Context,
+[0m[32m+        path: &Path,
+[0m[32m+        size: u32,
+[0m[32m+    ) -> Option<egui::TextureId> {
+[0m         let key = format!("path:{size}:{}", path.display());
+         if let Some(slot) = self.icons.get(&key) {
+             return slot.as_ref().map(|t| t.id());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2164:
+             if rgba.len() < expected {
+                 return None;
              }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:982:
-             let tab = self.current();
-             let files = tab.entries.iter().filter(|e| !e.is_dir).count();
-             let dirs = tab.entries.iter().filter(|e| e.is_dir).count();
-[31m-            let total: u64 = tab.entries.iter().filter(|e| !e.is_dir).map(|e| e.size).sum();
-[0m[31m-            ui.label(RichText::new(format!("{dirs} folders, {files} files · {}", disk::format_size(total))).small());
-[0m[32m+            let total: u64 = tab
-[0m[32m+                .entries
-[0m[32m+                .iter()
-[0m[32m+                .filter(|e| !e.is_dir)
-[0m[32m+                .map(|e| e.size)
-[0m[32m+                .sum();
-[0m[32m+            ui.label(
-[0m[32m+                RichText::new(format!(
-[0m[32m+                    "{dirs} folders, {files} files · {}",
-[0m[32m+                    disk::format_size(total)
-[0m[32m+                ))
-[0m[32m+                .small(),
+[31m-            let image = egui::ColorImage::from_rgba_unmultiplied([size as usize, size as usize], &rgba[..expected]);
+[0m[32m+            let image = egui::ColorImage::from_rgba_unmultiplied(
+[0m[32m+                [size as usize, size as usize],
+[0m[32m+                &rgba[..expected],
 [0m[32m+            );
-[0m             if !self.status.is_empty() {
-                 ui.separator();
+[0m             Some(ctx.load_texture(key.clone(), image, egui::TextureOptions::LINEAR))
+         });
+         let id = texture.as_ref().map(|t| t.id());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2184:
+                 let mut s = format!("{dirs} folder(s), {files} file(s)");
+                 if let Some((_, bytes, count)) = &self.folder_size {
+                     if *count > 0 {
+[31m-                        s.push_str(&format!("  ·  {} total in {}", disk::format_size(*bytes), plural(*count)));
+[0m[32m+                        s.push_str(&format!(
+[0m[32m+                            "  ·  {} total in {}",
+[0m[32m+                            disk::format_size(*bytes),
+[0m[32m+                            plural(*count)
+[0m[32m+                        ));
+[0m                     }
+                 }
+                 s
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2196:
                  ui.label(RichText::new(&self.status).small().weak());
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:990:
              }
              ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
 [31m-                ui.label(RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION"))).small().weak());
@@ -2355,77 +3088,143 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:990:
 [0m[32m+                        .small()
 [0m[32m+                        .weak(),
 [0m[32m+                );
-[0m             });
-         });
-     }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1062:
-         });
-         if let Some(sel) = self.current().selected.clone() {
-             if ctrl_c {
-[31m-                self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: false });
-[0m[32m+                self.clipboard = Some(FileClipboard {
-[0m[32m+                    paths: vec![sel.clone()],
-[0m[32m+                    cut: false,
+[0m                 ui.separator();
+                 // View-mode shortcuts, like Explorer's status-bar buttons.
+                 for v in ViewMode::ALL {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2203:
+                     let active = self.current().view == v;
+                     if ui
+[31m-                        .add(egui::Button::new(RichText::new(view_glyph(v)).size(13.0)).frame(active))
+[0m[32m+                        .add(
+[0m[32m+                            egui::Button::new(RichText::new(view_glyph(v)).size(13.0))
+[0m[32m+                                .frame(active),
+[0m[32m+                        )
+[0m                         .on_hover_text(v.label())
+                         .clicked()
+                     {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2369:
+                     (None, false) => entries.len() - 1,
+                 };
+                 if shift {
+[31m-                    let mods = egui::Modifiers { shift: true, ..Default::default() };
+[0m[32m+                    let mods = egui::Modifiers {
+[0m[32m+                        shift: true,
+[0m[32m+                        ..Default::default()
+[0m[32m+                    };
+[0m                     self.apply_click(next, &entries[next].path.clone(), mods, &entries);
+                 } else {
+                     self.current_mut().selection = vec![entries[next].path.clone()];
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2391:
+             let paths = self.delete_confirm.clone();
+             let permanent = self.delete_permanent;
+             let mut action: Option<bool> = None;
+[31m-            egui::Window::new(if permanent { "Delete permanently" } else { "Delete" })
+[0m[31m-                .collapsible(false)
+[0m[31m-                .resizable(false)
+[0m[31m-                .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+[0m[31m-                .show(ctx, |ui| {
+[0m[31m-                    ui.label(if paths.len() == 1 {
+[0m[31m-                        if permanent {
+[0m[31m-                            format!("Permanently delete \"{}\"? This cannot be undone.", file_name_of(&paths[0]))
+[0m[31m-                        } else {
+[0m[31m-                            format!("Move \"{}\" to the Recycle Bin?", file_name_of(&paths[0]))
+[0m[31m-                        }
+[0m[31m-                    } else if permanent {
+[0m[31m-                        format!("Permanently delete {} items? This cannot be undone.", paths.len())
+[0m[32m+            egui::Window::new(if permanent {
+[0m[32m+                "Delete permanently"
+[0m[32m+            } else {
+[0m[32m+                "Delete"
+[0m[32m+            })
+[0m[32m+            .collapsible(false)
+[0m[32m+            .resizable(false)
+[0m[32m+            .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+[0m[32m+            .show(ctx, |ui| {
+[0m[32m+                ui.label(if paths.len() == 1 {
+[0m[32m+                    if permanent {
+[0m[32m+                        format!(
+[0m[32m+                            "Permanently delete \"{}\"? This cannot be undone.",
+[0m[32m+                            file_name_of(&paths[0])
+[0m[32m+                        )
+[0m                     } else {
+[31m-                        format!("Move {} items to the Recycle Bin?", paths.len())
+[0m[31m-                    });
+[0m[31m-                    ui.add_space(10.0);
+[0m[31m-                    ui.horizontal(|ui| {
+[0m[31m-                        if ui.button(if permanent { "Delete permanently" } else { "Delete" }).clicked() {
+[0m[31m-                            action = Some(true);
+[0m[31m-                        }
+[0m[31m-                        if ui.button("Cancel").clicked() {
+[0m[31m-                            action = Some(false);
+[0m[31m-                        }
+[0m[31m-                    });
+[0m[32m+                        format!("Move \"{}\" to the Recycle Bin?", file_name_of(&paths[0]))
+[0m[32m+                    }
+[0m[32m+                } else if permanent {
+[0m[32m+                    format!(
+[0m[32m+                        "Permanently delete {} items? This cannot be undone.",
+[0m[32m+                        paths.len()
+[0m[32m+                    )
+[0m[32m+                } else {
+[0m[32m+                    format!("Move {} items to the Recycle Bin?", paths.len())
+[0m                 });
+[32m+                ui.add_space(10.0);
+[0m[32m+                ui.horizontal(|ui| {
+[0m[32m+                    if ui
+[0m[32m+                        .button(if permanent {
+[0m[32m+                            "Delete permanently"
+[0m[32m+                        } else {
+[0m[32m+                            "Delete"
+[0m[32m+                        })
+[0m[32m+                        .clicked()
+[0m[32m+                    {
+[0m[32m+                        action = Some(true);
+[0m[32m+                    }
+[0m[32m+                    if ui.button("Cancel").clicked() {
+[0m[32m+                        action = Some(false);
+[0m[32m+                    }
 [0m[32m+                });
-[0m                 self.status = format!("Copied: {}", sel.display());
-             }
-             if ctrl_x {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1069:
-[31m-                self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: true });
-[0m[32m+                self.clipboard = Some(FileClipboard {
-[0m[32m+                    paths: vec![sel.clone()],
-[0m[32m+                    cut: true,
-[0m[32m+                });
-[0m                 self.status = format!("Cut: {}", sel.display());
-             }
-             if f2 {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1094:
-         let mut done = 0usize;
-         let mut errors: Vec<String> = Vec::new();
-         for src in &clip.paths {
-[31m-            let Some(name) = src.file_name() else { continue };
-[0m[32m+            let Some(name) = src.file_name() else {
-[0m[32m+                continue;
-[0m[32m+            };
-[0m             let mut dest = dest_dir.join(name);
-             if dest.exists() {
-                 dest = disk::unique_destination(&dest);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1113:
-         self.status = if errors.is_empty() {
-             format!("{verb} {done} item(s) to {}", dest_dir.display())
-         } else {
-[31m-            format!("{verb} {done}; {} failed — {}", errors.len(), errors.join("; "))
-[0m[32m+            format!(
-[0m[32m+                "{verb} {done}; {} failed — {}",
-[0m[32m+                errors.len(),
-[0m[32m+                errors.join("; ")
-[0m[32m+            )
-[0m         };
-         // A cut only clears the clipboard when everything moved.
-         if clip.cut && errors.is_empty() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1254:
-     ];
-     for path in candidates {
-         if let Ok(bytes) = std::fs::read(path) {
-[31m-            fonts.font_data.insert("segoe".to_string(), egui::FontData::from_owned(bytes));
-[0m[31m-            fonts.families.entry(egui::FontFamily::Proportional).or_default().insert(0, "segoe".to_string());
-[0m[31m-            fonts.families.entry(egui::FontFamily::Monospace).or_default().push("segoe".to_string());
-[0m[32m+            fonts
-[0m[32m+                .font_data
-[0m[32m+                .insert("segoe".to_string(), egui::FontData::from_owned(bytes));
-[0m[32m+            fonts
-[0m[32m+                .families
-[0m[32m+                .entry(egui::FontFamily::Proportional)
-[0m[32m+                .or_default()
-[0m[32m+                .insert(0, "segoe".to_string());
-[0m[32m+            fonts
-[0m[32m+                .families
-[0m[32m+                .entry(egui::FontFamily::Monospace)
-[0m[32m+                .or_default()
-[0m[32m+                .push("segoe".to_string());
-[0m             break;
+[0m[32m+            });
+[0m             match action {
+                 Some(true) => {
+                     let mut errors = Vec::new();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2448:
          }
-     }
+ 
+         if let Some(job) = &self.job {
+[31m-            let fraction = if job.total == 0 { 0.0 } else { job.done as f32 / job.total as f32 };
+[0m[32m+            let fraction = if job.total == 0 {
+[0m[32m+                0.0
+[0m[32m+            } else {
+[0m[32m+                job.done as f32 / job.total as f32
+[0m[32m+            };
+[0m             let label = job.label.clone();
+             let done = job.done;
+             let total = job.total;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2458:
+                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+                 .show(ctx, |ui| {
+                     ui.label(label);
+[31m-                    ui.add(egui::ProgressBar::new(fraction).show_percentage().desired_width(320.0));
+[0m[32m+                    ui.add(
+[0m[32m+                        egui::ProgressBar::new(fraction)
+[0m[32m+                            .show_percentage()
+[0m[32m+                            .desired_width(320.0),
+[0m[32m+                    );
+[0m                     ui.label(format!("{done} / {total}"));
+                     if ui.button("Cancel").clicked() {
+                         // The worker observes this flag between items.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2475:
+ 
+         egui::TopBottomPanel::top("tabs").show(ctx, |ui| self.tab_bar(ui));
+         egui::TopBottomPanel::top("commandbar").show(ctx, |ui| self.command_bar(ui));
+[31m-        egui::TopBottomPanel::bottom("status").exact_height(26.0).show(ctx, |ui| self.status_bar(ui));
+[0m[32m+        egui::TopBottomPanel::bottom("status")
+[0m[32m+            .exact_height(26.0)
+[0m[32m+            .show(ctx, |ui| self.status_bar(ui));
+[0m         if self.preview_open {
+             egui::SidePanel::right("preview")
+                 .resizable(true)
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:105:
  
  fn find_component(exe: &str) -> Option<PathBuf> {
@@ -3036,821 +3835,4 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:150:
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:166:
                      self.drivers.push(DriverRow {
                          name: s.name,
-                         display: s.display_name,
-[31m-                        state: s.state.map(|x| x.label().to_string()).unwrap_or_else(|| "—".into()),
-[0m[31m-                        start: s.start_type.map(|x| x.label().to_string()).unwrap_or_else(|| "—".into()),
-[0m[32m+                        state: s
-[0m[32m+                            .state
-[0m[32m+                            .map(|x| x.label().to_string())
-[0m[32m+                            .unwrap_or_else(|| "—".into()),
-[0m[32m+                        start: s
-[0m[32m+                            .start_type
-[0m[32m+                            .map(|x| x.label().to_string())
-[0m[32m+                            .unwrap_or_else(|| "—".into()),
-[0m                     });
-                 }
-             }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:181:
-         let path = r"SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes";
-         if let Ok(key) = registry::Key::open(Root::LocalMachine, path) {
-             for guid in key.subkeys() {
-[31m-                let friendly = registry::read_machine_string(
-[0m[31m-                    &format!(r"{path}\{guid}"),
-[0m[31m-                    "FriendlyName",
-[0m[31m-                )
-[0m[31m-                .unwrap_or_else(|| guid.clone());
-[0m[32m+                let friendly =
-[0m[32m+                    registry::read_machine_string(&format!(r"{path}\{guid}"), "FriendlyName")
-[0m[32m+                        .unwrap_or_else(|| guid.clone());
-[0m                 let active = registry::read_machine_string(path, "ActivePowerScheme")
-                     .map(|a| a.eq_ignore_ascii_case(&guid))
-                     .unwrap_or(false);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:213:
-         let mut r = String::new();
-         r.push_str("WinRust support report\n======================\n\n");
-         r.push_str(&format!("Generated: {}\n", chrono_like_now()));
-[31m-        r.push_str(&format!("OS: {} build {} (UBR {}) {}\n", self.os.product_name, self.os.build, self.os.ubr, self.os.display_version));
-[0m[31m-        r.push_str(&format!("Host: {} domain {}\n", self.os.hostname, self.os.domain));
-[0m[31m-        r.push_str(&format!("CPU: {} logical, arch {}\n", self.cpu.logical, self.cpu.arch));
-[0m[31m-        r.push_str(&format!("RAM: {} of {}\n", system::MemoryStatus::used_phys(&self.memory), self.memory.total_phys));
-[0m         r.push_str(&format!(
-[32m+            "OS: {} build {} (UBR {}) {}\n",
-[0m[32m+            self.os.product_name, self.os.build, self.os.ubr, self.os.display_version
-[0m[32m+        ));
-[0m[32m+        r.push_str(&format!(
-[0m[32m+            "Host: {} domain {}\n",
-[0m[32m+            self.os.hostname, self.os.domain
-[0m[32m+        ));
-[0m[32m+        r.push_str(&format!(
-[0m[32m+            "CPU: {} logical, arch {}\n",
-[0m[32m+            self.cpu.logical, self.cpu.arch
-[0m[32m+        ));
-[0m[32m+        r.push_str(&format!(
-[0m[32m+            "RAM: {} of {}\n",
-[0m[32m+            system::MemoryStatus::used_phys(&self.memory),
-[0m[32m+            self.memory.total_phys
-[0m[32m+        ));
-[0m[32m+        r.push_str(&format!(
-[0m             "User: {}\\{} ({}, {})\n",
-[31m-            self.user.domain, self.user.account, self.user.integrity,
-[0m[31m-            if self.user.elevated { "elevated" } else { "not elevated" }
-[0m[32m+            self.user.domain,
-[0m[32m+            self.user.account,
-[0m[32m+            self.user.integrity,
-[0m[32m+            if self.user.elevated {
-[0m[32m+                "elevated"
-[0m[32m+            } else {
-[0m[32m+                "not elevated"
-[0m[32m+            }
-[0m         ));
-         r.push_str(&format!("Uptime: {} ms\n\n", system::uptime_ms()));
-         r.push_str("Top processes by memory:\n");
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:227:
-         let mut procs = process::enumerate().unwrap_or_default();
-         procs.sort_by_key(|p| std::cmp::Reverse(p.private_bytes));
-         for p in procs.iter().take(15) {
-[31m-            r.push_str(&format!("  {:>6}  {:>10} KB  {}\n", p.pid, p.private_bytes / 1024, p.name));
-[0m[32m+            r.push_str(&format!(
-[0m[32m+                "  {:>6}  {:>10} KB  {}\n",
-[0m[32m+                p.pid,
-[0m[32m+                p.private_bytes / 1024,
-[0m[32m+                p.name
-[0m[32m+            ));
-[0m         }
-         r.push_str("\nServices not running (auto-start):\n");
-         if let Ok(scm) = ScManager::connect() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:256:
-         ui.add_space(6.0);
-         ui.separator();
-         for s in Section::ALL {
-[31m-            if ui.selectable_label(self.section == s, format!("  {}", s.label())).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .selectable_label(self.section == s, format!("  {}", s.label()))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 self.section = s;
-             }
-         }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:270:
-     fn overview(&mut self, ui: &mut egui::Ui) {
-         ui.heading("System overview");
-         ui.separator();
-[31m-        egui::Grid::new("overview_grid").num_columns(2).spacing([24.0, 8.0]).show(ui, |ui| {
-[0m[31m-            ui.label(RichText::new("Operating system").strong());
-[0m[31m-            ui.label(system::os_summary());
-[0m[31m-            ui.end_row();
-[0m[31m-            ui.label(RichText::new("Build").strong());
-[0m[31m-            ui.label(format!("{}.{}", self.os.build, self.os.ubr));
-[0m[31m-            ui.end_row();
-[0m[31m-            ui.label(RichText::new("Architecture").strong());
-[0m[31m-            ui.label(self.cpu.arch);
-[0m[31m-            ui.end_row();
-[0m[31m-            ui.label(RichText::new("Logical processors").strong());
-[0m[31m-            ui.label(self.cpu.logical.to_string());
-[0m[31m-            ui.end_row();
-[0m[31m-            ui.label(RichText::new("Memory").strong());
-[0m[31m-            ui.label(format!(
-[0m[31m-                "{} in use of {} ({:.0}%)",
-[0m[31m-                system::MemoryStatus::used_phys(&self.memory) / 1_048_576,
-[0m[31m-                self.memory.total_phys / 1_048_576,
-[0m[31m-                self.memory.used_percent()
-[0m[31m-            ));
-[0m[31m-            ui.end_row();
-[0m[31m-            ui.label(RichText::new("Uptime").strong());
-[0m[31m-            let up = system::uptime_ms() / 1000;
-[0m[31m-            ui.label(format!("{}d {}h {}m", up / 86400, (up % 86400) / 3600, (up % 3600) / 60));
-[0m[31m-            ui.end_row();
-[0m[31m-            ui.label(RichText::new("Elevation").strong());
-[0m[31m-            ui.label(if self.user.elevated {
-[0m[31m-                RichText::new("Administrator").color(Color32::from_rgb(140, 220, 140))
-[0m[31m-            } else {
-[0m[31m-                RichText::new("Standard user").color(Color32::from_rgb(230, 200, 120))
-[0m[32m+        egui::Grid::new("overview_grid")
-[0m[32m+            .num_columns(2)
-[0m[32m+            .spacing([24.0, 8.0])
-[0m[32m+            .show(ui, |ui| {
-[0m[32m+                ui.label(RichText::new("Operating system").strong());
-[0m[32m+                ui.label(system::os_summary());
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(RichText::new("Build").strong());
-[0m[32m+                ui.label(format!("{}.{}", self.os.build, self.os.ubr));
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(RichText::new("Architecture").strong());
-[0m[32m+                ui.label(self.cpu.arch);
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(RichText::new("Logical processors").strong());
-[0m[32m+                ui.label(self.cpu.logical.to_string());
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(RichText::new("Memory").strong());
-[0m[32m+                ui.label(format!(
-[0m[32m+                    "{} in use of {} ({:.0}%)",
-[0m[32m+                    system::MemoryStatus::used_phys(&self.memory) / 1_048_576,
-[0m[32m+                    self.memory.total_phys / 1_048_576,
-[0m[32m+                    self.memory.used_percent()
-[0m[32m+                ));
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(RichText::new("Uptime").strong());
-[0m[32m+                let up = system::uptime_ms() / 1000;
-[0m[32m+                ui.label(format!(
-[0m[32m+                    "{}d {}h {}m",
-[0m[32m+                    up / 86400,
-[0m[32m+                    (up % 86400) / 3600,
-[0m[32m+                    (up % 3600) / 60
-[0m[32m+                ));
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(RichText::new("Elevation").strong());
-[0m[32m+                ui.label(if self.user.elevated {
-[0m[32m+                    RichText::new("Administrator").color(Color32::from_rgb(140, 220, 140))
-[0m[32m+                } else {
-[0m[32m+                    RichText::new("Standard user").color(Color32::from_rgb(230, 200, 120))
-[0m[32m+                });
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(RichText::new("Account").strong());
-[0m[32m+                ui.label(format!("{}\\{}", self.user.domain, self.user.account));
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(RichText::new("SID").strong());
-[0m[32m+                ui.label(RichText::new(&self.user.sid).monospace().small());
-[0m[32m+                ui.end_row();
-[0m             });
-[31m-            ui.end_row();
-[0m[31m-            ui.label(RichText::new("Account").strong());
-[0m[31m-            ui.label(format!("{}\\{}", self.user.domain, self.user.account));
-[0m[31m-            ui.end_row();
-[0m[31m-            ui.label(RichText::new("SID").strong());
-[0m[31m-            ui.label(RichText::new(&self.user.sid).monospace().small());
-[0m[31m-            ui.end_row();
-[0m[31m-        });
-[0m         ui.add_space(12.0);
-         if ui.button("Re-open Task Manager components").clicked() {
-             let _ = process::enumerate();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:324:
- 
-     fn environment(&mut self, ui: &mut egui::Ui) {
-         ui.heading("Environment variables");
-[31m-        ui.label(RichText::new("Edit PATH and other variables; changes are written through to the registry.").small().weak());
-[0m[32m+        ui.label(
-[0m[32m+            RichText::new(
-[0m[32m+                "Edit PATH and other variables; changes are written through to the registry.",
-[0m[32m+            )
-[0m[32m+            .small()
-[0m[32m+            .weak(),
-[0m[32m+        );
-[0m         ui.separator();
-         let mut edit: Option<(usize, String)> = None;
-[31m-        egui::ScrollArea::vertical().max_height(380.0).show(ui, |ui| {
-[0m[31m-            egui::Grid::new("env_grid").num_columns(3).striped(true).show(ui, |ui| {
-[0m[31m-                ui.label(RichText::new("Scope").strong());
-[0m[31m-                ui.label(RichText::new("Name").strong());
-[0m[31m-                ui.label(RichText::new("Value").strong());
-[0m[31m-                ui.end_row();
-[0m[31m-                for (i, var) in self.env.iter().enumerate() {
-[0m[31m-                    ui.label(var.scope);
-[0m[31m-                    ui.label(RichText::new(&var.name).monospace());
-[0m[31m-                    ui.horizontal(|ui| {
-[0m[31m-                        ui.label(RichText::new(truncate(&var.value, 80)).small());
-[0m[31m-                        if ui.small_button("Edit").clicked() {
-[0m[31m-                            edit = Some((i, var.value.clone()));
-[0m[32m+        egui::ScrollArea::vertical()
-[0m[32m+            .max_height(380.0)
-[0m[32m+            .show(ui, |ui| {
-[0m[32m+                egui::Grid::new("env_grid")
-[0m[32m+                    .num_columns(3)
-[0m[32m+                    .striped(true)
-[0m[32m+                    .show(ui, |ui| {
-[0m[32m+                        ui.label(RichText::new("Scope").strong());
-[0m[32m+                        ui.label(RichText::new("Name").strong());
-[0m[32m+                        ui.label(RichText::new("Value").strong());
-[0m[32m+                        ui.end_row();
-[0m[32m+                        for (i, var) in self.env.iter().enumerate() {
-[0m[32m+                            ui.label(var.scope);
-[0m[32m+                            ui.label(RichText::new(&var.name).monospace());
-[0m[32m+                            ui.horizontal(|ui| {
-[0m[32m+                                ui.label(RichText::new(truncate(&var.value, 80)).small());
-[0m[32m+                                if ui.small_button("Edit").clicked() {
-[0m[32m+                                    edit = Some((i, var.value.clone()));
-[0m[32m+                                }
-[0m[32m+                            });
-[0m[32m+                            ui.end_row();
-[0m                         }
-                     });
-[31m-                    ui.end_row();
-[0m[31m-                }
-[0m             });
-[31m-        });
-[0m         if let Some((i, value)) = edit {
-             self.env_edit = Some((i, value));
-         }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:359:
-                 .resizable(true)
-                 .default_width(700.0)
-                 .show(ui.ctx(), |ui| {
-[31m-                    ui.add(egui::TextEdit::multiline(&mut draft).desired_rows(6).desired_width(660.0));
-[0m[32m+                    ui.add(
-[0m[32m+                        egui::TextEdit::multiline(&mut draft)
-[0m[32m+                            .desired_rows(6)
-[0m[32m+                            .desired_width(660.0),
-[0m[32m+                    );
-[0m                     ui.horizontal(|ui| {
-                         if ui.button("Save").clicked() {
-                             action = Some("save");
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:448:
- 
-     fn power_section(&mut self, ui: &mut egui::Ui) {
-         ui.heading("Power plans");
-[31m-        ui.label(RichText::new("Switching plans writes ActivePowerScheme and broadcasts the change.").small().weak());
-[0m[32m+        ui.label(
-[0m[32m+            RichText::new("Switching plans writes ActivePowerScheme and broadcasts the change.")
-[0m[32m+                .small()
-[0m[32m+                .weak(),
-[0m[32m+        );
-[0m         ui.separator();
-         let mut pick: Option<String> = None;
-         for (guid, name, active) in &self.power_plans {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:468:
-         ui.label(RichText::new("Session power").strong());
-         egui::Grid::new("power_grid").num_columns(2).show(ui, |ui| {
-             ui.label("Battery present:");
-[31m-            ui.label(if system::pnp_battery_present() { "yes" } else { "no" });
-[0m[32m+            ui.label(if system::pnp_battery_present() {
-[0m[32m+                "yes"
-[0m[32m+            } else {
-[0m[32m+                "no"
-[0m[32m+            });
-[0m             ui.end_row();
-             ui.label("Idle time:");
-             ui.label(format!("{} s", system::idle_seconds().unwrap_or(0)));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:494:
-             ui.label(&self.os.hostname);
-             ui.end_row();
-             ui.label(RichText::new("Domain").strong());
-[31m-            ui.label(if self.os.domain.is_empty() { "—" } else { &self.os.domain });
-[0m[32m+            ui.label(if self.os.domain.is_empty() {
-[0m[32m+                "—"
-[0m[32m+            } else {
-[0m[32m+                &self.os.domain
-[0m[32m+            });
-[0m             ui.end_row();
-         });
-         ui.add_space(8.0);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:508:
-         ui.label(RichText::new("Enumerated from the kernel/service database — the same list Device Manager's 'drivers' tab uses.").small().weak());
-         ui.separator();
-         let mut filter = String::new();
-[31m-        let filter_copy = ui.data(|d| d.get_temp::<String>(egui::Id::new("kernel_filter"))).unwrap_or_default();
-[0m[32m+        let filter_copy = ui
-[0m[32m+            .data(|d| d.get_temp::<String>(egui::Id::new("kernel_filter")))
-[0m[32m+            .unwrap_or_default();
-[0m         filter.push_str(&filter_copy);
-         ui.horizontal(|ui| {
-             ui.add(egui::TextEdit::singleline(&mut filter).hint_text("🔍 Filter drivers"));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:522:
-         let rows: Vec<&DriverRow> = self
-             .drivers
-             .iter()
-[31m-            .filter(|d| needle.is_empty() || d.display.to_lowercase().contains(&needle) || d.name.to_lowercase().contains(&needle))
-[0m[32m+            .filter(|d| {
-[0m[32m+                needle.is_empty()
-[0m[32m+                    || d.display.to_lowercase().contains(&needle)
-[0m[32m+                    || d.name.to_lowercase().contains(&needle)
-[0m[32m+            })
-[0m             .collect();
-         let table = TableBuilder::new(ui)
-             .striped(true)
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:549:
-                     ui.label(RichText::new(&d.name).monospace().small());
-                 });
-                 row.col(|ui| {
-[31m-                    let color = if d.state == "Running" { Color32::from_rgb(120, 220, 120) } else { Color32::GRAY };
-[0m[32m+                    let color = if d.state == "Running" {
-[0m[32m+                        Color32::from_rgb(120, 220, 120)
-[0m[32m+                    } else {
-[0m[32m+                        Color32::GRAY
-[0m[32m+                    };
-[0m                     ui.label(RichText::new(&d.state).color(color));
-                 });
-                 row.col(|ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:585:
-         ui.separator();
-         let report = self.report.clone();
-         egui::ScrollArea::both().show(ui, |ui| {
-[31m-            ui.add(egui::TextEdit::multiline(&mut report.as_str()).desired_width(f32::INFINITY).desired_rows(28).font(egui::TextStyle::Monospace));
-[0m[32m+            ui.add(
-[0m[32m+                egui::TextEdit::multiline(&mut report.as_str())
-[0m[32m+                    .desired_width(f32::INFINITY)
-[0m[32m+                    .desired_rows(28)
-[0m[32m+                    .font(egui::TextStyle::Monospace),
-[0m[32m+            );
-[0m         });
-     }
- }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:601:
-                     ui.label(RichText::new(&self.status).small());
-                 }
-                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-[31m-                    ui.label(RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION"))).small().weak());
-[0m[32m+                    ui.label(
-[0m[32m+                        RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION")))
-[0m[32m+                            .small()
-[0m[32m+                            .weak(),
-[0m[32m+                    );
-[0m                 });
-             });
-         });
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:611:
-             .width_range(170.0..=320.0)
-             .show(ctx, |ui| self.sidebar(ui));
-         egui::CentralPanel::default().show(ctx, |ui| {
-[31m-            egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| match self.section {
-[0m[31m-                Section::Overview => self.overview(ui),
-[0m[31m-                Section::Environment => self.environment(ui),
-[0m[31m-                Section::Startup => self.startup_section(ui),
-[0m[31m-                Section::Power => self.power_section(ui),
-[0m[31m-                Section::Network => self.network_section(ui),
-[0m[31m-                Section::Kernel => self.kernel_section(ui),
-[0m[31m-                Section::Support => self.support_section(ui),
-[0m[31m-            });
-[0m[32m+            egui::ScrollArea::vertical()
-[0m[32m+                .auto_shrink([false, false])
-[0m[32m+                .show(ui, |ui| match self.section {
-[0m[32m+                    Section::Overview => self.overview(ui),
-[0m[32m+                    Section::Environment => self.environment(ui),
-[0m[32m+                    Section::Startup => self.startup_section(ui),
-[0m[32m+                    Section::Power => self.power_section(ui),
-[0m[32m+                    Section::Network => self.network_section(ui),
-[0m[32m+                    Section::Kernel => self.kernel_section(ui),
-[0m[32m+                    Section::Support => self.support_section(ui),
-[0m[32m+                });
-[0m         });
-         ctx.request_repaint_after(Duration::from_millis(1000));
-     }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:45:
-             Tab::Services => "Services",
-         }
-     }
-[31m-    const ALL: [Tab; 6] = [Tab::Processes, Tab::Performance, Tab::Startup, Tab::Users, Tab::Network, Tab::Services];
-[0m[32m+    const ALL: [Tab; 6] = [
-[0m[32m+        Tab::Processes,
-[0m[32m+        Tab::Performance,
-[0m[32m+        Tab::Startup,
-[0m[32m+        Tab::Users,
-[0m[32m+        Tab::Network,
-[0m[32m+        Tab::Services,
-[0m[32m+    ];
-[0m }
- 
- /// One row with computed CPU%, grouped the way Task Manager groups by app.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:132:
-                     None => 0.0,
-                 };
-                 let group = group_key(&p);
-[31m-                rows.push(Row { info: p, cpu_percent, disk_bps, net_bps, group, ..Default::default() });
-[0m[32m+                rows.push(Row {
-[0m[32m+                    info: p,
-[0m[32m+                    cpu_percent,
-[0m[32m+                    disk_bps,
-[0m[32m+                    net_bps,
-[0m[32m+                    group,
-[0m[32m+                    ..Default::default()
-[0m[32m+                });
-[0m             }
-             prev_proc = new_proc;
-             prev_io = new_io;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:245:
-         let mut out = Vec::new();
-         // Run keys
-         for (root, path, label) in [
-[31m-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKCU Run"),
-[0m[31m-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKLM Run"),
-[0m[32m+            (
-[0m[32m+                Root::CurrentUser,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
-[0m[32m+                "HKCU Run",
-[0m[32m+            ),
-[0m[32m+            (
-[0m[32m+                Root::LocalMachine,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
-[0m[32m+                "HKLM Run",
-[0m[32m+            ),
-[0m         ] {
-             for (name, ty, data) in registry::enum_values(path, root) {
-                 let cmd = if ty == 1 || ty == 2 {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:266:
-                     String::new()
-                 } else {
-                     let vi = shell::version_info(&exe);
-[31m-                    if vi.company.is_empty() { vi.description } else { vi.company }
-[0m[32m+                    if vi.company.is_empty() {
-[0m[32m+                        vi.description
-[0m[32m+                    } else {
-[0m[32m+                        vi.company
-[0m[32m+                    }
-[0m                 };
-                 out.push(StartupItem {
-                     name,
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:281:
-         // Task Manager marks disabled startup items in StartupApproved\Run as a
-         // 12-byte blob whose first dword is 2 (enabled) / 3 (disabled).
-         for (root, approved_path) in [
-[31m-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"),
-[0m[31m-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"),
-[0m[32m+            (
-[0m[32m+                Root::CurrentUser,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
-[0m[32m+            ),
-[0m[32m+            (
-[0m[32m+                Root::LocalMachine,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
-[0m[32m+            ),
-[0m         ] {
-             for (name, _ty, data) in registry::enum_values(approved_path, root) {
-                 if data.len() < 4 {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:305:
-     fn set_enabled(item: &StartupItem, enable: bool) -> Result<(), String> {
-         use winrust_core::registry::{self, Root};
-         let (root, path) = if item.location.starts_with("HKLM") {
-[31m-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run")
-[0m[32m+            (
-[0m[32m+                Root::LocalMachine,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
-[0m[32m+            )
-[0m         } else {
-[31m-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run")
-[0m[32m+            (
-[0m[32m+                Root::CurrentUser,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
-[0m[32m+            )
-[0m         };
-         let key = registry::open_for_write(root, path).map_err(|e| e.to_string())?;
-         let mut blob = [0u8; 12];
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:389:
-             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                 if let Some(sel) = self.selected {
-                     if let Some(row) = self.snapshot.rows.iter().find(|r| r.info.pid == sel) {
-[31m-                        ui.label(RichText::new(format!("{}  ·  PID {}", row.info.name, sel)).small().weak());
-[0m[32m+                        ui.label(
-[0m[32m+                            RichText::new(format!("{}  ·  PID {}", row.info.name, sel))
-[0m[32m+                                .small()
-[0m[32m+                                .weak(),
-[0m[32m+                        );
-[0m                     }
-                 }
-                 ui.label(
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:406:
- 
-     fn processes_tab(&mut self, ui: &mut egui::Ui) {
-         ui.horizontal(|ui| {
-[31m-            ui.add_sized([240.0, 22.0], egui::TextEdit::singleline(&mut self.search).hint_text("🔍 Search processes"));
-[0m[32m+            ui.add_sized(
-[0m[32m+                [240.0, 22.0],
-[0m[32m+                egui::TextEdit::singleline(&mut self.search).hint_text("🔍 Search processes"),
-[0m[32m+            );
-[0m             ui.checkbox(&mut self.group_by_app, "Group by app");
-             ui.separator();
-[31m-            let selected = self.selected.and_then(|pid| self.snapshot.rows.iter().find(|r| r.info.pid == pid).cloned());
-[0m[32m+            let selected = self.selected.and_then(|pid| {
-[0m[32m+                self.snapshot
-[0m[32m+                    .rows
-[0m[32m+                    .iter()
-[0m[32m+                    .find(|r| r.info.pid == pid)
-[0m[32m+                    .cloned()
-[0m[32m+            });
-[0m             let can_end = selected.is_some();
-[31m-            if ui.add_enabled(can_end, egui::Button::new("End task")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(can_end, egui::Button::new("End task"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 if let Some(row) = &selected {
-                     self.confirm_kill = Some((row.info.pid, row.info.name.clone()));
-                 }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:418:
-             }
-[31m-            if ui.add_enabled(can_end, egui::Button::new("Suspend")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(can_end, egui::Button::new("Suspend"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 if let Some(row) = &selected {
-                     match process::suspend(row.info.pid) {
-[31m-                        Ok(n) => self.status = format!("Suspended {n} threads of {}", row.info.name),
-[0m[32m+                        Ok(n) => {
-[0m[32m+                            self.status = format!("Suspended {n} threads of {}", row.info.name)
-[0m[32m+                        }
-[0m                         Err(e) => self.status = format!("Suspend failed: {e}"),
-                     }
-                 }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:426:
-             }
-[31m-            if ui.add_enabled(can_end, egui::Button::new("Resume")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(can_end, egui::Button::new("Resume"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 if let Some(row) = &selected {
-                     match process::resume(row.info.pid) {
-                         Ok(n) => self.status = format!("Resumed {n} threads of {}", row.info.name),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:432:
-                     }
-                 }
-             }
-[31m-            if ui.add_enabled(can_end, egui::Button::new("Priority…")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(can_end, egui::Button::new("Priority…"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 if let Some(row) = &selected {
-                     self.priority_open = Some(row.info.pid);
-                 }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:443:
-                 .show_ui(ui, |ui| {
-                     if let Some(row) = &selected {
-                         for p in process::ALL_PRIORITIES {
-[31m-                            if ui.selectable_label(row.info.priority == p, p.label()).clicked() {
-[0m[32m+                            if ui
-[0m[32m+                                .selectable_label(row.info.priority == p, p.label())
-[0m[32m+                                .clicked()
-[0m[32m+                            {
-[0m                                 match process::set_priority(row.info.pid, p) {
-[31m-                                    Ok(()) => self.status = format!("{} -> {}", row.info.name, p.label()),
-[0m[32m+                                    Ok(()) => {
-[0m[32m+                                        self.status = format!("{} -> {}", row.info.name, p.label())
-[0m[32m+                                    }
-[0m                                     Err(e) => self.status = format!("Priority change failed: {e}"),
-                                 }
-                             }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:454:
-                         ui.label("Select a process first");
-                     }
-                 });
-[31m-            if ui.add_enabled(can_end, egui::Button::new("Open file location")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(can_end, egui::Button::new("Open file location"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 if let Some(row) = &selected {
-                     if !row.info.exe_path.is_empty() {
-                         let _ = shell::open(std::path::Path::new(&row.info.exe_path));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:461:
-                     }
-                 }
-             }
-[31m-            if ui.add_enabled(can_end, egui::Button::new("Properties")).clicked() {
-[0m[32m+            if ui
-[0m[32m+                .add_enabled(can_end, egui::Button::new("Properties"))
-[0m[32m+                .clicked()
-[0m[32m+            {
-[0m                 if let Some(row) = &selected {
-                     if !row.info.exe_path.is_empty() {
-                         let _ = shell::show_properties(&row.info.exe_path);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:480:
-             .snapshot
-             .rows
-             .iter()
-[31m-            .filter(|r| needle.is_empty() || r.info.name.to_lowercase().contains(&needle) || r.info.pid.to_string() == needle)
-[0m[32m+            .filter(|r| {
-[0m[32m+                needle.is_empty()
-[0m[32m+                    || r.info.name.to_lowercase().contains(&needle)
-[0m[32m+                    || r.info.pid.to_string() == needle
-[0m[32m+            })
-[0m             .cloned()
-             .collect();
-         // Sort according to the selected column.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:487:
-         match self.sort_by {
-             SortBy::Name => display.sort_by_key(|r| r.info.name.to_lowercase()),
-[31m-            SortBy::Cpu => display.sort_by(|a, b| b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)),
-[0m[32m+            SortBy::Cpu => display.sort_by(|a, b| {
-[0m[32m+                b.cpu_percent
-[0m[32m+                    .partial_cmp(&a.cpu_percent)
-[0m[32m+                    .unwrap_or(std::cmp::Ordering::Equal)
-[0m[32m+            }),
-[0m             SortBy::Memory => display.sort_by_key(|r| std::cmp::Reverse(r.info.private_bytes)),
-[31m-            SortBy::Disk => display.sort_by(|a, b| b.disk_bps.partial_cmp(&a.disk_bps).unwrap_or(std::cmp::Ordering::Equal)),
-[0m[31m-            SortBy::Network => display.sort_by(|a, b| b.net_bps.partial_cmp(&a.net_bps).unwrap_or(std::cmp::Ordering::Equal)),
-[0m[32m+            SortBy::Disk => display.sort_by(|a, b| {
-[0m[32m+                b.disk_bps
-[0m[32m+                    .partial_cmp(&a.disk_bps)
-[0m[32m+                    .unwrap_or(std::cmp::Ordering::Equal)
-[0m[32m+            }),
-[0m[32m+            SortBy::Network => display.sort_by(|a, b| {
-[0m[32m+                b.net_bps
-[0m[32m+                    .partial_cmp(&a.net_bps)
-[0m[32m+                    .unwrap_or(std::cmp::Ordering::Equal)
-[0m[32m+            }),
-[0m             SortBy::Pid => display.sort_by_key(|r| r.info.pid),
-         }
-         if !self.sort_desc {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:497:
-         }
-         // Group by app when requested.
-         if self.group_by_app {
-[31m-            display.sort_by(|a, b| a.group.cmp(&b.group).then(b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)));
-[0m[32m+            display.sort_by(|a, b| {
-[0m[32m+                a.group.cmp(&b.group).then(
-[0m[32m+                    b.cpu_percent
-[0m[32m+                        .partial_cmp(&a.cpu_percent)
-[0m[32m+                        .unwrap_or(std::cmp::Ordering::Equal),
-[0m[32m+                )
-[0m[32m+            });
-[0m         }
- 
-         let total_cpu: f32 = self.snapshot.cpu_percent;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:504:
-         let total_mem = self.snapshot.memory.used_phys();
-         ui.horizontal(|ui| {
-[31m-            ui.label(RichText::new(format!("CPU {total_cpu:.1}%  ·  Memory {}", used_mem_text(total_mem))).strong());
-[0m[31m-            ui.label(RichText::new(format!("({:.1}%)", self.snapshot.memory.used_percent())).weak());
-[0m[32m+            ui.label(
-[0m[32m+                RichText::new(format!(
-[0m[32m+                    "CPU {total_cpu:.1}%  ·  Memory {}",
-[0m[32m+                    used_mem_text(total_mem)
-[0m[32m+                ))
-[0m[32m+                .strong(),
-[0m[32m+            );
-[0m[32m+            ui.label(
-[0m[32m+                RichText::new(format!("({:.1}%)", self.snapshot.memory.used_percent())).weak(),
-[0m[32m+            );
-[0m         });
- 
-         let mut clicked: Option<u32> = None;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:536:
-                 ("Exe", SortBy::Name),
-             ] {
-                 header.col(|ui| {
-[31m-                    let arrow = if self.sort_by == key { if self.sort_desc { " ▼" } else { " ▲" } } else { "" };
-[0m[31m-                    if ui.add(egui::Button::new(RichText::new(format!("{title}{arrow}")).strong()).frame(false)).clicked() {
-[0m[32m+                    let arrow = if self.sort_by == key {
-[0m[32m+                        if self.sort_desc {
-[0m[32m+                            " ▼"
-[0m[32m+                        } else {
-[0m[32m+                            " ▲"
-[0m[32m+                        }
-[0m[32m+                    } else {
-[0m[32m+                        ""
-[0m[32m+                    };
-[0m[32m+                    if ui
-[0m[32m+                        .add(
-[0m[32m+                            egui::Button::new(RichText::new(format!("{title}{arrow}")).strong())
-[0m[32m+                                .frame(false),
-[0m[32m+                        )
-[0m[32m+                        .clicked()
-[0m[32m+                    {
-[0m                         sort_col = Some(key);
-                     }
-                 });
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:568:
-                             let _ = process::resume(r.info.pid);
-                             ui.close_menu();
-                         }
-[31m-                        if !r.info.exe_path.is_empty() && ui.button("Open file location").clicked() {
-[0m[32m+                        if !r.info.exe_path.is_empty() && ui.button("Open file location").clicked()
-[0m[32m+                        {
-[0m                             let _ = shell::open(std::path::Path::new(&r.info.exe_path));
-                             ui.close_menu();
-                         }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:586:
-                     });
-                 });
-                 row.col(|ui| {
-[31m-                    let text = if r.info.access == AccessLevel::Denied { "Access denied" } else { "Running" };
-[0m[32m+                    let text = if r.info.access == AccessLevel::Denied {
-[0m[32m+                        "Access denied"
-[0m[32m+                    } else {
-[0m[32m+                        "Running"
-[0m[32m+                    };
-[0m                     ui.label(RichText::new(text).weak());
-                 });
-                 row.col(|ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:593:
-                     let color = heat_color(r.cpu_percent, 10.0);
-[31m-                    ui.label(RichText::new(format!("{:.1}%", r.cpu_percent)).color(color).monospace());
-[0m[32m+                    ui.label(
-[0m[32m+                        RichText::new(format!("{:.1}%", r.cpu_percent))
-[0m[32m+                            .color(color)
-[0m[32m+                            .monospace(),
-[0m[32m+                    );
-[0m                 });
-                 row.col(|ui| {
-                     ui.label(RichText::new(memory_mb(r.info.private_bytes)).monospace());
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:598:
-                 });
-                 row.col(|ui| {
-                     let color = heat_color(r.disk_bps as f32 / 1024.0, 200.0);
-[31m-                    ui.label(RichText::new(rate_text(r.disk_bps)).color(color).monospace());
-[0m[32m+                    ui.label(
-[0m[32m+                        RichText::new(rate_text(r.disk_bps))
-[0m[32m+                            .color(color)
-[0m[32m+                            .monospace(),
-[0m[32m+                    );
-[0m                 });
-                 row.col(|ui| {
-                     let color = heat_color(r.net_bps as f32 / 1024.0, 200.0);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:642:
-         ui.columns(2, |cols| {
-             cols[0].heading("CPU");
-             self.graph(&mut cols[0], &self.history_cpu.clone(), 100.0, "CPU");
-[31m-            cols[0].label(format!("{} · {} logical processors", self.cpu_info.arch, self.cpu_info.logical));
-[0m[31m-            cols[0].label(format!("Uptime: {}", format_uptime(self.snapshot.uptime_ms)));
-[0m[32m+            cols[0].label(format!(
-[0m[32m+                "{} · {} logical processors",
-[0m[32m+                self.cpu_info.arch, self.cpu_info.logical
-[0m[32m+            ));
-[0m[32m+            cols[0].label(format!(
-[0m[32m+                "Uptime: {}",
-[0m[32m+                format_uptime(self.snapshot.uptime_ms)
-[0m[32m+            ));
-[0m             cols[0].separator();
-             cols[0].heading("Memory");
-             self.graph(&mut cols[1], &self.history_mem.clone(), 100.0, "Memory");
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:650:
-             let m = self.snapshot.memory;
-[31m-            cols[0].label(format!("In use: {} ({:.0}%)", used_mem_text(m.used_phys()), m.used_percent()));
-[0m[32m+            cols[0].label(format!(
-[0m[32m+                "In use: {} ({:.0}%)",
-[0m[32m+                used_mem_text(m.used_phys()),
-[0m[32m+                m.used_percent()
-[0m[32m+            ));
-[0m             cols[0].label(format!("Available: {}", used_mem_text(m.avail_phys)));
-             cols[0].label(format!("Total: {}", used_mem_text(m.total_phys)));
-             if let Some(ram) = self.ram_installed {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:655:
-                 cols[0].label(format!("Installed RAM: {}", used_mem_text(ram)));
-             }
-[31m-            cols[0].label(format!("Committed: {}", used_mem_text(m.total_page_file - m.avail_page_file)));
-[0m[32m+            cols[0].label(format!(
-[0m[32m+                "Committed: {}",
-[0m[32m+                used_mem_text(m.total_page_file - m.avail_page_file)
-[0m[32m+            ));
-[0m             cols[0].separator();
-             cols[0].heading("Kernel CPU time");
-             // `snapshot.cpu` carries the cumulative 64-bit CPU time counters;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:715:
-     /// mirroring Task Manager's "Set priority" submenu reachable without a
-     /// right click. Uses the same `process::set_priority` path as the menu.
-     fn priority_window(&mut self, ctx: &egui::Context) {
-[31m-        let Some(pid) = self.priority_open else { return };
-[0m[31m-        let Some(row) = self.snapshot.rows.iter().find(|r| r.info.pid == pid).cloned() else {
-[0m[32m+        let Some(pid) = self.priority_open else {
-[0m[32m+            return;
-[0m[32m+        };
-[0m[32m+        let Some(row) = self
-[0m[32m+            .snapshot
-[0m[32m+            .rows
-[0m[32m+            .iter()
-[0m[32m+            .find(|r| r.info.pid == pid)
-[0m[32m+            .cloned()
-[0m[32m+        else {
-[0m             self.priority_open = None;
-             return;
-         };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:808:
-     fn users_tab(&mut self, ui: &mut egui::Ui) {
-         ui.heading("Users");
-         ui.separator();
-[31m-        egui::Grid::new("users_grid").num_columns(4).striped(true).show(ui, |ui| {
-[0m[31m-            ui.label(RichText::new("User").strong());
-[0m[31m-            ui.label(RichText::new("Session").strong());
-[0m[31m-            ui.label(RichText::new("Integrity").strong());
-[0m[31m-            ui.label(RichText::new("Elevated").strong());
-[0m[31m-            ui.end_row();
-[0m[31m-            ui.label(format!("{}\\{}
+                         display
