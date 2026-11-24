@@ -485,9 +485,9 @@ impl TaskManagerApp {
             .collect();
         // Sort according to the selected column.
         match self.sort_by {
-            SortBy::Name => display.sort_by(|a, b| a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase())),
+            SortBy::Name => display.sort_by_key(|r| r.info.name.to_lowercase()),
             SortBy::Cpu => display.sort_by(|a, b| b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)),
-            SortBy::Memory => display.sort_by(|a, b| b.info.private_bytes.cmp(&a.info.private_bytes)),
+            SortBy::Memory => display.sort_by_key(|r| std::cmp::Reverse(r.info.private_bytes)),
             SortBy::Disk => display.sort_by(|a, b| b.disk_bps.partial_cmp(&a.disk_bps).unwrap_or(std::cmp::Ordering::Equal)),
             SortBy::Network => display.sort_by(|a, b| b.net_bps.partial_cmp(&a.net_bps).unwrap_or(std::cmp::Ordering::Equal)),
             SortBy::Pid => display.sort_by_key(|r| r.info.pid),
@@ -655,6 +655,16 @@ impl TaskManagerApp {
                 cols[0].label(format!("Installed RAM: {}", used_mem_text(ram)));
             }
             cols[0].label(format!("Committed: {}", used_mem_text(m.total_page_file - m.avail_page_file)));
+            cols[0].separator();
+            cols[0].heading("Kernel CPU time");
+            // `snapshot.cpu` carries the cumulative 64-bit CPU time counters;
+            // showing them is what Performance tab does in its "Details" view.
+            cols[0].label(format!(
+                "Kernel: {:.1} s   User: {:.1} s   Idle: {:.1} s",
+                self.snapshot.cpu.kernel_100ns() as f64 / 1e7,
+                self.snapshot.cpu.user_100ns() as f64 / 1e7,
+                self.snapshot.cpu.idle_100ns() as f64 / 1e7,
+            ));
         });
     }
 

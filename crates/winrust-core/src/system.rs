@@ -64,6 +64,21 @@ pub struct CpuSample {
     user: u64,
 }
 
+impl CpuSample {
+    /// Cumulative idle time in 100 ns units since boot.
+    pub fn idle_100ns(self) -> u64 {
+        self.idle
+    }
+    /// Cumulative kernel time in 100 ns units since boot.
+    pub fn kernel_100ns(self) -> u64 {
+        self.kernel
+    }
+    /// Cumulative user time in 100 ns units since boot.
+    pub fn user_100ns(self) -> u64 {
+        self.user
+    }
+}
+
 fn ft64(ft: &FILETIME) -> u64 {
     ((ft.dwHighDateTime as u64) << 32) | ft.dwLowDateTime as u64
 }
