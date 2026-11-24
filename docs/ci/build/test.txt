@@ -2,7 +2,7 @@ warning: profiles for the non root package will be ignored, specify profiles at 
 package:   D:\a\WinRust\WinRust\crates\winrust-kernel\Cargo.toml
 workspace: D:\a\WinRust\WinRust\Cargo.toml
     Updating crates.io index
-     Locking 389 packages to highest compatible versions
+     Locking 390 packages to highest compatible versions
       Adding eframe v0.29.1 (available: v0.37.0)
       Adding egui v0.29.1 (available: v0.37.0)
       Adding egui_extras v0.29.1 (available: v0.37.0)
@@ -10,19 +10,19 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
   Downloaded windows-targets v0.52.6
-  Downloaded quote v1.0.47
-  Downloaded serde_core v1.0.229
   Downloaded itoa v1.0.19
-  Downloaded thiserror v1.0.69
-  Downloaded zmij v1.0.23
+  Downloaded proc-macro2 v1.0.107
   Downloaded thiserror-impl v1.0.69
+  Downloaded zmij v1.0.23
+  Downloaded thiserror v1.0.69
+  Downloaded quote v1.0.47
   Downloaded unicode-ident v1.0.27
   Downloaded log v0.4.35
-  Downloaded proc-macro2 v1.0.107
-  Downloaded serde v1.0.229
-  Downloaded memchr v2.8.3
   Downloaded serde_derive v1.0.229
+  Downloaded serde_core v1.0.229
+  Downloaded serde v1.0.229
   Downloaded serde_json v1.0.154
+  Downloaded memchr v2.8.3
   Downloaded syn v2.0.119
   Downloaded syn v3.0.10
   Downloaded windows_x86_64_msvc v0.52.6
@@ -39,14 +39,14 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
    Compiling serde_json v1.0.154
    Compiling thiserror v1.0.69
    Compiling windows-targets v0.52.6
-   Compiling serde_derive v1.0.229
    Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.229
    Compiling itoa v1.0.19
    Compiling memchr v2.8.3
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 44.73s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 39.32s
      Running unittests src\lib.rs (target\debug\build\winrust-core/3419f2d8408084de\out\winrust_core-3419f2d8408084de.exe)
 
 running 7 tests
