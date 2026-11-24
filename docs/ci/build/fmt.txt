@@ -1,120 +1,224 @@
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\gpu.rs:10:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\lang.rs:59:
+ /// The stored language, falling back to English.
+ pub fn load() -> Lang {
+     registry::read_user_string(KEY, "Lang")
+[31m-        .as_deref().and_then(Lang::parse)
+[0m[32m+        .as_deref()
+[0m[32m+        .and_then(Lang::parse)
+[0m         .unwrap_or_default()
+ }
  
- #[cfg(windows)]
- mod win {
-[32m+    use crate::wide::{from_wide_ptr, str_to_wide};
-[0m     use std::collections::HashMap;
-     use windows_sys::Win32::System::Performance::{
-         PdhAddEnglishCounterW, PdhCloseQuery, PdhCollectQueryData, PdhGetFormattedCounterArrayW,
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\gpu.rs:16:
-         PdhOpenQueryW, PDH_FMT_COUNTERVALUE_ITEM_W, PDH_FMT_DOUBLE, PDH_MORE_DATA,
-     };
-[31m-    use crate::wide::{from_wide_ptr, str_to_wide};
-[0m 
-     /// A live PDH query over "GPU Engine(*)\Utilization Percentage".
-     pub struct GpuQuery {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\gpu.rs:169:
-     let path = r"SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}";
-     if let Ok(key) = crate::registry::Key::open(Root::LocalMachine, path) {
-         for sub in key.subkeys() {
-[31m-            if let Ok(k) = crate::registry::Key::open(Root::LocalMachine, &format!("{path}\\{sub}")) {
-[0m[32m+            if let Ok(k) = crate::registry::Key::open(Root::LocalMachine, &format!("{path}\\{sub}"))
-[0m[32m+            {
-[0m                 let name = k.string("DriverDesc").unwrap_or_default();
-                 if name.is_empty() {
-                     continue;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\mod.rs:30:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:189:
+     fn metric_heat(&self, m: Metric) -> f32 {
+         match m {
+             Metric::Cpu => self.cpu_percent,
+[31m-            Metric::Memory => (self.info.private_bytes as f64 / (512.0 * 1024.0 * 1024.0)) as f32 * 100.0,
+[0m[32m+            Metric::Memory => {
+[0m[32m+                (self.info.private_bytes as f64 / (512.0 * 1024.0 * 1024.0)) as f32 * 100.0
+[0m[32m+            }
+[0m             Metric::Disk => (self.disk_bps / (1024.0 * 1024.0)) as f32 * 100.0,
+             Metric::Network => (self.net_bps / (1024.0 * 1024.0)) as f32 * 100.0,
+             Metric::Gpu => self.gpu_percent,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:779:
+             (
+                 Metric::Disk,
+                 rate(self.snapshot.rows.iter().map(|r| r.disk_bps).sum::<f64>()),
+[31m-                self.snapshot
+[0m[31m-                    .rows
+[0m[31m-                    .iter()
+[0m[31m-                    .map(|r| r.disk_bps)
+[0m[31m-                    .sum::<f64>() as f32
+[0m[32m+                self.snapshot.rows.iter().map(|r| r.disk_bps).sum::<f64>() as f32
+[0m                     / (1024.0 * 1024.0),
+             ),
+             (
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:853:
  
- /// Cache a language without writing it to the registry.
- pub fn set_lang(l: Lang) {
-[31m-    CURRENT.store(match l { Lang::En => 0, Lang::Ru => 1 }, Ordering::Relaxed);
-[0m[32m+    CURRENT.store(
-[0m[32m+        match l {
-[0m[32m+            Lang::En => 0,
-[0m[32m+            Lang::Ru => 1,
-[0m[32m+        },
-[0m[32m+        Ordering::Relaxed,
-[0m[32m+    );
-[0m }
+     fn metric_chip(&self, ui: &mut egui::Ui, metric: Metric, value: &str, heat: f32) {
+         let t = (heat / 100.0).clamp(0.0, 1.0);
+[31m-        let color = Color32::from_rgb(
+[0m[31m-            (120.0 + 130.0 * t) as u8,
+[0m[31m-            (220.0 - 130.0 * t) as u8,
+[0m[31m-            120,
+[0m[31m-        );
+[0m[32m+        let color = Color32::from_rgb((120.0 + 130.0 * t) as u8, (220.0 - 130.0 * t) as u8, 120);
+[0m         let resp = ui.allocate_ui_with_layout(
+             egui::vec2(ui.available_width(), 34.0),
+             egui::Layout::left_to_right(egui::Align::Center),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:902:
+                     .width(96.0)
+                     .show_ui(ui, |ui| {
+                         for l in Lang::ALL {
+[31m-                            if ui
+[0m[31m-                                .selectable_label(lang == l, l.native_name())
+[0m[31m-                                .clicked()
+[0m[32m+                            if ui.selectable_label(lang == l, l.native_name()).clicked()
+[0m                                 && lang != l
+                             {
+                                 lang = l;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:973:
+             {
+                 if let Some(row) = &selected {
+                     match process::suspend(row.info.pid) {
+[31m-                        Ok(n) => {
+[0m[31m-                            self.status = tf!("Suspended {} threads of {}", n, &row.info.name)
+[0m[31m-                        }
+[0m[32m+                        Ok(n) => self.status = tf!("Suspended {} threads of {}", n, &row.info.name),
+[0m                         Err(e) => self.status = tf!("Suspend failed: {}", e),
+                     }
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1108:
+                     if ui
+                         .add(
+                             egui::Button::new(
+[31m-                                RichText::new(format!("{title}{arrow}"))
+[0m[31m-                                    .strong()
+[0m[31m-                                    .size(11.0),
+[0m[32m+                                RichText::new(format!("{title}{arrow}")).strong().size(11.0),
+[0m                             )
+                             .frame(false),
+                         )
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1163:
+                             let _ = process::resume(r.info.pid);
+                             ui.close_menu();
+                         }
+[31m-                        if !r.info.exe_path.is_empty() && ui.button(ts("Open file location")).clicked()
+[0m[32m+                        if !r.info.exe_path.is_empty()
+[0m[32m+                            && ui.button(ts("Open file location")).clicked()
+[0m                         {
+                             let _ = shell::open(std::path::Path::new(&r.info.exe_path));
+                             ui.close_menu();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1174:
+                         }
+                         ui.separator();
+                         for p in process::ALL_PRIORITIES {
+[31m-                            if ui.button(format!("{}: {}", t("Priority"), p.label())).clicked() {
+[0m[32m+                            if ui
+[0m[32m+                                .button(format!("{}: {}", t("Priority"), p.label()))
+[0m[32m+                                .clicked()
+[0m[32m+                            {
+[0m                                 new_priority = Some((r.info.pid, p));
+                                 ui.close_menu();
+                             }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1275:
+         cols[1].heading(ts("GPU"));
+         self.graph(&mut cols[1], &gpu_hist, 100.0, ts("GPU"));
+         if self.snapshot.gpu.by_adapter.is_empty() {
+[31m-            cols[1].label(RichText::new(ts("No GPU counters available")).weak().small());
+[0m[32m+            cols[1].label(
+[0m[32m+                RichText::new(ts("No GPU counters available"))
+[0m[32m+                    .weak()
+[0m[32m+                    .small(),
+[0m[32m+            );
+[0m         } else {
+             for (adapter, pct) in &self.snapshot.gpu.by_adapter {
+                 let name = self
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1325:
+         let step = rect.width() / (n - 1) as f32;
+         let mut points = Vec::with_capacity(n);
+         for (i, v) in data.iter().enumerate() {
+[31m-            let norm = if max <= 0.0 { 0.0 } else { (v / max).clamp(0.0, 1.0) };
+[0m[32m+            let norm = if max <= 0.0 {
+[0m[32m+                0.0
+[0m[32m+            } else {
+[0m[32m+                (v / max).clamp(0.0, 1.0)
+[0m[32m+            };
+[0m             let y = rect.bottom() - norm * rect.height();
+             points.push(egui::pos2(rect.left() + i as f32 * step, y));
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1447:
+                         status_note = Some(format!(
+                             "{} — {}",
+                             name,
+[31m-                            if enable { ts("Enabled") } else { ts("Disabled") }
+[0m[32m+                            if enable {
+[0m[32m+                                ts("Enabled")
+[0m[32m+                            } else {
+[0m[32m+                                ts("Disabled")
+[0m[32m+                            }
+[0m                         ));
+                         self.startup = StartupItem::scan();
+                     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1475:
+                 ui.label(format!("{}\\{}", self.user.domain, self.user.account));
+                 ui.label(ts("Console (current)"));
+                 ui.label(self.user.integrity);
+[31m-                ui.label(if self.user.elevated { ts("Yes") } else { ts("No") });
+[0m[32m+                ui.label(if self.user.elevated {
+[0m[32m+                    ts("Yes")
+[0m[32m+                } else {
+[0m[32m+                    ts("No")
+[0m[32m+                });
+[0m                 ui.end_row();
+             });
+         ui.add_space(10.0);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1558:
+                     .small(),
+             );
+             if !self.user.elevated {
+[31m-                ui.label(RichText::new(ts("(read-only without elevation)")).small().weak());
+[0m[32m+                ui.label(
+[0m[32m+                    RichText::new(ts("(read-only without elevation)"))
+[0m[32m+                        .small()
+[0m[32m+                        .weak(),
+[0m[32m+                );
+[0m             }
+         });
+         ui.separator();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1581:
+                             _ => Color32::GRAY,
+                         };
+                         ui.label(RichText::new(state).color(color));
+[31m-                        ui.label(s.start_type.map(|x| x.label()).unwrap_or_else(|| "—".into()));
+[0m[32m+                        ui.label(
+[0m[32m+                            s.start_type
+[0m[32m+                                .map(|x| x.label())
+[0m[32m+                                .unwrap_or_else(|| "—".into()),
+[0m[32m+                        );
+[0m                         ui.label(if s.pid == 0 {
+                             String::new()
+                         } else {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1612:
+             changed |= ui
+                 .add(egui::Slider::new(&mut self.appearance.opacity, 30..=100).text(ts("Opacity")))
+                 .changed();
+[31m-            changed |= ui
+[0m[31m-                .checkbox(&mut self.appearance.blur, ts("Blur"))
+[0m[31m-                .changed();
+[0m[32m+            changed |= ui.checkbox(&mut self.appearance.blur, ts("Blur")).changed();
+[0m             ui.add_enabled_ui(self.appearance.blur, |ui| {
+                 changed |= ui
+                     .add(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1758:
+     } else if bps < 1024.0 * 1024.0 * 1024.0 {
+         format!("{:.1} {}{unit_b}", bps / (1024.0 * 1024.0), ts("M"))
+     } else {
+[31m-        format!("{:.2} {}{unit_b}", bps / (1024.0 * 1024.0 * 1024.0), ts("G"))
+[0m[32m+        format!(
+[0m[32m+            "{:.2} {}{unit_b}",
+[0m[32m+            bps / (1024.0 * 1024.0 * 1024.0),
+[0m[32m+            ts("G")
+[0m[32m+        )
+[0m     }
+ }
  
- /// The language currently in effect.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\mod.rs:143:
-     fn russian_translates_known_and_keeps_unknown() {
-         set_lang(Lang::Ru);
-         assert_eq!(t("Cancel"), "Отмена");
-[31m-        assert_eq!(t("Some string nobody translated"), "Some string nobody translated");
-[0m[32m+        assert_eq!(
-[0m[32m+            t("Some string nobody translated"),
-[0m[32m+            "Some string nobody translated"
-[0m[32m+        );
-[0m         set_lang(Lang::En);
-     }
- 
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\settings.rs:70:
-                 .u32("Transparent")
-                 .map(|v| v != 0)
-                 .unwrap_or(d.transparent),
-[31m-            blur_amount: k.u32("BlurAmount").map(|v| v as u8).unwrap_or(d.blur_amount),
-[0m[32m+            blur_amount: k
-[0m[32m+                .u32("BlurAmount")
-[0m[32m+                .map(|v| v as u8)
-[0m[32m+                .unwrap_or(d.blur_amount),
-[0m         })
-         .unwrap_or(d)
-         .sanitized()
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\common.rs:86:
-     ("Realtime", "Реального времени"),
-     ("System", "Система"),
-     ("Automatic", "Автоматически"),
-[31m-    ("Automatic (Delayed Start)", "Автоматически (отложенный запуск)"),
-[0m[32m+    (
-[0m[32m+        "Automatic (Delayed Start)",
-[0m[32m+        "Автоматически (отложенный запуск)",
-[0m[32m+    ),
-[0m     ("Manual", "Вручную"),
-     ("Boot", "Загрузка"),
-     ("Running", "Выполняется"),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\common.rs:106:
-     ("Select a service first", "Сначала выберите службу"),
-     ("Nothing selected", "Ничего не выбрано"),
-     ("No SCM connection", "Нет подключения к диспетчеру служб"),
-[31m-    ("Administrator rights are required", "Требуются права администратора"),
-[0m[32m+    (
-[0m[32m+        "Administrator rights are required",
-[0m[32m+        "Требуются права администратора",
-[0m[32m+    ),
-[0m     ("Run as administrator", "Запуск от имени администратора"),
-     ("Copied to clipboard", "Скопировано в буфер обмена"),
- ];
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-ui\src\theme.rs:44:
-     visuals.faint_bg_color = egui::Color32::from_rgb(SURFACE, SURFACE, SURFACE + 4);
-     visuals.extreme_bg_color = egui::Color32::from_rgb(18, 18, 22);
-     visuals.widgets.noninteractive.bg_fill = egui::Color32::from_rgb(SURFACE, SURFACE, SURFACE + 2);
-[31m-    visuals.widgets.inactive.bg_fill = egui::Color32::from_rgb(SURFACE_HIGH, SURFACE_HIGH, SURFACE_HIGH + 6);
-[0m[32m+    visuals.widgets.inactive.bg_fill =
-[0m[32m+        egui::Color32::from_rgb(SURFACE_HIGH, SURFACE_HIGH, SURFACE_HIGH + 6);
-[0m     visuals.widgets.hovered.bg_fill = egui::Color32::from_rgb(58, 58, 70);
-[31m-    visuals.widgets.active.bg_fill = egui::Color32::from_rgb(ACCENT.0 / 2, ACCENT.1 / 2, ACCENT.2 / 2);
-[0m[32m+    visuals.widgets.active.bg_fill =
-[0m[32m+        egui::Color32::from_rgb(ACCENT.0 / 2, ACCENT.1 / 2, ACCENT.2 / 2);
-[0m     visuals.selection.bg_fill = egui::Color32::from_rgb(40, 84, 132);
-[31m-    visuals.selection.stroke = egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(ACCENT.0, ACCENT.1, ACCENT.2));
-[0m[32m+    visuals.selection.stroke = egui::Stroke::new(
-[0m[32m+        1.0_f32,
-[0m[32m+        egui::Color32::from_rgb(ACCENT.0, ACCENT.1, ACCENT.2),
-[0m[32m+    );
-[0m     ctx.set_visuals(visuals);
-     // Transparency: hand egui a translucent background so the DWM composition
-     // underneath is visible.  With it off the window paints opaque.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-ui\src\theme.rs:71:
-     use super::Appearance;
-     use windows_sys::Win32::Foundation::HWND;
-     use windows_sys::Win32::Graphics::Dwm::{
-[31m-        DwmEnableBlurBehindWindow, DwmSetWindowAttribute, DWM_BLURBEHIND, DWM_BB_ENABLE,
-[0m[31m-        DWMWA_USE_IMMERSIVE_DARK_MODE,
-[0m[32m+        DwmEnableBlurBehindWindow, DwmSetWindowAttribute, DWMWA_USE_IMMERSIVE_DARK_MODE,
-[0m[32m+        DWM_BB_ENABLE, DWM_BLURBEHIND,
-[0m     };
-     use windows_sys::Win32::UI::WindowsAndMessaging::{
-         GetWindowLongW, SetLayeredWindowAttributes, SetWindowLongW, GWL_EXSTYLE, LWA_ALPHA,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\main.rs:10:
+         viewport: egui::ViewportBuilder::default()
+             .with_inner_size([1180.0, 740.0])
+             .with_min_inner_size([860.0, 480.0])
+[31m-            .with_title(if winrust_core::i18n::lang::load() == winrust_core::i18n::Lang::Ru {
+[0m[31m-                "Диспетчер задач WinRust"
+[0m[31m-            } else {
+[0m[31m-                "WinRust Task Manager"
+[0m[31m-            })
+[0m[32m+            .with_title(
+[0m[32m+                if winrust_core::i18n::lang::load() == winrust_core::i18n::Lang::Ru {
+[0m[32m+                    "Диспетчер задач WinRust"
+[0m[32m+                } else {
+[0m[32m+                    "WinRust Task Manager"
+[0m[32m+                },
+[0m[32m+            )
+[0m             // Transparency has to be requested when the window is created;
+             // the switch in Settings then only changes the alpha (see theme.rs).
+             .with_transparent(appearance.transparent),
 exit=False
