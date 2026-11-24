@@ -214,6 +214,16 @@ def main() -> None:
     except Exception:
         with open(os.path.join(OUT_DIR, "errors.txt"), "a", encoding="utf-8") as fh:
             fh.write("windows-sys dump failed:\n" + traceback.format_exc())
+    # manifest: what the dump loop actually produced (helps debug missing files)
+    try:
+        rows = []
+        for fn in sorted(os.listdir(OUT_DIR)):
+            if fn.endswith(".txt"):
+                rows.append(f"{fn}: {os.path.getsize(os.path.join(OUT_DIR, fn))}")
+        with open(os.path.join(OUT_DIR, "manifest.txt"), "w", encoding="utf-8") as fh:
+            fh.write("\n".join(rows))
+    except Exception:
+        pass
 
     # ---------------- eframe / egui / egui_extras ----------------
     out = []
