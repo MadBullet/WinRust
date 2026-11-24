@@ -189,7 +189,9 @@ impl Row {
     fn metric_heat(&self, m: Metric) -> f32 {
         match m {
             Metric::Cpu => self.cpu_percent,
-            Metric::Memory => (self.info.private_bytes as f64 / (512.0 * 1024.0 * 1024.0)) as f32 * 100.0,
+            Metric::Memory => {
+                (self.info.private_bytes as f64 / (512.0 * 1024.0 * 1024.0)) as f32 * 100.0
+            }
             Metric::Disk => (self.disk_bps / (1024.0 * 1024.0)) as f32 * 100.0,
             Metric::Network => (self.net_bps / (1024.0 * 1024.0)) as f32 * 100.0,
             Metric::Gpu => self.gpu_percent,
@@ -779,11 +781,7 @@ impl TaskManagerApp {
             (
                 Metric::Disk,
                 rate(self.snapshot.rows.iter().map(|r| r.disk_bps).sum::<f64>()),
-                self.snapshot
-                    .rows
-                    .iter()
-                    .map(|r| r.disk_bps)
-                    .sum::<f64>() as f32
+                self.snapshot.rows.iter().map(|r| r.disk_bps).sum::<f64>() as f32
                     / (1024.0 * 1024.0),
             ),
             (
@@ -853,11 +851,7 @@ impl TaskManagerApp {
 
     fn metric_chip(&self, ui: &mut egui::Ui, metric: Metric, value: &str, heat: f32) {
         let t = (heat / 100.0).clamp(0.0, 1.0);
-        let color = Color32::from_rgb(
-            (120.0 + 130.0 * t) as u8,
-            (220.0 - 130.0 * t) as u8,
-            120,
-        );
+        let color = Color32::from_rgb((120.0 + 130.0 * t) as u8, (220.0 - 130.0 * t) as u8, 120);
         let resp = ui.allocate_ui_with_layout(
             egui::vec2(ui.available_width(), 34.0),
             egui::Layout::left_to_right(egui::Align::Center),
@@ -902,9 +896,7 @@ impl TaskManagerApp {
                     .width(96.0)
                     .show_ui(ui, |ui| {
                         for l in Lang::ALL {
-                            if ui
-                                .selectable_label(lang == l, l.native_name())
-                                .clicked()
+                            if ui.selectable_label(lang == l, l.native_name()).clicked()
                                 && lang != l
                             {
                                 lang = l;
@@ -973,9 +965,7 @@ impl TaskManagerApp {
             {
                 if let Some(row) = &selected {
                     match process::suspend(row.info.pid) {
-                        Ok(n) => {
-                            self.status = tf!("Suspended {} threads of {}", n, &row.info.name)
-                        }
+                        Ok(n) => self.status = tf!("Suspended {} threads of {}", n, &row.info.name),
                         Err(e) => self.status = tf!("Suspend failed: {}", e),
                     }
                 }
@@ -1108,9 +1098,7 @@ impl TaskManagerApp {
                     if ui
                         .add(
                             egui::Button::new(
-                                RichText::new(format!("{title}{arrow}"))
-                                    .strong()
-                                    .size(11.0),
+                                RichText::new(format!("{title}{arrow}")).strong().size(11.0),
                             )
                             .frame(false),
                         )
@@ -1163,7 +1151,8 @@ impl TaskManagerApp {
                             let _ = process::resume(r.info.pid);
                             ui.close_menu();
                         }
-                        if !r.info.exe_path.is_empty() && ui.button(ts("Open file location")).clicked()
+                        if !r.info.exe_path.is_empty()
+                            && ui.button(ts("Open file location")).clicked()
                         {
                             let _ = shell::open(std::path::Path::new(&r.info.exe_path));
                             ui.close_menu();
@@ -1174,7 +1163,10 @@ impl TaskManagerApp {
                         }
                         ui.separator();
                         for p in process::ALL_PRIORITIES {
-                            if ui.button(format!("{}: {}", t("Priority"), p.label())).clicked() {
+                            if ui
+                                .button(format!("{}: {}", t("Priority"), p.label()))
+                                .clicked()
+                            {
                                 new_priority = Some((r.info.pid, p));
                                 ui.close_menu();
                             }
@@ -1275,7 +1267,11 @@ impl TaskManagerApp {
         cols[1].heading(ts("GPU"));
         self.graph(&mut cols[1], &gpu_hist, 100.0, ts("GPU"));
         if self.snapshot.gpu.by_adapter.is_empty() {
-            cols[1].label(RichText::new(ts("No GPU counters available")).weak().small());
+            cols[1].label(
+                RichText::new(ts("No GPU counters available"))
+                    .weak()
+                    .small(),
+            );
         } else {
             for (adapter, pct) in &self.snapshot.gpu.by_adapter {
                 let name = self
@@ -1325,7 +1321,11 @@ impl TaskManagerApp {
         let step = rect.width() / (n - 1) as f32;
         let mut points = Vec::with_capacity(n);
         for (i, v) in data.iter().enumerate() {
-            let norm = if max <= 0.0 { 0.0 } else { (v / max).clamp(0.0, 1.0) };
+            let norm = if max <= 0.0 {
+                0.0
+            } else {
+                (v / max).clamp(0.0, 1.0)
+            };
             let y = rect.bottom() - norm * rect.height();
             points.push(egui::pos2(rect.left() + i as f32 * step, y));
         }
@@ -1447,7 +1447,11 @@ impl TaskManagerApp {
                         status_note = Some(format!(
                             "{} — {}",
                             name,
-                            if enable { ts("Enabled") } else { ts("Disabled") }
+                            if enable {
+                                ts("Enabled")
+                            } else {
+                                ts("Disabled")
+                            }
                         ));
                         self.startup = StartupItem::scan();
                     }
@@ -1475,7 +1479,11 @@ impl TaskManagerApp {
                 ui.label(format!("{}\\{}", self.user.domain, self.user.account));
                 ui.label(ts("Console (current)"));
                 ui.label(self.user.integrity);
-                ui.label(if self.user.elevated { ts("Yes") } else { ts("No") });
+                ui.label(if self.user.elevated {
+                    ts("Yes")
+                } else {
+                    ts("No")
+                });
                 ui.end_row();
             });
         ui.add_space(10.0);
@@ -1558,7 +1566,11 @@ impl TaskManagerApp {
                     .small(),
             );
             if !self.user.elevated {
-                ui.label(RichText::new(ts("(read-only without elevation)")).small().weak());
+                ui.label(
+                    RichText::new(ts("(read-only without elevation)"))
+                        .small()
+                        .weak(),
+                );
             }
         });
         ui.separator();
@@ -1581,7 +1593,11 @@ impl TaskManagerApp {
                             _ => Color32::GRAY,
                         };
                         ui.label(RichText::new(state).color(color));
-                        ui.label(s.start_type.map(|x| x.label()).unwrap_or_else(|| "—".into()));
+                        ui.label(
+                            s.start_type
+                                .map(|x| x.label())
+                                .unwrap_or_else(|| "—".into()),
+                        );
                         ui.label(if s.pid == 0 {
                             String::new()
                         } else {
@@ -1612,9 +1628,7 @@ impl TaskManagerApp {
             changed |= ui
                 .add(egui::Slider::new(&mut self.appearance.opacity, 30..=100).text(ts("Opacity")))
                 .changed();
-            changed |= ui
-                .checkbox(&mut self.appearance.blur, ts("Blur"))
-                .changed();
+            changed |= ui.checkbox(&mut self.appearance.blur, ts("Blur")).changed();
             ui.add_enabled_ui(self.appearance.blur, |ui| {
                 changed |= ui
                     .add(
@@ -1758,7 +1772,11 @@ fn rate(bps: f64) -> String {
     } else if bps < 1024.0 * 1024.0 * 1024.0 {
         format!("{:.1} {}{unit_b}", bps / (1024.0 * 1024.0), ts("M"))
     } else {
-        format!("{:.2} {}{unit_b}", bps / (1024.0 * 1024.0 * 1024.0), ts("G"))
+        format!(
+            "{:.2} {}{unit_b}",
+            bps / (1024.0 * 1024.0 * 1024.0),
+            ts("G")
+        )
     }
 }
 

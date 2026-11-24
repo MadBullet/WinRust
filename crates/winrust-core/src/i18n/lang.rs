@@ -59,7 +59,8 @@ impl std::fmt::Display for Lang {
 /// The stored language, falling back to English.
 pub fn load() -> Lang {
     registry::read_user_string(KEY, "Lang")
-        .as_deref().and_then(Lang::parse)
+        .as_deref()
+        .and_then(Lang::parse)
         .unwrap_or_default()
 }
 

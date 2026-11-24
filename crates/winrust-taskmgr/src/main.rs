@@ -10,11 +10,13 @@ fn main() -> eframe::Result<()> {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1180.0, 740.0])
             .with_min_inner_size([860.0, 480.0])
-            .with_title(if winrust_core::i18n::lang::load() == winrust_core::i18n::Lang::Ru {
-                "Диспетчер задач WinRust"
-            } else {
-                "WinRust Task Manager"
-            })
+            .with_title(
+                if winrust_core::i18n::lang::load() == winrust_core::i18n::Lang::Ru {
+                    "Диспетчер задач WinRust"
+                } else {
+                    "WinRust Task Manager"
+                },
+            )
             // Transparency has to be requested when the window is created;
             // the switch in Settings then only changes the alpha (see theme.rs).
             .with_transparent(appearance.transparent),
