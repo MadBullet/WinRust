@@ -12,3 +12,4 @@ windows-sys.workspace = true
 thiserror.workspace = true
 log.workspace = true
 serde.workspace = true
+serde_json.workspace = true
