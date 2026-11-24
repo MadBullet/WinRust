@@ -408,8 +408,9 @@ impl ExplorerApp {
         self.tabs[tab_index].error = None;
 
         let tx = self.tx.clone();
+        let read_path = path.clone();
         std::thread::spawn(move || {
-            let result = disk::read_dir(&path, show_hidden).map_err(|e| e.to_string());
+            let result = disk::read_dir(&read_path, show_hidden).map_err(|e| e.to_string());
             let _ = tx.send(Listing { tab_index, request_id, result });
         });
 
@@ -447,7 +448,6 @@ impl ExplorerApp {
             tab.anchor = None;
             tab.filter.clear();
             tab.scroll_to_top = true;
-            self.search_results = None;
             if let Some(p) = prefs {
                 tab.view = p.view;
                 tab.show_hidden = p.show_hidden;
@@ -455,6 +455,7 @@ impl ExplorerApp {
                 tab.sort_asc = p.sort_ascending;
             }
         }
+        self.search_results = None;
         self.remember_prefs();
         self.start_load(self.active);
     }
@@ -1189,7 +1190,7 @@ impl ExplorerApp {
                     .margin(egui::vec2(6.0, 3.0)),
             );
             if resp.changed() {
-                self.start_search(needle);
+                self.start_search(needle.clone());
             }
             if needle.is_empty() && self.search_results.is_some() {
                 self.search_results = None;
@@ -1295,7 +1296,7 @@ impl ExplorerApp {
                 });
 
             let mut sort_key = self.current().sort_key;
-            let mut sort_asc = self.current().sort_asc;
+            let sort_asc = self.current().sort_asc;
             egui::ComboBox::from_id_salt("sortby")
                 .selected_text(format!("Sort: {}", sort_key.label()))
                 .width(170.0)
