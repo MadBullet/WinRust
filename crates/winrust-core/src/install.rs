@@ -236,16 +236,16 @@ pub fn uninstall(
         match integration {
             Integration::Portable => {
                 actions.push("Portable: nothing to undo".into());
+                Ok(())
             }
             Integration::Hijack => {
                 if !hijack_active(spec) {
                     actions.push("IFEO redirect was not present".into());
                 } else {
-                    match registry::delete_value(Root::LocalMachine, &spec.ifeo_path, "Debugger") {
-                        Ok(()) => actions.push(format!("Removed IFEO redirect for {}", spec.exe)),
-                        Err(e) => return Err(e),
-                    }
+                    registry::delete_value(Root::LocalMachine, &spec.ifeo_path, "Debugger")?;
+                    actions.push(format!("Removed IFEO redirect for {}", spec.exe));
                 }
+                Ok(())
             }
             Integration::Shell => {
                 let current = configured_shell();
@@ -264,9 +264,9 @@ pub fn uninstall(
                 };
                 let log = crate::restore::restore_session(session)?;
                 actions.extend(log);
+                Ok(())
             }
         }
-        Ok(())
     })();
 
     match result {

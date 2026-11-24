@@ -48,16 +48,30 @@ pub fn create_restore_point(description: &str) -> RestorePointResult {
     info.dwEventType = windows_sys::Win32::System::Restore::BEGIN_SYSTEM_CHANGE;
     info.dwRestorePtType = MODIFY_SETTINGS;
     info.llSequenceNumber = 0;
+    // `RESTOREPOINTINFOW` is `#[repr(packed)]` (`DWORD`-aligned), so the array
+    // -- like every field of every Win32 packed struct below -- has to be
+    // written through raw pointers: creating a `&mut [u16]` into a misaligned
+    // field would be undefined behaviour (rustc's E0793).
     let len = desc.len().min(MAX_DESC_W);
-    info.szDescription[..len].copy_from_slice(&desc[..len]);
+    unsafe {
+        let dst = std::ptr::addr_of_mut!(info.szDescription).cast::<u16>();
+        std::ptr::copy_nonoverlapping(desc.as_ptr(), dst, len);
+    }
 
     let mut status: STATEMGRSTATUS = unsafe { std::mem::zeroed() };
     let ok = unsafe { SRSetRestorePointW(&info, &mut status) };
+    // Read packed fields into locals before formatting them.
+    let (seq, state) = unsafe {
+        (
+            std::ptr::addr_of!(status.llSequenceNumber).read_unaligned(),
+            std::ptr::addr_of!(status.nStatus).read_unaligned(),
+        )
+    };
     if ok == 0 {
-        let code = status.nStatus;
+        let code = state;
         return RestorePointResult {
             created: false,
-            sequence: status.llSequenceNumber,
+            sequence: seq,
             message: if code == 0 {
                 "System Restore refused the request (System Protection may be disabled)".to_string()
             } else {
@@ -71,8 +85,8 @@ pub fn create_restore_point(description: &str) -> RestorePointResult {
     }
     RestorePointResult {
         created: true,
-        sequence: status.llSequenceNumber,
-        message: format!("Restore point #{} created", status.llSequenceNumber),
+        sequence: seq,
+        message: format!("Restore point #{seq} created"),
     }
 }
 
