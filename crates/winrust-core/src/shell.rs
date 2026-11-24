@@ -373,7 +373,7 @@ pub fn clipboard_text() -> Option<String> {
         if OpenClipboard(std::ptr::null_mut()) == 0 {
             return None;
         }
-        let handle = GetClipboardData(CF_UNICODETEXT);
+        let handle = GetClipboardData(CF_UNICODETEXT as u32);
         let mut out = None;
         if !handle.is_null() {
             let ptr = GlobalLock(handle) as *const u16;
@@ -412,7 +412,7 @@ pub fn set_clipboard_text(text: &str) -> bool {
         }
         std::ptr::copy_nonoverlapping(wide.as_ptr(), dst, wide.len());
         GlobalUnlock(mem);
-        let ok = !SetClipboardData(CF_UNICODETEXT, mem).is_null();
+        let ok = !SetClipboardData(CF_UNICODETEXT as u32, mem).is_null();
         CloseClipboard();
         ok
     }
