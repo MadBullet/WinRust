@@ -1,0 +1,68 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g. v0.1.0)"
+        required: true
+        default: "v0.1.0"
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: cargo build (release)
+        run: cargo build --workspace --release
+
+      - name: stage binaries
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp target/release/WinRust.exe dist/ || true
+          cp target/release/winrust-explorer.exe dist/ || true
+          cp target/release/winrust-taskmgr.exe dist/ || true
+          cp target/release/winrust-services.exe dist/ || true
+          cp target/release/winrust-sysctl.exe dist/ || true
+          cp README.md dist/ || true
+          ls -la dist
+
+      - name: zip binaries
+        shell: bash
+        run: |
+          cd dist && 7z a -tzip ../WinRust-windows-x64.zip * > /dev/null
+
+      - name: publish release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          gh release delete "$TAG" --yes || true
+          gh release create "$TAG" \
+            --title "WinRust $TAG" \
+            --notes "Windows 10/11 system components rewritten in Rust: Explorer, Task Manager, Services, system utilities and the core library.
+
+          **Downloads**
+          * \`WinRust-windows-x64.zip\` — all five executables plus README.
+          * Or grab a single .exe below.
+
+          Run the component you need; elevation (Run as administrator) is required for service control and for managing other users' processes." \
+            dist/WinRust.exe \
+            dist/winrust-explorer.exe \
+            dist/winrust-taskmgr.exe \
+            dist/winrust-services.exe \
+            dist/winrust-sysctl.exe \
+            WinRust-windows-x64.zip
