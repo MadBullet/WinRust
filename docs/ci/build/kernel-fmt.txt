@@ -1,1 +1,42 @@
-exit=True
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-kernel\control\src\client.rs:189:
+                 status: std::io::Error::last_os_error().raw_os_error().unwrap_or(0),
+             });
+         }
+[31m-        if (returned as usize) < std::mem::size_of::<ResponseHeader>() + std::mem::size_of::<GuardStatus>() {
+[0m[32m+        if (returned as usize)
+[0m[32m+            < std::mem::size_of::<ResponseHeader>() + std::mem::size_of::<GuardStatus>()
+[0m[32m+        {
+[0m             return Err(DriverError::Protocol("short guard response".into()));
+         }
+         let offset = std::mem::size_of::<ResponseHeader>();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-kernel\control\src\client.rs:196:
+[31m-        Ok(unsafe {
+[0m[31m-            std::ptr::read_unaligned(output.as_ptr().add(offset).cast::<GuardStatus>())
+[0m[31m-        })
+[0m[32m+        Ok(unsafe { std::ptr::read_unaligned(output.as_ptr().add(offset).cast::<GuardStatus>()) })
+[0m     }
+ 
+     fn paged<T: Copy>(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-kernel\control\src\main.rs:255:
+     let driver = Driver::connect().map_err(|e| e.to_string())?;
+     println!("the driver keeps the list in RAM; use `block <name>` to add entries");
+     let perf = driver.performance().map_err(|e| e.to_string())?;
+[31m-    println!("{} processes currently visible from kernel mode", perf.process_count);
+[0m[32m+    println!(
+[0m[32m+        "{} processes currently visible from kernel mode",
+[0m[32m+        perf.process_count
+[0m[32m+    );
+[0m     Ok(())
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-kernel\src\ioctl.rs:94:
+             &raw mut length
+         )
+     };
+[31m-    if !wdk::nt_success(status) || input.is_null() || length < core::mem::size_of::<GuardRequest>() {
+[0m[32m+    if !wdk::nt_success(status) || input.is_null() || length < core::mem::size_of::<GuardRequest>()
+[0m[32m+    {
+[0m         return Err(STATUS_INVALID_PARAMETER);
+     }
+     // SAFETY: at least `size_of::<GuardRequest>()` bytes were copied into this
+exit=False
