@@ -130,12 +130,12 @@ impl Driver {
 
     /// Every process, paging through the table `MAX_RECORDS` at a time.
     pub fn processes(&self) -> Result<Vec<ProcessRecord>, DriverError> {
-        self.paged(Query::Processes, |bytes| from_bytes::<ProcessRecord>(bytes))
+        self.paged(Query::Processes, from_bytes::<ProcessRecord>)
     }
 
     /// Every loaded kernel module.
     pub fn modules(&self) -> Result<Vec<ModuleRecord>, DriverError> {
-        self.paged(Query::Modules, |bytes| from_bytes::<ModuleRecord>(bytes))
+        self.paged(Query::Modules, from_bytes::<ModuleRecord>)
     }
 
     /// Aggregate counters.

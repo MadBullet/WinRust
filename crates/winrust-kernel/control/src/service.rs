@@ -74,12 +74,10 @@ pub fn remove() -> Result<()> {
         scm.delete(SERVICE_NAME)?;
     }
     let image = driver_dir().join(DRIVER_FILE);
-    if image.is_file() {
-        if std::fs::remove_file(&image).is_err() {
-            // The image is still mapped by a running driver, or a pending
-            // reboot swap owns it: ask Windows to delete it at next boot.
-            schedule_delete(&image);
-        }
+    if image.is_file() && std::fs::remove_file(&image).is_err() {
+        // The image is still mapped by a running driver, or a pending reboot
+        // swap owns it: ask Windows to delete it at next boot.
+        schedule_delete(&image);
     }
     // The driver has no persistent state, but clean the record anyway.
     let _ = registry::delete_key(Root::LocalMachine, r"SOFTWARE\WinRust", "Kernel");

@@ -176,10 +176,7 @@ fn processes(limit: usize) -> Result<(), String> {
     let driver = Driver::connect().map_err(|e| e.to_string())?;
     let mut rows = driver.processes().map_err(|e| e.to_string())?;
     rows.sort_by_key(|row| std::cmp::Reverse(row.working_set));
-    println!(
-        "{:>6}  {:>6}  {:>4}  {:>5}  {:>10}  {:>8}  {}",
-        "PID", "PPID", "THR", "HND", "WORKING", "CPU", "NAME"
-    );
+    println!("{:>6}  {:>6}  {:>4}  {:>5}  {:>10}  {:>8}  NAME", "PID", "PPID", "THR", "HND", "WORKING", "CPU");
     for row in rows.iter().take(limit) {
         println!(
             "{:>6}  {:>6}  {:>4}  {:>5}  {:>10}  {:>8}  {}",
@@ -200,7 +197,7 @@ fn modules(limit: usize) -> Result<(), String> {
     let driver = Driver::connect().map_err(|e| e.to_string())?;
     let mut rows = driver.modules().map_err(|e| e.to_string())?;
     rows.sort_by_key(|row| row.base_address);
-    println!("{:>18}  {:>10}  {}", "BASE", "SIZE", "IMAGE");
+    println!("{:>18}  {:>10}  IMAGE", "BASE", "SIZE");
     for row in rows.iter().take(limit) {
         println!(
             "{:>18}  {:>10}  {}",
