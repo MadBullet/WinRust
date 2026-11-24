@@ -11,14 +11,14 @@ jobs:
     steps:
       - name: fetch and dump API signatures
         run: |
-          set -uo pipefail
+          set -uxo pipefail
           mkdir -p /tmp/dump && cd /tmp/dump
           fetch() { curl -sSL "https://static.crates.io/crates/$1/$1-$2.crate" -o "$1.crate" && tar xzf "$1.crate"; }
           fetch windows-sys 0.59.0
           fetch eframe 0.29.1
           fetch egui 0.29.1
           fetch egui_extras 0.29.1
-          ls -d */
+          ls -d */ > /tmp/diag.txt 2>&1
           python3 - <<'PY' > /tmp/api-dump.txt 2>&1
           import glob, re, sys, os
 
@@ -273,11 +273,14 @@ jobs:
           show_struct(src, 'FontData', 30)
           PY
           echo "=== dump size: $(wc -l < /tmp/api-dump.txt) lines ==="
-          head -c 200 /tmp/api-dump.txt
+          head -c 300 /tmp/api-dump.txt
+          exit 0
       - name: upload dump
         uses: actions/upload-artifact@v4
         with:
           name: api-dump
-          path: /tmp/api-dump.txt
+          path: |
+            /tmp/api-dump.txt
+            /tmp/diag.txt
       - name: print dump
         run: cat /tmp/api-dump.txt
