@@ -129,7 +129,11 @@ impl Component {
                 Integration::Shell,
                 Integration::Replace,
             ],
-            Component::TaskManager => &[Integration::Portable, Integration::Hijack, Integration::Replace],
+            Component::TaskManager => &[
+                Integration::Portable,
+                Integration::Hijack,
+                Integration::Replace,
+            ],
             _ => &[Integration::Portable],
         }
     }
@@ -240,7 +244,9 @@ impl LauncherApp {
                 let integration = install::read_state(c.id())
                     .or_else(|| match &target {
                         Some(spec) if install::hijack_active(spec) => Some(Integration::Hijack),
-                        Some(spec) if install::replacement_active(spec) => Some(Integration::Replace),
+                        Some(spec) if install::replacement_active(spec) => {
+                            Some(Integration::Replace)
+                        }
                         _ => None,
                     })
                     .unwrap_or(Integration::Portable);
@@ -290,7 +296,11 @@ impl LauncherApp {
     }
 
     fn log(&mut self, kind: LogKind, text: impl Into<String>) {
-        self.log.push(LogLine { at: Instant::now(), text: text.into(), kind });
+        self.log.push(LogLine {
+            at: Instant::now(),
+            text: text.into(),
+            kind,
+        });
         if self.log.len() > 500 {
             self.log.remove(0);
         }
@@ -325,8 +335,10 @@ impl LauncherApp {
             if let Ok(scm) = ScManager::connect() {
                 if let Ok(list) = scm.enumerate() {
                     self.services_total = list.len();
-                    self.services_running =
-                        list.iter().filter(|s| s.state == Some(ServiceState::Running)).count();
+                    self.services_running = list
+                        .iter()
+                        .filter(|s| s.state == Some(ServiceState::Running))
+                        .count();
                 }
             }
             self.last_services = Instant::now();
@@ -348,7 +360,11 @@ impl LauncherApp {
             return;
         }
         let Some(path) = path else {
-            let msg = format!("{} not found — build it with: cargo build --release -p {}", c.exe(), c.pkg());
+            let msg = format!(
+                "{} not found — build it with: cargo build --release -p {}",
+                c.exe(),
+                c.pkg()
+            );
             self.status = msg.clone();
             self.log(LogKind::Warn, msg);
             return;
@@ -374,7 +390,8 @@ impl LauncherApp {
             return;
         }
         if !self.user.elevated {
-            let msg = "Administrator rights are required to install. Relaunch WinRust as administrator.";
+            let msg =
+                "Administrator rights are required to install. Relaunch WinRust as administrator.";
             self.status = msg.into();
             self.log(LogKind::Error, msg);
             return;
@@ -443,7 +460,11 @@ impl LauncherApp {
             Ok(v) => {
                 self.log(
                     LogKind::Ok,
-                    format!("Staged {} binary(ies) into {}", v.len(), install::install_dir().display()),
+                    format!(
+                        "Staged {} binary(ies) into {}",
+                        v.len(),
+                        install::install_dir().display()
+                    ),
                 );
                 v
             }
@@ -492,12 +513,17 @@ impl LauncherApp {
         let mut installed = 0usize;
         let mut failed = 0usize;
         for c in &components {
-            let Some(st_index) = self.components.iter().position(|s| s.component == *c) else { continue };
+            let Some(st_index) = self.components.iter().position(|s| s.component == *c) else {
+                continue;
+            };
             let integration = self.components[st_index].integration;
             let Some(spec) = self.components[st_index].target.clone() else {
                 self.log(
                     LogKind::Info,
-                    format!("{}: no system binary to replace — available from the launcher", c.title()),
+                    format!(
+                        "{}: no system binary to replace — available from the launcher",
+                        c.title()
+                    ),
                 );
                 continue;
             };
@@ -507,7 +533,10 @@ impl LauncherApp {
                 .map(|(_, p)| p.clone())
                 .or_else(|| self.components[st_index].path.clone());
             let Some(source) = staged_path else {
-                self.log(LogKind::Warn, format!("{}: binary not found, skipped", c.title()));
+                self.log(
+                    LogKind::Warn,
+                    format!("{}: binary not found, skipped", c.title()),
+                );
                 failed += 1;
                 continue;
             };
@@ -522,7 +551,10 @@ impl LauncherApp {
                 if integration != Integration::Portable {
                     let target = spec.system_path.as_deref();
                     if let Err(e) = install::record_state(c.id(), integration, target) {
-                        self.log(LogKind::Warn, format!("{}: state not saved ({e})", c.title()));
+                        self.log(
+                            LogKind::Warn,
+                            format!("{}: state not saved ({e})", c.title()),
+                        );
                     }
                 } else {
                     let _ = install::clear_state(c.id());
@@ -556,13 +588,15 @@ impl LauncherApp {
         }
         let backup = session.or_else(|| {
             // Fall back to the most recent session that mentions this binary.
-            self.backups.iter().find(|s| {
-                spec.as_ref()
-                    .and_then(|sp| sp.system_path.as_ref())
-                    .map(|p| s.entries.iter().any(|e| &e.original == p))
-                    .unwrap_or(false)
-            })
-            .cloned()
+            self.backups
+                .iter()
+                .find(|s| {
+                    spec.as_ref()
+                        .and_then(|sp| sp.system_path.as_ref())
+                        .map(|p| s.entries.iter().any(|e| &e.original == p))
+                        .unwrap_or(false)
+                })
+                .cloned()
         });
         let Some(spec) = spec else {
             self.status = format!("{} has no undo information", c.title());
@@ -579,12 +613,18 @@ impl LauncherApp {
                 st.installed_at = None;
             }
             if let Err(e) = install::clear_state(c.id()) {
-                self.log(LogKind::Warn, format!("{}: recorded state not cleared ({e})", c.title()));
+                self.log(
+                    LogKind::Warn,
+                    format!("{}: recorded state not cleared ({e})", c.title()),
+                );
             }
             self.status = format!("{} restored", c.title());
         } else {
             let msg = report.error.unwrap_or_else(|| "unknown error".into());
-            self.log(LogKind::Error, format!("{}: uninstall failed — {msg}", c.title()));
+            self.log(
+                LogKind::Error,
+                format!("{}: uninstall failed — {msg}", c.title()),
+            );
             self.status = format!("{}: uninstall failed", c.title());
         }
     }
@@ -598,7 +638,11 @@ impl LauncherApp {
     }
 
     fn block_with_explorer(&mut self) {
-        let path = match self.components.iter().find(|s| s.component == Component::Explorer) {
+        let path = match self
+            .components
+            .iter()
+            .find(|s| s.component == Component::Explorer)
+        {
             Some(st) => st.path.clone(),
             None => None,
         };
@@ -630,7 +674,9 @@ impl LauncherApp {
 
 fn find_component(exe: &str) -> Option<PathBuf> {
     let dirs = [
-        std::env::current_exe().ok().and_then(|p| p.parent().map(Path::to_path_buf)),
+        std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(Path::to_path_buf)),
         std::env::current_dir().ok(),
         Some(install::install_dir()),
     ];
@@ -660,7 +706,10 @@ fn find_component(exe: &str) -> Option<PathBuf> {
 fn pid_of(exe: &str) -> Option<u32> {
     let procs = process::enumerate().ok()?;
     let target = exe.to_lowercase();
-    procs.iter().find(|p| p.name.to_lowercase() == target).map(|p| p.pid)
+    procs
+        .iter()
+        .find(|p| p.name.to_lowercase() == target)
+        .map(|p| p.pid)
 }
 
 // ---------------------------------------------------------------------------
@@ -680,7 +729,10 @@ impl eframe::App for LauncherApp {
                     let (color, text) = if self.user.elevated {
                         (Color32::from_rgb(120, 220, 120), "administrator")
                     } else {
-                        (Color32::from_rgb(230, 170, 120), "standard user — install disabled")
+                        (
+                            Color32::from_rgb(230, 170, 120),
+                            "standard user — install disabled",
+                        )
                     };
                     ui.label(RichText::new(text).small().color(color));
                     ui.separator();
@@ -763,82 +815,111 @@ impl LauncherApp {
         let mut change_integration: Option<(Component, Integration)> = None;
         let elevated = self.user.elevated;
 
-        egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
-            for idx in 0..self.components.len() {
-                let (component, running, integration, path_ok) = {
-                    let st = &self.components[idx];
-                    (st.component, st.running, st.integration, st.path.is_some())
-                };
-                let selected = self.selected == component;
-                let (status_label, status_color) = self.components[idx].status_text();
-                let frame = egui::Frame::group(ui.style())
-                    .fill(if selected { Color32::from_rgb(40, 46, 60) } else { Color32::from_rgb(28, 30, 36) });
-                frame.show(ui, |ui| {
-                    ui.horizontal(|ui| {
-                        // Batch checkbox
-                        let mut ticked = self.components[idx].selected;
-                        if ui.checkbox(&mut ticked, "").changed() {
-                            toggle_selected = Some(component);
-                        }
-                        ui.vertical(|ui| {
-                            ui.horizontal(|ui| {
-                                ui.label(RichText::new(format!("{}  {}", component.glyph(), component.title())).strong().size(15.0));
-                                ui.label(RichText::new(status_label).small().color(status_color));
-                                if running {
-                                    ui.label(RichText::new("running").small().color(Color32::from_rgb(120, 220, 120)));
-                                }
+        egui::ScrollArea::vertical()
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                for idx in 0..self.components.len() {
+                    let (component, running, integration, path_ok) = {
+                        let st = &self.components[idx];
+                        (st.component, st.running, st.integration, st.path.is_some())
+                    };
+                    let selected = self.selected == component;
+                    let (status_label, status_color) = self.components[idx].status_text();
+                    let frame = egui::Frame::group(ui.style()).fill(if selected {
+                        Color32::from_rgb(40, 46, 60)
+                    } else {
+                        Color32::from_rgb(28, 30, 36)
+                    });
+                    frame.show(ui, |ui| {
+                        ui.horizontal(|ui| {
+                            // Batch checkbox
+                            let mut ticked = self.components[idx].selected;
+                            if ui.checkbox(&mut ticked, "").changed() {
+                                toggle_selected = Some(component);
+                            }
+                            ui.vertical(|ui| {
+                                ui.horizontal(|ui| {
+                                    ui.label(
+                                        RichText::new(format!(
+                                            "{}  {}",
+                                            component.glyph(),
+                                            component.title()
+                                        ))
+                                        .strong()
+                                        .size(15.0),
+                                    );
+                                    ui.label(
+                                        RichText::new(status_label).small().color(status_color),
+                                    );
+                                    if running {
+                                        ui.label(
+                                            RichText::new("running")
+                                                .small()
+                                                .color(Color32::from_rgb(120, 220, 120)),
+                                        );
+                                    }
+                                });
+                                ui.label(
+                                    RichText::new(format!("replaces {}", component.replaces()))
+                                        .small()
+                                        .weak(),
+                                );
                             });
-                            ui.label(
-                                RichText::new(format!("replaces {}", component.replaces()))
-                                    .small()
-                                    .weak(),
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    if integration == Integration::Portable {
+                                        if ui
+                                            .add_enabled(
+                                                !running && path_ok,
+                                                egui::Button::new("Launch"),
+                                            )
+                                            .clicked()
+                                        {
+                                            launch = Some(component);
+                                        }
+                                    } else if ui
+                                        .button("Restore")
+                                        .on_hover_text("Undo the installation")
+                                        .clicked()
+                                    {
+                                        uninstall = Some(component);
+                                    }
+                                    if ui.button("Details").clicked() {
+                                        select = Some(component);
+                                    }
+                                },
                             );
                         });
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                            if integration == Integration::Portable {
-                                if ui
-                                    .add_enabled(!running && path_ok, egui::Button::new("Launch"))
-                                    .clicked()
-                                {
-                                    launch = Some(component);
-                                }
-                            } else if ui.button("Restore").on_hover_text("Undo the installation").clicked() {
-                                uninstall = Some(component);
-                            }
-                            if ui.button("Details").clicked() {
-                                select = Some(component);
-                            }
-                        });
-                    });
 
-                    // Integration selector
-                    if self.components[idx].target.is_some() {
-                        ui.horizontal(|ui| {
-                            ui.label(RichText::new("Integration:").small().weak());
-                            for &level in component.levels() {
-                                let enabled = !level.requires_admin() || elevated;
-                                let resp = ui.add_enabled(
-                                    enabled && !self.busy,
-                                    egui::RadioButton::new(integration == level, level.label()),
-                                );
-                                if resp.on_hover_text(level.hint()).clicked() {
-                                    change_integration = Some((component, level));
+                        // Integration selector
+                        if self.components[idx].target.is_some() {
+                            ui.horizontal(|ui| {
+                                ui.label(RichText::new("Integration:").small().weak());
+                                for &level in component.levels() {
+                                    let enabled = !level.requires_admin() || elevated;
+                                    let resp = ui.add_enabled(
+                                        enabled && !self.busy,
+                                        egui::RadioButton::new(integration == level, level.label()),
+                                    );
+                                    if resp.on_hover_text(level.hint()).clicked() {
+                                        change_integration = Some((component, level));
+                                    }
                                 }
-                            }
-                        });
-                    } else {
-                        ui.label(
+                            });
+                        } else {
+                            ui.label(
                             RichText::new(
                                 "No single system binary — this component runs from the launcher.",
                             )
                             .small()
                             .weak(),
                         );
-                    }
-                });
-                ui.add_space(4.0);
-            }
-        });
+                        }
+                    });
+                    ui.add_space(4.0);
+                }
+            });
 
         if let Some(c) = select {
             self.selected = c;
@@ -1001,7 +1082,9 @@ impl LauncherApp {
     }
 
     fn confirm_modal(&mut self, ctx: &egui::Context) {
-        let Some(pending) = self.confirm.as_mut() else { return };
+        let Some(pending) = self.confirm.as_mut() else {
+            return;
+        };
         let mut go = false;
         let mut cancel = false;
         egui::Window::new(pending.title.as_str())
@@ -1090,7 +1173,10 @@ impl LauncherApp {
         if let Some(session) = restore_now {
             match restore::restore_session(&session) {
                 Ok(log) => {
-                    self.log(LogKind::Ok, format!("Restored backup #{}", session.created_unix));
+                    self.log(
+                        LogKind::Ok,
+                        format!("Restored backup #{}", session.created_unix),
+                    );
                     for line in log {
                         self.log(LogKind::Info, line);
                     }

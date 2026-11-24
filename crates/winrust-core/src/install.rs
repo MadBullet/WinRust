@@ -61,7 +61,10 @@ impl Integration {
         }
     }
     pub fn requires_admin(self) -> bool {
-        matches!(self, Integration::Hijack | Integration::Replace | Integration::Shell)
+        matches!(
+            self,
+            Integration::Hijack | Integration::Replace | Integration::Shell
+        )
     }
 
     /// Only a desktop shell can be a sign-in shell.
@@ -134,7 +137,10 @@ pub fn install(
     let mut actions = Vec::new();
     let result = (|| -> Result<()> {
         if !source.is_file() {
-            return Err(WinError::Other(format!("source binary missing: {}", source.display())));
+            return Err(WinError::Other(format!(
+                "source binary missing: {}",
+                source.display()
+            )));
         }
         match integration {
             Integration::Portable => {
@@ -159,19 +165,23 @@ pub fn install(
                     "Winlogon Shell = \"{}\" (sign-in starts WinRust)",
                     source.display()
                 ));
-                actions.push("explorer.exe is untouched — remove the override to get it back".into());
+                actions
+                    .push("explorer.exe is untouched — remove the override to get it back".into());
                 Ok(())
             }
             Integration::Replace => {
-                let target = spec
-                    .system_path
-                    .clone()
-                    .ok_or_else(|| WinError::Other(format!("{} not found on this system", spec.exe)))?;
+                let target = spec.system_path.clone().ok_or_else(|| {
+                    WinError::Other(format!("{} not found on this system", spec.exe))
+                })?;
                 // The backup itself happens in `restore::backup_files` before
                 // this call; here we only swap the file.
                 match std::fs::copy(source, &target) {
                     Ok(_) => {
-                        actions.push(format!("Replaced {} with {}", target.display(), source.display()));
+                        actions.push(format!(
+                            "Replaced {} with {}",
+                            target.display(),
+                            source.display()
+                        ));
                     }
                     Err(_) => {
                         // A running shell binary cannot be overwritten in place
@@ -191,7 +201,10 @@ pub fn install(
                             return Err(WinError::Other(format!(
                                 "replace {}: file is in use and the reboot swap was refused ({})",
                                 target.display(),
-                                crate::format_error(std::io::Error::last_os_error().raw_os_error().unwrap_or(0) as u32)
+                                crate::format_error(
+                                    std::io::Error::last_os_error().raw_os_error().unwrap_or(0)
+                                        as u32
+                                )
                             )));
                         }
                         actions.push(format!(
@@ -259,7 +272,8 @@ pub fn uninstall(
             Integration::Replace => {
                 let Some(session) = backup else {
                     return Err(WinError::Other(
-                        "no backup recorded for this component — restore it from System Restore".into(),
+                        "no backup recorded for this component — restore it from System Restore"
+                            .into(),
                     ));
                 };
                 let log = crate::restore::restore_session(session)?;
@@ -307,7 +321,9 @@ pub fn replacement_active(spec: &TargetSpec) -> bool {
 /// Copy our binary next to the target under a `<name>.winrust` name, so the
 /// original file name stays free for the swap.  Used by [`Integration::Replace`].
 pub fn side_load(source: &Path, target: &Path) -> Result<PathBuf> {
-    let dir = target.parent().ok_or_else(|| WinError::Other("target has no directory".into()))?;
+    let dir = target
+        .parent()
+        .ok_or_else(|| WinError::Other("target has no directory".into()))?;
     let name = target
         .file_name()
         .map(|n| n.to_string_lossy().to_string())
@@ -420,10 +436,14 @@ pub fn install_dir() -> PathBuf {
 /// paths keyed by component id.
 pub fn stage_binaries(sources: &[(String, PathBuf)]) -> Result<Vec<(String, PathBuf)>> {
     let dir = install_dir();
-    std::fs::create_dir_all(&dir).map_err(|e| WinError::Other(format!("create {}: {e}", dir.display())))?;
+    std::fs::create_dir_all(&dir)
+        .map_err(|e| WinError::Other(format!("create {}: {e}", dir.display())))?;
     let mut out = Vec::with_capacity(sources.len());
     for (id, src) in sources {
-        let dst = dir.join(src.file_name().unwrap_or_else(|| std::ffi::OsStr::new("winrust.exe")));
+        let dst = dir.join(
+            src.file_name()
+                .unwrap_or_else(|| std::ffi::OsStr::new("winrust.exe")),
+        );
         std::fs::copy(src, &dst)
             .map_err(|e| WinError::Other(format!("stage {}: {e}", src.display())))?;
         out.push((id.clone(), dst));

@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 use windows_sys::Win32::Foundation::FILETIME;
 use windows_sys::Win32::System::LibraryLoader::{GetModuleHandleW, GetProcAddress, LoadLibraryW};
 use windows_sys::Win32::System::SystemInformation::{
-    GetComputerNameExW, GetNativeSystemInfo, GetPhysicallyInstalledSystemMemory, GetTickCount64,
-    GlobalMemoryStatusEx, COMPUTER_NAME_FORMAT, MEMORYSTATUSEX, SYSTEM_INFO,
-    ComputerNameDnsHostname, ComputerNamePhysicalDnsDomain,
+    ComputerNameDnsHostname, ComputerNamePhysicalDnsDomain, GetComputerNameExW,
+    GetNativeSystemInfo, GetPhysicallyInstalledSystemMemory, GetTickCount64, GlobalMemoryStatusEx,
+    COMPUTER_NAME_FORMAT, MEMORYSTATUSEX, SYSTEM_INFO,
 };
 use windows_sys::Win32::System::Threading::GetSystemTimes;
 
@@ -90,7 +90,11 @@ pub fn cpu_sample() -> CpuSample {
     unsafe {
         GetSystemTimes(&mut idle, &mut kernel, &mut user);
     }
-    CpuSample { idle: ft64(&idle), kernel: ft64(&kernel), user: ft64(&user) }
+    CpuSample {
+        idle: ft64(&idle),
+        kernel: ft64(&kernel),
+        user: ft64(&user),
+    }
 }
 
 /// CPU usage percentage between two samples (0..=100).
@@ -198,11 +202,9 @@ pub fn os_info() -> OsInfo {
         "DisplayVersion",
     )
     .unwrap_or_default();
-    let ubr = crate::registry::read_machine_u32(
-        r"SOFTWARE\Microsoft\Windows NT\CurrentVersion",
-        "UBR",
-    )
-    .unwrap_or(0);
+    let ubr =
+        crate::registry::read_machine_u32(r"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "UBR")
+            .unwrap_or(0);
 
     let hostname = computer_name(ComputerNameDnsHostname);
     let domain = computer_name(ComputerNamePhysicalDnsDomain);
@@ -228,7 +230,11 @@ fn module_name(s: &str) -> Result<Vec<u16>> {
 }
 
 fn non_null_handle(h: *mut std::ffi::c_void) -> Option<*mut std::ffi::c_void> {
-    if h.is_null() { None } else { Some(h) }
+    if h.is_null() {
+        None
+    } else {
+        Some(h)
+    }
 }
 
 #[allow(non_snake_case)]
@@ -275,7 +281,9 @@ pub fn os_summary() -> String {
 /// Ask the shell to re-broadcast settings changes so apps re-read the
 /// environment (used after WinRust edits the user PATH).
 pub fn broadcast_settings_change() {
-    use windows_sys::Win32::UI::WindowsAndMessaging::{SendMessageTimeoutW, HWND_BROADCAST, SMTO_ABORTIFHUNG, WM_SETTINGCHANGE};
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        SendMessageTimeoutW, HWND_BROADCAST, SMTO_ABORTIFHUNG, WM_SETTINGCHANGE,
+    };
     let s = crate::wide::str_to_wide("Environment");
     unsafe {
         SendMessageTimeoutW(
@@ -297,42 +305,43 @@ pub fn env(name: &str) -> Option<String> {
 
 /// Raise a process' working set limits (privilege `SeIncreaseWorkingSetPrivilege`).
 pub fn set_privilege(name: &str, enable: bool) -> Result<()> {
-    use windows_sys::Win32::Security::{LookupPrivilegeValueW, TOKEN_ADJUST_PRIVILEGES, TOKEN_QUERY};
-    use windows_sys::Win32::Security::{TOKEN_PRIVILEGES, SE_PRIVILEGE_ENABLED};
+    use windows_sys::Win32::Security::{
+        LookupPrivilegeValueW, TOKEN_ADJUST_PRIVILEGES, TOKEN_QUERY,
+    };
+    use windows_sys::Win32::Security::{SE_PRIVILEGE_ENABLED, TOKEN_PRIVILEGES};
     use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
 
     let mut token = std::ptr::null_mut();
-    check(
-        "OpenProcessToken",
-        unsafe { OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &mut token) },
-    )?;
+    check("OpenProcessToken", unsafe {
+        OpenProcessToken(
+            GetCurrentProcess(),
+            TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+            &mut token,
+        )
+    })?;
     let token = crate::handle::Handle::new(token).ok_or(WinError::Other("null token".into()))?;
 
     let mut luid = unsafe { std::mem::zeroed() };
     let wname = crate::wide::str_to_wide(name);
-    check(
-        "LookupPrivilegeValueW",
-        unsafe { LookupPrivilegeValueW(std::ptr::null(), wname.as_ptr(), &mut luid) },
-    )?;
+    check("LookupPrivilegeValueW", unsafe {
+        LookupPrivilegeValueW(std::ptr::null(), wname.as_ptr(), &mut luid)
+    })?;
 
     let mut tp: TOKEN_PRIVILEGES = unsafe { std::mem::zeroed() };
     tp.PrivilegeCount = 1;
     tp.Privileges[0].Luid = luid;
     tp.Privileges[0].Attributes = if enable { SE_PRIVILEGE_ENABLED } else { 0 };
 
-    check(
-        "AdjustTokenPrivileges",
-        unsafe {
-            windows_sys::Win32::Security::AdjustTokenPrivileges(
-                token.raw(),
-                0,
-                &tp,
-                std::mem::size_of::<TOKEN_PRIVILEGES>() as u32,
-                std::ptr::null_mut(),
-                std::ptr::null_mut(),
-            )
-        },
-    )
+    check("AdjustTokenPrivileges", unsafe {
+        windows_sys::Win32::Security::AdjustTokenPrivileges(
+            token.raw(),
+            0,
+            &tp,
+            std::mem::size_of::<TOKEN_PRIVILEGES>() as u32,
+            std::ptr::null_mut(),
+            std::ptr::null_mut(),
+        )
+    })
 }
 
 /// True when the machine has a battery (laptop / UPS-backed tablet).
@@ -350,7 +359,10 @@ pub fn pnp_battery_present() -> bool {
 pub fn idle_seconds() -> Option<u32> {
     use windows_sys::Win32::System::SystemInformation::GetTickCount;
     use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
-    let mut info = LASTINPUTINFO { cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32, dwTime: 0 };
+    let mut info = LASTINPUTINFO {
+        cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32,
+        dwTime: 0,
+    };
     if unsafe { GetLastInputInfo(&mut info) } == 0 {
         return None;
     }

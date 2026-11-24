@@ -2,14 +2,13 @@
 //! "Network" and the Resource Monitor's "Network" tab.
 
 use crate::error::{Result, WinError};
-use windows_sys::Win32::NetworkManagement::IpHelper::{
-    GetExtendedTcpTable, GetExtendedUdpTable, GetPerTcpConnectionEStats, MIB_TCPROW_LH,
-    MIB_TCPROW_OWNER_PID, MIB_UDPROW_OWNER_PID, SetPerTcpConnectionEStats,
-    TCP_ESTATS_DATA_ROD_v0, TCP_ESTATS_DATA_RW_v0, TCP_TABLE_OWNER_PID_ALL, TcpConnectionEstatsData,
-    UDP_TABLE_OWNER_PID,
-};
-use windows_sys::Win32::Foundation::ERROR_INSUFFICIENT_BUFFER;
 use serde::{Deserialize, Serialize};
+use windows_sys::Win32::Foundation::ERROR_INSUFFICIENT_BUFFER;
+use windows_sys::Win32::NetworkManagement::IpHelper::{
+    GetExtendedTcpTable, GetExtendedUdpTable, GetPerTcpConnectionEStats, SetPerTcpConnectionEStats,
+    TCP_ESTATS_DATA_ROD_v0, TCP_ESTATS_DATA_RW_v0, TcpConnectionEstatsData, MIB_TCPROW_LH,
+    MIB_TCPROW_OWNER_PID, MIB_UDPROW_OWNER_PID, TCP_TABLE_OWNER_PID_ALL, UDP_TABLE_OWNER_PID,
+};
 
 const AF_INET: u32 = 2;
 const AF_INET6: u32 = 23;
@@ -47,8 +46,19 @@ pub struct Connection {
 }
 
 const TCP_STATES: [&str; 13] = [
-    "", "CLOSED", "LISTENING", "SYN_SENT", "SYN_RECV", "ESTABLISHED", "FIN_WAIT1", "FIN_WAIT2",
-    "CLOSE_WAIT", "CLOSING", "LAST_ACK", "TIME_WAIT", "DELETE_TCB",
+    "",
+    "CLOSED",
+    "LISTENING",
+    "SYN_SENT",
+    "SYN_RECV",
+    "ESTABLISHED",
+    "FIN_WAIT1",
+    "FIN_WAIT2",
+    "CLOSE_WAIT",
+    "CLOSING",
+    "LAST_ACK",
+    "TIME_WAIT",
+    "DELETE_TCB",
 ];
 
 fn ipv4_to_string(raw: u32) -> String {
@@ -70,7 +80,10 @@ fn ipv6_to_string(b: &[u8; 16]) -> String {
     }
     // Special-case IPv4-mapped addresses.
     if groups[..5].iter().all(|&g| g == 0) && groups[5] == 0xFFFF {
-        return format!("::ffff:{}", ipv4_to_string(u32::from_be_bytes([b[12], b[13], b[14], b[15]])));
+        return format!(
+            "::ffff:{}",
+            ipv4_to_string(u32::from_be_bytes([b[12], b[13], b[14], b[15]]))
+        );
     }
     let mut best_start = usize::MAX;
     let mut best_len = 0usize;
@@ -90,17 +103,36 @@ fn ipv6_to_string(b: &[u8; 16]) -> String {
         }
     }
     if best_len < 2 {
-        return groups.iter().map(|g| format!("{g:x}")).collect::<Vec<_>>().join(":");
+        return groups
+            .iter()
+            .map(|g| format!("{g:x}"))
+            .collect::<Vec<_>>()
+            .join(":");
     }
-    let head = groups[..best_start].iter().map(|g| format!("{g:x}")).collect::<Vec<_>>().join(":");
-    let tail = groups[best_start + best_len..].iter().map(|g| format!("{g:x}")).collect::<Vec<_>>().join(":");
+    let head = groups[..best_start]
+        .iter()
+        .map(|g| format!("{g:x}"))
+        .collect::<Vec<_>>()
+        .join(":");
+    let tail = groups[best_start + best_len..]
+        .iter()
+        .map(|g| format!("{g:x}"))
+        .collect::<Vec<_>>()
+        .join(":");
     format!("{head}::{tail}")
 }
 
 fn tcp_table(family: u32) -> Result<Vec<MIB_TCPROW_OWNER_PID>> {
     let mut size = 0u32;
     let rc = unsafe {
-        GetExtendedTcpTable(std::ptr::null_mut(), &mut size, 0, family, TCP_TABLE_OWNER_PID_ALL, 0)
+        GetExtendedTcpTable(
+            std::ptr::null_mut(),
+            &mut size,
+            0,
+            family,
+            TCP_TABLE_OWNER_PID_ALL,
+            0,
+        )
     };
     if rc != ERROR_INSUFFICIENT_BUFFER && rc != 0 {
         return Err(WinError::from_code(rc, "GetExtendedTcpTable(size)"));
@@ -110,7 +142,14 @@ fn tcp_table(family: u32) -> Result<Vec<MIB_TCPROW_OWNER_PID>> {
     }
     let mut buf = vec![0u8; size as usize];
     let rc = unsafe {
-        GetExtendedTcpTable(buf.as_mut_ptr() as *mut _, &mut size, 0, family, TCP_TABLE_OWNER_PID_ALL, 0)
+        GetExtendedTcpTable(
+            buf.as_mut_ptr() as *mut _,
+            &mut size,
+            0,
+            family,
+            TCP_TABLE_OWNER_PID_ALL,
+            0,
+        )
     };
     if rc != 0 {
         return Err(WinError::from_code(rc, "GetExtendedTcpTable"));
@@ -124,7 +163,11 @@ fn tcp_table(family: u32) -> Result<Vec<MIB_TCPROW_OWNER_PID>> {
     }
     let mut rows = Vec::with_capacity(count);
     for i in 0..count {
-        let row = unsafe { std::ptr::read_unaligned(buf.as_ptr().add(offset + i * row_size) as *const MIB_TCPROW_OWNER_PID) };
+        let row = unsafe {
+            std::ptr::read_unaligned(
+                buf.as_ptr().add(offset + i * row_size) as *const MIB_TCPROW_OWNER_PID
+            )
+        };
         rows.push(row);
     }
     Ok(rows)
@@ -133,7 +176,14 @@ fn tcp_table(family: u32) -> Result<Vec<MIB_TCPROW_OWNER_PID>> {
 fn udp_table(family: u32) -> Result<Vec<MIB_UDPROW_OWNER_PID>> {
     let mut size = 0u32;
     let rc = unsafe {
-        GetExtendedUdpTable(std::ptr::null_mut(), &mut size, 0, family, UDP_TABLE_OWNER_PID, 0)
+        GetExtendedUdpTable(
+            std::ptr::null_mut(),
+            &mut size,
+            0,
+            family,
+            UDP_TABLE_OWNER_PID,
+            0,
+        )
     };
     if rc != ERROR_INSUFFICIENT_BUFFER && rc != 0 {
         return Err(WinError::from_code(rc, "GetExtendedUdpTable(size)"));
@@ -143,7 +193,14 @@ fn udp_table(family: u32) -> Result<Vec<MIB_UDPROW_OWNER_PID>> {
     }
     let mut buf = vec![0u8; size as usize];
     let rc = unsafe {
-        GetExtendedUdpTable(buf.as_mut_ptr() as *mut _, &mut size, 0, family, UDP_TABLE_OWNER_PID, 0)
+        GetExtendedUdpTable(
+            buf.as_mut_ptr() as *mut _,
+            &mut size,
+            0,
+            family,
+            UDP_TABLE_OWNER_PID,
+            0,
+        )
     };
     if rc != 0 {
         return Err(WinError::from_code(rc, "GetExtendedUdpTable"));
@@ -156,7 +213,11 @@ fn udp_table(family: u32) -> Result<Vec<MIB_UDPROW_OWNER_PID>> {
     }
     let mut rows = Vec::with_capacity(count);
     for i in 0..count {
-        let row = unsafe { std::ptr::read_unaligned(buf.as_ptr().add(offset + i * row_size) as *const MIB_UDPROW_OWNER_PID) };
+        let row = unsafe {
+            std::ptr::read_unaligned(
+                buf.as_ptr().add(offset + i * row_size) as *const MIB_UDPROW_OWNER_PID
+            )
+        };
         rows.push(row);
     }
     Ok(rows)
@@ -171,9 +232,17 @@ pub fn tcp_connections_v4() -> Vec<Connection> {
                 protocol: Protocol::Tcp,
                 local_addr: ipv4_to_string(r.dwLocalAddr),
                 local_port: port_from_net(r.dwLocalPort),
-                remote_addr: if r.dwRemoteAddr == 0 { String::new() } else { ipv4_to_string(r.dwRemoteAddr) },
+                remote_addr: if r.dwRemoteAddr == 0 {
+                    String::new()
+                } else {
+                    ipv4_to_string(r.dwRemoteAddr)
+                },
                 remote_port: port_from_net(r.dwRemotePort),
-                state: TCP_STATES.get(r.dwState as usize).copied().unwrap_or("").to_string(),
+                state: TCP_STATES
+                    .get(r.dwState as usize)
+                    .copied()
+                    .unwrap_or("")
+                    .to_string(),
                 pid: r.dwOwningPid,
             });
         }
@@ -192,7 +261,11 @@ pub fn tcp_connections() -> Vec<Connection> {
                 local_port: port_from_net(r.dwLocalPort),
                 remote_addr: String::new(),
                 remote_port: port_from_net(r.dwRemotePort),
-                state: TCP_STATES.get(r.dwState as usize).copied().unwrap_or("").to_string(),
+                state: TCP_STATES
+                    .get(r.dwState as usize)
+                    .copied()
+                    .unwrap_or("")
+                    .to_string(),
                 pid: r.dwOwningPid,
             });
         }
@@ -230,7 +303,9 @@ pub fn udp_listeners() -> Vec<Connection> {
 pub fn net_bytes_per_pid() -> std::collections::HashMap<u32, u64> {
     let mut out: std::collections::HashMap<u32, u64> = std::collections::HashMap::new();
     for row in tcp_owner_rows() {
-        let Some(rb) = tcp_bytes_for_row(&row) else { continue };
+        let Some(rb) = tcp_bytes_for_row(&row) else {
+            continue;
+        };
         *out.entry(row.dwOwningPid).or_insert(0) += rb;
     }
     out
@@ -246,11 +321,15 @@ fn estats_row(row: &MIB_TCPROW_OWNER_PID) -> *const MIB_TCPROW_LH {
 
 fn tcp_bytes_for_row(row: &MIB_TCPROW_OWNER_PID) -> Option<u64> {
     let lh = estats_row(row);
-    debug_assert!(std::mem::size_of::<MIB_TCPROW_LH>() <= std::mem::size_of::<MIB_TCPROW_OWNER_PID>());
+    debug_assert!(
+        std::mem::size_of::<MIB_TCPROW_LH>() <= std::mem::size_of::<MIB_TCPROW_OWNER_PID>()
+    );
     const NO_ERROR_CODE: u32 = 0;
     // 1. Make sure collection is on; ignore the result (it fails harmlessly when
     //    already enabled for this connection).
-    let rw = TCP_ESTATS_DATA_RW_v0 { EnableCollection: 1u8 };
+    let rw = TCP_ESTATS_DATA_RW_v0 {
+        EnableCollection: 1u8,
+    };
     unsafe {
         SetPerTcpConnectionEStats(
             lh,
@@ -288,14 +367,28 @@ fn tcp_bytes_for_row(row: &MIB_TCPROW_OWNER_PID) -> Option<u64> {
 fn tcp_owner_rows() -> Vec<MIB_TCPROW_OWNER_PID> {
     let mut size = 0u32;
     let rc = unsafe {
-        GetExtendedTcpTable(std::ptr::null_mut(), &mut size, 0, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0)
+        GetExtendedTcpTable(
+            std::ptr::null_mut(),
+            &mut size,
+            0,
+            AF_INET,
+            TCP_TABLE_OWNER_PID_ALL,
+            0,
+        )
     };
     if (rc != ERROR_INSUFFICIENT_BUFFER && rc != 0) || size == 0 {
         return Vec::new();
     }
     let mut buf = vec![0u8; size as usize];
     let rc = unsafe {
-        GetExtendedTcpTable(buf.as_mut_ptr() as *mut _, &mut size, 0, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0)
+        GetExtendedTcpTable(
+            buf.as_mut_ptr() as *mut _,
+            &mut size,
+            0,
+            AF_INET,
+            TCP_TABLE_OWNER_PID_ALL,
+            0,
+        )
     };
     if rc != 0 {
         return Vec::new();
@@ -308,7 +401,11 @@ fn tcp_owner_rows() -> Vec<MIB_TCPROW_OWNER_PID> {
     }
     let mut rows = Vec::with_capacity(count);
     for i in 0..count {
-        let row = unsafe { std::ptr::read_unaligned(buf.as_ptr().add(offset + i * row_size) as *const MIB_TCPROW_OWNER_PID) };
+        let row = unsafe {
+            std::ptr::read_unaligned(
+                buf.as_ptr().add(offset + i * row_size) as *const MIB_TCPROW_OWNER_PID
+            )
+        };
         rows.push(row);
     }
     rows

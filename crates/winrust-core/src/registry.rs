@@ -7,7 +7,8 @@ use windows_sys::Win32::Foundation::ERROR_SUCCESS;
 use windows_sys::Win32::System::Registry::{
     RegCloseKey, RegCreateKeyExW, RegDeleteKeyExW, RegDeleteValueW, RegEnumKeyExW, RegEnumValueW,
     RegOpenKeyExW, RegQueryValueExW, RegSetValueExW, HKEY, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE,
-    KEY_READ, KEY_SET_VALUE, KEY_WOW64_64KEY, REG_BINARY, REG_DWORD, REG_OPTION_NON_VOLATILE, REG_SZ,
+    KEY_READ, KEY_SET_VALUE, KEY_WOW64_64KEY, REG_BINARY, REG_DWORD, REG_OPTION_NON_VOLATILE,
+    REG_SZ,
 };
 
 /// Predefined root keys supported by the wrapper.
@@ -49,7 +50,13 @@ impl Key {
         let wpath = str_to_wide(path);
         let mut hkey: HKEY = std::ptr::null_mut();
         let rc = unsafe {
-            RegOpenKeyExW(root.key(), wpath.as_ptr(), 0, KEY_READ | KEY_WOW64_64KEY, &mut hkey)
+            RegOpenKeyExW(
+                root.key(),
+                wpath.as_ptr(),
+                0,
+                KEY_READ | KEY_WOW64_64KEY,
+                &mut hkey,
+            )
         };
         if rc != ERROR_SUCCESS {
             return Err(WinError::from_code(rc, "RegOpenKeyExW"));
@@ -95,20 +102,37 @@ impl Key {
     /// Raw value bytes plus the registry type.
     pub fn value_raw(&self, name: Option<&str>) -> Result<(u32, Vec<u8>)> {
         let wname = name.map(str_to_wide);
-        let name_ptr = wname.as_ref().map(|w| w.as_ptr()).unwrap_or(std::ptr::null());
+        let name_ptr = wname
+            .as_ref()
+            .map(|w| w.as_ptr())
+            .unwrap_or(std::ptr::null());
 
         // First call sizes the buffer.
         let mut ty = 0u32;
         let mut size = 0u32;
         let rc = unsafe {
-            RegQueryValueExW(self.raw(), name_ptr, std::ptr::null(), &mut ty, std::ptr::null_mut(), &mut size)
+            RegQueryValueExW(
+                self.raw(),
+                name_ptr,
+                std::ptr::null(),
+                &mut ty,
+                std::ptr::null_mut(),
+                &mut size,
+            )
         };
         if rc != ERROR_SUCCESS {
             return Err(WinError::from_code(rc, "RegQueryValueExW(size)"));
         }
         let mut data = vec![0u8; size.max(1) as usize];
         let rc = unsafe {
-            RegQueryValueExW(self.raw(), name_ptr, std::ptr::null(), &mut ty, data.as_mut_ptr(), &mut size)
+            RegQueryValueExW(
+                self.raw(),
+                name_ptr,
+                std::ptr::null(),
+                &mut ty,
+                data.as_mut_ptr(),
+                &mut size,
+            )
         };
         if rc != ERROR_SUCCESS {
             return Err(WinError::from_code(rc, "RegQueryValueExW"));
@@ -147,9 +171,20 @@ impl Key {
         let bytes: Vec<u8> = wide.iter().flat_map(|w| w.to_le_bytes()).collect();
         let wname = str_to_wide(name);
         let rc = unsafe {
-            RegSetValueExW(self.raw(), wname.as_ptr(), 0, REG_SZ, bytes.as_ptr(), bytes.len() as u32)
+            RegSetValueExW(
+                self.raw(),
+                wname.as_ptr(),
+                0,
+                REG_SZ,
+                bytes.as_ptr(),
+                bytes.len() as u32,
+            )
         };
-        if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegSetValueExW")) }
+        if rc == ERROR_SUCCESS {
+            Ok(())
+        } else {
+            Err(WinError::from_code(rc, "RegSetValueExW"))
+        }
     }
 
     /// Arbitrary binary value (`REG_BINARY`), used for the `StartupApproved`
@@ -157,9 +192,20 @@ impl Key {
     pub fn set_binary(&self, name: &str, data: &[u8]) -> Result<()> {
         let wname = str_to_wide(name);
         let rc = unsafe {
-            RegSetValueExW(self.raw(), wname.as_ptr(), 0, REG_BINARY, data.as_ptr(), data.len() as u32)
+            RegSetValueExW(
+                self.raw(),
+                wname.as_ptr(),
+                0,
+                REG_BINARY,
+                data.as_ptr(),
+                data.len() as u32,
+            )
         };
-        if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegSetValueExW(binary)")) }
+        if rc == ERROR_SUCCESS {
+            Ok(())
+        } else {
+            Err(WinError::from_code(rc, "RegSetValueExW(binary)"))
+        }
     }
 }
 
@@ -267,7 +313,11 @@ pub fn delete_value(root: Root, path: &str, name: &str) -> Result<()> {
     let key = open_for_write(root, path)?;
     let wname = str_to_wide(name);
     let rc = unsafe { RegDeleteValueW(key.raw(), wname.as_ptr()) };
-    if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegDeleteValueW")) }
+    if rc == ERROR_SUCCESS {
+        Ok(())
+    } else {
+        Err(WinError::from_code(rc, "RegDeleteValueW"))
+    }
 }
 
 /// Delete a sub-key tree node.
@@ -275,5 +325,9 @@ pub fn delete_key(root: Root, path: &str, sub: &str) -> Result<()> {
     let key = open_for_write(root, path)?;
     let wsub = str_to_wide(sub);
     let rc = unsafe { RegDeleteKeyExW(key.raw(), wsub.as_ptr(), KEY_WOW64_64KEY, 0) };
-    if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegDeleteKeyExW")) }
+    if rc == ERROR_SUCCESS {
+        Ok(())
+    } else {
+        Err(WinError::from_code(rc, "RegDeleteKeyExW"))
+    }
 }

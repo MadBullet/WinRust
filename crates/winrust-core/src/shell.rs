@@ -7,17 +7,19 @@ use serde::{Deserialize, Serialize};
 use std::ffi::c_void;
 use std::path::Path;
 use windows_sys::Win32::Foundation::HWND;
-use windows_sys::Win32::Storage::FileSystem::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO};
+use windows_sys::Win32::Storage::FileSystem::{
+    GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO,
+};
 use windows_sys::Win32::System::DataExchange::{
     CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData,
 };
-use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
 use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
+use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
 use windows_sys::Win32::UI::Shell::{
     SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
-    SHFILEINFOW, SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
-    FOF_NOERRORUI, FOF_WANTNUKEWARNING, SEE_MASK_INVOKEIDLIST, SEE_MASK_NOCLOSEPROCESS,
-    SEE_MASK_NOASYNC, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_LARGEICON, SHGFI_SMALLICON,
+    FOF_ALLOWUNDO, FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_WANTNUKEWARNING, FO_DELETE,
+    SEE_MASK_INVOKEIDLIST, SEE_MASK_NOASYNC, SEE_MASK_NOCLOSEPROCESS, SHELLEXECUTEINFOW,
+    SHFILEINFOW, SHFILEOPSTRUCTW, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_LARGEICON, SHGFI_SMALLICON,
     SHGFI_SYSICONINDEX, SHGFI_TYPENAME, SHGFI_USEFILEATTRIBUTES,
 };
 use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
@@ -107,7 +109,11 @@ impl KnownFolder {
         unsafe {
             windows_sys::Win32::System::Com::CoTaskMemFree(psz as *const c_void);
         }
-        if s.is_empty() { None } else { Some(std::path::PathBuf::from(s)) }
+        if s.is_empty() {
+            None
+        } else {
+            Some(std::path::PathBuf::from(s))
+        }
     }
 
     /// Everything Explorer lists in its sidebar tree.
@@ -141,7 +147,14 @@ pub fn open(path: impl AsRef<Path>) -> Result<()> {
         )
     };
     // ShellExecuteW returns a value > 32 on success.
-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute failed ({} )", rc as isize))) }
+    if rc as isize > 32 {
+        Ok(())
+    } else {
+        Err(WinError::Other(format!(
+            "ShellExecute failed ({} )",
+            rc as isize
+        )))
+    }
 }
 
 /// Open with an explicit verb: "edit", "runas" (UAC elevation), "properties".
@@ -158,7 +171,14 @@ pub fn open_verb(path: impl AsRef<Path>, verb: &str) -> Result<()> {
             SW_SHOWNORMAL,
         )
     };
-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute({verb}) failed ({})", rc as isize))) }
+    if rc as isize > 32 {
+        Ok(())
+    } else {
+        Err(WinError::Other(format!(
+            "ShellExecute({verb}) failed ({})",
+            rc as isize
+        )))
+    }
 }
 
 /// Show the shell's "Properties" dialog for a path.
@@ -177,7 +197,11 @@ pub fn show_properties(path: impl AsRef<Path>) -> Result<()> {
 /// Launch an executable with command-line arguments, waiting for the handle.
 ///
 /// Returns the process id when the shell reports one.
-pub fn execute(path: impl AsRef<Path>, args: &str, working_dir: Option<&Path>) -> Result<Option<u32>> {
+pub fn execute(
+    path: impl AsRef<Path>,
+    args: &str,
+    working_dir: Option<&Path>,
+) -> Result<Option<u32>> {
     let mut info: SHELLEXECUTEINFOW = unsafe { std::mem::zeroed() };
     info.cbSize = std::mem::size_of::<SHELLEXECUTEINFOW>() as u32;
     info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
@@ -197,7 +221,11 @@ pub fn execute(path: impl AsRef<Path>, args: &str, working_dir: Option<&Path>) -
         let pid = unsafe { windows_sys::Win32::System::Threading::GetProcessId(info.hProcess) };
         // wrap in an owned handle so it closes when scope ends
         let _owned = Handle::new(info.hProcess);
-        if pid == 0 { None } else { Some(pid) }
+        if pid == 0 {
+            None
+        } else {
+            Some(pid)
+        }
     };
     Ok(pid)
 }
@@ -221,7 +249,9 @@ pub fn recycle(paths: &[std::path::PathBuf]) -> Result<()> {
     op.fFlags = (FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_WANTNUKEWARNING) as u16;
     let rc = unsafe { SHFileOperationW(&mut op) };
     if rc != 0 {
-        return Err(WinError::Other(format!("SHFileOperationW failed with {rc}")));
+        return Err(WinError::Other(format!(
+            "SHFileOperationW failed with {rc}"
+        )));
     }
     if op.fAnyOperationsAborted != 0 {
         return Err(WinError::Other("delete was cancelled".into()));
@@ -361,7 +391,11 @@ pub fn type_name_for_extension(ext: &str, is_dir: bool) -> String {
         )
     };
     if ok == 0 {
-        return if is_dir { "File folder".into() } else { "File".into() };
+        return if is_dir {
+            "File folder".into()
+        } else {
+            "File".into()
+        };
     }
     from_wide(&info.szTypeName, info.szTypeName.len())
 }
@@ -381,7 +415,9 @@ pub fn clipboard_text() -> Option<String> {
                 while *ptr.add(len) != 0 {
                     len += 1;
                 }
-                out = Some(String::from_utf16_lossy(std::slice::from_raw_parts(ptr, len)));
+                out = Some(String::from_utf16_lossy(std::slice::from_raw_parts(
+                    ptr, len,
+                )));
                 GlobalUnlock(handle);
             }
         }
@@ -446,7 +482,14 @@ pub fn version_info(path: impl AsRef<Path>) -> VersionInfo {
     // Fixed block: gives us the numeric version.
     let mut fixed_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
     let mut fixed_len = 0u32;
-    if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\").as_ptr(), &mut fixed_ptr, &mut fixed_len) } != 0
+    if unsafe {
+        VerQueryValueW(
+            buf.as_ptr() as *const _,
+            w("\\").as_ptr(),
+            &mut fixed_ptr,
+            &mut fixed_len,
+        )
+    } != 0
         && fixed_len as usize >= std::mem::size_of::<VS_FIXEDFILEINFO>()
     {
         let ffi = unsafe { &*(fixed_ptr as *const VS_FIXEDFILEINFO) };
@@ -458,10 +501,18 @@ pub fn version_info(path: impl AsRef<Path>) -> VersionInfo {
     // Strings live in `\StringFileInfo\<langcodepage>\<name>`.
     let mut trans_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
     let mut trans_len = 0u32;
-    if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\VarFileInfo\\Translation").as_ptr(), &mut trans_ptr, &mut trans_len) } != 0
+    if unsafe {
+        VerQueryValueW(
+            buf.as_ptr() as *const _,
+            w("\\VarFileInfo\\Translation").as_ptr(),
+            &mut trans_ptr,
+            &mut trans_len,
+        )
+    } != 0
         && trans_len >= 4
     {
-        let words = unsafe { std::slice::from_raw_parts(trans_ptr as *const u16, trans_len as usize / 2) };
+        let words =
+            unsafe { std::slice::from_raw_parts(trans_ptr as *const u16, trans_len as usize / 2) };
         let lang = words[0];
         let cp = words[1];
         for (key, slot) in [
@@ -472,9 +523,15 @@ pub fn version_info(path: impl AsRef<Path>) -> VersionInfo {
             let sub = format!("\\StringFileInfo\\{lang:04x}{cp:04x}\\{key}");
             let mut p: *mut std::ffi::c_void = std::ptr::null_mut();
             let mut len = 0u32;
-            if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w(&sub).as_ptr(), &mut p, &mut len) } != 0 && len > 0 {
+            if unsafe {
+                VerQueryValueW(buf.as_ptr() as *const _, w(&sub).as_ptr(), &mut p, &mut len)
+            } != 0
+                && len > 0
+            {
                 let chars = unsafe { std::slice::from_raw_parts(p as *const u16, len as usize) };
-                *slot = crate::wide::from_wide(chars, chars.len()).trim_end_matches('\0').to_string();
+                *slot = crate::wide::from_wide(chars, chars.len())
+                    .trim_end_matches('\0')
+                    .to_string();
             }
         }
     }
@@ -508,7 +565,11 @@ pub fn launch(command: &str, args: &str) -> Result<()> {
             SW_SHOWNORMAL,
         )
     };
-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("launch failed ({})", rc as isize))) }
+    if rc as isize > 32 {
+        Ok(())
+    } else {
+        Err(WinError::Other(format!("launch failed ({})", rc as isize)))
+    }
 }
 
 /// The desktop window handle (used to parent modal dialogs).

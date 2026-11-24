@@ -1,6 +1,6 @@
 //! RAII ownership for Win32 kernel handles.
 
-use crate::error::{WinError, Result};
+use crate::error::{Result, WinError};
 use windows_sys::Win32::Foundation::{CloseHandle, HANDLE, INVALID_HANDLE_VALUE};
 
 /// An owned kernel handle.  Dropping it calls `CloseHandle` exactly once.

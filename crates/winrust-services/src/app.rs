@@ -67,7 +67,8 @@ impl ServicesApp {
             None => {
                 self.scm = ScManager::connect().ok();
                 if self.scm.is_none() {
-                    self.status = "Cannot open the Service Control Manager — run WinRust elevated.".into();
+                    self.status =
+                        "Cannot open the Service Control Manager — run WinRust elevated.".into();
                 }
             }
         }
@@ -116,7 +117,11 @@ impl ServicesApp {
         };
         match scm.open_service(&dlg.name, winrust_core::service::ACCESS_CHANGE_CONFIG) {
             Ok(svc) => {
-                let bin = if dlg.binary_path.is_empty() { None } else { Some(dlg.binary_path.as_str()) };
+                let bin = if dlg.binary_path.is_empty() {
+                    None
+                } else {
+                    Some(dlg.binary_path.as_str())
+                };
                 let result = svc
                     .set_start_type(dlg.start_type, bin)
                     .and_then(|()| svc.set_description(&dlg.description));
@@ -146,27 +151,48 @@ impl ServicesApp {
             }
             ui.separator();
             let enabled = self.selected.is_some();
-            if ui.add_enabled(enabled, egui::Button::new("▶ Start")).clicked() {
+            if ui
+                .add_enabled(enabled, egui::Button::new("▶ Start"))
+                .clicked()
+            {
                 self.do_action(ServiceAction::Start);
             }
-            if ui.add_enabled(enabled, egui::Button::new("⏹ Stop")).clicked() {
+            if ui
+                .add_enabled(enabled, egui::Button::new("⏹ Stop"))
+                .clicked()
+            {
                 self.do_action(ServiceAction::Stop);
             }
-            if ui.add_enabled(enabled, egui::Button::new("⏸ Pause")).clicked() {
+            if ui
+                .add_enabled(enabled, egui::Button::new("⏸ Pause"))
+                .clicked()
+            {
                 self.do_action(ServiceAction::Pause);
             }
-            if ui.add_enabled(enabled, egui::Button::new("⏵ Resume")).clicked() {
+            if ui
+                .add_enabled(enabled, egui::Button::new("⏵ Resume"))
+                .clicked()
+            {
                 self.do_action(ServiceAction::Resume);
             }
-            if ui.add_enabled(enabled, egui::Button::new("⟲ Restart")).clicked() {
+            if ui
+                .add_enabled(enabled, egui::Button::new("⟲ Restart"))
+                .clicked()
+            {
                 self.do_action(ServiceAction::Stop);
                 self.do_action(ServiceAction::Start);
             }
-            if ui.add_enabled(enabled, egui::Button::new("Properties…")).clicked() {
+            if ui
+                .add_enabled(enabled, egui::Button::new("Properties…"))
+                .clicked()
+            {
                 self.open_props();
             }
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                ui.add_sized([220.0, 22.0], egui::TextEdit::singleline(&mut self.filter).hint_text("🔍 Filter services"));
+                ui.add_sized(
+                    [220.0, 22.0],
+                    egui::TextEdit::singleline(&mut self.filter).hint_text("🔍 Filter services"),
+                );
             });
         });
         if !self.user.elevated {
@@ -247,11 +273,19 @@ impl ServicesApp {
                     ui.label(s.start_type.map(|x| x.label()).unwrap_or("—"));
                 });
                 row.col(|ui| {
-                    let acct = if s.logon_account.is_empty() { "—" } else { &s.logon_account };
+                    let acct = if s.logon_account.is_empty() {
+                        "—"
+                    } else {
+                        &s.logon_account
+                    };
                     ui.label(RichText::new(acct).weak());
                 });
                 row.col(|ui| {
-                    let desc = if s.description.is_empty() { String::new() } else { shorten(&s.description, 70) };
+                    let desc = if s.description.is_empty() {
+                        String::new()
+                    } else {
+                        shorten(&s.description, 70)
+                    };
                     ui.label(RichText::new(desc).weak());
                 });
             });
@@ -276,32 +310,43 @@ impl ServicesApp {
             ui.heading(RichText::new(&entry.display_name).size(16.0));
             ui.label(RichText::new(&entry.name).monospace().weak());
             ui.add_space(6.0);
-            egui::Grid::new("svc_details").num_columns(2).spacing([16.0, 6.0]).show(ui, |ui| {
-                ui.label(RichText::new("Service name").strong());
-                ui.label(&entry.name);
-                ui.end_row();
-                ui.label(RichText::new("Display name").strong());
-                ui.label(&entry.display_name);
-                ui.end_row();
-                ui.label(RichText::new("Description").strong());
-                if ui.button("Show").clicked() {
-                    // Description is shown inline below; this button exists so the
-                    // layout stays identical to services.msc.
-                }
-                ui.end_row();
-                ui.label(RichText::new("Path to executable").strong());
-                ui.label(RichText::new(&entry.binary_path).monospace());
-                ui.end_row();
-                ui.label(RichText::new("Start type").strong());
-                ui.label(entry.start_type.map(|x| x.label()).unwrap_or("—"));
-                ui.end_row();
-                ui.label(RichText::new("Log On As").strong());
-                ui.label(if entry.logon_account.is_empty() { "—" } else { &entry.logon_account });
-                ui.end_row();
-                ui.label(RichText::new("Process ID").strong());
-                ui.label(if entry.pid == 0 { "—".to_string() } else { entry.pid.to_string() });
-                ui.end_row();
-            });
+            egui::Grid::new("svc_details")
+                .num_columns(2)
+                .spacing([16.0, 6.0])
+                .show(ui, |ui| {
+                    ui.label(RichText::new("Service name").strong());
+                    ui.label(&entry.name);
+                    ui.end_row();
+                    ui.label(RichText::new("Display name").strong());
+                    ui.label(&entry.display_name);
+                    ui.end_row();
+                    ui.label(RichText::new("Description").strong());
+                    if ui.button("Show").clicked() {
+                        // Description is shown inline below; this button exists so the
+                        // layout stays identical to services.msc.
+                    }
+                    ui.end_row();
+                    ui.label(RichText::new("Path to executable").strong());
+                    ui.label(RichText::new(&entry.binary_path).monospace());
+                    ui.end_row();
+                    ui.label(RichText::new("Start type").strong());
+                    ui.label(entry.start_type.map(|x| x.label()).unwrap_or("—"));
+                    ui.end_row();
+                    ui.label(RichText::new("Log On As").strong());
+                    ui.label(if entry.logon_account.is_empty() {
+                        "—"
+                    } else {
+                        &entry.logon_account
+                    });
+                    ui.end_row();
+                    ui.label(RichText::new("Process ID").strong());
+                    ui.label(if entry.pid == 0 {
+                        "—".to_string()
+                    } else {
+                        entry.pid.to_string()
+                    });
+                    ui.end_row();
+                });
             if !entry.description.is_empty() {
                 ui.add_space(6.0);
                 ui.label(RichText::new("Description").strong());
@@ -317,16 +362,34 @@ impl ServicesApp {
             ui.add_space(8.0);
             ui.horizontal(|ui| {
                 let state = entry.state.unwrap_or(ServiceState::Stopped);
-                if ui.add_enabled(state == ServiceState::Stopped, egui::Button::new("Start")).clicked() {
+                if ui
+                    .add_enabled(state == ServiceState::Stopped, egui::Button::new("Start"))
+                    .clicked()
+                {
                     self.do_action(ServiceAction::Start);
                 }
-                if ui.add_enabled(state == ServiceState::Running && entry.accepts_stop, egui::Button::new("Stop")).clicked() {
+                if ui
+                    .add_enabled(
+                        state == ServiceState::Running && entry.accepts_stop,
+                        egui::Button::new("Stop"),
+                    )
+                    .clicked()
+                {
                     self.do_action(ServiceAction::Stop);
                 }
-                if ui.add_enabled(state == ServiceState::Running && entry.can_pause, egui::Button::new("Pause")).clicked() {
+                if ui
+                    .add_enabled(
+                        state == ServiceState::Running && entry.can_pause,
+                        egui::Button::new("Pause"),
+                    )
+                    .clicked()
+                {
                     self.do_action(ServiceAction::Pause);
                 }
-                if ui.add_enabled(state == ServiceState::Paused, egui::Button::new("Resume")).clicked() {
+                if ui
+                    .add_enabled(state == ServiceState::Paused, egui::Button::new("Resume"))
+                    .clicked()
+                {
                     self.do_action(ServiceAction::Resume);
                 }
                 if ui.button("Properties…").clicked() {
@@ -337,7 +400,9 @@ impl ServicesApp {
     }
 
     fn props_modal(&mut self, ctx: &egui::Context) {
-        let Some(mut dlg) = self.props.take() else { return };
+        let Some(mut dlg) = self.props.take() else {
+            return;
+        };
         let mut apply = false;
         let mut cancel = false;
         egui::Window::new(format!("{} Properties", dlg.display_name))
@@ -346,38 +411,50 @@ impl ServicesApp {
             .default_width(520.0)
             .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
             .show(ctx, |ui| {
-                egui::Grid::new("props_grid").num_columns(2).spacing([12.0, 8.0]).show(ui, |ui| {
-                    ui.label("Service name:");
-                    ui.label(RichText::new(&dlg.name).monospace());
-                    ui.end_row();
-                    ui.label("Display name:");
-                    ui.label(&dlg.display_name);
-                    ui.end_row();
-                    ui.label("Path to executable:");
-                    ui.add(egui::TextEdit::singleline(&mut dlg.binary_path).desired_width(380.0));
-                    ui.end_row();
-                    ui.label("Startup type:");
-                    egui::ComboBox::from_id_salt("starttype")
-                        .selected_text(dlg.start_type.label())
-                        .show_ui(ui, |ui| {
-                            for opt in StartType::OPTIONS {
-                                if ui.selectable_label(dlg.start_type == opt, opt.label()).clicked() {
-                                    dlg.start_type = opt;
+                egui::Grid::new("props_grid")
+                    .num_columns(2)
+                    .spacing([12.0, 8.0])
+                    .show(ui, |ui| {
+                        ui.label("Service name:");
+                        ui.label(RichText::new(&dlg.name).monospace());
+                        ui.end_row();
+                        ui.label("Display name:");
+                        ui.label(&dlg.display_name);
+                        ui.end_row();
+                        ui.label("Path to executable:");
+                        ui.add(
+                            egui::TextEdit::singleline(&mut dlg.binary_path).desired_width(380.0),
+                        );
+                        ui.end_row();
+                        ui.label("Startup type:");
+                        egui::ComboBox::from_id_salt("starttype")
+                            .selected_text(dlg.start_type.label())
+                            .show_ui(ui, |ui| {
+                                for opt in StartType::OPTIONS {
+                                    if ui
+                                        .selectable_label(dlg.start_type == opt, opt.label())
+                                        .clicked()
+                                    {
+                                        dlg.start_type = opt;
+                                    }
                                 }
-                            }
+                            });
+                        ui.end_row();
+                        ui.label("Log on as:");
+                        ui.label(if dlg.logon_account.is_empty() {
+                            "—"
+                        } else {
+                            &dlg.logon_account
                         });
-                    ui.end_row();
-                    ui.label("Log on as:");
-                    ui.label(if dlg.logon_account.is_empty() { "—" } else { &dlg.logon_account });
-                    ui.end_row();
-                    ui.label("Description:");
-                    ui.add(
-                        egui::TextEdit::multiline(&mut dlg.description)
-                            .desired_rows(3)
-                            .desired_width(380.0),
-                    );
-                    ui.end_row();
-                });
+                        ui.end_row();
+                        ui.label("Description:");
+                        ui.add(
+                            egui::TextEdit::multiline(&mut dlg.description)
+                                .desired_rows(3)
+                                .desired_width(380.0),
+                        );
+                        ui.end_row();
+                    });
                 ui.add_space(8.0);
                 if self.action_busy {
                     ui.horizontal(|ui| {
@@ -386,7 +463,10 @@ impl ServicesApp {
                     });
                 }
                 ui.horizontal(|ui| {
-                    if ui.add_enabled(!self.action_busy, egui::Button::new("Apply")).clicked() {
+                    if ui
+                        .add_enabled(!self.action_busy, egui::Button::new("Apply"))
+                        .clicked()
+                    {
                         apply = true;
                     }
                     if ui.button("Cancel").clicked() {
@@ -413,8 +493,16 @@ impl eframe::App for ServicesApp {
                     RichText::new(format!(
                         "{} services · logged in as {}{} · {}",
                         self.services.len(),
-                        if self.user.domain.is_empty() { String::new() } else { format!("{}\\", self.user.domain) },
-                        if self.user.account.is_empty() { "user".into() } else { self.user.account.clone() },
+                        if self.user.domain.is_empty() {
+                            String::new()
+                        } else {
+                            format!("{}\\", self.user.domain)
+                        },
+                        if self.user.account.is_empty() {
+                            "user".into()
+                        } else {
+                            self.user.account.clone()
+                        },
                         self.user.integrity
                     ))
                     .small()

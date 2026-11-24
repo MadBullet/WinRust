@@ -13,16 +13,17 @@ use windows_sys::Win32::Foundation::{FILETIME, MAX_PATH};
 use windows_sys::Win32::System::Diagnostics::ToolHelp::{
     CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W, TH32CS_SNAPPROCESS,
 };
-use windows_sys::Win32::System::ProcessStatus::{K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS_EX};
+use windows_sys::Win32::System::ProcessStatus::{
+    K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS_EX,
+};
 use windows_sys::Win32::System::Threading::{
-    GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters, GetProcessTimes,
-    OpenProcess, OpenThread, QueryFullProcessImageNameW, IO_COUNTERS,
-    ResumeThread, SetPriorityClass, SetProcessAffinityMask, SuspendThread,
-    IDLE_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS,
-    ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS,
-    PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SUSPEND_RESUME, PROCESS_TERMINATE,
-    PROCESS_SET_INFORMATION, PROCESS_QUERY_INFORMATION, PROCESS_NAME_WIN32, THREAD_SUSPEND_RESUME,
-    PROCESS_VM_READ,
+    GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
+    GetProcessTimes, OpenProcess, OpenThread, QueryFullProcessImageNameW, ResumeThread,
+    SetPriorityClass, SetProcessAffinityMask, SuspendThread, ABOVE_NORMAL_PRIORITY_CLASS,
+    BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, IDLE_PRIORITY_CLASS, IO_COUNTERS,
+    NORMAL_PRIORITY_CLASS, PROCESS_NAME_WIN32, PROCESS_QUERY_INFORMATION,
+    PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SET_INFORMATION, PROCESS_SUSPEND_RESUME,
+    PROCESS_TERMINATE, PROCESS_VM_READ, REALTIME_PRIORITY_CLASS, THREAD_SUSPEND_RESUME,
 };
 
 /// One row of the Task Manager process list, as far as Task Manager shows it.
@@ -146,7 +147,12 @@ pub fn enumerate() -> Result<Vec<ProcessInfo>> {
         ok = unsafe { Process32NextW(snap.raw(), &mut entry) };
     }
 
-    out.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()).then(a.pid.cmp(&b.pid)));
+    out.sort_by(|a, b| {
+        a.name
+            .to_lowercase()
+            .cmp(&b.name.to_lowercase())
+            .then(a.pid.cmp(&b.pid))
+    });
     Ok(out)
 }
 
@@ -158,7 +164,9 @@ fn enrich(info: &mut ProcessInfo) {
         info.access = AccessLevel::Limited;
         let mut buf = [0u16; MAX_PATH as usize];
         let mut len = buf.len() as u32;
-        let ok = unsafe { QueryFullProcessImageNameW(h.raw(), PROCESS_NAME_WIN32, buf.as_mut_ptr(), &mut len) };
+        let ok = unsafe {
+            QueryFullProcessImageNameW(h.raw(), PROCESS_NAME_WIN32, buf.as_mut_ptr(), &mut len)
+        };
         if ok != 0 {
             info.exe_path = crate::wide::from_wide(&buf, len as usize);
             info.access = AccessLevel::Full;
@@ -168,7 +176,9 @@ fn enrich(info: &mut ProcessInfo) {
         let mut exit = unsafe { std::mem::zeroed::<FILETIME>() };
         let mut kernel = unsafe { std::mem::zeroed::<FILETIME>() };
         let mut user = unsafe { std::mem::zeroed::<FILETIME>() };
-        if unsafe { GetProcessTimes(h.raw(), &mut creation, &mut exit, &mut kernel, &mut user) } != 0 {
+        if unsafe { GetProcessTimes(h.raw(), &mut creation, &mut exit, &mut kernel, &mut user) }
+            != 0
+        {
             info.created_100ns = filetime_to_u64(&creation);
             info.cpu_time_100ns = filetime_to_u64(&kernel) + filetime_to_u64(&user);
         }
@@ -222,7 +232,10 @@ fn open_limited(pid: u32) -> Option<Handle> {
 fn open_full(pid: u32) -> Option<Handle> {
     let h = unsafe {
         OpenProcess(
-            PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE | PROCESS_SET_INFORMATION,
+            PROCESS_QUERY_INFORMATION
+                | PROCESS_VM_READ
+                | PROCESS_TERMINATE
+                | PROCESS_SET_INFORMATION,
             0,
             pid,
         )
@@ -237,27 +250,43 @@ fn open_with(pid: u32, access: u32) -> Result<Handle> {
 /// Terminate a process (Task Manager's "End task").
 pub fn terminate(pid: u32) -> Result<()> {
     let h = open_with(pid, PROCESS_TERMINATE)?;
-    check("TerminateProcess", unsafe { windows_sys::Win32::System::Threading::TerminateProcess(h.raw(), 1) })
+    check("TerminateProcess", unsafe {
+        windows_sys::Win32::System::Threading::TerminateProcess(h.raw(), 1)
+    })
 }
 
 /// Change a process priority class.
 pub fn set_priority(pid: u32, priority: Priority) -> Result<()> {
     let h = open_with(pid, PROCESS_SET_INFORMATION)?;
-    check("SetPriorityClass", unsafe { SetPriorityClass(h.raw(), priority.flag()) })
+    check("SetPriorityClass", unsafe {
+        SetPriorityClass(h.raw(), priority.flag())
+    })
 }
 
 /// Suspend every thread of a process (a WinRust extension over Task Manager).
 pub fn suspend(pid: u32) -> Result<usize> {
     let h = open_with(pid, PROCESS_SUSPEND_RESUME)?;
-    let n = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(4 /* TH32CS_SNAPTHREAD */, 0) };
+    let n = unsafe {
+        windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(
+            4, /* TH32CS_SNAPTHREAD */
+            0,
+        )
+    };
     let snap = match Handle::new(n) {
         Some(s) => s,
-        None => return Err(WinError::from_last_error("CreateToolhelp32Snapshot(threads)")),
+        None => {
+            return Err(WinError::from_last_error(
+                "CreateToolhelp32Snapshot(threads)",
+            ))
+        }
     };
-    let mut te: windows_sys::Win32::System::Diagnostics::ToolHelp::THREADENTRY32 = unsafe { std::mem::zeroed() };
+    let mut te: windows_sys::Win32::System::Diagnostics::ToolHelp::THREADENTRY32 =
+        unsafe { std::mem::zeroed() };
     te.dwSize = std::mem::size_of_val(&te) as u32;
     let mut count = 0;
-    let mut ok = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32First(snap.raw(), &mut te) };
+    let mut ok = unsafe {
+        windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32First(snap.raw(), &mut te)
+    };
     while ok != 0 {
         if te.th32OwnerProcessID == pid {
             let th = unsafe { OpenThread(THREAD_SUSPEND_RESUME, 0, te.th32ThreadID) };
@@ -266,7 +295,9 @@ pub fn suspend(pid: u32) -> Result<usize> {
                 count += 1;
             }
         }
-        ok = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32Next(snap.raw(), &mut te) };
+        ok = unsafe {
+            windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32Next(snap.raw(), &mut te)
+        };
     }
     let _ = h;
     Ok(count)
@@ -275,15 +306,24 @@ pub fn suspend(pid: u32) -> Result<usize> {
 /// Resume every thread of a process.
 pub fn resume(pid: u32) -> Result<usize> {
     let h = open_with(pid, PROCESS_SUSPEND_RESUME)?;
-    let n = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(4, 0) };
+    let n = unsafe {
+        windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(4, 0)
+    };
     let snap = match Handle::new(n) {
         Some(s) => s,
-        None => return Err(WinError::from_last_error("CreateToolhelp32Snapshot(threads)")),
+        None => {
+            return Err(WinError::from_last_error(
+                "CreateToolhelp32Snapshot(threads)",
+            ))
+        }
     };
-    let mut te: windows_sys::Win32::System::Diagnostics::ToolHelp::THREADENTRY32 = unsafe { std::mem::zeroed() };
+    let mut te: windows_sys::Win32::System::Diagnostics::ToolHelp::THREADENTRY32 =
+        unsafe { std::mem::zeroed() };
     te.dwSize = std::mem::size_of_val(&te) as u32;
     let mut count = 0;
-    let mut ok = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32First(snap.raw(), &mut te) };
+    let mut ok = unsafe {
+        windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32First(snap.raw(), &mut te)
+    };
     while ok != 0 {
         if te.th32OwnerProcessID == pid {
             let th = unsafe { OpenThread(THREAD_SUSPEND_RESUME, 0, te.th32ThreadID) };
@@ -292,7 +332,9 @@ pub fn resume(pid: u32) -> Result<usize> {
                 count += 1;
             }
         }
-        ok = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32Next(snap.raw(), &mut te) };
+        ok = unsafe {
+            windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32Next(snap.raw(), &mut te)
+        };
     }
     let _ = h;
     Ok(count)
@@ -302,8 +344,14 @@ pub fn resume(pid: u32) -> Result<usize> {
 pub fn set_affinity(pid: u32, mask: usize) -> Result<()> {
     let h = open_with(pid, PROCESS_SET_INFORMATION)?;
     let cores = crate::system::cpu_count();
-    let mask = if mask == 0 { (1usize << cores.min(64)) - 1 } else { mask };
-    check("SetProcessAffinityMask", unsafe { SetProcessAffinityMask(h.raw(), mask) })
+    let mask = if mask == 0 {
+        (1usize << cores.min(64)) - 1
+    } else {
+        mask
+    };
+    check("SetProcessAffinityMask", unsafe {
+        SetProcessAffinityMask(h.raw(), mask)
+    })
 }
 
 /// Current affinity mask of a process.
@@ -311,10 +359,13 @@ pub fn affinity(pid: u32) -> Result<(usize, usize)> {
     let h = open_with(pid, PROCESS_QUERY_INFORMATION)?;
     let mut proc_mask = 0usize;
     let mut sys_mask = 0usize;
-    check(
-        "GetProcessAffinityMask",
-        unsafe { windows_sys::Win32::System::Threading::GetProcessAffinityMask(h.raw(), &mut proc_mask, &mut sys_mask) },
-    )?;
+    check("GetProcessAffinityMask", unsafe {
+        windows_sys::Win32::System::Threading::GetProcessAffinityMask(
+            h.raw(),
+            &mut proc_mask,
+            &mut sys_mask,
+        )
+    })?;
     Ok((proc_mask, sys_mask))
 }
 
@@ -325,12 +376,19 @@ pub fn basename(path: &str) -> &str {
 
 /// Wait until a process exits.  Returns the exit code.
 pub fn wait_for_exit(pid: u32, timeout_ms: u32) -> Result<u32> {
-    let h = open_with(pid, windows_sys::Win32::System::Threading::PROCESS_SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
-    let r = unsafe { windows_sys::Win32::System::Threading::WaitForSingleObject(h.raw(), timeout_ms) };
+    let h = open_with(
+        pid,
+        windows_sys::Win32::System::Threading::PROCESS_SYNCHRONIZE
+            | PROCESS_QUERY_LIMITED_INFORMATION,
+    )?;
+    let r =
+        unsafe { windows_sys::Win32::System::Threading::WaitForSingleObject(h.raw(), timeout_ms) };
     if r != windows_sys::Win32::Foundation::WAIT_OBJECT_0 {
         return Err(WinError::Other(format!("wait timed out or failed: {r}")));
     }
     let mut code = 0u32;
-    check("GetExitCodeProcess", unsafe { GetExitCodeProcess(h.raw(), &mut code) })?;
+    check("GetExitCodeProcess", unsafe {
+        GetExitCodeProcess(h.raw(), &mut code)
+    })?;
     Ok(code)
 }

@@ -45,7 +45,14 @@ impl Tab {
             Tab::Services => "Services",
         }
     }
-    const ALL: [Tab; 6] = [Tab::Processes, Tab::Performance, Tab::Startup, Tab::Users, Tab::Network, Tab::Services];
+    const ALL: [Tab; 6] = [
+        Tab::Processes,
+        Tab::Performance,
+        Tab::Startup,
+        Tab::Users,
+        Tab::Network,
+        Tab::Services,
+    ];
 }
 
 /// One row with computed CPU%, grouped the way Task Manager groups by app.
@@ -132,7 +139,14 @@ fn spawn_sampler(interval: Duration) -> Sampler {
                     None => 0.0,
                 };
                 let group = group_key(&p);
-                rows.push(Row { info: p, cpu_percent, disk_bps, net_bps, group, ..Default::default() });
+                rows.push(Row {
+                    info: p,
+                    cpu_percent,
+                    disk_bps,
+                    net_bps,
+                    group,
+                    ..Default::default()
+                });
             }
             prev_proc = new_proc;
             prev_io = new_io;
@@ -245,8 +259,16 @@ impl StartupItem {
         let mut out = Vec::new();
         // Run keys
         for (root, path, label) in [
-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKCU Run"),
-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKLM Run"),
+            (
+                Root::CurrentUser,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+                "HKCU Run",
+            ),
+            (
+                Root::LocalMachine,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+                "HKLM Run",
+            ),
         ] {
             for (name, ty, data) in registry::enum_values(path, root) {
                 let cmd = if ty == 1 || ty == 2 {
@@ -266,7 +288,11 @@ impl StartupItem {
                     String::new()
                 } else {
                     let vi = shell::version_info(&exe);
-                    if vi.company.is_empty() { vi.description } else { vi.company }
+                    if vi.company.is_empty() {
+                        vi.description
+                    } else {
+                        vi.company
+                    }
                 };
                 out.push(StartupItem {
                     name,
@@ -281,8 +307,14 @@ impl StartupItem {
         // Task Manager marks disabled startup items in StartupApproved\Run as a
         // 12-byte blob whose first dword is 2 (enabled) / 3 (disabled).
         for (root, approved_path) in [
-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"),
-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"),
+            (
+                Root::CurrentUser,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
+            ),
+            (
+                Root::LocalMachine,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
+            ),
         ] {
             for (name, _ty, data) in registry::enum_values(approved_path, root) {
                 if data.len() < 4 {
@@ -305,9 +337,15 @@ impl StartupItem {
     fn set_enabled(item: &StartupItem, enable: bool) -> Result<(), String> {
         use winrust_core::registry::{self, Root};
         let (root, path) = if item.location.starts_with("HKLM") {
-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run")
+            (
+                Root::LocalMachine,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
+            )
         } else {
-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run")
+            (
+                Root::CurrentUser,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
+            )
         };
         let key = registry::open_for_write(root, path).map_err(|e| e.to_string())?;
         let mut blob = [0u8; 12];
@@ -389,7 +427,11 @@ impl TaskManagerApp {
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 if let Some(sel) = self.selected {
                     if let Some(row) = self.snapshot.rows.iter().find(|r| r.info.pid == sel) {
-                        ui.label(RichText::new(format!("{}  ·  PID {}", row.info.name, sel)).small().weak());
+                        ui.label(
+                            RichText::new(format!("{}  ·  PID {}", row.info.name, sel))
+                                .small()
+                                .weak(),
+                        );
                     }
                 }
                 ui.label(
@@ -406,25 +448,45 @@ impl TaskManagerApp {
 
     fn processes_tab(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
-            ui.add_sized([240.0, 22.0], egui::TextEdit::singleline(&mut self.search).hint_text("🔍 Search processes"));
+            ui.add_sized(
+                [240.0, 22.0],
+                egui::TextEdit::singleline(&mut self.search).hint_text("🔍 Search processes"),
+            );
             ui.checkbox(&mut self.group_by_app, "Group by app");
             ui.separator();
-            let selected = self.selected.and_then(|pid| self.snapshot.rows.iter().find(|r| r.info.pid == pid).cloned());
+            let selected = self.selected.and_then(|pid| {
+                self.snapshot
+                    .rows
+                    .iter()
+                    .find(|r| r.info.pid == pid)
+                    .cloned()
+            });
             let can_end = selected.is_some();
-            if ui.add_enabled(can_end, egui::Button::new("End task")).clicked() {
+            if ui
+                .add_enabled(can_end, egui::Button::new("End task"))
+                .clicked()
+            {
                 if let Some(row) = &selected {
                     self.confirm_kill = Some((row.info.pid, row.info.name.clone()));
                 }
             }
-            if ui.add_enabled(can_end, egui::Button::new("Suspend")).clicked() {
+            if ui
+                .add_enabled(can_end, egui::Button::new("Suspend"))
+                .clicked()
+            {
                 if let Some(row) = &selected {
                     match process::suspend(row.info.pid) {
-                        Ok(n) => self.status = format!("Suspended {n} threads of {}", row.info.name),
+                        Ok(n) => {
+                            self.status = format!("Suspended {n} threads of {}", row.info.name)
+                        }
                         Err(e) => self.status = format!("Suspend failed: {e}"),
                     }
                 }
             }
-            if ui.add_enabled(can_end, egui::Button::new("Resume")).clicked() {
+            if ui
+                .add_enabled(can_end, egui::Button::new("Resume"))
+                .clicked()
+            {
                 if let Some(row) = &selected {
                     match process::resume(row.info.pid) {
                         Ok(n) => self.status = format!("Resumed {n} threads of {}", row.info.name),
@@ -432,7 +494,10 @@ impl TaskManagerApp {
                     }
                 }
             }
-            if ui.add_enabled(can_end, egui::Button::new("Priority…")).clicked() {
+            if ui
+                .add_enabled(can_end, egui::Button::new("Priority…"))
+                .clicked()
+            {
                 if let Some(row) = &selected {
                     self.priority_open = Some(row.info.pid);
                 }
@@ -443,9 +508,14 @@ impl TaskManagerApp {
                 .show_ui(ui, |ui| {
                     if let Some(row) = &selected {
                         for p in process::ALL_PRIORITIES {
-                            if ui.selectable_label(row.info.priority == p, p.label()).clicked() {
+                            if ui
+                                .selectable_label(row.info.priority == p, p.label())
+                                .clicked()
+                            {
                                 match process::set_priority(row.info.pid, p) {
-                                    Ok(()) => self.status = format!("{} -> {}", row.info.name, p.label()),
+                                    Ok(()) => {
+                                        self.status = format!("{} -> {}", row.info.name, p.label())
+                                    }
                                     Err(e) => self.status = format!("Priority change failed: {e}"),
                                 }
                             }
@@ -454,14 +524,20 @@ impl TaskManagerApp {
                         ui.label("Select a process first");
                     }
                 });
-            if ui.add_enabled(can_end, egui::Button::new("Open file location")).clicked() {
+            if ui
+                .add_enabled(can_end, egui::Button::new("Open file location"))
+                .clicked()
+            {
                 if let Some(row) = &selected {
                     if !row.info.exe_path.is_empty() {
                         let _ = shell::open(std::path::Path::new(&row.info.exe_path));
                     }
                 }
             }
-            if ui.add_enabled(can_end, egui::Button::new("Properties")).clicked() {
+            if ui
+                .add_enabled(can_end, egui::Button::new("Properties"))
+                .clicked()
+            {
                 if let Some(row) = &selected {
                     if !row.info.exe_path.is_empty() {
                         let _ = shell::show_properties(&row.info.exe_path);
@@ -480,16 +556,32 @@ impl TaskManagerApp {
             .snapshot
             .rows
             .iter()
-            .filter(|r| needle.is_empty() || r.info.name.to_lowercase().contains(&needle) || r.info.pid.to_string() == needle)
+            .filter(|r| {
+                needle.is_empty()
+                    || r.info.name.to_lowercase().contains(&needle)
+                    || r.info.pid.to_string() == needle
+            })
             .cloned()
             .collect();
         // Sort according to the selected column.
         match self.sort_by {
             SortBy::Name => display.sort_by_key(|r| r.info.name.to_lowercase()),
-            SortBy::Cpu => display.sort_by(|a, b| b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)),
+            SortBy::Cpu => display.sort_by(|a, b| {
+                b.cpu_percent
+                    .partial_cmp(&a.cpu_percent)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            }),
             SortBy::Memory => display.sort_by_key(|r| std::cmp::Reverse(r.info.private_bytes)),
-            SortBy::Disk => display.sort_by(|a, b| b.disk_bps.partial_cmp(&a.disk_bps).unwrap_or(std::cmp::Ordering::Equal)),
-            SortBy::Network => display.sort_by(|a, b| b.net_bps.partial_cmp(&a.net_bps).unwrap_or(std::cmp::Ordering::Equal)),
+            SortBy::Disk => display.sort_by(|a, b| {
+                b.disk_bps
+                    .partial_cmp(&a.disk_bps)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            }),
+            SortBy::Network => display.sort_by(|a, b| {
+                b.net_bps
+                    .partial_cmp(&a.net_bps)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            }),
             SortBy::Pid => display.sort_by_key(|r| r.info.pid),
         }
         if !self.sort_desc {
@@ -497,14 +589,28 @@ impl TaskManagerApp {
         }
         // Group by app when requested.
         if self.group_by_app {
-            display.sort_by(|a, b| a.group.cmp(&b.group).then(b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)));
+            display.sort_by(|a, b| {
+                a.group.cmp(&b.group).then(
+                    b.cpu_percent
+                        .partial_cmp(&a.cpu_percent)
+                        .unwrap_or(std::cmp::Ordering::Equal),
+                )
+            });
         }
 
         let total_cpu: f32 = self.snapshot.cpu_percent;
         let total_mem = self.snapshot.memory.used_phys();
         ui.horizontal(|ui| {
-            ui.label(RichText::new(format!("CPU {total_cpu:.1}%  ·  Memory {}", used_mem_text(total_mem))).strong());
-            ui.label(RichText::new(format!("({:.1}%)", self.snapshot.memory.used_percent())).weak());
+            ui.label(
+                RichText::new(format!(
+                    "CPU {total_cpu:.1}%  ·  Memory {}",
+                    used_mem_text(total_mem)
+                ))
+                .strong(),
+            );
+            ui.label(
+                RichText::new(format!("({:.1}%)", self.snapshot.memory.used_percent())).weak(),
+            );
         });
 
         let mut clicked: Option<u32> = None;
@@ -536,8 +642,22 @@ impl TaskManagerApp {
                 ("Exe", SortBy::Name),
             ] {
                 header.col(|ui| {
-                    let arrow = if self.sort_by == key { if self.sort_desc { " ▼" } else { " ▲" } } else { "" };
-                    if ui.add(egui::Button::new(RichText::new(format!("{title}{arrow}")).strong()).frame(false)).clicked() {
+                    let arrow = if self.sort_by == key {
+                        if self.sort_desc {
+                            " ▼"
+                        } else {
+                            " ▲"
+                        }
+                    } else {
+                        ""
+                    };
+                    if ui
+                        .add(
+                            egui::Button::new(RichText::new(format!("{title}{arrow}")).strong())
+                                .frame(false),
+                        )
+                        .clicked()
+                    {
                         sort_col = Some(key);
                     }
                 });
@@ -568,7 +688,8 @@ impl TaskManagerApp {
                             let _ = process::resume(r.info.pid);
                             ui.close_menu();
                         }
-                        if !r.info.exe_path.is_empty() && ui.button("Open file location").clicked() {
+                        if !r.info.exe_path.is_empty() && ui.button("Open file location").clicked()
+                        {
                             let _ = shell::open(std::path::Path::new(&r.info.exe_path));
                             ui.close_menu();
                         }
@@ -586,19 +707,31 @@ impl TaskManagerApp {
                     });
                 });
                 row.col(|ui| {
-                    let text = if r.info.access == AccessLevel::Denied { "Access denied" } else { "Running" };
+                    let text = if r.info.access == AccessLevel::Denied {
+                        "Access denied"
+                    } else {
+                        "Running"
+                    };
                     ui.label(RichText::new(text).weak());
                 });
                 row.col(|ui| {
                     let color = heat_color(r.cpu_percent, 10.0);
-                    ui.label(RichText::new(format!("{:.1}%", r.cpu_percent)).color(color).monospace());
+                    ui.label(
+                        RichText::new(format!("{:.1}%", r.cpu_percent))
+                            .color(color)
+                            .monospace(),
+                    );
                 });
                 row.col(|ui| {
                     ui.label(RichText::new(memory_mb(r.info.private_bytes)).monospace());
                 });
                 row.col(|ui| {
                     let color = heat_color(r.disk_bps as f32 / 1024.0, 200.0);
-                    ui.label(RichText::new(rate_text(r.disk_bps)).color(color).monospace());
+                    ui.label(
+                        RichText::new(rate_text(r.disk_bps))
+                            .color(color)
+                            .monospace(),
+                    );
                 });
                 row.col(|ui| {
                     let color = heat_color(r.net_bps as f32 / 1024.0, 200.0);
@@ -642,19 +775,32 @@ impl TaskManagerApp {
         ui.columns(2, |cols| {
             cols[0].heading("CPU");
             self.graph(&mut cols[0], &self.history_cpu.clone(), 100.0, "CPU");
-            cols[0].label(format!("{} · {} logical processors", self.cpu_info.arch, self.cpu_info.logical));
-            cols[0].label(format!("Uptime: {}", format_uptime(self.snapshot.uptime_ms)));
+            cols[0].label(format!(
+                "{} · {} logical processors",
+                self.cpu_info.arch, self.cpu_info.logical
+            ));
+            cols[0].label(format!(
+                "Uptime: {}",
+                format_uptime(self.snapshot.uptime_ms)
+            ));
             cols[0].separator();
             cols[0].heading("Memory");
             self.graph(&mut cols[1], &self.history_mem.clone(), 100.0, "Memory");
             let m = self.snapshot.memory;
-            cols[0].label(format!("In use: {} ({:.0}%)", used_mem_text(m.used_phys()), m.used_percent()));
+            cols[0].label(format!(
+                "In use: {} ({:.0}%)",
+                used_mem_text(m.used_phys()),
+                m.used_percent()
+            ));
             cols[0].label(format!("Available: {}", used_mem_text(m.avail_phys)));
             cols[0].label(format!("Total: {}", used_mem_text(m.total_phys)));
             if let Some(ram) = self.ram_installed {
                 cols[0].label(format!("Installed RAM: {}", used_mem_text(ram)));
             }
-            cols[0].label(format!("Committed: {}", used_mem_text(m.total_page_file - m.avail_page_file)));
+            cols[0].label(format!(
+                "Committed: {}",
+                used_mem_text(m.total_page_file - m.avail_page_file)
+            ));
             cols[0].separator();
             cols[0].heading("Kernel CPU time");
             // `snapshot.cpu` carries the cumulative 64-bit CPU time counters;
@@ -715,8 +861,16 @@ impl TaskManagerApp {
     /// mirroring Task Manager's "Set priority" submenu reachable without a
     /// right click. Uses the same `process::set_priority` path as the menu.
     fn priority_window(&mut self, ctx: &egui::Context) {
-        let Some(pid) = self.priority_open else { return };
-        let Some(row) = self.snapshot.rows.iter().find(|r| r.info.pid == pid).cloned() else {
+        let Some(pid) = self.priority_open else {
+            return;
+        };
+        let Some(row) = self
+            .snapshot
+            .rows
+            .iter()
+            .find(|r| r.info.pid == pid)
+            .cloned()
+        else {
             self.priority_open = None;
             return;
         };
@@ -808,20 +962,27 @@ impl TaskManagerApp {
     fn users_tab(&mut self, ui: &mut egui::Ui) {
         ui.heading("Users");
         ui.separator();
-        egui::Grid::new("users_grid").num_columns(4).striped(true).show(ui, |ui| {
-            ui.label(RichText::new("User").strong());
-            ui.label(RichText::new("Session").strong());
-            ui.label(RichText::new("Integrity").strong());
-            ui.label(RichText::new("Elevated").strong());
-            ui.end_row();
-            ui.label(format!("{}\\{}", self.user.domain, self.user.account));
-            ui.label("Console (current)");
-            ui.label(self.user.integrity);
-            ui.label(if self.user.elevated { "Yes" } else { "No" });
-            ui.end_row();
-        });
+        egui::Grid::new("users_grid")
+            .num_columns(4)
+            .striped(true)
+            .show(ui, |ui| {
+                ui.label(RichText::new("User").strong());
+                ui.label(RichText::new("Session").strong());
+                ui.label(RichText::new("Integrity").strong());
+                ui.label(RichText::new("Elevated").strong());
+                ui.end_row();
+                ui.label(format!("{}\\{}", self.user.domain, self.user.account));
+                ui.label("Console (current)");
+                ui.label(self.user.integrity);
+                ui.label(if self.user.elevated { "Yes" } else { "No" });
+                ui.end_row();
+            });
         ui.add_space(10.0);
-        ui.label(RichText::new("Sessions are enumerated from the local session table.").small().weak());
+        ui.label(
+            RichText::new("Sessions are enumerated from the local session table.")
+                .small()
+                .weak(),
+        );
         for s in enumerate_sessions() {
             ui.label(s);
         }
@@ -844,32 +1005,40 @@ impl TaskManagerApp {
         let mut pids: Vec<u32> = by_pid.keys().copied().collect();
         pids.sort();
         egui::ScrollArea::vertical().show(ui, |ui| {
-            egui::Grid::new("net_grid").num_columns(4).striped(true).show(ui, |ui| {
-                ui.label(RichText::new("PID").strong());
-                ui.label(RichText::new("Process").strong());
-                ui.label(RichText::new("Connections").strong());
-                ui.label(RichText::new("Local ports").strong());
-                ui.end_row();
-                for pid in pids {
-                    let (count, ports) = &by_pid[&pid];
-                    let name = self
-                        .snapshot
-                        .rows
-                        .iter()
-                        .find(|r| r.info.pid == pid)
-                        .map(|r| r.info.name.clone())
-                        .unwrap_or_else(|| "?".into());
-                    ui.label(pid.to_string());
-                    ui.label(name);
-                    ui.label(count.to_string());
-                    let mut p = ports.clone();
-                    p.sort();
-                    p.dedup();
-                    let port_list = p.iter().take(8).map(|x| x.to_string()).collect::<Vec<_>>().join(", ");
-                    ui.label(port_list);
+            egui::Grid::new("net_grid")
+                .num_columns(4)
+                .striped(true)
+                .show(ui, |ui| {
+                    ui.label(RichText::new("PID").strong());
+                    ui.label(RichText::new("Process").strong());
+                    ui.label(RichText::new("Connections").strong());
+                    ui.label(RichText::new("Local ports").strong());
                     ui.end_row();
-                }
-            });
+                    for pid in pids {
+                        let (count, ports) = &by_pid[&pid];
+                        let name = self
+                            .snapshot
+                            .rows
+                            .iter()
+                            .find(|r| r.info.pid == pid)
+                            .map(|r| r.info.name.clone())
+                            .unwrap_or_else(|| "?".into());
+                        ui.label(pid.to_string());
+                        ui.label(name);
+                        ui.label(count.to_string());
+                        let mut p = ports.clone();
+                        p.sort();
+                        p.dedup();
+                        let port_list = p
+                            .iter()
+                            .take(8)
+                            .map(|x| x.to_string())
+                            .collect::<Vec<_>>()
+                            .join(", ");
+                        ui.label(port_list);
+                        ui.end_row();
+                    }
+                });
         });
     }
 
@@ -880,31 +1049,42 @@ impl TaskManagerApp {
             }
             ui.label(RichText::new(format!("{} services", self.services.len())).weak());
             if !self.user.elevated {
-                ui.label(RichText::new("(read-only without elevation)").small().weak());
+                ui.label(
+                    RichText::new("(read-only without elevation)")
+                        .small()
+                        .weak(),
+                );
             }
         });
         ui.separator();
         egui::ScrollArea::vertical().show(ui, |ui| {
-            egui::Grid::new("services_grid").num_columns(4).striped(true).show(ui, |ui| {
-                ui.label(RichText::new("Name").strong());
-                ui.label(RichText::new("Status").strong());
-                ui.label(RichText::new("Start type").strong());
-                ui.label(RichText::new("PID").strong());
-                ui.end_row();
-                for s in &self.services {
-                    ui.label(&s.display_name);
-                    let state = s.state.map(|x| x.label()).unwrap_or("—");
-                    let color = match s.state {
-                        Some(ServiceState::Running) => Color32::from_rgb(120, 220, 120),
-                        Some(ServiceState::Stopped) => Color32::from_rgb(220, 120, 120),
-                        _ => Color32::GRAY,
-                    };
-                    ui.label(RichText::new(state).color(color));
-                    ui.label(s.start_type.map(|x| x.label()).unwrap_or("—"));
-                    ui.label(if s.pid == 0 { String::new() } else { s.pid.to_string() });
+            egui::Grid::new("services_grid")
+                .num_columns(4)
+                .striped(true)
+                .show(ui, |ui| {
+                    ui.label(RichText::new("Name").strong());
+                    ui.label(RichText::new("Status").strong());
+                    ui.label(RichText::new("Start type").strong());
+                    ui.label(RichText::new("PID").strong());
                     ui.end_row();
-                }
-            });
+                    for s in &self.services {
+                        ui.label(&s.display_name);
+                        let state = s.state.map(|x| x.label()).unwrap_or("—");
+                        let color = match s.state {
+                            Some(ServiceState::Running) => Color32::from_rgb(120, 220, 120),
+                            Some(ServiceState::Stopped) => Color32::from_rgb(220, 120, 120),
+                            _ => Color32::GRAY,
+                        };
+                        ui.label(RichText::new(state).color(color));
+                        ui.label(s.start_type.map(|x| x.label()).unwrap_or("—"));
+                        ui.label(if s.pid == 0 {
+                            String::new()
+                        } else {
+                            s.pid.to_string()
+                        });
+                        ui.end_row();
+                    }
+                });
         });
     }
 
@@ -916,7 +1096,11 @@ impl TaskManagerApp {
                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
                 .show(ctx, |ui| {
                     ui.label(format!("Terminate {name} (PID {pid})?"));
-                    ui.label(RichText::new("Unsaved data in this app will be lost.").small().weak());
+                    ui.label(
+                        RichText::new("Unsaved data in this app will be lost.")
+                            .small()
+                            .weak(),
+                    );
                     ui.add_space(8.0);
                     ui.horizontal(|ui| {
                         if ui.button("End task").clicked() {

@@ -158,10 +158,15 @@ fn now_unix() -> u64 {
 /// Copy every `path` that exists into a fresh timestamped backup directory and
 /// write `session.json`.  Missing files are recorded with `existed: false` so a
 /// rollback knows to delete a file that WinRust created from scratch.
-pub fn backup_files(paths: &[PathBuf], label: &str, restore_sequence: Option<i64>) -> Result<BackupSession> {
+pub fn backup_files(
+    paths: &[PathBuf],
+    label: &str,
+    restore_sequence: Option<i64>,
+) -> Result<BackupSession> {
     let created = now_unix();
     let dir = backup_root().join(created.to_string());
-    std::fs::create_dir_all(&dir).map_err(|e| WinError::Other(format!("create backup dir: {e}")))?;
+    std::fs::create_dir_all(&dir)
+        .map_err(|e| WinError::Other(format!("create backup dir: {e}")))?;
 
     let mut entries = Vec::with_capacity(paths.len());
     for (index, path) in paths.iter().enumerate() {
@@ -200,7 +205,8 @@ pub fn backup_files(paths: &[PathBuf], label: &str, restore_sequence: Option<i64
         restore_sequence,
         entries,
     };
-    let json = serde_json::to_string_pretty(&session).map_err(|e| WinError::Other(e.to_string()))?;
+    let json =
+        serde_json::to_string_pretty(&session).map_err(|e| WinError::Other(e.to_string()))?;
     std::fs::write(dir.join("session.json"), json)
         .map_err(|e| WinError::Other(format!("write manifest: {e}")))?;
     Ok(session)
@@ -221,7 +227,10 @@ pub fn restore_session(session: &BackupSession) -> Result<Vec<String>> {
         } else if entry.original.exists() {
             match std::fs::remove_file(&entry.original) {
                 Ok(()) => log.push(format!("removed {}", entry.original.display())),
-                Err(e) => log.push(format!("FAILED to remove {}: {e}", entry.original.display())),
+                Err(e) => log.push(format!(
+                    "FAILED to remove {}: {e}",
+                    entry.original.display()
+                )),
             }
         }
     }

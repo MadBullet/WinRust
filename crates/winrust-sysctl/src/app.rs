@@ -128,21 +128,49 @@ impl SysCtlApp {
 
     fn reload_env(&mut self) {
         self.env.clear();
-        for name in ["PATH", "TEMP", "TMP", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "SystemRoot", "ComSpec"] {
+        for name in [
+            "PATH",
+            "TEMP",
+            "TMP",
+            "USERPROFILE",
+            "APPDATA",
+            "LOCALAPPDATA",
+            "SystemRoot",
+            "ComSpec",
+        ] {
             if let Ok(v) = std::env::var(name) {
-                self.env.push(EnvVar { scope: "User", name: name.to_string(), value: v });
+                self.env.push(EnvVar {
+                    scope: "User",
+                    name: name.to_string(),
+                    value: v,
+                });
             }
         }
-        if let Some(path) = registry::read_machine_string(r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", "Path") {
-            self.env.push(EnvVar { scope: "System", name: "PATH".into(), value: path });
+        if let Some(path) = registry::read_machine_string(
+            r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment",
+            "Path",
+        ) {
+            self.env.push(EnvVar {
+                scope: "System",
+                name: "PATH".into(),
+                value: path,
+            });
         }
     }
 
     fn reload_startup(&mut self) {
         self.startup.clear();
         for (root, path, label) in [
-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKCU Run"),
-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKLM Run"),
+            (
+                Root::CurrentUser,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+                "HKCU Run",
+            ),
+            (
+                Root::LocalMachine,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+                "HKLM Run",
+            ),
         ] {
             for (name, ty, data) in registry::enum_values(path, root) {
                 if ty == 1 || ty == 2 {
@@ -150,8 +178,15 @@ impl SysCtlApp {
                         .chunks_exact(2)
                         .map(|c| u16::from_le_bytes([c[0], c[1]]))
                         .collect();
-                    let cmd = String::from_utf16_lossy(&units).trim_end_matches('\0').to_string();
-                    self.startup.push(StartupRow { name, command: cmd, location: label, enabled: true });
+                    let cmd = String::from_utf16_lossy(&units)
+                        .trim_end_matches('\0')
+                        .to_string();
+                    self.startup.push(StartupRow {
+                        name,
+                        command: cmd,
+                        location: label,
+                        enabled: true,
+                    });
                 }
             }
         }
@@ -166,8 +201,14 @@ impl SysCtlApp {
                     self.drivers.push(DriverRow {
                         name: s.name,
                         display: s.display_name,
-                        state: s.state.map(|x| x.label().to_string()).unwrap_or_else(|| "—".into()),
-                        start: s.start_type.map(|x| x.label().to_string()).unwrap_or_else(|| "—".into()),
+                        state: s
+                            .state
+                            .map(|x| x.label().to_string())
+                            .unwrap_or_else(|| "—".into()),
+                        start: s
+                            .start_type
+                            .map(|x| x.label().to_string())
+                            .unwrap_or_else(|| "—".into()),
                     });
                 }
             }
@@ -181,11 +222,9 @@ impl SysCtlApp {
         let path = r"SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes";
         if let Ok(key) = registry::Key::open(Root::LocalMachine, path) {
             for guid in key.subkeys() {
-                let friendly = registry::read_machine_string(
-                    &format!(r"{path}\{guid}"),
-                    "FriendlyName",
-                )
-                .unwrap_or_else(|| guid.clone());
+                let friendly =
+                    registry::read_machine_string(&format!(r"{path}\{guid}"), "FriendlyName")
+                        .unwrap_or_else(|| guid.clone());
                 let active = registry::read_machine_string(path, "ActivePowerScheme")
                     .map(|a| a.eq_ignore_ascii_case(&guid))
                     .unwrap_or(false);
@@ -213,21 +252,45 @@ impl SysCtlApp {
         let mut r = String::new();
         r.push_str("WinRust support report\n======================\n\n");
         r.push_str(&format!("Generated: {}\n", chrono_like_now()));
-        r.push_str(&format!("OS: {} build {} (UBR {}) {}\n", self.os.product_name, self.os.build, self.os.ubr, self.os.display_version));
-        r.push_str(&format!("Host: {} domain {}\n", self.os.hostname, self.os.domain));
-        r.push_str(&format!("CPU: {} logical, arch {}\n", self.cpu.logical, self.cpu.arch));
-        r.push_str(&format!("RAM: {} of {}\n", system::MemoryStatus::used_phys(&self.memory), self.memory.total_phys));
+        r.push_str(&format!(
+            "OS: {} build {} (UBR {}) {}\n",
+            self.os.product_name, self.os.build, self.os.ubr, self.os.display_version
+        ));
+        r.push_str(&format!(
+            "Host: {} domain {}\n",
+            self.os.hostname, self.os.domain
+        ));
+        r.push_str(&format!(
+            "CPU: {} logical, arch {}\n",
+            self.cpu.logical, self.cpu.arch
+        ));
+        r.push_str(&format!(
+            "RAM: {} of {}\n",
+            system::MemoryStatus::used_phys(&self.memory),
+            self.memory.total_phys
+        ));
         r.push_str(&format!(
             "User: {}\\{} ({}, {})\n",
-            self.user.domain, self.user.account, self.user.integrity,
-            if self.user.elevated { "elevated" } else { "not elevated" }
+            self.user.domain,
+            self.user.account,
+            self.user.integrity,
+            if self.user.elevated {
+                "elevated"
+            } else {
+                "not elevated"
+            }
         ));
         r.push_str(&format!("Uptime: {} ms\n\n", system::uptime_ms()));
         r.push_str("Top processes by memory:\n");
         let mut procs = process::enumerate().unwrap_or_default();
         procs.sort_by_key(|p| std::cmp::Reverse(p.private_bytes));
         for p in procs.iter().take(15) {
-            r.push_str(&format!("  {:>6}  {:>10} KB  {}\n", p.pid, p.private_bytes / 1024, p.name));
+            r.push_str(&format!(
+                "  {:>6}  {:>10} KB  {}\n",
+                p.pid,
+                p.private_bytes / 1024,
+                p.name
+            ));
         }
         r.push_str("\nServices not running (auto-start):\n");
         if let Ok(scm) = ScManager::connect() {
@@ -256,7 +319,10 @@ impl SysCtlApp {
         ui.add_space(6.0);
         ui.separator();
         for s in Section::ALL {
-            if ui.selectable_label(self.section == s, format!("  {}", s.label())).clicked() {
+            if ui
+                .selectable_label(self.section == s, format!("  {}", s.label()))
+                .clicked()
+            {
                 self.section = s;
             }
         }
@@ -270,45 +336,53 @@ impl SysCtlApp {
     fn overview(&mut self, ui: &mut egui::Ui) {
         ui.heading("System overview");
         ui.separator();
-        egui::Grid::new("overview_grid").num_columns(2).spacing([24.0, 8.0]).show(ui, |ui| {
-            ui.label(RichText::new("Operating system").strong());
-            ui.label(system::os_summary());
-            ui.end_row();
-            ui.label(RichText::new("Build").strong());
-            ui.label(format!("{}.{}", self.os.build, self.os.ubr));
-            ui.end_row();
-            ui.label(RichText::new("Architecture").strong());
-            ui.label(self.cpu.arch);
-            ui.end_row();
-            ui.label(RichText::new("Logical processors").strong());
-            ui.label(self.cpu.logical.to_string());
-            ui.end_row();
-            ui.label(RichText::new("Memory").strong());
-            ui.label(format!(
-                "{} in use of {} ({:.0}%)",
-                system::MemoryStatus::used_phys(&self.memory) / 1_048_576,
-                self.memory.total_phys / 1_048_576,
-                self.memory.used_percent()
-            ));
-            ui.end_row();
-            ui.label(RichText::new("Uptime").strong());
-            let up = system::uptime_ms() / 1000;
-            ui.label(format!("{}d {}h {}m", up / 86400, (up % 86400) / 3600, (up % 3600) / 60));
-            ui.end_row();
-            ui.label(RichText::new("Elevation").strong());
-            ui.label(if self.user.elevated {
-                RichText::new("Administrator").color(Color32::from_rgb(140, 220, 140))
-            } else {
-                RichText::new("Standard user").color(Color32::from_rgb(230, 200, 120))
+        egui::Grid::new("overview_grid")
+            .num_columns(2)
+            .spacing([24.0, 8.0])
+            .show(ui, |ui| {
+                ui.label(RichText::new("Operating system").strong());
+                ui.label(system::os_summary());
+                ui.end_row();
+                ui.label(RichText::new("Build").strong());
+                ui.label(format!("{}.{}", self.os.build, self.os.ubr));
+                ui.end_row();
+                ui.label(RichText::new("Architecture").strong());
+                ui.label(self.cpu.arch);
+                ui.end_row();
+                ui.label(RichText::new("Logical processors").strong());
+                ui.label(self.cpu.logical.to_string());
+                ui.end_row();
+                ui.label(RichText::new("Memory").strong());
+                ui.label(format!(
+                    "{} in use of {} ({:.0}%)",
+                    system::MemoryStatus::used_phys(&self.memory) / 1_048_576,
+                    self.memory.total_phys / 1_048_576,
+                    self.memory.used_percent()
+                ));
+                ui.end_row();
+                ui.label(RichText::new("Uptime").strong());
+                let up = system::uptime_ms() / 1000;
+                ui.label(format!(
+                    "{}d {}h {}m",
+                    up / 86400,
+                    (up % 86400) / 3600,
+                    (up % 3600) / 60
+                ));
+                ui.end_row();
+                ui.label(RichText::new("Elevation").strong());
+                ui.label(if self.user.elevated {
+                    RichText::new("Administrator").color(Color32::from_rgb(140, 220, 140))
+                } else {
+                    RichText::new("Standard user").color(Color32::from_rgb(230, 200, 120))
+                });
+                ui.end_row();
+                ui.label(RichText::new("Account").strong());
+                ui.label(format!("{}\\{}", self.user.domain, self.user.account));
+                ui.end_row();
+                ui.label(RichText::new("SID").strong());
+                ui.label(RichText::new(&self.user.sid).monospace().small());
+                ui.end_row();
             });
-            ui.end_row();
-            ui.label(RichText::new("Account").strong());
-            ui.label(format!("{}\\{}", self.user.domain, self.user.account));
-            ui.end_row();
-            ui.label(RichText::new("SID").strong());
-            ui.label(RichText::new(&self.user.sid).monospace().small());
-            ui.end_row();
-        });
         ui.add_space(12.0);
         if ui.button("Re-open Task Manager components").clicked() {
             let _ = process::enumerate();
@@ -324,28 +398,39 @@ impl SysCtlApp {
 
     fn environment(&mut self, ui: &mut egui::Ui) {
         ui.heading("Environment variables");
-        ui.label(RichText::new("Edit PATH and other variables; changes are written through to the registry.").small().weak());
+        ui.label(
+            RichText::new(
+                "Edit PATH and other variables; changes are written through to the registry.",
+            )
+            .small()
+            .weak(),
+        );
         ui.separator();
         let mut edit: Option<(usize, String)> = None;
-        egui::ScrollArea::vertical().max_height(380.0).show(ui, |ui| {
-            egui::Grid::new("env_grid").num_columns(3).striped(true).show(ui, |ui| {
-                ui.label(RichText::new("Scope").strong());
-                ui.label(RichText::new("Name").strong());
-                ui.label(RichText::new("Value").strong());
-                ui.end_row();
-                for (i, var) in self.env.iter().enumerate() {
-                    ui.label(var.scope);
-                    ui.label(RichText::new(&var.name).monospace());
-                    ui.horizontal(|ui| {
-                        ui.label(RichText::new(truncate(&var.value, 80)).small());
-                        if ui.small_button("Edit").clicked() {
-                            edit = Some((i, var.value.clone()));
+        egui::ScrollArea::vertical()
+            .max_height(380.0)
+            .show(ui, |ui| {
+                egui::Grid::new("env_grid")
+                    .num_columns(3)
+                    .striped(true)
+                    .show(ui, |ui| {
+                        ui.label(RichText::new("Scope").strong());
+                        ui.label(RichText::new("Name").strong());
+                        ui.label(RichText::new("Value").strong());
+                        ui.end_row();
+                        for (i, var) in self.env.iter().enumerate() {
+                            ui.label(var.scope);
+                            ui.label(RichText::new(&var.name).monospace());
+                            ui.horizontal(|ui| {
+                                ui.label(RichText::new(truncate(&var.value, 80)).small());
+                                if ui.small_button("Edit").clicked() {
+                                    edit = Some((i, var.value.clone()));
+                                }
+                            });
+                            ui.end_row();
                         }
                     });
-                    ui.end_row();
-                }
             });
-        });
         if let Some((i, value)) = edit {
             self.env_edit = Some((i, value));
         }
@@ -359,7 +444,11 @@ impl SysCtlApp {
                 .resizable(true)
                 .default_width(700.0)
                 .show(ui.ctx(), |ui| {
-                    ui.add(egui::TextEdit::multiline(&mut draft).desired_rows(6).desired_width(660.0));
+                    ui.add(
+                        egui::TextEdit::multiline(&mut draft)
+                            .desired_rows(6)
+                            .desired_width(660.0),
+                    );
                     ui.horizontal(|ui| {
                         if ui.button("Save").clicked() {
                             action = Some("save");
@@ -448,7 +537,11 @@ impl SysCtlApp {
 
     fn power_section(&mut self, ui: &mut egui::Ui) {
         ui.heading("Power plans");
-        ui.label(RichText::new("Switching plans writes ActivePowerScheme and broadcasts the change.").small().weak());
+        ui.label(
+            RichText::new("Switching plans writes ActivePowerScheme and broadcasts the change.")
+                .small()
+                .weak(),
+        );
         ui.separator();
         let mut pick: Option<String> = None;
         for (guid, name, active) in &self.power_plans {
@@ -468,7 +561,11 @@ impl SysCtlApp {
         ui.label(RichText::new("Session power").strong());
         egui::Grid::new("power_grid").num_columns(2).show(ui, |ui| {
             ui.label("Battery present:");
-            ui.label(if system::pnp_battery_present() { "yes" } else { "no" });
+            ui.label(if system::pnp_battery_present() {
+                "yes"
+            } else {
+                "no"
+            });
             ui.end_row();
             ui.label("Idle time:");
             ui.label(format!("{} s", system::idle_seconds().unwrap_or(0)));
@@ -494,7 +591,11 @@ impl SysCtlApp {
             ui.label(&self.os.hostname);
             ui.end_row();
             ui.label(RichText::new("Domain").strong());
-            ui.label(if self.os.domain.is_empty() { "—" } else { &self.os.domain });
+            ui.label(if self.os.domain.is_empty() {
+                "—"
+            } else {
+                &self.os.domain
+            });
             ui.end_row();
         });
         ui.add_space(8.0);
@@ -508,7 +609,9 @@ impl SysCtlApp {
         ui.label(RichText::new("Enumerated from the kernel/service database — the same list Device Manager's 'drivers' tab uses.").small().weak());
         ui.separator();
         let mut filter = String::new();
-        let filter_copy = ui.data(|d| d.get_temp::<String>(egui::Id::new("kernel_filter"))).unwrap_or_default();
+        let filter_copy = ui
+            .data(|d| d.get_temp::<String>(egui::Id::new("kernel_filter")))
+            .unwrap_or_default();
         filter.push_str(&filter_copy);
         ui.horizontal(|ui| {
             ui.add(egui::TextEdit::singleline(&mut filter).hint_text("🔍 Filter drivers"));
@@ -522,7 +625,11 @@ impl SysCtlApp {
         let rows: Vec<&DriverRow> = self
             .drivers
             .iter()
-            .filter(|d| needle.is_empty() || d.display.to_lowercase().contains(&needle) || d.name.to_lowercase().contains(&needle))
+            .filter(|d| {
+                needle.is_empty()
+                    || d.display.to_lowercase().contains(&needle)
+                    || d.name.to_lowercase().contains(&needle)
+            })
             .collect();
         let table = TableBuilder::new(ui)
             .striped(true)
@@ -549,7 +656,11 @@ impl SysCtlApp {
                     ui.label(RichText::new(&d.name).monospace().small());
                 });
                 row.col(|ui| {
-                    let color = if d.state == "Running" { Color32::from_rgb(120, 220, 120) } else { Color32::GRAY };
+                    let color = if d.state == "Running" {
+                        Color32::from_rgb(120, 220, 120)
+                    } else {
+                        Color32::GRAY
+                    };
                     ui.label(RichText::new(&d.state).color(color));
                 });
                 row.col(|ui| {
@@ -585,7 +696,12 @@ impl SysCtlApp {
         ui.separator();
         let report = self.report.clone();
         egui::ScrollArea::both().show(ui, |ui| {
-            ui.add(egui::TextEdit::multiline(&mut report.as_str()).desired_width(f32::INFINITY).desired_rows(28).font(egui::TextStyle::Monospace));
+            ui.add(
+                egui::TextEdit::multiline(&mut report.as_str())
+                    .desired_width(f32::INFINITY)
+                    .desired_rows(28)
+                    .font(egui::TextStyle::Monospace),
+            );
         });
     }
 }
@@ -601,7 +717,11 @@ impl eframe::App for SysCtlApp {
                     ui.label(RichText::new(&self.status).small());
                 }
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    ui.label(RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION"))).small().weak());
+                    ui.label(
+                        RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION")))
+                            .small()
+                            .weak(),
+                    );
                 });
             });
         });
@@ -611,15 +731,17 @@ impl eframe::App for SysCtlApp {
             .width_range(170.0..=320.0)
             .show(ctx, |ui| self.sidebar(ui));
         egui::CentralPanel::default().show(ctx, |ui| {
-            egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| match self.section {
-                Section::Overview => self.overview(ui),
-                Section::Environment => self.environment(ui),
-                Section::Startup => self.startup_section(ui),
-                Section::Power => self.power_section(ui),
-                Section::Network => self.network_section(ui),
-                Section::Kernel => self.kernel_section(ui),
-                Section::Support => self.support_section(ui),
-            });
+            egui::ScrollArea::vertical()
+                .auto_shrink([false, false])
+                .show(ui, |ui| match self.section {
+                    Section::Overview => self.overview(ui),
+                    Section::Environment => self.environment(ui),
+                    Section::Startup => self.startup_section(ui),
+                    Section::Power => self.power_section(ui),
+                    Section::Network => self.network_section(ui),
+                    Section::Kernel => self.kernel_section(ui),
+                    Section::Support => self.support_section(ui),
+                });
         });
         ctx.request_repaint_after(Duration::from_millis(1000));
     }

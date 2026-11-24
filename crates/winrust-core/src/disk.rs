@@ -11,12 +11,12 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use windows_sys::Win32::Foundation::INVALID_HANDLE_VALUE;
 use windows_sys::Win32::Storage::FileSystem::{
-    FindClose, FindFirstFileExW, FindNextFileW, GetDiskFreeSpaceExW, GetDriveTypeW,
-    GetFileAttributesW, GetLogicalDrives, GetVolumeInformationW, MoveFileExW, SetFileAttributesW,
-    WIN32_FIND_DATAW, FILE_ATTRIBUTE_COMPRESSED, FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_HIDDEN,
-    FILE_ATTRIBUTE_READONLY, FILE_ATTRIBUTE_REPARSE_POINT, FILE_ATTRIBUTE_SYSTEM,
-    FIND_FIRST_EX_LARGE_FETCH, FindExInfoBasic, FindExSearchNameMatch,
-    MOVEFILE_COPY_ALLOWED, MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH,
+    FindClose, FindExInfoBasic, FindExSearchNameMatch, FindFirstFileExW, FindNextFileW,
+    GetDiskFreeSpaceExW, GetDriveTypeW, GetFileAttributesW, GetLogicalDrives,
+    GetVolumeInformationW, MoveFileExW, SetFileAttributesW, FILE_ATTRIBUTE_COMPRESSED,
+    FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_READONLY,
+    FILE_ATTRIBUTE_REPARSE_POINT, FILE_ATTRIBUTE_SYSTEM, FIND_FIRST_EX_LARGE_FETCH,
+    MOVEFILE_COPY_ALLOWED, MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH, WIN32_FIND_DATAW,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -119,8 +119,16 @@ pub fn volumes() -> Vec<VolumeInfo> {
 
         out.push(VolumeInfo {
             root,
-            label: if volume_ok { from_wide(&label, label.len()) } else { String::new() },
-            fs_name: if volume_ok { from_wide(&fs, fs.len()) } else { String::new() },
+            label: if volume_ok {
+                from_wide(&label, label.len())
+            } else {
+                String::new()
+            },
+            fs_name: if volume_ok {
+                from_wide(&fs, fs.len())
+            } else {
+                String::new()
+            },
             kind: Some(kind),
             total_bytes: total,
             free_bytes: free,
@@ -311,10 +319,13 @@ pub fn sort_by(entries: &mut [DirEntry], key: SortKey, ascending: bool) {
             let lname: Vec<String> = entries.iter().map(|e| e.name.to_lowercase()).collect();
             order.sort_unstable_by(|&a, &b| {
                 let (a, b) = (a as usize, b as usize);
-                entries[b]
-                    .is_dir
-                    .cmp(&entries[a].is_dir)
-                    .then_with(|| if ascending { lname[a].cmp(&lname[b]) } else { lname[b].cmp(&lname[a]) })
+                entries[b].is_dir.cmp(&entries[a].is_dir).then_with(|| {
+                    if ascending {
+                        lname[a].cmp(&lname[b])
+                    } else {
+                        lname[b].cmp(&lname[a])
+                    }
+                })
             });
         }
         SortKey::Type => {
@@ -322,22 +333,42 @@ pub fn sort_by(entries: &mut [DirEntry], key: SortKey, ascending: bool) {
             let lfull: Vec<String> = entries.iter().map(|e| e.name.to_lowercase()).collect();
             order.sort_unstable_by(|&a, &b| {
                 let (a, b) = (a as usize, b as usize);
-                let by_type = if ascending { lname[a].cmp(lname[b]) } else { lname[b].cmp(lname[a]) };
-                let by_name = if ascending { lfull[a].cmp(&lfull[b]) } else { lfull[b].cmp(&lfull[a]) };
-                entries[b].is_dir.cmp(&entries[a].is_dir).then(by_type).then(by_name)
+                let by_type = if ascending {
+                    lname[a].cmp(lname[b])
+                } else {
+                    lname[b].cmp(lname[a])
+                };
+                let by_name = if ascending {
+                    lfull[a].cmp(&lfull[b])
+                } else {
+                    lfull[b].cmp(&lfull[a])
+                };
+                entries[b]
+                    .is_dir
+                    .cmp(&entries[a].is_dir)
+                    .then(by_type)
+                    .then(by_name)
             });
         }
         SortKey::Size => {
             order.sort_unstable_by(|&a, &b| {
                 let (a, b) = (a as usize, b as usize);
-                let by = if ascending { entries[a].size.cmp(&entries[b].size) } else { entries[b].size.cmp(&entries[a].size) };
+                let by = if ascending {
+                    entries[a].size.cmp(&entries[b].size)
+                } else {
+                    entries[b].size.cmp(&entries[a].size)
+                };
                 entries[b].is_dir.cmp(&entries[a].is_dir).then(by)
             });
         }
         SortKey::Modified => {
             order.sort_unstable_by(|&a, &b| {
                 let (a, b) = (a as usize, b as usize);
-                let by = if ascending { entries[a].modified.cmp(&entries[b].modified) } else { entries[b].modified.cmp(&entries[a].modified) };
+                let by = if ascending {
+                    entries[a].modified.cmp(&entries[b].modified)
+                } else {
+                    entries[b].modified.cmp(&entries[a].modified)
+                };
                 entries[b].is_dir.cmp(&entries[a].is_dir).then(by)
             });
         }
@@ -349,7 +380,9 @@ pub fn sort_by(entries: &mut [DirEntry], key: SortKey, ascending: bool) {
         moved.push(Some(std::mem::take(e)));
     }
     for (slot, &src) in entries.iter_mut().zip(order.iter()) {
-        *slot = moved[src as usize].take().expect("permutation is a bijection");
+        *slot = moved[src as usize]
+            .take()
+            .expect("permutation is a bijection");
     }
 }
 
@@ -380,7 +413,11 @@ pub fn format_size(bytes: u64) -> String {
     let b = bytes as f64;
     fn trimmed(v: f64, unit: &str, decimals: usize) -> String {
         let s = format!("{v:.decimals$}");
-        let s = if s.contains('.') { s.trim_end_matches('0').trim_end_matches('.').to_string() } else { s };
+        let s = if s.contains('.') {
+            s.trim_end_matches('0').trim_end_matches('.').to_string()
+        } else {
+            s
+        };
         format!("{s} {unit}")
     }
     if b < KB {
@@ -409,7 +446,9 @@ pub fn move_path(from: impl AsRef<Path>, to: impl AsRef<Path>, replace: bool) ->
     if replace {
         flags |= MOVEFILE_REPLACE_EXISTING;
     }
-    check("MoveFileExW", unsafe { MoveFileExW(f.as_ptr(), t.as_ptr(), flags) })
+    check("MoveFileExW", unsafe {
+        MoveFileExW(f.as_ptr(), t.as_ptr(), flags)
+    })
 }
 
 /// Copy a file or a whole directory tree, like Explorer's Ctrl+C / Ctrl+V.
@@ -435,10 +474,13 @@ pub fn copy_tree(from: impl AsRef<Path>, to: impl AsRef<Path>, overwrite: bool) 
         let f = to_wide(from);
         let t = to_wide(to);
         let fail_if_exists = if overwrite { 0 } else { 1 };
-        check(
-            "CopyFileW",
-            unsafe { windows_sys::Win32::Storage::FileSystem::CopyFileW(f.as_ptr(), t.as_ptr(), fail_if_exists) },
-        )?;
+        check("CopyFileW", unsafe {
+            windows_sys::Win32::Storage::FileSystem::CopyFileW(
+                f.as_ptr(),
+                t.as_ptr(),
+                fail_if_exists,
+            )
+        })?;
         Ok(1)
     }
 }
@@ -450,7 +492,10 @@ pub fn unique_destination(path: impl AsRef<Path>) -> std::path::PathBuf {
     if !path.exists() {
         return path.to_path_buf();
     }
-    let stem = path.file_stem().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
+    let stem = path
+        .file_stem()
+        .map(|s| s.to_string_lossy().to_string())
+        .unwrap_or_default();
     let ext = path.extension().map(|s| s.to_string_lossy().to_string());
     let parent = path.parent().map(|p| p.to_path_buf()).unwrap_or_default();
     for n in 2..10_000 {
@@ -521,8 +566,14 @@ pub fn set_readonly(path: impl AsRef<Path>, readonly: bool) -> Result<()> {
     if cur == u32::MAX {
         return Err(WinError::from_last_error("GetFileAttributesW"));
     }
-    let next = if readonly { cur | FILE_ATTRIBUTE_READONLY } else { cur & !FILE_ATTRIBUTE_READONLY };
-    check("SetFileAttributesW", unsafe { SetFileAttributesW(w.as_ptr(), next) })
+    let next = if readonly {
+        cur | FILE_ATTRIBUTE_READONLY
+    } else {
+        cur & !FILE_ATTRIBUTE_READONLY
+    };
+    check("SetFileAttributesW", unsafe {
+        SetFileAttributesW(w.as_ptr(), next)
+    })
 }
 
 /// Total size of a folder tree, with a hard cap to keep the UI responsive.

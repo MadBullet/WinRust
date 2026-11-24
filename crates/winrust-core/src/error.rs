@@ -8,7 +8,11 @@ pub type Result<T> = std::result::Result<T, WinError>;
 #[derive(Debug, Clone)]
 pub enum WinError {
     /// The last-error code returned by a Win32 call.
-    Api { code: u32, message: String, context: &'static str },
+    Api {
+        code: u32,
+        message: String,
+        context: &'static str,
+    },
     /// Access denied — very common for services / other users' processes.
     AccessDenied { context: &'static str },
     /// The object does not exist (process exited, key deleted, ...).
@@ -29,18 +33,18 @@ impl WinError {
 
     pub fn from_code(code: u32, context: &'static str) -> Self {
         match code {
-            windows_sys::Win32::Foundation::ERROR_ACCESS_DENIED => {
-                Self::AccessDenied { context }
-            }
+            windows_sys::Win32::Foundation::ERROR_ACCESS_DENIED => Self::AccessDenied { context },
             windows_sys::Win32::Foundation::ERROR_FILE_NOT_FOUND
             | windows_sys::Win32::Foundation::ERROR_PATH_NOT_FOUND
             | windows_sys::Win32::Foundation::ERROR_SERVICE_DOES_NOT_EXIST
-            | windows_sys::Win32::Foundation::ERROR_INVALID_HANDLE => {
-                Self::NotFound { context }
-            }
+            | windows_sys::Win32::Foundation::ERROR_INVALID_HANDLE => Self::NotFound { context },
             windows_sys::Win32::Foundation::ERROR_INSUFFICIENT_BUFFER
             | windows_sys::Win32::Foundation::ERROR_MORE_DATA => Self::Buffer { context },
-            _ => Self::Api { code, message: message_for(code), context },
+            _ => Self::Api {
+                code,
+                message: message_for(code),
+                context,
+            },
         }
     }
 
@@ -62,7 +66,11 @@ impl WinError {
 impl fmt::Display for WinError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Api { code, message, context } => {
+            Self::Api {
+                code,
+                message,
+                context,
+            } => {
                 write!(f, "{context}: {message} (0x{code:08X})")
             }
             Self::AccessDenied { context } => {

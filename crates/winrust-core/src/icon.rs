@@ -4,14 +4,16 @@
 //! renders the icon into a 32-bit top-down DIB with GDI and reads the pixels
 //! back, handling the mask for legacy icons that have no alpha channel.
 
+use std::ffi::c_void;
 use windows_sys::Win32::Foundation::HWND;
 use windows_sys::Win32::Graphics::Gdi::{
-    CreateCompatibleDC, CreateCompatibleBitmap, CreateDIBSection, DeleteDC, DeleteObject, GetDC,
+    CreateCompatibleBitmap, CreateCompatibleDC, CreateDIBSection, DeleteDC, DeleteObject, GetDC,
     ReleaseDC, SelectObject, BITMAPINFO, BITMAPINFOHEADER, BI_RGB, DIB_RGB_COLORS, HBITMAP, HDC,
     HGDIOBJ,
 };
-use std::ffi::c_void;
-use windows_sys::Win32::UI::WindowsAndMessaging::{DrawIconEx, GetIconInfo, HICON, ICONINFO, DI_MASK, DI_NORMAL};
+use windows_sys::Win32::UI::WindowsAndMessaging::{
+    DrawIconEx, GetIconInfo, DI_MASK, DI_NORMAL, HICON, ICONINFO,
+};
 
 /// Convert an icon into tightly packed RGBA8 pixels (row-major, top-down).
 ///
@@ -19,7 +21,11 @@ use windows_sys::Win32::UI::WindowsAndMessaging::{DrawIconEx, GetIconInfo, HICON
 ///
 /// # Safety
 /// `hicon` must be a valid icon handle that stays alive for the call.
-pub unsafe fn hicon_to_rgba(hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON, w: u32, h: u32) -> Option<Vec<u8>> {
+pub unsafe fn hicon_to_rgba(
+    hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON,
+    w: u32,
+    h: u32,
+) -> Option<Vec<u8>> {
     if hicon.is_null() || w == 0 || h == 0 {
         return None;
     }
@@ -50,7 +56,14 @@ pub unsafe fn hicon_to_rgba(hicon: windows_sys::Win32::UI::WindowsAndMessaging::
         };
 
         let mut bits: *mut std::ffi::c_void = std::ptr::null_mut();
-        let dib: HBITMAP = CreateDIBSection(mem, &bmi, DIB_RGB_COLORS, &mut bits, std::ptr::null_mut(), 0);
+        let dib: HBITMAP = CreateDIBSection(
+            mem,
+            &bmi,
+            DIB_RGB_COLORS,
+            &mut bits,
+            std::ptr::null_mut(),
+            0,
+        );
         if dib.is_null() || bits.is_null() {
             DeleteDC(mem);
             ReleaseDC(std::ptr::null_mut() as HWND, screen);
@@ -63,10 +76,30 @@ pub unsafe fn hicon_to_rgba(hicon: windows_sys::Win32::UI::WindowsAndMessaging::
         std::ptr::write_bytes(bits as *mut u8, 0, (w * h * 4) as usize);
 
         // Draw the icon (DI_NORMAL blends color+mask with alpha).
-        let drawn = DrawIconEx(mem, 0, 0, hicon, w as i32, h as i32, 0, std::ptr::null_mut(), DI_NORMAL);
+        let drawn = DrawIconEx(
+            mem,
+            0,
+            0,
+            hicon,
+            w as i32,
+            h as i32,
+            0,
+            std::ptr::null_mut(),
+            DI_NORMAL,
+        );
         if drawn == 0 {
             // Fallback: legacy icons drawn via mask only.
-            DrawIconEx(mem, 0, 0, hicon, w as i32, h as i32, 0, std::ptr::null_mut(), DI_MASK);
+            DrawIconEx(
+                mem,
+                0,
+                0,
+                hicon,
+                w as i32,
+                h as i32,
+                0,
+                std::ptr::null_mut(),
+                DI_MASK,
+            );
         }
 
         let mut rgba = vec![0u8; (w * h * 4) as usize];
@@ -132,7 +165,6 @@ fn _reserve(dc: HDC) -> HBITMAP {
     unsafe { CreateCompatibleBitmap(dc, 1, 1) }
 }
 
-
 // ---------------------------------------------------------------------------
 // System image list (large icons: 32 / 48 / 256 px)
 // ---------------------------------------------------------------------------
@@ -157,7 +189,9 @@ impl ComGuard {
         };
         // S_OK (0) and S_FALSE (1) both mean "usable"; RPC_E_CHANGED_MODE
         // (0x80010106) means another apartment already exists — also usable.
-        Self { should_uninit: hr == 0 || hr == 1 }
+        Self {
+            should_uninit: hr == 0 || hr == 1,
+        }
     }
 }
 
@@ -183,7 +217,11 @@ impl Drop for ComGuard {
 /// `Remove`, `GetIcon`.  So `GetIcon` is slot 3+8 = 11.
 #[repr(C)]
 struct IImageListVtbl {
-    query_interface: unsafe extern "system" fn(*mut c_void, *const windows_sys::core::GUID, *mut *mut c_void) -> i32,
+    query_interface: unsafe extern "system" fn(
+        *mut c_void,
+        *const windows_sys::core::GUID,
+        *mut *mut c_void,
+    ) -> i32,
     add_ref: unsafe extern "system" fn(*mut c_void) -> u32,
     release: unsafe extern "system" fn(*mut c_void) -> u32,
     // Add(HBITMAP hbmImage, HBITMAP hbmMask, int *pi)
@@ -226,11 +264,7 @@ pub fn system_icon_rgba(index: i32, size: u32) -> Option<Vec<u8>> {
     };
     let mut list: *mut c_void = std::ptr::null_mut();
     let hr = unsafe {
-        windows_sys::Win32::UI::Shell::SHGetImageList(
-            shil as i32,
-            &IID_IIMAGE_LIST,
-            &mut list,
-        )
+        windows_sys::Win32::UI::Shell::SHGetImageList(shil as i32, &IID_IIMAGE_LIST, &mut list)
     };
     if hr < 0 || list.is_null() {
         return None;
@@ -241,7 +275,12 @@ pub fn system_icon_rgba(index: i32, size: u32) -> Option<Vec<u8>> {
     }
     let mut hicon: HICON = std::ptr::null_mut();
     let get_icon = unsafe { (*vtbl).get_icon };
-    let rc = unsafe { get_icon(list, index, 0x00000001 /* ILD_TRANSPARENT */, &mut hicon) };
+    let rc = unsafe {
+        get_icon(
+            list, index, 0x00000001, /* ILD_TRANSPARENT */
+            &mut hicon,
+        )
+    };
     if rc < 0 || hicon.is_null() {
         return None;
     }

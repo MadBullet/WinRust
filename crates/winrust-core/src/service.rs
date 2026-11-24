@@ -10,19 +10,18 @@ use crate::wide::str_to_wide;
 use serde::{Deserialize, Serialize};
 use windows_sys::Win32::System::Services::{
     ChangeServiceConfig2W, ChangeServiceConfigW, ControlService, EnumDependentServicesW,
-    EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W,
-    QueryServiceConfigW, QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW,
-    ENUM_SERVICE_TYPE, QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
+    EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W, QueryServiceConfigW,
+    QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW, ENUM_SERVICE_TYPE,
+    QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
     SC_MANAGER_ENUMERATE_SERVICE, SC_STATUS_PROCESS_INFO, SERVICE_ACCEPT_PAUSE_CONTINUE,
-    SERVICE_ACCEPT_STOP, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+    SERVICE_ACCEPT_STOP, SERVICE_CHANGE_CONFIG, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
     SERVICE_CONFIG_DESCRIPTION, SERVICE_CONTINUE_PENDING, SERVICE_CONTROL_CONTINUE,
     SERVICE_CONTROL_PAUSE, SERVICE_CONTROL_STOP, SERVICE_DELAYED_AUTO_START_INFO,
     SERVICE_DEMAND_START, SERVICE_DESCRIPTIONW, SERVICE_DISABLED, SERVICE_DRIVER,
-    SERVICE_NO_CHANGE, SERVICE_PAUSED, SERVICE_PAUSE_PENDING, SERVICE_QUERY_CONFIG,
-    SERVICE_QUERY_STATUS, SERVICE_RUNNING, SERVICE_START, SERVICE_STATE_ALL, SERVICE_STATUS,
-    SERVICE_START_PENDING,
-    SERVICE_STATUS_PROCESS, SERVICE_STOP, SERVICE_STOPPED, SERVICE_STOP_PENDING,
-    SERVICE_WIN32, SERVICE_CHANGE_CONFIG, SERVICE_ENUMERATE_DEPENDENTS, SERVICE_PAUSE_CONTINUE,
+    SERVICE_ENUMERATE_DEPENDENTS, SERVICE_NO_CHANGE, SERVICE_PAUSED, SERVICE_PAUSE_CONTINUE,
+    SERVICE_PAUSE_PENDING, SERVICE_QUERY_CONFIG, SERVICE_QUERY_STATUS, SERVICE_RUNNING,
+    SERVICE_START, SERVICE_START_PENDING, SERVICE_STATE_ALL, SERVICE_STATUS,
+    SERVICE_STATUS_PROCESS, SERVICE_STOP, SERVICE_STOPPED, SERVICE_STOP_PENDING, SERVICE_WIN32,
 };
 
 /// Access rights used when opening a service handle.
@@ -78,7 +77,10 @@ impl ServiceState {
     }
 
     pub fn is_busy(self) -> bool {
-        matches!(self, Self::StartPending | Self::StopPending | Self::PausePending | Self::ContinuePending)
+        matches!(
+            self,
+            Self::StartPending | Self::StopPending | Self::PausePending | Self::ContinuePending
+        )
     }
 }
 
@@ -99,7 +101,13 @@ impl StartType {
         match v {
             0 => Self::Boot,
             1 => Self::System,
-            2 => if delayed { Self::AutoDelayed } else { Self::Auto },
+            2 => {
+                if delayed {
+                    Self::AutoDelayed
+                } else {
+                    Self::Auto
+                }
+            }
             3 => Self::Manual,
             4 => Self::Disabled,
             other => Self::Unknown(other),
@@ -167,10 +175,18 @@ pub struct ScManager {
 
 impl ScManager {
     pub fn connect() -> Result<Self> {
-        let h = unsafe { OpenSCManagerW(std::ptr::null(), std::ptr::null(), SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE) };
+        let h = unsafe {
+            OpenSCManagerW(
+                std::ptr::null(),
+                std::ptr::null(),
+                SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE,
+            )
+        };
         match Handle::new(h) {
             Some(h) => Ok(Self { h }),
-            None => Err(WinError::from_last_error("OpenSCManagerW (elevation required?)")),
+            None => Err(WinError::from_last_error(
+                "OpenSCManagerW (elevation required?)",
+            )),
         }
     }
 
@@ -178,7 +194,10 @@ impl ScManager {
         let w = str_to_wide(name);
         let h = unsafe { OpenServiceW(self.h.raw() as SC_HANDLE, w.as_ptr(), access) };
         match Handle::new(h) {
-            Some(h) => Ok(ServiceHandle { h, name: name.to_string() }),
+            Some(h) => Ok(ServiceHandle {
+                h,
+                name: name.to_string(),
+            }),
             None => Err(WinError::from_last_error("OpenServiceW")),
         }
     }
@@ -195,7 +214,11 @@ impl ScManager {
         Ok(out)
     }
 
-    fn enumerate_filtered(&self, service_type: ENUM_SERVICE_TYPE, is_driver: bool) -> Result<Vec<ServiceEntry>> {
+    fn enumerate_filtered(
+        &self,
+        service_type: ENUM_SERVICE_TYPE,
+        is_driver: bool,
+    ) -> Result<Vec<ServiceEntry>> {
         let mut needed = 0u32;
         let mut count = 0u32;
         let mut resume = 0u32;
@@ -241,7 +264,8 @@ impl ScManager {
         }
 
         let mut out = Vec::with_capacity(entries as usize);
-        let base = buf.as_ptr() as *const windows_sys::Win32::System::Services::ENUM_SERVICE_STATUS_PROCESSW;
+        let base = buf.as_ptr()
+            as *const windows_sys::Win32::System::Services::ENUM_SERVICE_STATUS_PROCESSW;
         for i in 0..entries as usize {
             let e = unsafe { &*base.add(i) };
             let name = ptr_to_string(e.lpServiceName);
@@ -258,7 +282,10 @@ impl ScManager {
                 ..Default::default()
             };
             // Configuration + description, best-effort (needs SERVICE_QUERY_CONFIG).
-            if let Ok(svc) = self.open_service(&name, SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS) {
+            if let Ok(svc) = self.open_service(
+                &name,
+                SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS,
+            ) {
                 if let Some(cfg) = svc.config() {
                     entry.start_type = Some(cfg.0);
                     entry.binary_path = cfg.1;
@@ -303,23 +330,22 @@ impl ServiceHandle {
     pub fn status(&self) -> Result<SERVICE_STATUS_PROCESS> {
         let mut buf = [0u8; std::mem::size_of::<SERVICE_STATUS_PROCESS>()];
         let mut needed = 0u32;
-        check(
-            "QueryServiceStatusEx",
-            unsafe {
-                QueryServiceStatusEx(
-                    self.raw(),
-                    SC_STATUS_PROCESS_INFO,
-                    buf.as_mut_ptr(),
-                    buf.len() as u32,
-                    &mut needed,
-                )
-            },
-        )?;
+        check("QueryServiceStatusEx", unsafe {
+            QueryServiceStatusEx(
+                self.raw(),
+                SC_STATUS_PROCESS_INFO,
+                buf.as_mut_ptr(),
+                buf.len() as u32,
+                &mut needed,
+            )
+        })?;
         Ok(unsafe { std::ptr::read_unaligned(buf.as_ptr() as *const SERVICE_STATUS_PROCESS) })
     }
 
     pub fn state(&self) -> Option<ServiceState> {
-        self.status().ok().map(|s| ServiceState::from_raw(s.dwCurrentState))
+        self.status()
+            .ok()
+            .map(|s| ServiceState::from_raw(s.dwCurrentState))
     }
 
     /// `(start_type, binary_path, logon_account, load_order_group)`
@@ -333,7 +359,12 @@ impl ServiceHandle {
         }
         let mut buf = vec![0u8; needed as usize];
         let ok = unsafe {
-            QueryServiceConfigW(self.raw(), buf.as_mut_ptr() as *mut QUERY_SERVICE_CONFIGW, needed, &mut needed)
+            QueryServiceConfigW(
+                self.raw(),
+                buf.as_mut_ptr() as *mut QUERY_SERVICE_CONFIGW,
+                needed,
+                &mut needed,
+            )
         };
         if ok == 0 {
             return None;
@@ -357,7 +388,9 @@ impl ServiceHandle {
     }
 
     pub fn delayed_auto_start(&self) -> Option<bool> {
-        let mut info = SERVICE_DELAYED_AUTO_START_INFO { fDelayedAutostart: 0 };
+        let mut info = SERVICE_DELAYED_AUTO_START_INFO {
+            fDelayedAutostart: 0,
+        };
         let mut needed = 0u32;
         let ok = unsafe {
             QueryServiceConfig2W(
@@ -368,13 +401,23 @@ impl ServiceHandle {
                 &mut needed,
             )
         };
-        if ok != 0 { Some(info.fDelayedAutostart != 0) } else { None }
+        if ok != 0 {
+            Some(info.fDelayedAutostart != 0)
+        } else {
+            None
+        }
     }
 
     pub fn description(&self) -> Option<String> {
         let mut needed = 0u32;
         unsafe {
-            QueryServiceConfig2W(self.raw(), SERVICE_CONFIG_DESCRIPTION, std::ptr::null_mut(), 0, &mut needed);
+            QueryServiceConfig2W(
+                self.raw(),
+                SERVICE_CONFIG_DESCRIPTION,
+                std::ptr::null_mut(),
+                0,
+                &mut needed,
+            );
         }
         if needed < std::mem::size_of::<SERVICE_DESCRIPTIONW>() as u32 {
             return None;
@@ -394,7 +437,11 @@ impl ServiceHandle {
         }
         let desc = unsafe { &*(buf.as_ptr() as *const SERVICE_DESCRIPTIONW) };
         let s = ptr_to_string(desc.lpDescription);
-        if s.is_empty() { None } else { Some(s) }
+        if s.is_empty() {
+            None
+        } else {
+            Some(s)
+        }
     }
 
     /// Services that must be running before this one can start.
@@ -402,7 +449,14 @@ impl ServiceHandle {
         let mut needed = 0u32;
         let mut count = 0u32;
         unsafe {
-            EnumDependentServicesW(self.raw(), SERVICE_STATE_ALL, std::ptr::null_mut(), 0, &mut needed, &mut count);
+            EnumDependentServicesW(
+                self.raw(),
+                SERVICE_STATE_ALL,
+                std::ptr::null_mut(),
+                0,
+                &mut needed,
+                &mut count,
+            );
         }
         if needed == 0 {
             return Vec::new();
@@ -431,22 +485,54 @@ impl ServiceHandle {
     }
 
     pub fn start(&self) -> Result<()> {
-        check("StartServiceW", unsafe { StartServiceW(self.raw(), 0, std::ptr::null()) })
+        check("StartServiceW", unsafe {
+            StartServiceW(self.raw(), 0, std::ptr::null())
+        })
     }
 
     pub fn stop(&self) -> Result<()> {
-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
-        check("ControlService(STOP)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_STOP, &mut st) })
+        let mut st = SERVICE_STATUS {
+            dwServiceType: 0,
+            dwCurrentState: 0,
+            dwControlsAccepted: 0,
+            dwWin32ExitCode: 0,
+            dwServiceSpecificExitCode: 0,
+            dwCheckPoint: 0,
+            dwWaitHint: 0,
+        };
+        check("ControlService(STOP)", unsafe {
+            ControlService(self.raw(), SERVICE_CONTROL_STOP, &mut st)
+        })
     }
 
     pub fn pause(&self) -> Result<()> {
-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
-        check("ControlService(PAUSE)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_PAUSE, &mut st) })
+        let mut st = SERVICE_STATUS {
+            dwServiceType: 0,
+            dwCurrentState: 0,
+            dwControlsAccepted: 0,
+            dwWin32ExitCode: 0,
+            dwServiceSpecificExitCode: 0,
+            dwCheckPoint: 0,
+            dwWaitHint: 0,
+        };
+        check("ControlService(PAUSE)", unsafe {
+            ControlService(self.raw(), SERVICE_CONTROL_PAUSE, &mut st)
+        })
     }
 
     pub fn resume(&self) -> Result<()> {
-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
-        check("ControlService(CONTINUE)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_CONTINUE, &mut st) })
+        let mut st = SERVICE_STATUS {
+            dwServiceType: 0,
+            dwCurrentState: 0,
+            dwControlsAccepted: 0,
+            dwWin32ExitCode: 0,
+            dwServiceSpecificExitCode: 0,
+            dwCheckPoint: 0,
+            dwWaitHint: 0,
+        };
+        check("ControlService(CONTINUE)", unsafe {
+            ControlService(self.raw(), SERVICE_CONTROL_CONTINUE, &mut st)
+        })
     }
 
     /// Change the start type (and optionally the binary path).
@@ -458,7 +544,9 @@ impl ServiceHandle {
                 SERVICE_NO_CHANGE,
                 start.raw(),
                 SERVICE_NO_CHANGE,
-                wbin.as_ref().map(|w| w.as_ptr()).unwrap_or(std::ptr::null()),
+                wbin.as_ref()
+                    .map(|w| w.as_ptr())
+                    .unwrap_or(std::ptr::null()),
                 std::ptr::null(),
                 std::ptr::null_mut(),
                 std::ptr::null(),
@@ -471,7 +559,13 @@ impl ServiceHandle {
             return Err(WinError::from_last_error("ChangeServiceConfigW"));
         }
         // Delayed start is a separate flag.
-        let mut delayed = SERVICE_DELAYED_AUTO_START_INFO { fDelayedAutostart: if start == StartType::AutoDelayed { 1 } else { 0 } };
+        let mut delayed = SERVICE_DELAYED_AUTO_START_INFO {
+            fDelayedAutostart: if start == StartType::AutoDelayed {
+                1
+            } else {
+                0
+            },
+        };
         if matches!(start, StartType::Auto | StartType::AutoDelayed) {
             unsafe {
                 QueryServiceConfig2W(
@@ -482,7 +576,11 @@ impl ServiceHandle {
                     std::ptr::null_mut(),
                 );
             }
-            delayed.fDelayedAutostart = if start == StartType::AutoDelayed { 1 } else { 0 };
+            delayed.fDelayedAutostart = if start == StartType::AutoDelayed {
+                1
+            } else {
+                0
+            };
             let ok = unsafe {
                 windows_sys::Win32::System::Services::ChangeServiceConfig2W(
                     self.raw(),
@@ -500,7 +598,9 @@ impl ServiceHandle {
     /// Replace the service description (`sc description`, services.msc field).
     pub fn set_description(&self, text: &str) -> Result<()> {
         let mut w = str_to_wide(text);
-        let desc = SERVICE_DESCRIPTIONW { lpDescription: w.as_mut_ptr() };
+        let desc = SERVICE_DESCRIPTIONW {
+            lpDescription: w.as_mut_ptr(),
+        };
         let ok = unsafe {
             ChangeServiceConfig2W(
                 self.raw(),
@@ -509,7 +609,9 @@ impl ServiceHandle {
             )
         };
         if ok == 0 {
-            return Err(WinError::from_last_error("ChangeServiceConfig2W(description)"));
+            return Err(WinError::from_last_error(
+                "ChangeServiceConfig2W(description)",
+            ));
         }
         Ok(())
     }

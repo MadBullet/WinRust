@@ -49,7 +49,12 @@ impl ViewMode {
             ViewMode::Content => "Content",
         }
     }
-    const ALL: [ViewMode; 4] = [ViewMode::Details, ViewMode::List, ViewMode::Tiles, ViewMode::Content];
+    const ALL: [ViewMode; 4] = [
+        ViewMode::Details,
+        ViewMode::List,
+        ViewMode::Tiles,
+        ViewMode::Content,
+    ];
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -316,7 +321,9 @@ impl ExplorerApp {
         style(&cc.egui_ctx);
 
         let persisted = load_state();
-        let default_start = KnownFolder::Profile.path().unwrap_or_else(|| PathBuf::from("C:\\"));
+        let default_start = KnownFolder::Profile
+            .path()
+            .unwrap_or_else(|| PathBuf::from("C:\\"));
         let tabs: Vec<Tab> = if persisted.tabs.is_empty() {
             vec![Tab::new(default_start)]
         } else {
@@ -370,7 +377,11 @@ impl ExplorerApp {
             job_rx,
             job_tx,
             preview_open: persisted.preview_open,
-            sidebar_width: if persisted.sidebar_width > 0.0 { persisted.sidebar_width } else { 230.0 },
+            sidebar_width: if persisted.sidebar_width > 0.0 {
+                persisted.sidebar_width
+            } else {
+                230.0
+            },
             search_path: PathBuf::new(),
             search_results: None,
             search_rx,
@@ -410,7 +421,11 @@ impl ExplorerApp {
         let read_path = path.clone();
         std::thread::spawn(move || {
             let result = disk::read_dir(&read_path, show_hidden).map_err(|e| e.to_string());
-            let _ = tx.send(Listing { tab_index, request_id, result });
+            let _ = tx.send(Listing {
+                tab_index,
+                request_id,
+                result,
+            });
         });
 
         // Folder sizes are only meaningful for single-folder views; ask the
@@ -436,7 +451,10 @@ impl ExplorerApp {
             self.select_in_parent(path);
             return;
         }
-        let prefs = self.folders.get(&path.to_string_lossy().to_string()).cloned();
+        let prefs = self
+            .folders
+            .get(&path.to_string_lossy().to_string())
+            .cloned();
         {
             let tab = self.current_mut();
             tab.history.truncate(tab.history_pos + 1);
@@ -568,7 +586,12 @@ impl ExplorerApp {
     // ------------------------------------------------------------------
 
     /// Load (once) and draw an icon for `entry`. `size` is 16, 32 or 48 px.
-    fn icon_for(&mut self, ctx: &egui::Context, entry: &DirEntry, size: u32) -> Option<egui::TextureId> {
+    fn icon_for(
+        &mut self,
+        ctx: &egui::Context,
+        entry: &DirEntry,
+        size: u32,
+    ) -> Option<egui::TextureId> {
         let key = if entry.is_dir {
             format!("dir:{size}")
         } else if entry.ext.is_empty() {
@@ -593,14 +616,19 @@ impl ExplorerApp {
             } else {
                 entry.ext.clone()
             };
-            self.type_names.entry(type_key).or_insert(info.type_name.clone());
+            self.type_names
+                .entry(type_key)
+                .or_insert(info.type_name.clone());
         }
         let texture = info.icon_rgba.and_then(|rgba| {
             let expected = (px * px * 4) as usize;
             if rgba.len() < expected {
                 return None;
             }
-            let image = egui::ColorImage::from_rgba_unmultiplied([px as usize, px as usize], &rgba[..expected]);
+            let image = egui::ColorImage::from_rgba_unmultiplied(
+                [px as usize, px as usize],
+                &rgba[..expected],
+            );
             Some(ctx.load_texture(key.clone(), image, egui::TextureOptions::LINEAR))
         });
         let id = texture.as_ref().map(|t| t.id());
@@ -609,7 +637,11 @@ impl ExplorerApp {
     }
 
     fn type_text(&mut self, entry: &DirEntry) -> String {
-        let key = if entry.is_dir { "dir".to_string() } else { entry.ext.clone() };
+        let key = if entry.is_dir {
+            "dir".to_string()
+        } else {
+            entry.ext.clone()
+        };
         if let Some(t) = self.type_names.get(&key) {
             return t.clone();
         }
@@ -635,10 +667,15 @@ fn style(ctx: &egui::Context) {
 /// fonts when the system font cannot be read.
 fn install_fonts(ctx: &egui::Context) {
     let mut fonts = egui::FontDefinitions::default();
-    let candidates = ["C:\\Windows\\Fonts\\segoeui.ttf", "C:\\Windows\\Fonts\\SegoeUI.ttf"];
+    let candidates = [
+        "C:\\Windows\\Fonts\\segoeui.ttf",
+        "C:\\Windows\\Fonts\\SegoeUI.ttf",
+    ];
     for path in candidates {
         if let Ok(bytes) = std::fs::read(path) {
-            fonts.font_data.insert("segoe".to_string(), egui::FontData::from_owned(bytes));
+            fonts
+                .font_data
+                .insert("segoe".to_string(), egui::FontData::from_owned(bytes));
             fonts
                 .families
                 .entry(egui::FontFamily::Proportional)
@@ -730,11 +767,17 @@ impl ExplorerApp {
                 }
             }
             Command::Copy => {
-                self.clipboard = Some(FileClipboard { paths: vec![path.clone()], cut: false });
+                self.clipboard = Some(FileClipboard {
+                    paths: vec![path.clone()],
+                    cut: false,
+                });
                 self.status = format!("Copied: {}", file_name_of(&path));
             }
             Command::Cut => {
-                self.clipboard = Some(FileClipboard { paths: vec![path.clone()], cut: true });
+                self.clipboard = Some(FileClipboard {
+                    paths: vec![path.clone()],
+                    cut: true,
+                });
                 self.status = format!("Cut: {}", file_name_of(&path));
             }
             Command::Paste => self.paste_clipboard(),
@@ -810,11 +853,17 @@ impl ExplorerApp {
             Command::InvertSelection => self.run(PathBuf::new(), cmd),
             Command::Refresh => self.refresh(),
             Command::Copy => {
-                self.clipboard = Some(FileClipboard { paths: sel.clone(), cut: false });
+                self.clipboard = Some(FileClipboard {
+                    paths: sel.clone(),
+                    cut: false,
+                });
                 self.status = format!("Copied {} item(s)", sel.len());
             }
             Command::Cut => {
-                self.clipboard = Some(FileClipboard { paths: sel.clone(), cut: true });
+                self.clipboard = Some(FileClipboard {
+                    paths: sel.clone(),
+                    cut: true,
+                });
                 self.status = format!("Cut {} item(s)", sel.len());
             }
             Command::Delete => {
@@ -848,7 +897,9 @@ impl ExplorerApp {
         }
         let mut jobs: Vec<(PathBuf, PathBuf)> = Vec::new();
         for src in &clip.paths {
-            let Some(name) = src.file_name() else { continue };
+            let Some(name) = src.file_name() else {
+                continue;
+            };
             let mut dest = dest_dir.join(name);
             if dest.exists() {
                 dest = disk::unique_destination(&dest);
@@ -894,9 +945,17 @@ impl ExplorerApp {
                     Ok(()) => done += 1,
                     Err(e) => errors.push(format!("{}: {e}", file_name_of(&src))),
                 }
-                let _ = tx.send(JobUpdate { done, errors: errors.clone(), finished: false });
+                let _ = tx.send(JobUpdate {
+                    done,
+                    errors: errors.clone(),
+                    finished: false,
+                });
             }
-            let _ = tx.send(JobUpdate { done, errors, finished: true });
+            let _ = tx.send(JobUpdate {
+                done,
+                errors,
+                finished: true,
+            });
         });
     }
 
@@ -910,7 +969,11 @@ impl ExplorerApp {
                         Ok(mut entries) => {
                             // Fill the localized type text once per extension.
                             for e in &mut entries {
-                                let key = if e.is_dir { "dir".to_string() } else { e.ext.clone() };
+                                let key = if e.is_dir {
+                                    "dir".to_string()
+                                } else {
+                                    e.ext.clone()
+                                };
                                 if let Some(t) = self.type_names.get(&key) {
                                     e.type_name = t.clone();
                                 } else {
@@ -956,7 +1019,11 @@ impl ExplorerApp {
                     self.status = if errors.is_empty() {
                         format!("Done: {done} item(s)")
                     } else {
-                        format!("{done} done, {} error(s): {}", errors.len(), errors.join("; "))
+                        format!(
+                            "{done} done, {} error(s): {}",
+                            errors.len(),
+                            errors.join("; ")
+                        )
                     };
                     if self.tabs.get(refresh_tab).is_some() {
                         self.start_load(refresh_tab);
@@ -1009,7 +1076,9 @@ impl ExplorerApp {
                 if budget == 0 {
                     break;
                 }
-                let Ok(entries) = disk::read_dir(&dir, show_hidden) else { continue };
+                let Ok(entries) = disk::read_dir(&dir, show_hidden) else {
+                    continue;
+                };
                 for e in entries {
                     budget = budget.saturating_sub(1);
                     if budget == 0 {
@@ -1087,14 +1156,20 @@ impl ExplorerApp {
         // Row 1: navigation + address + search
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(self.current().can_back(), egui::Button::new(RichText::new("◀").size(14.0)))
+                .add_enabled(
+                    self.current().can_back(),
+                    egui::Button::new(RichText::new("◀").size(14.0)),
+                )
                 .on_hover_text("Back (Alt+←)")
                 .clicked()
             {
                 self.go_back();
             }
             if ui
-                .add_enabled(self.current().can_forward(), egui::Button::new(RichText::new("▶").size(14.0)))
+                .add_enabled(
+                    self.current().can_forward(),
+                    egui::Button::new(RichText::new("▶").size(14.0)),
+                )
                 .on_hover_text("Forward (Alt+→)")
                 .clicked()
             {
@@ -1114,7 +1189,8 @@ impl ExplorerApp {
                 let mut buf = self.current().address_edit.clone().unwrap_or_default();
                 let response = ui.add_sized(
                     [addr_w, 24.0],
-                    egui::TextEdit::singleline(&mut buf).hint_text("Type a path or URL and press Enter"),
+                    egui::TextEdit::singleline(&mut buf)
+                        .hint_text("Type a path or URL and press Enter"),
                 );
                 self.current_mut().address_edit = Some(buf.clone());
                 if response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
@@ -1149,14 +1225,24 @@ impl ExplorerApp {
                                 } else {
                                     label
                                 };
-                                if ui.add(egui::Button::new(RichText::new(text).size(13.0)).frame(false)).clicked() {
+                                if ui
+                                    .add(
+                                        egui::Button::new(RichText::new(text).size(13.0))
+                                            .frame(false),
+                                    )
+                                    .clicked()
+                                {
                                     target = Some(acc.clone());
                                 }
                                 if acc != path {
                                     ui.label(RichText::new("›").weak());
                                 }
                             }
-                            if ui.small_button("✎").on_hover_text("Edit address (Ctrl+L)").clicked() {
+                            if ui
+                                .small_button("✎")
+                                .on_hover_text("Edit address (Ctrl+L)")
+                                .clicked()
+                            {
                                 start_edit = true;
                             }
                         });
@@ -1199,7 +1285,8 @@ impl ExplorerApp {
                     ui.close_menu();
                 }
                 if ui.button("📄 Text document").clicked() {
-                    let target = disk::unique_destination(self.current().path.join("New Text Document.txt"));
+                    let target =
+                        disk::unique_destination(self.current().path.join("New Text Document.txt"));
                     match std::fs::write(&target, b"") {
                         Ok(()) => {
                             self.status = format!("Created {}", file_name_of(&target));
@@ -1223,7 +1310,10 @@ impl ExplorerApp {
                 .on_hover_text("Ctrl+X")
                 .clicked()
             {
-                self.clipboard = Some(FileClipboard { paths: multiselection.clone(), cut: true });
+                self.clipboard = Some(FileClipboard {
+                    paths: multiselection.clone(),
+                    cut: true,
+                });
                 self.status = format!("Cut {} item(s)", multiselection.len());
             }
             if ui
@@ -1231,7 +1321,10 @@ impl ExplorerApp {
                 .on_hover_text("Ctrl+C")
                 .clicked()
             {
-                self.clipboard = Some(FileClipboard { paths: multiselection.clone(), cut: false });
+                self.clipboard = Some(FileClipboard {
+                    paths: multiselection.clone(),
+                    cut: false,
+                });
                 self.status = format!("Copied {} item(s)", multiselection.len());
             }
             let has_clip = self.clipboard.is_some();
@@ -1261,7 +1354,11 @@ impl ExplorerApp {
                 self.delete_permanent = false;
             }
             ui.separator();
-            if ui.button("⤴ Share").on_hover_text("Open sharing options").clicked() {
+            if ui
+                .button("⤴ Share")
+                .on_hover_text("Open sharing options")
+                .clicked()
+            {
                 if let Some(one) = multiselection.first() {
                     let _ = shell::open_verb(one, "share");
                 } else {
@@ -1350,78 +1447,88 @@ impl ExplorerApp {
         let mut status_msg: Option<String> = None;
         let drives = self.drives.clone();
 
-        egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
-            ui.add_space(4.0);
-            ui.label(RichText::new("QUICK ACCESS").small().weak());
-            for folder in KnownFolder::sidebar() {
-                let label = folder.label();
-                let path = folder.path();
-                let active = match &path {
-                    Some(p) => cur_path == *p,
-                    None => nav_selected == Some(*folder),
-                };
-                let text = RichText::new(format!("{}  {}", sidebar_glyph(*folder), label)).size(13.0);
-                let text = if active { text.strong() } else { text };
-                if ui.add(egui::Button::new(text).frame(active)).clicked() {
-                    nav_selected = Some(*folder);
-                    match path {
-                        Some(p) => nav = Some(p),
-                        None => status_msg = Some(format!("{label} is a virtual folder")),
+        egui::ScrollArea::vertical()
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                ui.add_space(4.0);
+                ui.label(RichText::new("QUICK ACCESS").small().weak());
+                for folder in KnownFolder::sidebar() {
+                    let label = folder.label();
+                    let path = folder.path();
+                    let active = match &path {
+                        Some(p) => cur_path == *p,
+                        None => nav_selected == Some(*folder),
+                    };
+                    let text =
+                        RichText::new(format!("{}  {}", sidebar_glyph(*folder), label)).size(13.0);
+                    let text = if active { text.strong() } else { text };
+                    if ui.add(egui::Button::new(text).frame(active)).clicked() {
+                        nav_selected = Some(*folder);
+                        match path {
+                            Some(p) => nav = Some(p),
+                            None => status_msg = Some(format!("{label} is a virtual folder")),
+                        }
                     }
                 }
-            }
 
-            ui.add_space(10.0);
-            ui.label(RichText::new("THIS PC").small().weak());
-            for drive in &drives {
-                let p = PathBuf::from(&drive.root);
-                let name = if drive.label.is_empty() {
-                    format!("{} ({})", drive.kind.map(|k| k.label()).unwrap_or("Drive"), drive.root.trim_end_matches('\\'))
-                } else {
-                    format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
-                };
-                let frac = if drive.total_bytes > 0 {
-                    drive.free_bytes as f32 / drive.total_bytes as f32
-                } else {
-                    0.0
-                };
-                let active = cur_path.starts_with(&p);
-                let text = RichText::new(format!("💽  {name}")).size(13.0);
-                let text = if active { text.strong() } else { text };
-                let resp = ui.add(egui::Button::new(text).frame(active));
-                if resp.clicked() {
-                    nav = Some(p);
+                ui.add_space(10.0);
+                ui.label(RichText::new("THIS PC").small().weak());
+                for drive in &drives {
+                    let p = PathBuf::from(&drive.root);
+                    let name = if drive.label.is_empty() {
+                        format!(
+                            "{} ({})",
+                            drive.kind.map(|k| k.label()).unwrap_or("Drive"),
+                            drive.root.trim_end_matches('\\')
+                        )
+                    } else {
+                        format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
+                    };
+                    let frac = if drive.total_bytes > 0 {
+                        drive.free_bytes as f32 / drive.total_bytes as f32
+                    } else {
+                        0.0
+                    };
+                    let active = cur_path.starts_with(&p);
+                    let text = RichText::new(format!("💽  {name}")).size(13.0);
+                    let text = if active { text.strong() } else { text };
+                    let resp = ui.add(egui::Button::new(text).frame(active));
+                    if resp.clicked() {
+                        nav = Some(p);
+                    }
+                    resp.on_hover_text(format!(
+                        "{} · free {} of {}",
+                        drive.fs_name,
+                        disk::format_size(drive.free_bytes),
+                        disk::format_size(drive.total_bytes)
+                    ));
+                    if drive.total_bytes > 0 {
+                        ui.add(
+                            egui::ProgressBar::new(1.0 - frac)
+                                .desired_width((ui.available_width() - 8.0).max(40.0))
+                                .desired_height(3.0)
+                                .fill(Color32::from_rgb(0, 120, 215)),
+                        );
+                    }
                 }
-                resp.on_hover_text(format!(
-                    "{} · free {} of {}",
-                    drive.fs_name,
-                    disk::format_size(drive.free_bytes),
-                    disk::format_size(drive.total_bytes)
-                ));
-                if drive.total_bytes > 0 {
-                    ui.add(
-                        egui::ProgressBar::new(1.0 - frac)
-                            .desired_width((ui.available_width() - 8.0).max(40.0))
-                            .desired_height(3.0)
-                            .fill(Color32::from_rgb(0, 120, 215)),
-                    );
-                }
-            }
 
-            ui.add_space(10.0);
-            ui.label(RichText::new("FOLDERS IN THIS VIEW").small().weak());
-            if subfolders.is_empty() {
-                ui.label(RichText::new("   (no sub-folders)").size(11.0).weak());
-            }
-            for (name, path) in &subfolders {
-                if ui
-                    .add(egui::Button::new(RichText::new(format!("📁  {name}")).size(12.0)).frame(false))
-                    .clicked()
-                {
-                    nav = Some(path.clone());
+                ui.add_space(10.0);
+                ui.label(RichText::new("FOLDERS IN THIS VIEW").small().weak());
+                if subfolders.is_empty() {
+                    ui.label(RichText::new("   (no sub-folders)").size(11.0).weak());
                 }
-            }
-        });
+                for (name, path) in &subfolders {
+                    if ui
+                        .add(
+                            egui::Button::new(RichText::new(format!("📁  {name}")).size(12.0))
+                                .frame(false),
+                        )
+                        .clicked()
+                    {
+                        nav = Some(path.clone());
+                    }
+                }
+            });
         let _ = ctx;
         self.nav_selected = nav_selected;
         if let Some(msg) = status_msg {
@@ -1458,7 +1565,11 @@ impl ExplorerApp {
         if let Some(err) = self.current().error.clone() {
             ui.add_space(20.0);
             ui.vertical_centered(|ui| {
-                ui.label(RichText::new("⚠").size(28.0).color(Color32::from_rgb(240, 160, 90)));
+                ui.label(
+                    RichText::new("⚠")
+                        .size(28.0)
+                        .color(Color32::from_rgb(240, 160, 90)),
+                );
                 ui.label(RichText::new(&err).color(Color32::from_rgb(240, 140, 120)));
                 ui.add_space(6.0);
                 if ui.button("Retry").clicked() {
@@ -1480,7 +1591,8 @@ impl ExplorerApp {
                 }
                 let commit = ui.input(|i| i.key_pressed(egui::Key::Enter));
                 if ui.button("Create").clicked() || commit {
-                    let target = disk::unique_destination(self.current().path.join(&self.new_folder_buffer));
+                    let target =
+                        disk::unique_destination(self.current().path.join(&self.new_folder_buffer));
                     match disk::create_dir_all(&target) {
                         Ok(()) => {
                             self.status = format!("Created {}", file_name_of(&target));
@@ -1530,7 +1642,11 @@ impl ExplorerApp {
                 if self.current().filter.is_empty() {
                     ui.label(RichText::new("This folder is empty").size(15.0).weak());
                 } else {
-                    ui.label(RichText::new("No items match your search").size(15.0).weak());
+                    ui.label(
+                        RichText::new("No items match your search")
+                            .size(15.0)
+                            .weak(),
+                    );
                 }
             });
             return;
@@ -1545,13 +1661,23 @@ impl ExplorerApp {
     }
 
     /// Shared selection logic: plain click replaces, Ctrl toggles, Shift extends.
-    fn apply_click(&mut self, index: usize, path: &Path, modifiers: egui::Modifiers, entries: &[DirEntry]) {
+    fn apply_click(
+        &mut self,
+        index: usize,
+        path: &Path,
+        modifiers: egui::Modifiers,
+        entries: &[DirEntry],
+    ) {
         let ctrl = modifiers.ctrl || modifiers.command;
         let shift = modifiers.shift;
         let tab = self.current_mut();
         if shift {
             if let Some(anchor) = tab.anchor {
-                let (lo, hi) = if anchor <= index { (anchor, index) } else { (index, anchor) };
+                let (lo, hi) = if anchor <= index {
+                    (anchor, index)
+                } else {
+                    (index, anchor)
+                };
                 tab.selection = entries[lo..=hi].iter().map(|e| e.path.clone()).collect();
                 return;
             }
@@ -1579,7 +1705,13 @@ impl ExplorerApp {
             .resizable(true)
             .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
             .column(Column::initial(26.0).at_least(24.0).clip(true))
-            .column(Column::initial(320.0).at_least(140.0).clip(true).resizable(true).range(120.0..=1400.0))
+            .column(
+                Column::initial(320.0)
+                    .at_least(140.0)
+                    .clip(true)
+                    .resizable(true)
+                    .range(120.0..=1400.0),
+            )
             .column(Column::initial(96.0).at_least(70.0).clip(true))
             .column(Column::initial(150.0).at_least(90.0).clip(true))
             .column(Column::initial(150.0).at_least(90.0).clip(true))
@@ -1600,7 +1732,11 @@ impl ExplorerApp {
             ] {
                 header.col(|ui| {
                     let arrow = if sort_key == key {
-                        if sort_asc { " ▲" } else { " ▼" }
+                        if sort_asc {
+                            " ▲"
+                        } else {
+                            " ▼"
+                        }
                     } else {
                         ""
                     };
@@ -1674,7 +1810,11 @@ impl ExplorerApp {
                     }
                 });
                 row.col(|ui| {
-                    let size = if entry.is_dir { String::new() } else { disk::format_size(entry.size) };
+                    let size = if entry.is_dir {
+                        String::new()
+                    } else {
+                        disk::format_size(entry.size)
+                    };
                     ui.label(RichText::new(size).monospace());
                 });
                 row.col(|ui| {
@@ -1723,55 +1863,71 @@ impl ExplorerApp {
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
         let mut drag_started: Option<PathBuf> = None;
         let mut drop_on: Option<PathBuf> = None;
-        egui::ScrollArea::both().id_salt("listview").auto_shrink([false, false]).show(ui, |ui| {
-            let width = ui.available_width().max(600.0);
-            let cols = ((width / 230.0).floor() as usize).max(1);
-            let cell_w = width / cols as f32 - 6.0;
-            for chunk_start in (0..entries.len()).step_by(cols) {
-                let chunk = &entries[chunk_start..(chunk_start + cols).min(entries.len())];
-                ui.horizontal(|ui| {
-                    for (offset, entry) in chunk.iter().enumerate() {
-                        let idx = chunk_start + offset;
-                        let selected = self.current().is_selected(&entry.path);
-                        ui.allocate_ui(egui::vec2(cell_w, 20.0), |ui| {
-                            ui.horizontal(|ui| {
-                                if let Some(id) = self.icon_for(ctx, entry, 16) {
-                                    ui.add(egui::Image::new((id, egui::vec2(16.0, 16.0))));
-                                }
-                                let mut text = RichText::new(truncate_middle(&entry.name, 30)).size(12.0);
-                                if entry.hidden {
-                                    text = text.weak();
-                                }
-                                let mut local: Vec<Command> = Vec::new();
-                                let resp = ui.add(egui::Button::new(text).selected(selected).frame(false));
-                                resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
-                                commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
-                                if resp.drag_started() {
-                                    drag_started = Some(entry.path.clone());
-                                }
-                                if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty() {
-                                    drop_on = Some(entry.path.clone());
-                                    ui.painter().rect_stroke(
-                                        resp.rect.expand(1.0),
-                                        2.0,
-                                        egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
+        egui::ScrollArea::both()
+            .id_salt("listview")
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                let width = ui.available_width().max(600.0);
+                let cols = ((width / 230.0).floor() as usize).max(1);
+                let cell_w = width / cols as f32 - 6.0;
+                for chunk_start in (0..entries.len()).step_by(cols) {
+                    let chunk = &entries[chunk_start..(chunk_start + cols).min(entries.len())];
+                    ui.horizontal(|ui| {
+                        for (offset, entry) in chunk.iter().enumerate() {
+                            let idx = chunk_start + offset;
+                            let selected = self.current().is_selected(&entry.path);
+                            ui.allocate_ui(egui::vec2(cell_w, 20.0), |ui| {
+                                ui.horizontal(|ui| {
+                                    if let Some(id) = self.icon_for(ctx, entry, 16) {
+                                        ui.add(egui::Image::new((id, egui::vec2(16.0, 16.0))));
+                                    }
+                                    let mut text =
+                                        RichText::new(truncate_middle(&entry.name, 30)).size(12.0);
+                                    if entry.hidden {
+                                        text = text.weak();
+                                    }
+                                    let mut local: Vec<Command> = Vec::new();
+                                    let resp = ui.add(
+                                        egui::Button::new(text).selected(selected).frame(false),
                                     );
-                                }
-                                if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
-                                    drop_on = Some(entry.path.clone());
-                                }
-                                if resp.clicked() {
-                                    clicked = Some((idx, entry.path.clone()));
-                                }
-                                if resp.double_clicked() {
-                                    opened = Some(entry.clone());
-                                }
+                                    resp.context_menu(|ui| {
+                                        simple_context_menu(ui, entry, &mut local)
+                                    });
+                                    commands
+                                        .extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+                                    if resp.drag_started() {
+                                        drag_started = Some(entry.path.clone());
+                                    }
+                                    if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty()
+                                    {
+                                        drop_on = Some(entry.path.clone());
+                                        ui.painter().rect_stroke(
+                                            resp.rect.expand(1.0),
+                                            2.0,
+                                            egui::Stroke::new(
+                                                1.5_f32,
+                                                Color32::from_rgb(0, 150, 255),
+                                            ),
+                                        );
+                                    }
+                                    if resp.drag_stopped()
+                                        && entry.is_dir
+                                        && !self.drag_paths.is_empty()
+                                    {
+                                        drop_on = Some(entry.path.clone());
+                                    }
+                                    if resp.clicked() {
+                                        clicked = Some((idx, entry.path.clone()));
+                                    }
+                                    if resp.double_clicked() {
+                                        opened = Some(entry.clone());
+                                    }
+                                });
                             });
-                        });
-                    }
-                });
-            }
-        });
+                        }
+                    });
+                }
+            });
         if let Some((idx, path)) = clicked {
             let mods = ctx.input(|i| i.modifiers);
             self.apply_click(idx, &path, mods, entries);
@@ -1793,7 +1949,13 @@ impl ExplorerApp {
     }
 
     /// Large icons (Explorer's "Large icons" view) with 48 px shell icons.
-    fn tiles_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry], icon: u32) {
+    fn tiles_view(
+        &mut self,
+        ui: &mut egui::Ui,
+        ctx: &egui::Context,
+        entries: &[DirEntry],
+        icon: u32,
+    ) {
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -1801,64 +1963,83 @@ impl ExplorerApp {
         let mut drop_on: Option<PathBuf> = None;
         let cell_w = 116.0;
         let cell_h = icon as f32 + 34.0;
-        egui::ScrollArea::vertical().id_salt("tiles").auto_shrink([false, false]).show(ui, |ui| {
-            let avail = ui.available_width().max(320.0);
-            let cols = ((avail / cell_w).floor() as usize).max(1);
-            for chunk_start in (0..entries.len()).step_by(cols) {
-                let chunk = &entries[chunk_start..(chunk_start + cols).min(entries.len())];
-                ui.horizontal(|ui| {
-                    for (offset, entry) in chunk.iter().enumerate() {
-                        let idx = chunk_start + offset;
-                        let selected = self.current().is_selected(&entry.path);
-                        ui.allocate_ui(egui::vec2(cell_w, cell_h), |ui| {
-                            ui.vertical_centered(|ui| {
-                                let id = self.icon_for(ctx, entry, icon);
-                                let resp = if let Some(id) = id {
-                                    ui.add(
-                                        egui::ImageButton::new(egui::Image::new((id, egui::vec2(icon as f32, icon as f32))))
+        egui::ScrollArea::vertical()
+            .id_salt("tiles")
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                let avail = ui.available_width().max(320.0);
+                let cols = ((avail / cell_w).floor() as usize).max(1);
+                for chunk_start in (0..entries.len()).step_by(cols) {
+                    let chunk = &entries[chunk_start..(chunk_start + cols).min(entries.len())];
+                    ui.horizontal(|ui| {
+                        for (offset, entry) in chunk.iter().enumerate() {
+                            let idx = chunk_start + offset;
+                            let selected = self.current().is_selected(&entry.path);
+                            ui.allocate_ui(egui::vec2(cell_w, cell_h), |ui| {
+                                ui.vertical_centered(|ui| {
+                                    let id = self.icon_for(ctx, entry, icon);
+                                    let resp = if let Some(id) = id {
+                                        ui.add(
+                                            egui::ImageButton::new(egui::Image::new((
+                                                id,
+                                                egui::vec2(icon as f32, icon as f32),
+                                            )))
                                             .selected(selected)
                                             .frame(false),
-                                    )
-                                } else {
-                                    let t = if entry.is_dir { "🗀" } else { "🗎" };
-                                    ui.add(
-                                        egui::Button::new(RichText::new(t).size(icon as f32 * 0.7))
+                                        )
+                                    } else {
+                                        let t = if entry.is_dir { "🗀" } else { "🗎" };
+                                        ui.add(
+                                            egui::Button::new(
+                                                RichText::new(t).size(icon as f32 * 0.7),
+                                            )
                                             .selected(selected)
                                             .frame(false),
-                                    )
-                                };
-                                let mut local: Vec<Command> = Vec::new();
-                                resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
-                                commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
-                                if resp.drag_started() {
-                                    drag_started = Some(entry.path.clone());
-                                }
-                                if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty() {
-                                    drop_on = Some(entry.path.clone());
-                                    ui.painter().rect_stroke(
-                                        resp.rect.expand(1.0),
-                                        2.0,
-                                        egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
-                                    );
-                                }
-                                if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
-                                    drop_on = Some(entry.path.clone());
-                                }
-                                if resp.clicked() {
-                                    clicked = Some((idx, entry.path.clone()));
-                                }
-                                if resp.double_clicked() {
-                                    opened = Some(entry.clone());
-                                }
-                                let name = RichText::new(truncate_middle(&entry.name, 16)).size(11.0);
-                                let name = if entry.hidden { name.weak() } else { name };
-                                ui.label(name);
+                                        )
+                                    };
+                                    let mut local: Vec<Command> = Vec::new();
+                                    resp.context_menu(|ui| {
+                                        simple_context_menu(ui, entry, &mut local)
+                                    });
+                                    commands
+                                        .extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+                                    if resp.drag_started() {
+                                        drag_started = Some(entry.path.clone());
+                                    }
+                                    if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty()
+                                    {
+                                        drop_on = Some(entry.path.clone());
+                                        ui.painter().rect_stroke(
+                                            resp.rect.expand(1.0),
+                                            2.0,
+                                            egui::Stroke::new(
+                                                1.5_f32,
+                                                Color32::from_rgb(0, 150, 255),
+                                            ),
+                                        );
+                                    }
+                                    if resp.drag_stopped()
+                                        && entry.is_dir
+                                        && !self.drag_paths.is_empty()
+                                    {
+                                        drop_on = Some(entry.path.clone());
+                                    }
+                                    if resp.clicked() {
+                                        clicked = Some((idx, entry.path.clone()));
+                                    }
+                                    if resp.double_clicked() {
+                                        opened = Some(entry.clone());
+                                    }
+                                    let name =
+                                        RichText::new(truncate_middle(&entry.name, 16)).size(11.0);
+                                    let name = if entry.hidden { name.weak() } else { name };
+                                    ui.label(name);
+                                });
                             });
-                        });
-                    }
-                });
-            }
-        });
+                        }
+                    });
+                }
+            });
         if let Some((idx, path)) = clicked {
             let mods = ctx.input(|i| i.modifiers);
             self.apply_click(idx, &path, mods, entries);
@@ -1884,68 +2065,81 @@ impl ExplorerApp {
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
-        egui::ScrollArea::vertical().id_salt("content").auto_shrink([false, false]).show(ui, |ui| {
-            for (idx, entry) in entries.iter().enumerate() {
-                let selected = self.current().is_selected(&entry.path);
-                let (rect, resp) = ui.allocate_exact_size(
-                    egui::vec2(ui.available_width(), 52.0),
-                    egui::Sense::click(),
-                );
-                if selected {
-                    ui.painter().rect_filled(rect, 3.0, ui.visuals().selection.bg_fill);
-                }
-                if resp.hovered() {
-                    ui.painter().rect_stroke(
-                        rect,
-                        3.0,
-                        egui::Stroke::new(1.0_f32, ui.visuals().widgets.hovered.bg_stroke.color),
+        egui::ScrollArea::vertical()
+            .id_salt("content")
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                for (idx, entry) in entries.iter().enumerate() {
+                    let selected = self.current().is_selected(&entry.path);
+                    let (rect, resp) = ui.allocate_exact_size(
+                        egui::vec2(ui.available_width(), 52.0),
+                        egui::Sense::click(),
                     );
-                }
-                let icon_rect = egui::Rect::from_min_size(rect.min + egui::vec2(6.0, 8.0), egui::vec2(36.0, 36.0));
-                if let Some(id) = self.icon_for(ctx, entry, 32) {
-                    ui.put(icon_rect, egui::Image::new((id, egui::vec2(36.0, 36.0))));
-                } else {
-                    ui.put(icon_rect, egui::Label::new(if entry.is_dir { "🗀" } else { "🗎" }));
-                }
-                let name_pos = rect.min + egui::vec2(52.0, 8.0);
-                ui.painter().text(
-                    name_pos,
-                    egui::Align2::LEFT_TOP,
-                    &entry.name,
-                    egui::FontId::proportional(13.0),
                     if selected {
-                        Color32::WHITE
+                        ui.painter()
+                            .rect_filled(rect, 3.0, ui.visuals().selection.bg_fill);
+                    }
+                    if resp.hovered() {
+                        ui.painter().rect_stroke(
+                            rect,
+                            3.0,
+                            egui::Stroke::new(
+                                1.0_f32,
+                                ui.visuals().widgets.hovered.bg_stroke.color,
+                            ),
+                        );
+                    }
+                    let icon_rect = egui::Rect::from_min_size(
+                        rect.min + egui::vec2(6.0, 8.0),
+                        egui::vec2(36.0, 36.0),
+                    );
+                    if let Some(id) = self.icon_for(ctx, entry, 32) {
+                        ui.put(icon_rect, egui::Image::new((id, egui::vec2(36.0, 36.0))));
                     } else {
-                        ui.visuals().text_color()
-                    },
-                );
-                let meta = if entry.is_dir {
-                    String::new()
-                } else {
-                    format!(
-                        "{} · {}",
-                        disk::format_size(entry.size),
-                        entry.modified_display()
-                    )
-                };
-                ui.painter().text(
-                    name_pos + egui::vec2(0.0, 18.0),
-                    egui::Align2::LEFT_TOP,
-                    &meta,
-                    egui::FontId::proportional(11.0),
-                    Color32::from_gray(160),
-                );
-                let mut local: Vec<Command> = Vec::new();
-                resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
-                commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
-                if resp.clicked() {
-                    clicked = Some((idx, entry.path.clone()));
+                        ui.put(
+                            icon_rect,
+                            egui::Label::new(if entry.is_dir { "🗀" } else { "🗎" }),
+                        );
+                    }
+                    let name_pos = rect.min + egui::vec2(52.0, 8.0);
+                    ui.painter().text(
+                        name_pos,
+                        egui::Align2::LEFT_TOP,
+                        &entry.name,
+                        egui::FontId::proportional(13.0),
+                        if selected {
+                            Color32::WHITE
+                        } else {
+                            ui.visuals().text_color()
+                        },
+                    );
+                    let meta = if entry.is_dir {
+                        String::new()
+                    } else {
+                        format!(
+                            "{} · {}",
+                            disk::format_size(entry.size),
+                            entry.modified_display()
+                        )
+                    };
+                    ui.painter().text(
+                        name_pos + egui::vec2(0.0, 18.0),
+                        egui::Align2::LEFT_TOP,
+                        &meta,
+                        egui::FontId::proportional(11.0),
+                        Color32::from_gray(160),
+                    );
+                    let mut local: Vec<Command> = Vec::new();
+                    resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
+                    commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
+                    if resp.clicked() {
+                        clicked = Some((idx, entry.path.clone()));
+                    }
+                    if resp.double_clicked() {
+                        opened = Some(entry.clone());
+                    }
                 }
-                if resp.double_clicked() {
-                    opened = Some(entry.clone());
-                }
-            }
-        });
+            });
         if let Some((idx, path)) = clicked {
             let mods = ctx.input(|i| i.modifiers);
             self.apply_click(idx, &path, mods, entries);
@@ -1982,8 +2176,10 @@ fn simple_context_menu(ui: &mut egui::Ui, entry: &DirEntry, out: &mut Vec<Comman
             out.push(Command::RunAsAdmin);
             ui.close_menu();
         }
-        if matches!(entry.ext.as_str(), "zip" | "7z" | "rar" | "tar" | "gz" | "cab")
-            && ui.button("Extract All…").clicked()
+        if matches!(
+            entry.ext.as_str(),
+            "zip" | "7z" | "rar" | "tar" | "gz" | "cab"
+        ) && ui.button("Extract All…").clicked()
         {
             out.push(Command::ExtractHere);
             ui.close_menu();
@@ -2036,7 +2232,12 @@ fn format_date(ft: u64) -> String {
 impl ExplorerApp {
     /// Runs after any view: applies queued context-menu commands, handles
     /// drag-and-drop between rows/folders and repaints while a job runs.
-    fn finish_drag_and_commands(&mut self, ctx: &egui::Context, _entries: &[DirEntry], commands: Vec<(PathBuf, Command)>) {
+    fn finish_drag_and_commands(
+        &mut self,
+        ctx: &egui::Context,
+        _entries: &[DirEntry],
+        commands: Vec<(PathBuf, Command)>,
+    ) {
         // Context-menu commands (the path is the row they were invoked on).
         for (path, cmd) in commands {
             // Explorer acts on the whole selection when the clicked row is part
@@ -2097,53 +2298,98 @@ impl ExplorerApp {
 
         let meta = std::fs::metadata(&path).ok();
         if let Some(meta) = &meta {
-            egui::Grid::new("preview_meta").num_columns(2).spacing([8.0, 4.0]).show(ui, |ui| {
-                ui.label(RichText::new("Type").weak());
-                let entry = self.current().entries.iter().find(|e| e.path == path).cloned();
-                let t = match entry {
-                    Some(e) => self.type_text(&e),
-                    None => "File".to_string(),
-                };
-                ui.label(t);
-                ui.end_row();
-                ui.label(RichText::new("Size").weak());
-                ui.label(disk::format_size(meta.len()));
-                ui.end_row();
-                if let Ok(modified) = meta.modified() {
-                    if let Ok(dur) = modified.duration_since(std::time::UNIX_EPOCH) {
-                        ui.label(RichText::new("Modified").weak());
-                        ui.label(disk::format_local(dur.as_secs()));
-                        ui.end_row();
+            egui::Grid::new("preview_meta")
+                .num_columns(2)
+                .spacing([8.0, 4.0])
+                .show(ui, |ui| {
+                    ui.label(RichText::new("Type").weak());
+                    let entry = self
+                        .current()
+                        .entries
+                        .iter()
+                        .find(|e| e.path == path)
+                        .cloned();
+                    let t = match entry {
+                        Some(e) => self.type_text(&e),
+                        None => "File".to_string(),
+                    };
+                    ui.label(t);
+                    ui.end_row();
+                    ui.label(RichText::new("Size").weak());
+                    ui.label(disk::format_size(meta.len()));
+                    ui.end_row();
+                    if let Ok(modified) = meta.modified() {
+                        if let Ok(dur) = modified.duration_since(std::time::UNIX_EPOCH) {
+                            ui.label(RichText::new("Modified").weak());
+                            ui.label(disk::format_local(dur.as_secs()));
+                            ui.end_row();
+                        }
                     }
-                }
-                ui.label(RichText::new("Path").weak());
-                ui.label(RichText::new(truncate_middle(&path.display().to_string(), 46)).small().weak());
-                ui.end_row();
-            });
+                    ui.label(RichText::new("Path").weak());
+                    ui.label(
+                        RichText::new(truncate_middle(&path.display().to_string(), 46))
+                            .small()
+                            .weak(),
+                    );
+                    ui.end_row();
+                });
             ui.separator();
             // Text preview for small text files, like Explorer's preview pane.
-            let ext = path.extension().map(|e| e.to_string_lossy().to_lowercase()).unwrap_or_default();
+            let ext = path
+                .extension()
+                .map(|e| e.to_string_lossy().to_lowercase())
+                .unwrap_or_default();
             let is_text = matches!(
                 ext.as_str(),
-                "txt" | "md" | "log" | "json" | "toml" | "yaml" | "yml" | "csv" | "rs" | "c" | "h" | "cpp" | "hpp"
-                    | "py" | "js" | "ts" | "html" | "css" | "xml" | "ini" | "cfg" | "conf" | "sh" | "bat" | "ps1"
+                "txt"
+                    | "md"
+                    | "log"
+                    | "json"
+                    | "toml"
+                    | "yaml"
+                    | "yml"
+                    | "csv"
+                    | "rs"
+                    | "c"
+                    | "h"
+                    | "cpp"
+                    | "hpp"
+                    | "py"
+                    | "js"
+                    | "ts"
+                    | "html"
+                    | "css"
+                    | "xml"
+                    | "ini"
+                    | "cfg"
+                    | "conf"
+                    | "sh"
+                    | "bat"
+                    | "ps1"
             );
             if is_text && meta.len() <= 64 * 1024 {
                 if let Ok(text) = std::fs::read_to_string(&path) {
                     let head: String = text.lines().take(60).collect::<Vec<_>>().join("\n");
-                    egui::ScrollArea::vertical().max_height(260.0).show(ui, |ui| {
-                        ui.add(
-                            egui::Label::new(RichText::new(head).monospace().size(11.0))
-                                .wrap_mode(egui::TextWrapMode::Truncate),
-                        );
-                    });
+                    egui::ScrollArea::vertical()
+                        .max_height(260.0)
+                        .show(ui, |ui| {
+                            ui.add(
+                                egui::Label::new(RichText::new(head).monospace().size(11.0))
+                                    .wrap_mode(egui::TextWrapMode::Truncate),
+                            );
+                        });
                 }
             }
         }
     }
 
     /// Icon for an arbitrary path (used by the preview pane).
-    fn icon_for_path(&mut self, ctx: &egui::Context, path: &Path, size: u32) -> Option<egui::TextureId> {
+    fn icon_for_path(
+        &mut self,
+        ctx: &egui::Context,
+        path: &Path,
+        size: u32,
+    ) -> Option<egui::TextureId> {
         let key = format!("path:{size}:{}", path.display());
         if let Some(slot) = self.icons.get(&key) {
             return slot.as_ref().map(|t| t.id());
@@ -2154,7 +2400,10 @@ impl ExplorerApp {
             if rgba.len() < expected {
                 return None;
             }
-            let image = egui::ColorImage::from_rgba_unmultiplied([size as usize, size as usize], &rgba[..expected]);
+            let image = egui::ColorImage::from_rgba_unmultiplied(
+                [size as usize, size as usize],
+                &rgba[..expected],
+            );
             Some(ctx.load_texture(key.clone(), image, egui::TextureOptions::LINEAR))
         });
         let id = texture.as_ref().map(|t| t.id());
@@ -2174,7 +2423,11 @@ impl ExplorerApp {
                 let mut s = format!("{dirs} folder(s), {files} file(s)");
                 if let Some((_, bytes, count)) = &self.folder_size {
                     if *count > 0 {
-                        s.push_str(&format!("  ·  {} total in {}", disk::format_size(*bytes), plural(*count)));
+                        s.push_str(&format!(
+                            "  ·  {} total in {}",
+                            disk::format_size(*bytes),
+                            plural(*count)
+                        ));
                     }
                 }
                 s
@@ -2186,13 +2439,20 @@ impl ExplorerApp {
                 ui.label(RichText::new(&self.status).small().weak());
             }
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                ui.label(RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION"))).small().weak());
+                ui.label(
+                    RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION")))
+                        .small()
+                        .weak(),
+                );
                 ui.separator();
                 // View-mode shortcuts, like Explorer's status-bar buttons.
                 for v in ViewMode::ALL {
                     let active = self.current().view == v;
                     if ui
-                        .add(egui::Button::new(RichText::new(view_glyph(v)).size(13.0)).frame(active))
+                        .add(
+                            egui::Button::new(RichText::new(view_glyph(v)).size(13.0))
+                                .frame(active),
+                        )
                         .on_hover_text(v.label())
                         .clicked()
                     {
@@ -2359,7 +2619,10 @@ impl ExplorerApp {
                     (None, false) => entries.len() - 1,
                 };
                 if shift {
-                    let mods = egui::Modifiers { shift: true, ..Default::default() };
+                    let mods = egui::Modifiers {
+                        shift: true,
+                        ..Default::default()
+                    };
                     self.apply_click(next, &entries[next].path.clone(), mods, &entries);
                 } else {
                     self.current_mut().selection = vec![entries[next].path.clone()];
@@ -2381,32 +2644,49 @@ impl ExplorerApp {
             let paths = self.delete_confirm.clone();
             let permanent = self.delete_permanent;
             let mut action: Option<bool> = None;
-            egui::Window::new(if permanent { "Delete permanently" } else { "Delete" })
-                .collapsible(false)
-                .resizable(false)
-                .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-                .show(ctx, |ui| {
-                    ui.label(if paths.len() == 1 {
-                        if permanent {
-                            format!("Permanently delete \"{}\"? This cannot be undone.", file_name_of(&paths[0]))
-                        } else {
-                            format!("Move \"{}\" to the Recycle Bin?", file_name_of(&paths[0]))
-                        }
-                    } else if permanent {
-                        format!("Permanently delete {} items? This cannot be undone.", paths.len())
+            egui::Window::new(if permanent {
+                "Delete permanently"
+            } else {
+                "Delete"
+            })
+            .collapsible(false)
+            .resizable(false)
+            .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+            .show(ctx, |ui| {
+                ui.label(if paths.len() == 1 {
+                    if permanent {
+                        format!(
+                            "Permanently delete \"{}\"? This cannot be undone.",
+                            file_name_of(&paths[0])
+                        )
                     } else {
-                        format!("Move {} items to the Recycle Bin?", paths.len())
-                    });
-                    ui.add_space(10.0);
-                    ui.horizontal(|ui| {
-                        if ui.button(if permanent { "Delete permanently" } else { "Delete" }).clicked() {
-                            action = Some(true);
-                        }
-                        if ui.button("Cancel").clicked() {
-                            action = Some(false);
-                        }
-                    });
+                        format!("Move \"{}\" to the Recycle Bin?", file_name_of(&paths[0]))
+                    }
+                } else if permanent {
+                    format!(
+                        "Permanently delete {} items? This cannot be undone.",
+                        paths.len()
+                    )
+                } else {
+                    format!("Move {} items to the Recycle Bin?", paths.len())
                 });
+                ui.add_space(10.0);
+                ui.horizontal(|ui| {
+                    if ui
+                        .button(if permanent {
+                            "Delete permanently"
+                        } else {
+                            "Delete"
+                        })
+                        .clicked()
+                    {
+                        action = Some(true);
+                    }
+                    if ui.button("Cancel").clicked() {
+                        action = Some(false);
+                    }
+                });
+            });
             match action {
                 Some(true) => {
                     let mut errors = Vec::new();
@@ -2438,7 +2718,11 @@ impl ExplorerApp {
         }
 
         if let Some(job) = &self.job {
-            let fraction = if job.total == 0 { 0.0 } else { job.done as f32 / job.total as f32 };
+            let fraction = if job.total == 0 {
+                0.0
+            } else {
+                job.done as f32 / job.total as f32
+            };
             let label = job.label.clone();
             let done = job.done;
             let total = job.total;
@@ -2448,7 +2732,11 @@ impl ExplorerApp {
                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
                 .show(ctx, |ui| {
                     ui.label(label);
-                    ui.add(egui::ProgressBar::new(fraction).show_percentage().desired_width(320.0));
+                    ui.add(
+                        egui::ProgressBar::new(fraction)
+                            .show_percentage()
+                            .desired_width(320.0),
+                    );
                     ui.label(format!("{done} / {total}"));
                     if ui.button("Cancel").clicked() {
                         if let Some(job) = &self.job {
@@ -2467,7 +2755,9 @@ impl eframe::App for ExplorerApp {
 
         egui::TopBottomPanel::top("tabs").show(ctx, |ui| self.tab_bar(ui));
         egui::TopBottomPanel::top("commandbar").show(ctx, |ui| self.command_bar(ui));
-        egui::TopBottomPanel::bottom("status").exact_height(26.0).show(ctx, |ui| self.status_bar(ui));
+        egui::TopBottomPanel::bottom("status")
+            .exact_height(26.0)
+            .show(ctx, |ui| self.status_bar(ui));
         if self.preview_open {
             egui::SidePanel::right("preview")
                 .resizable(true)
