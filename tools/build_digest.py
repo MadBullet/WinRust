@@ -45,7 +45,8 @@ def digest_file(path: str) -> list[str]:
         brace = src.find("{", m.end())
         semi = src.find(";", m.end())
         if semi != -1 and (brace == -1 or semi < brace):
-            out.append("ST  " + squeeze(src[m.start():semi + 1], 260))
+            name_m = re.match(r"pub (?:struct|union) ([A-Za-z0-9_]+)", src[m.start():])
+        out.append("ST  " + (name_m.group(1) if name_m else "?") + " = " + squeeze(src[m.start():semi + 1], 260))
             continue
         if brace == -1:
             continue
@@ -55,7 +56,9 @@ def digest_file(path: str) -> list[str]:
         body = re.sub(r"#\[[^\]]*\]", "", body)
         body = re.sub(r"\n\s*\n", "\n", body)
         lines = [ln.strip() for ln in body.splitlines() if ln.strip()]
-        out.append("ST  " + squeeze(" ".join(lines), 700))
+        name_m = re.match(r"pub (?:struct|union) ([A-Za-z0-9_]+)", src[m.start():])
+        nm = name_m.group(1) if name_m else "?"
+        out.append("ST  " + nm + " = " + squeeze(" ".join(lines), 700))
     for m in re.finditer(r"pub type [A-Za-z0-9_]+[^;]*;", src):
         out.append("TY  " + squeeze(m.group(0), 220))
     return out
