@@ -1,0 +1,90 @@
+name: build
+
+on:
+  push:
+    branches: [arena/1e8c9b58-winrust]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: rustfmt + clippy config
+        run: |
+          rustup component add clippy rustfmt
+          rustc -V
+          cargo -V
+
+      - name: cargo fmt --check
+        continue-on-error: true
+        run: cargo fmt --all -- --check > fmt.txt 2>&1; echo "exit=$?" >> fmt.txt
+
+      - name: cargo test (core)
+        continue-on-error: true
+        run: cargo test -p winrust-core --no-fail-fast > test.txt 2>&1; echo "exit=$?" >> test.txt
+
+      - name: cargo build (debug)
+        continue-on-error: true
+        run: cargo build --workspace > build.txt 2>&1; echo "exit=$?" >> build.txt
+
+      - name: cargo clippy
+        continue-on-error: true
+        run: cargo clippy --workspace --all-targets > clippy.txt 2>&1; echo "exit=$?" >> clippy.txt
+
+      - name: cargo build (release binaries)
+        continue-on-error: true
+        run: cargo build --workspace --release > release.txt 2>&1; echo "exit=$?" >> release.txt
+
+      - name: collect diagnostics
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p docs/ci/build
+          for f in fmt test build clippy release; do
+            if [ -f "$f.txt" ]; then
+              # trim to the parts that matter for the agent round-trip
+              head -c 200000 "$f.txt" > "docs/ci/build/$f.txt" || true
+            fi
+          done
+          ls -la target/release/*.exe 2>/dev/null > docs/ci/build/binaries.txt || true
+          du -sh target 2>/dev/null >> docs/ci/build/binaries.txt || true
+          exit 0
+
+      - name: commit diagnostics back to branch
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "WinRust CI"
+          git config user.email "ci@winrust.local"
+          git add docs/ci/build
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: build diagnostics [skip ci]"
+            git push
+          else
+            echo "no changes"
+          fi
+
+      - name: upload release exes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: winrust-binaries
+          path: |
+            target/release/winrust-explorer.exe
+            target/release/winrust-taskmgr.exe
+            target/release/winrust-services.exe
+            target/release/winrust-sysctl.exe
+            target/release/WinRust.exe
+          if-no-files-found: ignore
