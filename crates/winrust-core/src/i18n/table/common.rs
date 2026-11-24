@@ -86,7 +86,10 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Realtime", "Реального времени"),
     ("System", "Система"),
     ("Automatic", "Автоматически"),
-    ("Automatic (Delayed Start)", "Автоматически (отложенный запуск)"),
+    (
+        "Automatic (Delayed Start)",
+        "Автоматически (отложенный запуск)",
+    ),
     ("Manual", "Вручную"),
     ("Boot", "Загрузка"),
     ("Running", "Выполняется"),
@@ -106,7 +109,10 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Select a service first", "Сначала выберите службу"),
     ("Nothing selected", "Ничего не выбрано"),
     ("No SCM connection", "Нет подключения к диспетчеру служб"),
-    ("Administrator rights are required", "Требуются права администратора"),
+    (
+        "Administrator rights are required",
+        "Требуются права администратора",
+    ),
     ("Run as administrator", "Запуск от имени администратора"),
     ("Copied to clipboard", "Скопировано в буфер обмена"),
 ];

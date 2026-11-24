@@ -44,11 +44,16 @@ pub fn apply(ctx: &egui::Context, a: &Appearance) {
     visuals.faint_bg_color = egui::Color32::from_rgb(SURFACE, SURFACE, SURFACE + 4);
     visuals.extreme_bg_color = egui::Color32::from_rgb(18, 18, 22);
     visuals.widgets.noninteractive.bg_fill = egui::Color32::from_rgb(SURFACE, SURFACE, SURFACE + 2);
-    visuals.widgets.inactive.bg_fill = egui::Color32::from_rgb(SURFACE_HIGH, SURFACE_HIGH, SURFACE_HIGH + 6);
+    visuals.widgets.inactive.bg_fill =
+        egui::Color32::from_rgb(SURFACE_HIGH, SURFACE_HIGH, SURFACE_HIGH + 6);
     visuals.widgets.hovered.bg_fill = egui::Color32::from_rgb(58, 58, 70);
-    visuals.widgets.active.bg_fill = egui::Color32::from_rgb(ACCENT.0 / 2, ACCENT.1 / 2, ACCENT.2 / 2);
+    visuals.widgets.active.bg_fill =
+        egui::Color32::from_rgb(ACCENT.0 / 2, ACCENT.1 / 2, ACCENT.2 / 2);
     visuals.selection.bg_fill = egui::Color32::from_rgb(40, 84, 132);
-    visuals.selection.stroke = egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(ACCENT.0, ACCENT.1, ACCENT.2));
+    visuals.selection.stroke = egui::Stroke::new(
+        1.0_f32,
+        egui::Color32::from_rgb(ACCENT.0, ACCENT.1, ACCENT.2),
+    );
     ctx.set_visuals(visuals);
     // Transparency: hand egui a translucent background so the DWM composition
     // underneath is visible.  With it off the window paints opaque.
@@ -71,8 +76,8 @@ mod native {
     use super::Appearance;
     use windows_sys::Win32::Foundation::HWND;
     use windows_sys::Win32::Graphics::Dwm::{
-        DwmEnableBlurBehindWindow, DwmSetWindowAttribute, DWM_BLURBEHIND, DWM_BB_ENABLE,
-        DWMWA_USE_IMMERSIVE_DARK_MODE,
+        DwmEnableBlurBehindWindow, DwmSetWindowAttribute, DWMWA_USE_IMMERSIVE_DARK_MODE,
+        DWM_BB_ENABLE, DWM_BLURBEHIND,
     };
     use windows_sys::Win32::UI::WindowsAndMessaging::{
         GetWindowLongW, SetLayeredWindowAttributes, SetWindowLongW, GWL_EXSTYLE, LWA_ALPHA,

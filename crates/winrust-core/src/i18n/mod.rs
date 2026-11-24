@@ -30,7 +30,13 @@ pub fn init() -> Lang {
 
 /// Cache a language without writing it to the registry.
 pub fn set_lang(l: Lang) {
-    CURRENT.store(match l { Lang::En => 0, Lang::Ru => 1 }, Ordering::Relaxed);
+    CURRENT.store(
+        match l {
+            Lang::En => 0,
+            Lang::Ru => 1,
+        },
+        Ordering::Relaxed,
+    );
 }
 
 /// The language currently in effect.
@@ -143,7 +149,10 @@ mod tests {
     fn russian_translates_known_and_keeps_unknown() {
         set_lang(Lang::Ru);
         assert_eq!(t("Cancel"), "Отмена");
-        assert_eq!(t("Some string nobody translated"), "Some string nobody translated");
+        assert_eq!(
+            t("Some string nobody translated"),
+            "Some string nobody translated"
+        );
         set_lang(Lang::En);
     }
 

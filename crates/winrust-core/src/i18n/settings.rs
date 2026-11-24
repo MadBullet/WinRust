@@ -70,7 +70,10 @@ pub fn load() -> Appearance {
                 .u32("Transparent")
                 .map(|v| v != 0)
                 .unwrap_or(d.transparent),
-            blur_amount: k.u32("BlurAmount").map(|v| v as u8).unwrap_or(d.blur_amount),
+            blur_amount: k
+                .u32("BlurAmount")
+                .map(|v| v as u8)
+                .unwrap_or(d.blur_amount),
         })
         .unwrap_or(d)
         .sanitized()

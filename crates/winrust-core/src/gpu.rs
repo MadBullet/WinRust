@@ -10,12 +10,12 @@
 
 #[cfg(windows)]
 mod win {
+    use crate::wide::{from_wide_ptr, str_to_wide};
     use std::collections::HashMap;
     use windows_sys::Win32::System::Performance::{
         PdhAddEnglishCounterW, PdhCloseQuery, PdhCollectQueryData, PdhGetFormattedCounterArrayW,
         PdhOpenQueryW, PDH_FMT_COUNTERVALUE_ITEM_W, PDH_FMT_DOUBLE, PDH_MORE_DATA,
     };
-    use crate::wide::{from_wide_ptr, str_to_wide};
 
     /// A live PDH query over "GPU Engine(*)\Utilization Percentage".
     pub struct GpuQuery {
@@ -169,7 +169,8 @@ pub fn adapters() -> Vec<(u32, String)> {
     let path = r"SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}";
     if let Ok(key) = crate::registry::Key::open(Root::LocalMachine, path) {
         for sub in key.subkeys() {
-            if let Ok(k) = crate::registry::Key::open(Root::LocalMachine, &format!("{path}\\{sub}")) {
+            if let Ok(k) = crate::registry::Key::open(Root::LocalMachine, &format!("{path}\\{sub}"))
+            {
                 let name = k.string("DriverDesc").unwrap_or_default();
                 if name.is_empty() {
                     continue;
