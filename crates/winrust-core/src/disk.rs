@@ -170,7 +170,6 @@ impl DirEntry {
 pub fn format_local(unix_secs: u64) -> String {
     use windows_sys::Win32::Foundation::FILETIME;
     use windows_sys::Win32::Storage::FileSystem::FileTimeToLocalFileTime;
-    use windows_sys::Win32::System::SystemInformation::FileTimeToSystemTime;
     let ft_in = FILETIME {
         dwLowDateTime: ((unix_secs + 11_644_473_600) % (1 << 32)) as u32,
         dwHighDateTime: (((unix_secs + 11_644_473_600) >> 32) & 0xFFFF_FFFF) as u32,
@@ -179,13 +178,17 @@ pub fn format_local(unix_secs: u64) -> String {
     if unsafe { FileTimeToLocalFileTime(&ft_in, &mut local) } == 0 {
         return String::new();
     }
-    let mut st = unsafe { std::mem::zeroed::<windows_sys::Win32::Foundation::SYSTEMTIME>() };
-    if unsafe { FileTimeToSystemTime(&local, &mut st) } == 0 {
-        return String::new();
-    }
+    // Days since 1601-01-01, then a civil-date conversion (Howard Hinnant's
+    // algorithm) — avoids depending on FileTimeToSystemTime layout.
+    let ticks = ((local.dwHighDateTime as u64) << 32) | local.dwLowDateTime as u64;
+    let secs = ticks / 10_000_000;
+    let days = (secs / 86_400) as i64;
+    let sod = secs % 86_400;
+    let (y, m, d) = civil_from_days(days - 11_644_473_600);
     format!(
-        "{:04}-{:02}-{:02} {:02}:{:02}",
-        st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute
+        "{y:04}-{m:02}-{d:02} {:02}:{:02}",
+        sod / 3600,
+        (sod % 3600) / 60
     )
 }
 
@@ -363,4 +366,50 @@ pub fn tree_size(dir: impl AsRef<Path>, budget: &mut u32) -> u64 {
         }
     }
     total
+}
+
+/// Convert days-since-unix-epoch into a civil (year, month, day) triple.
+fn civil_from_days(z: i64) -> (i64, u32, u32) {
+    let z = z + 719_468;
+    let era = if z >= 0 { z } else { z - 146_096 } / 146_097;
+    let doe = (z - era * 146_097) as u64;
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let y = yoe as i64 + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = (doy - (153 * mp + 2) / 5 + 1) as u32;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 } as u32;
+    (if m <= 2 { y + 1 } else { y }, m, d)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn civil_dates() {
+        assert_eq!(civil_from_days(0), (1970, 1, 1));
+        assert_eq!(civil_from_days(19_000), (2022, 1, 8));
+        // 2026-11-24 == day 20793 since epoch
+        assert_eq!(civil_from_days(20_793), (2026, 11, 24));
+    }
+
+    #[test]
+    fn size_formatting() {
+        assert_eq!(format_size(999), "999 B");
+        assert_eq!(format_size(2048), "2.0 KB");
+        assert_eq!(format_size(5 * 1024 * 1024), "5.0 MB");
+    }
+
+    #[test]
+    fn extensions() {
+        assert_eq!(extension("readme.md"), "md");
+        assert_eq!(extension(".gitignore"), "");
+        assert_eq!(extension("noext"), "");
+    }
+
+    #[test]
+    fn local_time_roundtrip() {
+        assert!(!format_local(1_700_000_000).is_empty());
+    }
 }

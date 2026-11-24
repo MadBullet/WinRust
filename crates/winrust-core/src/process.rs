@@ -305,7 +305,7 @@ pub fn basename(path: &str) -> &str {
 
 /// Wait until a process exits.  Returns the exit code.
 pub fn wait_for_exit(pid: u32, timeout_ms: u32) -> Result<u32> {
-    let h = open_with(pid, windows_sys::Win32::Foundation::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
+    let h = open_with(pid, windows_sys::Win32::System::Threading::PROCESS_SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
     let r = unsafe { windows_sys::Win32::System::Threading::WaitForSingleObject(h.raw(), timeout_ms) };
     if r != windows_sys::Win32::Foundation::WAIT_OBJECT_0 {
         return Err(WinError::Other(format!("wait timed out or failed: {r}")));

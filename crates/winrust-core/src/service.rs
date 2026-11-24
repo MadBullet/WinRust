@@ -8,14 +8,13 @@ use crate::error::{check, Result, WinError};
 use crate::handle::Handle;
 use crate::wide::{from_wide, str_to_wide};
 use serde::{Deserialize, Serialize};
-use windows_sys::Win32::Foundation::ERROR_SUCCESS;
 use windows_sys::Win32::System::Services::{
-    ChangeServiceConfigW, CloseServiceHandle, ControlService, EnumDependentServicesW,
+    ChangeServiceConfigW, ControlService, EnumDependentServicesW,
     EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W,
     QueryServiceConfigW, QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW,
     ENUM_SERVICE_TYPE, QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
     SC_MANAGER_ENUMERATE_SERVICE, SC_STATUS_PROCESS_INFO, SERVICE_ACCEPT_PAUSE_CONTINUE,
-    SERVICE_ACCEPT_STOP, SERVICE_ACTIVE, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+    SERVICE_ACCEPT_STOP, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
     SERVICE_CONFIG_DESCRIPTION, SERVICE_CONTINUE_PENDING, SERVICE_CONTROL_CONTINUE,
     SERVICE_CONTROL_PAUSE, SERVICE_CONTROL_STOP, SERVICE_DELAYED_AUTO_START_INFO,
     SERVICE_DEMAND_START, SERVICE_DESCRIPTIONW, SERVICE_DISABLED, SERVICE_DRIVER,
