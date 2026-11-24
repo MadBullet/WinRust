@@ -578,8 +578,10 @@ mod tests {
     #[test]
     fn size_formatting() {
         assert_eq!(format_size(999), "999");
-        assert_eq!(format_size(2048), "2.0 KB");
-        assert_eq!(format_size(5 * 1024 * 1024), "5.0 MB");
+        // Explorer drops trailing zeros: 2.0 KB is shown as "2 KB".
+        assert_eq!(format_size(2048), "2 KB");
+        assert_eq!(format_size(5 * 1024 * 1024), "5 MB");
+        assert_eq!(format_size(1536), "1.5 KB");
     }
 
     #[test]
