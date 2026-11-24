@@ -319,3 +319,26 @@ pub fn set_privilege(name: &str, enable: bool) -> Result<()> {
         },
     )
 }
+
+/// True when the machine has a battery (laptop / UPS-backed tablet).
+pub fn pnp_battery_present() -> bool {
+    use windows_sys::Win32::System::Power::{GetSystemPowerStatus, SYSTEM_POWER_STATUS};
+    let mut status: SYSTEM_POWER_STATUS = unsafe { std::mem::zeroed() };
+    if unsafe { GetSystemPowerStatus(&mut status) } != 0 {
+        status.BatteryFlag != 128 // 128 == "no system battery"
+    } else {
+        false
+    }
+}
+
+/// Seconds since the last user input, as reported by `GetLastInputInfo`.
+pub fn idle_seconds() -> Option<u32> {
+    use windows_sys::Win32::System::SystemInformation::GetTickCount;
+    use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
+    let mut info = LASTINPUTINFO { cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32, dwTime: 0 };
+    if unsafe { GetLastInputInfo(&mut info) } == 0 {
+        return None;
+    }
+    let now = unsafe { GetTickCount() };
+    Some(now.wrapping_sub(info.dwTime) / 1000)
+}

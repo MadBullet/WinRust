@@ -1,0 +1,23 @@
+[package]
+name = "winrust-taskmgr"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "WinRust Task Manager — processes, performance and startup impact"
+
+[[bin]]
+name = "winrust-taskmgr"
+path = "src/main.rs"
+
+[dependencies]
+winrust-core.workspace = true
+eframe.workspace = true
+egui.workspace = true
+egui_extras.workspace = true
+serde.workspace = true
+env_logger.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-sys.workspace = true
