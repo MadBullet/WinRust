@@ -21,6 +21,10 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
+  # Kernel code has no C runtime to link against: wdk-build refuses to build
+  # without the static CRT (`StaticCrtNotEnabled`).  Microsoft's own driver CI
+  # sets exactly this.
+  RUSTFLAGS: "-C target-feature=+crt-static"
 
 jobs:
   kmdf:
@@ -107,7 +111,9 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Continue"
-          cargo build -p winrust-kernel --release *>&1 | Tee-Object -FilePath driver.txt
+          # `--target` is required: RUSTFLAGS-based `crt-static` is ignored for
+          # the host triple unless a target is named explicitly.
+          cargo build -p winrust-kernel --release --target x86_64-pc-windows-msvc *>&1 | Tee-Object -FilePath driver.txt
           "exit=$LASTEXITCODE" | Out-File -Append -Encoding utf8 driver.txt
 
       - name: collect diagnostics
@@ -120,7 +126,7 @@ jobs:
               head -c 200000 "$f.txt" > "docs/ci/build/kernel-$f.txt" || true
             fi
           done
-          ls -la target/release/*.sys target/release/winrust-driver.exe 2>/dev/null \
+          ls -la target/x86_64-pc-windows-msvc/release/*.dll target/release/winrust-driver.exe 2>/dev/null \
             > docs/ci/build/kernel-artifacts.txt || true
 
       - name: commit diagnostics
@@ -149,8 +155,8 @@ jobs:
         with:
           name: winrust-kernel
           path: |
-            target/release/winrust_kernel.dll
-            target/release/winrust-kernel.dll
+            target/x86_64-pc-windows-msvc/release/winrust_kernel.dll
+            target/x86_64-pc-windows-msvc/release/winrust-kernel.dll
             target/release/winrust-driver.exe
             crates/winrust-kernel/WinRustKernel.inx
           if-no-files-found: ignore

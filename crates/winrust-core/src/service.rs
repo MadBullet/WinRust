@@ -9,7 +9,7 @@ use crate::handle::Handle;
 use crate::wide::str_to_wide;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
-use windows_sys::Win32::Foundation::DELETE;
+use windows_sys::Win32::Storage::FileSystem::DELETE;
 use windows_sys::Win32::System::Services::{
     ChangeServiceConfig2W, ChangeServiceConfigW, ControlService, CreateServiceW, DeleteService,
     EnumDependentServicesW, EnumServicesStatusExW, OpenSCManagerW, OpenServiceW,
@@ -690,7 +690,7 @@ impl ScManager {
     pub fn create_kernel_service(&self, name: &str, display: &str, image: &Path) -> Result<()> {
         let wname = str_to_wide(name);
         let wdisplay = str_to_wide(display);
-        let wimage = str_to_wide(format!("\"{}\"", image.display()));
+        let wimage = str_to_wide(&format!("\"{}\"", image.display()));
         let handle = unsafe {
             CreateServiceW(
                 self.h.raw() as SC_HANDLE,
