@@ -1,6 +1,6 @@
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
    Compiling cfg-if v1.0.5
    Compiling log v0.4.35
    Compiling stable_deref_trait v1.2.1
@@ -10,8 +10,8 @@
    Compiling simd-adler32 v0.3.10
    Compiling crc32fast v1.5.6
    Compiling adler2 v2.0.1
-   Compiling utf_types v1.0.0
    Compiling litemap v0.8.3
+   Compiling utf_types v1.0.0
    Compiling writeable v0.6.4
    Compiling utf8_iter v1.1.0
    Compiling synstructure v0.14.0
@@ -19,57 +19,57 @@
    Compiling zerofrom-derive v0.1.8
    Compiling yoke-derive v0.8.4
    Compiling zerofrom v0.1.8
-   Compiling zerovec-derive v0.11.7
-   Compiling yoke v0.8.4
    Compiling bytemuck_derive v1.12.1
-   Compiling zerovec v0.11.9
+   Compiling yoke v0.8.4
+   Compiling zerovec-derive v0.11.7
    Compiling bytemuck v1.25.2
    Compiling displaydoc v0.2.7
-   Compiling potential_utf v0.1.6
-   Compiling icu_properties_data v2.4.0
-   Compiling khronos_api v3.1.0
-   Compiling icu_normalizer_data v2.4.0
-   Compiling tinystr v0.8.5
-   Compiling icu_locale_core v2.4.0
+   Compiling zerovec v0.11.9
    Compiling zerotrie v0.2.5
-   Compiling windows_x86_64_msvc v0.52.6
+   Compiling tinystr v0.8.5
+   Compiling potential_utf v0.1.6
+   Compiling icu_locale_core v2.4.0
    Compiling once_cell v1.21.4
-   Compiling icu_collections v2.4.0
+   Compiling windows_x86_64_msvc v0.52.6
+   Compiling icu_properties_data v2.4.0
+   Compiling icu_normalizer_data v2.4.0
+   Compiling khronos_api v3.1.0
    Compiling icu_provider v2.4.0
+   Compiling icu_collections v2.4.0
    Compiling flate2 v1.1.11
    Compiling cfg_aliases v0.2.2
    Compiling autocfg v1.5.1
    Compiling xml-rs v0.8.29
-   Compiling windows-targets v0.52.6
    Compiling icu_normalizer v2.4.0
    Compiling gl_generator v0.14.0
    Compiling icu_properties v2.4.0
+   Compiling windows-targets v0.52.6
    Compiling version_check v0.9.5
    Compiling parking_lot_core v0.9.12
+   Compiling find-msvc-tools v0.1.15
    Compiling shlex v2.0.1
    Compiling zerocopy v0.8.64
-   Compiling find-msvc-tools v0.1.15
+   Compiling cc v1.11.3
    Compiling idna_adapter v1.2.2
    Compiling ahash v0.8.13
-   Compiling cc v1.11.3
    Compiling scopeguard v1.2.0
-   Compiling bitflags v2.13.2
    Compiling percent-encoding v2.3.2
+   Compiling bitflags v2.13.2
    Compiling ttf-parser v0.25.1
    Compiling ring v0.17.14
    Compiling form_urlencoded v1.2.3
    Compiling lock_api v0.4.14
-   Compiling owned_ttf_parser v0.25.1
    Compiling idna v1.1.0
+   Compiling owned_ttf_parser v0.25.1
    Compiling emath v0.29.1
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
    Compiling windows-sys v0.61.2
+   Compiling arrayvec v0.7.8
    Compiling float-cmp v0.9.0
    Compiling serde_core v1.0.229
-   Compiling zeroize v1.9.2
    Compiling ab_glyph_rasterizer v0.1.10
-   Compiling arrayvec v0.7.8
+   Compiling zeroize v1.9.2
    Compiling ab_glyph v0.2.32
    Compiling rustls-pki-types v1.16.0
    Compiling strict-num v0.1.1
@@ -79,74 +79,74 @@
    Compiling windows-sys v0.52.0
    Compiling num-traits v0.2.19
    Compiling syn v2.0.119
+   Compiling nohash-hasher v0.2.0
+   Compiling memchr v2.8.3
    Compiling arrayref v0.3.9
    Compiling epaint_default_fonts v0.29.1
-   Compiling memchr v2.8.3
-   Compiling nohash-hasher v0.2.0
    Compiling epaint v0.29.1
    Compiling tiny-skia-path v0.11.4
    Compiling kurbo v0.9.5
-   Compiling glutin_wgl_sys v0.6.1
    Compiling glutin_egl_sys v0.7.1
+   Compiling glutin_wgl_sys v0.6.1
    Compiling winit v0.30.13
    Compiling getrandom v0.2.17
-   Compiling siphasher v1.0.4
-   Compiling unicase v2.10.0
    Compiling raw-window-handle v0.6.2
-   Compiling siphasher v0.3.11
-   Compiling untrusted v0.9.0
    Compiling pin-project-lite v0.2.18
+   Compiling siphasher v1.0.4
+   Compiling untrusted v0.9.0
+   Compiling unicase v2.10.0
+   Compiling siphasher v0.3.11
    Compiling serde v1.0.229
    Compiling tracing-core v0.1.36
-   Compiling tracing v0.1.44
    Compiling svgtypes v0.13.0
+   Compiling tracing v0.1.44
    Compiling phf_shared v0.11.3
    Compiling egui v0.29.1
    Compiling aho-corasick v1.1.5
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
    Compiling serde_derive v1.0.229
-   Compiling cursor-icon v1.2.0
    Compiling error-code v3.4.0
-   Compiling rctree v0.5.0
-   Compiling litrs v1.0.1
+   Compiling rustls v0.23.46
    Compiling pxfm v0.1.30
    Compiling color_quant v1.1.0
-   Compiling smol_str v0.2.2
-   Compiling unicode-segmentation v1.13.3
-   Compiling rustls v0.23.46
-   Compiling dpi v0.1.2
-   Compiling weezl v0.1.12
    Compiling regex-syntax v0.8.12
+   Compiling cursor-icon v1.2.0
+   Compiling litrs v1.0.1
+   Compiling unicode-segmentation v1.13.3
+   Compiling weezl v0.1.12
+   Compiling dpi v0.1.2
+   Compiling smol_str v0.2.2
+   Compiling rctree v0.5.0
+   Compiling usvg-tree v0.37.0
    Compiling gif v0.14.2
+   Compiling document-features v0.2.12
    Compiling regex-automata v0.4.19
    Compiling moxcms v0.8.1
-   Compiling document-features v0.2.12
-   Compiling usvg-tree v0.37.0
    Compiling clipboard-win v5.4.3
-   Compiling phf v0.11.3
    Compiling rustls-webpki v0.103.17
+   Compiling phf v0.11.3
    Compiling webpki-roots v1.0.12
    Compiling png v0.18.1
    Compiling glutin-winit v0.5.0
    Compiling libloading v0.8.9
    Compiling simplecss v0.2.2
-   Compiling data-url v0.3.2
-   Compiling byteorder-lite v0.1.0
-   Compiling once_cell_polyfill v1.70.2
-   Compiling winapi v0.3.9
-   Compiling anstyle v1.0.14
-   Compiling bitflags v1.3.2
-   Compiling imagesize v0.12.0
-   Compiling utf8parse v0.2.2
-   Compiling subtle v2.6.1
-   Compiling thiserror v1.0.69
    Compiling roxmltree v0.19.0
+   Compiling anstyle v1.0.14
+   Compiling subtle v2.6.1
+   Compiling imagesize v0.12.0
+   Compiling bitflags v1.3.2
+   Compiling thiserror v1.0.69
+   Compiling byteorder-lite v0.1.0
+   Compiling utf8parse v0.2.2
+   Compiling winapi v0.3.9
+   Compiling data-url v0.3.2
+   Compiling once_cell_polyfill v1.70.2
+   Compiling anstyle-wincon v3.0.11
    Compiling usvg-parser v0.37.0
+   Compiling image v0.25.10
    Compiling anstyle-parse v1.0.0
    Compiling png v0.17.16
-   Compiling anstyle-wincon v3.0.11
-   Compiling image v0.25.10
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
    Compiling arboard v3.7.0
@@ -154,44 +154,44 @@
    Compiling thiserror-impl v1.0.69
    Compiling webbrowser v1.2.7
    Compiling anstyle-query v1.1.5
-   Compiling base64 v0.21.7
    Compiling xmlwriter v0.1.0
+   Compiling base64 v0.21.7
+   Compiling colorchoice v1.0.5
    Compiling glow v0.14.2
    Compiling web-time v1.1.0
-   Compiling is_terminal_polyfill v1.70.2
-   Compiling colorchoice v1.0.5
    Compiling base64 v0.22.1
-   Compiling jiff-core v1.0.2
+   Compiling is_terminal_polyfill v1.70.2
    Compiling pico-args v0.5.0
+   Compiling jiff-core v1.0.2
    Compiling jiff v1.0.3
-   Compiling usvg v0.37.0
    Compiling egui_glow v0.29.1
-   Compiling ureq v2.12.1
+   Compiling usvg v0.37.0
    Compiling anstream v1.0.0
+   Compiling ureq v2.12.1
    Compiling egui-winit v0.29.1
    Compiling env_filter v2.1.0
    Compiling tiny-skia v0.11.4
    Compiling enum-map-derive v0.17.0
    Compiling windows-sys v0.59.0
    Compiling rgb v0.8.53
-   Compiling static_assertions v1.1.0
    Compiling mime v0.3.18
+   Compiling static_assertions v1.1.0
    Compiling eframe v0.29.1
    Compiling resvg v0.37.0
-   Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
    Compiling enum-map v2.7.3
    Compiling env_logger v0.11.12
+   Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
    Compiling ehttp v0.5.0
    Compiling egui_extras v0.29.1
    Compiling zmij v1.0.23
    Compiling serde_json v1.0.154
    Compiling itoa v1.0.19
-   Compiling winrust-sysctl v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
+   Compiling winrust-taskmgr v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
    Compiling winrust-explorer v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-   --> crates\winrust-explorer\src\app.rs:630:50
+   --> crates\winrust-explorer\src\app.rs:631:50
     |
-630 |     visuals.selection.stroke = egui::Stroke::new(1.0, Color32::from_rgb(120, 190, 255));
+631 |     visuals.selection.stroke = egui::Stroke::new(1.0, Color32::from_rgb(120, 190, 255));
     |                                                  ^^^ help: explicitly specify the type as `f32`: `1.0_f32`
     |
     = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
@@ -199,109 +199,83 @@ warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisf
     = note: `#[warn(float_literal_f32_fallback)]` (part of `#[warn(future_incompatible)]`) on by default
 
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-    --> crates\winrust-explorer\src\app.rs:1668:47
+    --> crates\winrust-explorer\src\app.rs:1669:47
      |
-1668 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+1669 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
      |                                         ^^^ help: explicitly specify the type as `f32`: `1.5_f32`
      |
      = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
      = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
 
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-    --> crates\winrust-explorer\src\app.rs:1767:59
+    --> crates\winrust-explorer\src\app.rs:1768:59
      |
-1767 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+1768 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
      |                                         ^^^ help: explicitly specify the type as `f32`: `1.5_f32`
      |
      = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
      = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
 
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-    --> crates\winrust-explorer\src\app.rs:1851:59
+    --> crates\winrust-explorer\src\app.rs:1852:59
      |
-1851 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+1852 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
      |                                         ^^^ help: explicitly specify the type as `f32`: `1.5_f32`
      |
      = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
      = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
 
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-    --> crates\winrust-explorer\src\app.rs:1911:43
+    --> crates\winrust-explorer\src\app.rs:1912:43
      |
-1911 |                         egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
+1912 |                         egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
      |                                           ^^^ help: explicitly specify the type as `f32`: `1.0_f32`
      |
      = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
      = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
 
-error[E0382]: use of moved value: `path`
-   --> crates\winrust-explorer\src\app.rs:418:34
+warning: field `cancel` is never read
+   --> crates\winrust-explorer\src\app.rs:246:5
     |
-400 |         let (path, show_hidden) = {
-    |              ---- move occurs because `path` has type `PathBuf`, which does not implement the `Copy` trait
+241 | struct FileJob {
+    |        ------- field in this struct
 ...
-411 |         std::thread::spawn(move || {
-    |                            ------- value moved into closure here
-412 |             let result = disk::read_dir(&path, show_hidden).map_err(|e| e.to_string());
-    |                                          ---- variable moved due to use in closure
+246 |     cancel: Arc<AtomicBool>,
+    |     ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `refresh_tab` is never read
+   --> crates\winrust-explorer\src\app.rs:305:5
+    |
+301 | struct JobUpdate {
+    |        --------- field in this struct
 ...
-418 |         self.request_folder_size(path, show_hidden);
-    |                                  ^^^^ value used here after move
-    |
-help: consider cloning the value before moving it into the closure
-    |
-411 ~         let value = path.clone();
-412 ~         std::thread::spawn(move || {
-413 ~             let result = disk::read_dir(&value, show_hidden).map_err(|e| e.to_string());
-    |
+305 |     refresh_tab: usize,
+    |     ^^^^^^^^^^^
 
-error[E0506]: cannot assign to `self.search_results` because it is borrowed
-   --> crates\winrust-explorer\src\app.rs:450:13
+warning: variants `Paste`, `SendToDesktop`, `InvertSelection`, and `Refresh` are never constructed
+   --> crates\winrust-explorer\src\app.rs:686:5
     |
-441 |             let tab = self.current_mut();
-    |                       ---- `self.search_results` is borrowed here
+678 | enum Command {
+    |      ------- variants in this enum
 ...
-450 |             self.search_results = None;
-    |             ^^^^^^^^^^^^^^^^^^^ `self.search_results` is assigned to here but it was already borrowed
-451 |             if let Some(p) = prefs {
-452 |                 tab.view = p.view;
-    |                 ----------------- borrow later used here
-
-warning: variable does not need to be mutable
-    --> crates\winrust-explorer\src\app.rs:1298:17
-     |
-1298 |             let mut sort_asc = self.current().sort_asc;
-     |                 ----^^^^^^^^
-     |                 |
-     |                 help: remove this `mut`
-     |
-     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
-
-error[E0382]: borrow of moved value: `needle`
-    --> crates\winrust-explorer\src\app.rs:1194:16
-     |
-1184 |             let mut needle = self.current().filter.clone();
-     |                 ---------- move occurs because `needle` has type `std::string::String`, which does not implement the `Copy` trait
+686 |     Paste,
+    |     ^^^^^
 ...
-1192 |                 self.start_search(needle);
-     |                                   ------ value moved here
-1193 |             }
-1194 |             if needle.is_empty() && self.search_results.is_some() {
-     |                ^^^^^^ value borrowed here after move
-     |
-note: consider changing this parameter type in method `start_search` to borrow instead if owning the value isn't necessary
-    --> crates\winrust-explorer\src\app.rs:999:40
-     |
- 999 |     fn start_search(&mut self, needle: String) {
-     |        ------------ in this method     ^^^^^^ this parameter takes ownership of the value
-help: consider cloning the value if the performance cost is acceptable
-     |
-1192 |                 self.start_search(needle.clone());
-     |                                         ++++++++
+692 |     SendToDesktop,
+    |     ^^^^^^^^^^^^^
+...
+695 |     InvertSelection,
+    |     ^^^^^^^^^^^^^^^
+696 |     Refresh,
+    |     ^^^^^^^
+    |
+    = note: `Command` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
 
-Some errors have detailed explanations: E0382, E0506.
-For more information about an error, try `rustc --explain E0382`.
-warning: `winrust-explorer` (bin "winrust-explorer") generated 6 warnings
-error: could not compile `winrust-explorer` (bin "winrust-explorer") due to 3 previous errors; 6 warnings emitted
-warning: build failed, waiting for other jobs to finish...
-exit=False
+   Compiling winrust-sysctl v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
+warning: `winrust-explorer` (bin "winrust-explorer") generated 8 warnings (run `cargo fix --bin "winrust-explorer" -p winrust-explorer` to apply 5 suggestions)
+   Compiling winrust-services v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-services)
+   Compiling winrust-launcher v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
+    Finished `release` profile [optimized] target(s) in 4m 46s
+exit=True

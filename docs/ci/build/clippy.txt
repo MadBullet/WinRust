@@ -3,16 +3,16 @@
     Checking zerofrom v0.1.8
     Checking stable_deref_trait v1.2.1
     Checking windows-link v0.2.1
-    Checking yoke v0.8.4
     Checking bytemuck v1.25.2
+    Checking yoke v0.8.4
     Checking zerovec v0.11.9
-    Checking smallvec v1.16.6
     Checking simd-adler32 v0.3.10
+    Checking smallvec v1.16.6
     Checking adler2 v2.0.1
     Checking utf_types v1.0.0
     Checking tinystr v0.8.5
-    Checking writeable v0.6.4
     Checking litemap v0.8.3
+    Checking writeable v0.6.4
     Checking utf8_iter v1.1.0
     Checking icu_locale_core v2.4.0
     Checking potential_utf v0.1.6
@@ -22,14 +22,14 @@
     Checking once_cell v1.21.4
     Checking flate2 v1.1.11
     Checking icu_provider v2.4.0
-    Checking icu_collections v2.4.0
     Checking windows_x86_64_msvc v0.52.6
+    Checking icu_collections v2.4.0
     Checking windows-targets v0.52.6
-    Checking icu_properties_data v2.4.0
     Checking icu_normalizer_data v2.4.0
+    Checking icu_properties_data v2.4.0
+    Checking percent-encoding v2.3.2
     Checking icu_properties v2.4.0
     Checking icu_normalizer v2.4.0
-    Checking percent-encoding v2.3.2
     Checking scopeguard v1.2.0
     Checking ttf-parser v0.25.1
     Checking idna_adapter v1.2.2
@@ -37,9 +37,9 @@
     Checking idna v1.1.0
     Checking lock_api v0.4.14
     Checking form_urlencoded v1.2.3
-    Checking zerocopy v0.8.64
-    Checking owned_ttf_parser v0.25.1
     Checking parking_lot_core v0.9.12
+    Checking owned_ttf_parser v0.25.1
+    Checking zerocopy v0.8.64
     Checking miniz_oxide v0.8.9
     Checking fdeflate v0.3.7
     Checking emath v0.29.1
@@ -47,24 +47,24 @@
     Checking ab_glyph_rasterizer v0.1.10
     Checking ab_glyph v0.2.32
     Checking ecolor v0.29.1
-    Checking ahash v0.8.13
     Checking parking_lot v0.12.5
     Checking url v2.5.9
+    Checking ahash v0.8.13
     Checking serde_core v1.0.229
     Checking windows-sys v0.52.0
-    Checking epaint_default_fonts v0.29.1
-    Checking arrayvec v0.7.8
-    Checking memchr v2.8.3
     Checking nohash-hasher v0.2.0
-    Checking float-cmp v0.9.0
+    Checking arrayvec v0.7.8
     Checking zeroize v1.9.2
-    Checking rustls-pki-types v1.16.0
+    Checking memchr v2.8.3
+    Checking epaint_default_fonts v0.29.1
+    Checking float-cmp v0.9.0
     Checking strict-num v0.1.1
     Checking epaint v0.29.1
+    Checking rustls-pki-types v1.16.0
     Checking tracing-core v0.1.36
+    Checking raw-window-handle v0.6.2
     Checking pin-project-lite v0.2.18
     Checking arrayref v0.3.9
-    Checking raw-window-handle v0.6.2
     Checking tracing v0.1.44
     Checking tiny-skia-path v0.11.4
     Checking serde v1.0.229
@@ -73,86 +73,87 @@
     Checking aho-corasick v1.1.5
     Checking kurbo v0.9.5
     Checking getrandom v0.2.17
-    Checking color_quant v1.1.0
-    Checking regex-syntax v0.8.12
-   Compiling unicase v2.10.0
     Checking weezl v0.1.12
-    Checking untrusted v0.9.0
-    Checking cursor-icon v1.2.0
-    Checking siphasher v0.3.11
-    Checking unicode-segmentation v1.13.3
     Checking error-code v3.4.0
-    Checking dpi v0.1.2
+   Compiling unicase v2.10.0
+    Checking untrusted v0.9.0
+    Checking color_quant v1.1.0
+    Checking siphasher v0.3.11
     Checking smol_str v0.2.2
+    Checking dpi v0.1.2
     Checking pxfm v0.1.30
-    Checking winit v0.30.13
-    Checking clipboard-win v5.4.3
-    Checking svgtypes v0.13.0
+    Checking cursor-icon v1.2.0
+    Checking unicode-segmentation v1.13.3
+    Checking regex-syntax v0.8.12
     Checking regex-automata v0.4.19
     Checking moxcms v0.8.1
-    Checking ring v0.17.14
-    Checking gif v0.14.2
+    Checking winit v0.30.13
    Compiling phf_shared v0.11.3
-    Checking glutin_wgl_sys v0.6.1
+    Checking svgtypes v0.13.0
+    Checking gif v0.14.2
+    Checking ring v0.17.14
+    Checking clipboard-win v5.4.3
     Checking glutin_egl_sys v0.7.1
+    Checking glutin_wgl_sys v0.6.1
     Checking png v0.18.1
     Checking libloading v0.8.9
-    Checking once_cell_polyfill v1.70.2
-    Checking byteorder-lite v0.1.0
-    Checking rctree v0.5.0
     Checking utf8parse v0.2.2
+    Checking rctree v0.5.0
+    Checking byteorder-lite v0.1.0
+    Checking once_cell_polyfill v1.70.2
     Checking anstyle v1.0.14
     Checking image v0.25.10
     Checking anstyle-wincon v3.0.11
-    Checking anstyle-parse v1.0.0
     Checking usvg-tree v0.37.0
+    Checking anstyle-parse v1.0.0
     Checking glutin v0.32.3
+    Checking rustls-webpki v0.103.17
     Checking thiserror v1.0.69
     Checking memoffset v0.9.1
-   Compiling phf v0.11.3
-    Checking rustls-webpki v0.103.17
-    Checking regex v1.13.2
     Checking arboard v3.7.0
+   Compiling phf v0.11.3
+    Checking regex v1.13.2
     Checking webpki-roots v1.0.12
     Checking webbrowser v1.2.7
     Checking anstyle-query v1.1.5
     Checking windows-sys v0.59.0
     Checking simplecss v0.2.2
-    Checking roxmltree v0.19.0
-    Checking web-time v1.1.0
-    Checking bitflags v1.3.2
-    Checking subtle v2.6.1
-    Checking colorchoice v1.0.5
-    Checking imagesize v0.12.0
-    Checking jiff-core v1.0.2
-    Checking glow v0.14.2
-    Checking data-url v0.3.2
     Checking is_terminal_polyfill v1.70.2
-    Checking anstream v1.0.0
+    Checking data-url v0.3.2
+    Checking glow v0.14.2
+    Checking jiff-core v1.0.2
+    Checking imagesize v0.12.0
+    Checking bitflags v1.3.2
+    Checking web-time v1.1.0
+    Checking colorchoice v1.0.5
+    Checking subtle v2.6.1
+    Checking roxmltree v0.19.0
     Checking usvg-parser v0.37.0
-    Checking egui_glow v0.29.1
-    Checking jiff v1.0.3
     Checking rustls v0.23.46
-    Checking png v0.17.16
+    Checking anstream v1.0.0
     Checking egui-winit v0.29.1
-    Checking webpki-roots v0.26.11
+    Checking png v0.17.16
+    Checking jiff v1.0.3
+    Checking egui_glow v0.29.1
     Checking env_filter v2.1.0
+    Checking webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
     Checking glutin-winit v0.5.0
     Checking winapi v0.3.9
+    Checking base64 v0.22.1
+    Checking static_assertions v1.1.0
+    Checking xmlwriter v0.1.0
     Checking base64 v0.21.7
     Checking pico-args v0.5.0
-    Checking static_assertions v1.1.0
-    Checking base64 v0.22.1
-    Checking xmlwriter v0.1.0
-    Checking ureq v2.12.1
-    Checking usvg v0.37.0
     Checking eframe v0.29.1
+    Checking usvg v0.37.0
+    Checking ureq v2.12.1
     Checking env_logger v0.11.12
     Checking tiny-skia v0.11.4
     Checking winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
     Checking rgb v0.8.53
     Checking mime v0.3.18
+    Checking resvg v0.37.0
 warning: returning the result of a `let` binding from a block
    --> crates\winrust-core\src\shell.rs:319:13
     |
@@ -182,22 +183,21 @@ help: return the expression directly
 319 +             }
     |
 
-warning: `winrust-core` (lib) generated 1 warning (run `cargo clippy --fix --lib -p winrust-core -- ` to apply 1 suggestion)
-    Checking resvg v0.37.0
     Checking enum-map v2.7.3
+warning: `winrust-core` (lib) generated 1 warning (run `cargo clippy --fix --lib -p winrust-core -- ` to apply 1 suggestion)
     Checking ehttp v0.5.0
     Checking zmij v1.0.23
     Checking egui_extras v0.29.1
     Checking itoa v1.0.19
     Checking serde_json v1.0.154
     Checking winrust-services v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-services)
-    Checking winrust-sysctl v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
     Checking winrust-taskmgr v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
+    Checking winrust-sysctl v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
     Checking winrust-explorer v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-   --> crates\winrust-explorer\src\app.rs:630:50
+   --> crates\winrust-explorer\src\app.rs:631:50
     |
-630 |     visuals.selection.stroke = egui::Stroke::new(1.0, Color32::from_rgb(120, 190, 255));
+631 |     visuals.selection.stroke = egui::Stroke::new(1.0, Color32::from_rgb(120, 190, 255));
     |                                                  ^^^ help: explicitly specify the type as `f32`: `1.0_f32`
     |
     = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
@@ -205,111 +205,94 @@ warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisf
     = note: `#[warn(float_literal_f32_fallback)]` (part of `#[warn(future_incompatible)]`) on by default
 
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-    --> crates\winrust-explorer\src\app.rs:1668:47
+    --> crates\winrust-explorer\src\app.rs:1669:47
      |
-1668 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+1669 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
      |                                         ^^^ help: explicitly specify the type as `f32`: `1.5_f32`
      |
      = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
      = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
 
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-    --> crates\winrust-explorer\src\app.rs:1767:59
+    --> crates\winrust-explorer\src\app.rs:1768:59
      |
-1767 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+1768 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
      |                                         ^^^ help: explicitly specify the type as `f32`: `1.5_f32`
      |
      = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
      = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
 
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-    --> crates\winrust-explorer\src\app.rs:1851:59
+    --> crates\winrust-explorer\src\app.rs:1852:59
      |
-1851 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+1852 | ...                   egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
      |                                         ^^^ help: explicitly specify the type as `f32`: `1.5_f32`
      |
      = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
      = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
 
 warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-    --> crates\winrust-explorer\src\app.rs:1911:43
+    --> crates\winrust-explorer\src\app.rs:1912:43
      |
-1911 |                         egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
+1912 |                         egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
      |                                           ^^^ help: explicitly specify the type as `f32`: `1.0_f32`
      |
      = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
      = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
 
-error[E0382]: use of moved value: `path`
-   --> crates\winrust-explorer\src\app.rs:418:34
+warning: field `cancel` is never read
+   --> crates\winrust-explorer\src\app.rs:246:5
     |
-400 |         let (path, show_hidden) = {
-    |              ---- move occurs because `path` has type `std::path::PathBuf`, which does not implement the `Copy` trait
+241 | struct FileJob {
+    |        ------- field in this struct
 ...
-411 |         std::thread::spawn(move || {
-    |                            ------- value moved into closure here
-412 |             let result = disk::read_dir(&path, show_hidden).map_err(|e| e.to_string());
-    |                                          ---- variable moved due to use in closure
+246 |     cancel: Arc<AtomicBool>,
+    |     ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `refresh_tab` is never read
+   --> crates\winrust-explorer\src\app.rs:305:5
+    |
+301 | struct JobUpdate {
+    |        --------- field in this struct
 ...
-418 |         self.request_folder_size(path, show_hidden);
-    |                                  ^^^^ value used here after move
-    |
-help: consider cloning the value before moving it into the closure
-    |
-411 ~         let value = path.clone();
-412 ~         std::thread::spawn(move || {
-413 ~             let result = disk::read_dir(&value, show_hidden).map_err(|e| e.to_string());
-    |
+305 |     refresh_tab: usize,
+    |     ^^^^^^^^^^^
 
-error[E0506]: cannot assign to `self.search_results` because it is borrowed
-   --> crates\winrust-explorer\src\app.rs:450:13
+warning: variants `Paste`, `SendToDesktop`, `InvertSelection`, and `Refresh` are never constructed
+   --> crates\winrust-explorer\src\app.rs:686:5
     |
-441 |             let tab = self.current_mut();
-    |                       ---- `self.search_results` is borrowed here
+678 | enum Command {
+    |      ------- variants in this enum
 ...
-450 |             self.search_results = None;
-    |             ^^^^^^^^^^^^^^^^^^^ `self.search_results` is assigned to here but it was already borrowed
-451 |             if let Some(p) = prefs {
-452 |                 tab.view = p.view;
-    |                 ----------------- borrow later used here
-
-warning: variable does not need to be mutable
-    --> crates\winrust-explorer\src\app.rs:1298:17
-     |
-1298 |             let mut sort_asc = self.current().sort_asc;
-     |                 ----^^^^^^^^
-     |                 |
-     |                 help: remove this `mut`
-     |
-     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
-
-error[E0382]: borrow of moved value: `needle`
-    --> crates\winrust-explorer\src\app.rs:1194:16
-     |
-1184 |             let mut needle = self.current().filter.clone();
-     |                 ---------- move occurs because `needle` has type `std::string::String`, which does not implement the `Copy` trait
+686 |     Paste,
+    |     ^^^^^
 ...
-1192 |                 self.start_search(needle);
-     |                                   ------ value moved here
-1193 |             }
-1194 |             if needle.is_empty() && self.search_results.is_some() {
-     |                ^^^^^^ value borrowed here after move
-     |
-note: consider changing this parameter type in method `start_search` to borrow instead if owning the value isn't necessary
-    --> crates\winrust-explorer\src\app.rs:999:40
-     |
- 999 |     fn start_search(&mut self, needle: String) {
-     |        ------------ in this method     ^^^^^^ this parameter takes ownership of the value
-help: consider cloning the value if the performance cost is acceptable
-     |
-1192 |                 self.start_search(needle.clone());
-     |                                         ++++++++
+692 |     SendToDesktop,
+    |     ^^^^^^^^^^^^^
+...
+695 |     InvertSelection,
+    |     ^^^^^^^^^^^^^^^
+696 |     Refresh,
+    |     ^^^^^^^
+    |
+    = note: `Command` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
 
-Some errors have detailed explanations: E0382, E0506.
-For more information about an error, try `rustc --explain E0382`.
-warning: `winrust-explorer` (bin "winrust-explorer" test) generated 6 warnings
-error: could not compile `winrust-explorer` (bin "winrust-explorer" test) due to 3 previous errors; 6 warnings emitted
-warning: build failed, waiting for other jobs to finish...
-warning: `winrust-explorer` (bin "winrust-explorer") generated 6 warnings (6 duplicates)
-error: could not compile `winrust-explorer` (bin "winrust-explorer") due to 3 previous errors; 6 warnings emitted
-exit=False
+warning: unnecessary use of `get(&key).is_none()`
+   --> crates\winrust-explorer\src\app.rs:591:28
+    |
+591 |         if self.type_names.get(&key).is_none() && !info.type_name.is_empty() {
+    |            ----------------^^^^^^^^^^^^^^^^^^^
+    |            |
+    |            help: replace it with: `!self.type_names.contains_key(&key)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#unnecessary_get_then_check
+    = note: `#[warn(clippy::unnecessary_get_then_check)]` on by default
+
+warning: `winrust-explorer` (bin "winrust-explorer" test) generated 9 warnings (run `cargo clippy --fix --bin "winrust-explorer" -p winrust-explorer --tests -- ` to apply 5 suggestions)
+warning: `winrust-explorer` (bin "winrust-explorer") generated 9 warnings (9 duplicates)
+    Checking winrust-launcher v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
+warning: `winrust-core` (lib test) generated 1 warning (1 duplicate)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 48.07s
+exit=True

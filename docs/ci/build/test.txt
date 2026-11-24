@@ -7,35 +7,35 @@
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
   Downloaded log v0.4.35
-  Downloaded serde_derive v1.0.229
   Downloaded windows-targets v0.52.6
-  Downloaded proc-macro2 v1.0.107
   Downloaded quote v1.0.47
-  Downloaded thiserror-impl v1.0.69
   Downloaded thiserror v1.0.69
-  Downloaded serde v1.0.229
+  Downloaded thiserror-impl v1.0.69
+  Downloaded proc-macro2 v1.0.107
   Downloaded unicode-ident v1.0.27
+  Downloaded serde_derive v1.0.229
   Downloaded serde_core v1.0.229
+  Downloaded serde v1.0.229
   Downloaded syn v2.0.119
   Downloaded syn v3.0.10
   Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
    Compiling windows_x86_64_msvc v0.52.6
    Compiling serde_core v1.0.229
-   Compiling serde v1.0.229
    Compiling thiserror v1.0.69
+   Compiling serde v1.0.229
    Compiling windows-targets v0.52.6
-   Compiling syn v3.0.10
    Compiling syn v2.0.119
-   Compiling serde_derive v1.0.229
+   Compiling syn v3.0.10
    Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.229
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 41.28s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 41.81s
      Running unittests src\lib.rs (target\debug\build\winrust-core/6ce60c864b707001\out\winrust_core-6ce60c864b707001.exe)
 
 running 7 tests
@@ -43,18 +43,18 @@ test disk::tests::civil_dates ... ok
 test disk::tests::extensions ... ok
 test disk::tests::local_time_roundtrip ... ok
 test wide::tests::roundtrip_ascii ... ok
-test disk::tests::size_formatting ... FAILED
 test wide::tests::roundtrip_cyrillic ... ok
 test wide::tests::stops_at_nul ... ok
+test disk::tests::size_formatting ... FAILED
 
 failures:
 
 ---- disk::tests::size_formatting stdout ----
 
-thread 'disk::tests::size_formatting' (9000) panicked at crates\winrust-core\src\disk.rs:580:9:
+thread 'disk::tests::size_formatting' (3912) panicked at crates\winrust-core\src\disk.rs:581:9:
 assertion `left == right` failed
-  left: "999"
- right: "999 B"
+  left: "2 KB"
+ right: "2.0 KB"
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 

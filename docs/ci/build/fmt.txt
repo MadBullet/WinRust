@@ -1939,10 +1939,10 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:371:
 [0m             search_path: PathBuf::new(),
              search_results: None,
              search_rx,
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:410:
-         let tx = self.tx.clone();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:411:
+         let read_path = path.clone();
          std::thread::spawn(move || {
-             let result = disk::read_dir(&path, show_hidden).map_err(|e| e.to_string());
+             let result = disk::read_dir(&read_path, show_hidden).map_err(|e| e.to_string());
 [31m-            let _ = tx.send(Listing { tab_index, request_id, result });
 [0m[32m+            let _ = tx.send(Listing {
 [0m[32m+                tab_index,
@@ -1952,7 +1952,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:410:
 [0m         });
  
          // Folder sizes are only meaningful for single-folder views; ask the
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:436:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:437:
              self.select_in_parent(path);
              return;
          }
@@ -1964,7 +1964,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:436:
 [0m         {
              let tab = self.current_mut();
              tab.history.truncate(tab.history_pos + 1);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:568:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:569:
      // ------------------------------------------------------------------
  
      /// Load (once) and draw an icon for `entry`. `size` is 16, 32 or 48 px.
@@ -1978,7 +1978,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:568:
 [0m         let key = if entry.is_dir {
              format!("dir:{size}")
          } else if entry.ext.is_empty() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:593:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:594:
              } else {
                  entry.ext.clone()
              };
@@ -1989,7 +1989,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:593:
 [0m         }
          let texture = info.icon_rgba.and_then(|rgba| {
              let expected = (px * px * 4) as usize;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:600:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:601:
              if rgba.len() < expected {
                  return None;
              }
@@ -2001,7 +2001,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:600:
 [0m             Some(ctx.load_texture(key.clone(), image, egui::TextureOptions::LINEAR))
          });
          let id = texture.as_ref().map(|t| t.id());
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:609:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:610:
      }
  
      fn type_text(&mut self, entry: &DirEntry) -> String {
@@ -2014,7 +2014,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:609:
 [0m         if let Some(t) = self.type_names.get(&key) {
              return t.clone();
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:635:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:636:
  /// fonts when the system font cannot be read.
  fn install_fonts(ctx: &egui::Context) {
      let mut fonts = egui::FontDefinitions::default();
@@ -2033,7 +2033,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:635:
 [0m                 .families
                  .entry(egui::FontFamily::Proportional)
                  .or_default()
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:730:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:731:
                  }
              }
              Command::Copy => {
@@ -2045,7 +2045,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:730:
 [0m                 self.status = format!("Copied: {}", file_name_of(&path));
              }
              Command::Cut => {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:737:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:738:
 [31m-                self.clipboard = Some(FileClipboard { paths: vec![path.clone()], cut: true });
 [0m[32m+                self.clipboard = Some(FileClipboard {
 [0m[32m+                    paths: vec![path.clone()],
@@ -2054,7 +2054,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:737:
 [0m                 self.status = format!("Cut: {}", file_name_of(&path));
              }
              Command::Paste => self.paste_clipboard(),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:810:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:811:
              Command::InvertSelection => self.run(PathBuf::new(), cmd),
              Command::Refresh => self.refresh(),
              Command::Copy => {
@@ -2066,7 +2066,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:810:
 [0m                 self.status = format!("Copied {} item(s)", sel.len());
              }
              Command::Cut => {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:817:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:818:
 [31m-                self.clipboard = Some(FileClipboard { paths: sel.clone(), cut: true });
 [0m[32m+                self.clipboard = Some(FileClipboard {
 [0m[32m+                    paths: sel.clone(),
@@ -2075,7 +2075,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:817:
 [0m                 self.status = format!("Cut {} item(s)", sel.len());
              }
              Command::Delete => {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:848:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:849:
          }
          let mut jobs: Vec<(PathBuf, PathBuf)> = Vec::new();
          for src in &clip.paths {
@@ -2086,7 +2086,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:848:
 [0m             let mut dest = dest_dir.join(name);
              if dest.exists() {
                  dest = disk::unique_destination(&dest);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:920:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:921:
                          Ok(mut entries) => {
                              // Fill the localized type text once per extension.
                              for e in &mut entries {
@@ -2099,7 +2099,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:920:
 [0m                                 if let Some(t) = self.type_names.get(&key) {
                                      e.type_name = t.clone();
                                  } else {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:966:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:967:
                      self.status = if errors.is_empty() {
                          format!("Done: {done} item(s)")
                      } else {
@@ -2112,7 +2112,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:966:
 [0m                     };
                      if self.tabs.get(refresh_tab).is_some() {
                          self.start_load(refresh_tab);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1019:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1020:
                  if budget == 0 {
                      break;
                  }
@@ -2123,7 +2123,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1019:
 [0m                 for e in entries {
                      budget = budget.saturating_sub(1);
                      if budget == 0 {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1097:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1098:
          // Row 1: navigation + address + search
          ui.horizontal(|ui| {
              if ui
@@ -2135,7 +2135,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1097:
 [0m                 .on_hover_text("Back (Alt+←)")
                  .clicked()
              {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1104:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1105:
                  self.go_back();
              }
              if ui
@@ -2147,7 +2147,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1104:
 [0m                 .on_hover_text("Forward (Alt+→)")
                  .clicked()
              {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1124:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1125:
                  let mut buf = self.current().address_edit.clone().unwrap_or_default();
                  let response = ui.add_sized(
                      [addr_w, 24.0],
@@ -2157,7 +2157,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1124:
 [0m                 );
                  self.current_mut().address_edit = Some(buf.clone());
                  if response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1159:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1160:
                                  } else {
                                      label
                                  };
@@ -2172,7 +2172,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1159:
 [0m                                     target = Some(acc.clone());
                                  }
                                  if acc != path {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1166:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1167:
                                      ui.label(RichText::new("›").weak());
                                  }
                              }
@@ -2185,7 +2185,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1166:
 [0m                                 start_edit = true;
                              }
                          });
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1209:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1210:
                      ui.close_menu();
                  }
                  if ui.button("📄 Text document").clicked() {
@@ -2195,7 +2195,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1209:
 [0m                     match std::fs::write(&target, b"") {
                          Ok(()) => {
                              self.status = format!("Created {}", file_name_of(&target));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1233:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1234:
                  .on_hover_text("Ctrl+X")
                  .clicked()
              {
@@ -2207,7 +2207,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1233:
 [0m                 self.status = format!("Cut {} item(s)", multiselection.len());
              }
              if ui
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1241:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1242:
                  .on_hover_text("Ctrl+C")
                  .clicked()
              {
@@ -2219,7 +2219,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1241:
 [0m                 self.status = format!("Copied {} item(s)", multiselection.len());
              }
              let has_clip = self.clipboard.is_some();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1271:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1272:
                  self.delete_permanent = false;
              }
              ui.separator();
@@ -2232,7 +2232,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1271:
 [0m                 if let Some(one) = multiselection.first() {
                      let _ = shell::open_verb(one, "share");
                  } else {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1360:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1361:
          let mut status_msg: Option<String> = None;
          let drives = self.drives.clone();
  
@@ -2387,7 +2387,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1360:
 [0m         let _ = ctx;
          self.nav_selected = nav_selected;
          if let Some(msg) = status_msg {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1468:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1469:
          if let Some(err) = self.current().error.clone() {
              ui.add_space(20.0);
              ui.vertical_centered(|ui| {
@@ -2400,7 +2400,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1468:
 [0m                 ui.label(RichText::new(&err).color(Color32::from_rgb(240, 140, 120)));
                  ui.add_space(6.0);
                  if ui.button("Retry").clicked() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1490:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1491:
                  }
                  let commit = ui.input(|i| i.key_pressed(egui::Key::Enter));
                  if ui.button("Create").clicked() || commit {
@@ -2410,7 +2410,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1490:
 [0m                     match disk::create_dir_all(&target) {
                          Ok(()) => {
                              self.status = format!("Created {}", file_name_of(&target));
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1540:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1541:
                  if self.current().filter.is_empty() {
                      ui.label(RichText::new("This folder is empty").size(15.0).weak());
                  } else {
@@ -2423,7 +2423,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1540:
 [0m                 }
              });
              return;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1555:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1556:
      }
  
      /// Shared selection logic: plain click replaces, Ctrl toggles, Shift extends.
@@ -2438,7 +2438,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1555:
 [0m         let ctrl = modifiers.ctrl || modifiers.command;
          let shift = modifiers.shift;
          let tab = self.current_mut();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1562:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1563:
          if shift {
              if let Some(anchor) = tab.anchor {
 [31m-                let (lo, hi) = if anchor <= index { (anchor, index) } else { (index, anchor) };
@@ -2450,7 +2450,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1562:
 [0m                 tab.selection = entries[lo..=hi].iter().map(|e| e.path.clone()).collect();
                  return;
              }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1589:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1590:
              .resizable(true)
              .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
              .column(Column::initial(26.0).at_least(24.0).clip(true))
@@ -2465,7 +2465,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1589:
 [0m             .column(Column::initial(96.0).at_least(70.0).clip(true))
              .column(Column::initial(150.0).at_least(90.0).clip(true))
              .column(Column::initial(150.0).at_least(90.0).clip(true))
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1610:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1611:
              ] {
                  header.col(|ui| {
                      let arrow = if sort_key == key {
@@ -2478,7 +2478,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1610:
 [0m                     } else {
                          ""
                      };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1684:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1685:
                      }
                  });
                  row.col(|ui| {
@@ -2491,7 +2491,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1684:
 [0m                     ui.label(RichText::new(size).monospace());
                  });
                  row.col(|ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1733:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1734:
          let mut commands: Vec<(PathBuf, Command)> = Vec::new();
          let mut drag_started: Option<PathBuf> = None;
          let mut drop_on: Option<PathBuf> = None;
@@ -2607,7 +2607,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1733:
 [0m         if let Some((idx, path)) = clicked {
              let mods = ctx.input(|i| i.modifiers);
              self.apply_click(idx, &path, mods, entries);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1803:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1804:
      }
  
      /// Large icons (Explorer's "Large icons" view) with 48 px shell icons.
@@ -2622,7 +2622,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1803:
 [0m         let mut clicked: Option<(usize, PathBuf)> = None;
          let mut opened: Option<DirEntry> = None;
          let mut commands: Vec<(PathBuf, Command)> = Vec::new();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1811:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1812:
          let mut drop_on: Option<PathBuf> = None;
          let cell_w = 116.0;
          let cell_h = icon as f32 + 34.0;
@@ -2756,7 +2756,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1811:
 [0m         if let Some((idx, path)) = clicked {
              let mods = ctx.input(|i| i.modifiers);
              self.apply_click(idx, &path, mods, entries);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1894:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1895:
          let mut clicked: Option<(usize, PathBuf)> = None;
          let mut opened: Option<DirEntry> = None;
          let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -2893,7 +2893,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1894:
 [0m         if let Some((idx, path)) = clicked {
              let mods = ctx.input(|i| i.modifiers);
              self.apply_click(idx, &path, mods, entries);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1992:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1993:
              out.push(Command::RunAsAdmin);
              ui.close_menu();
          }
@@ -2906,7 +2906,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1992:
 [0m         {
              out.push(Command::ExtractHere);
              ui.close_menu();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2046:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2047:
  impl ExplorerApp {
      /// Runs after any view: applies queued context-menu commands, handles
      /// drag-and-drop between rows/folders and repaints while a job runs.
@@ -2920,7 +2920,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2046:
 [0m         // Context-menu commands (the path is the row they were invoked on).
          for (path, cmd) in commands {
              // Explorer acts on the whole selection when the clicked row is part
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2107:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2108:
  
          let meta = std::fs::metadata(&path).ok();
          if let Some(meta) = &meta {
@@ -3020,7 +3020,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2107:
 [0m             );
              if is_text && meta.len() <= 64 * 1024 {
                  if let Ok(text) = std::fs::read_to_string(&path) {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2143:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2144:
                      let head: String = text.lines().take(60).collect::<Vec<_>>().join("\n");
 [31m-                    egui::ScrollArea::vertical().max_height(260.0).show(ui, |ui| {
 [0m[31m-                        ui.add(
@@ -3039,7 +3039,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2143:
 [0m                 }
              }
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2153:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2154:
      }
  
      /// Icon for an arbitrary path (used by the preview pane).
@@ -3053,7 +3053,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2153:
 [0m         let key = format!("path:{size}:{}", path.display());
          if let Some(slot) = self.icons.get(&key) {
              return slot.as_ref().map(|t| t.id());
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2164:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2165:
              if rgba.len() < expected {
                  return None;
              }
@@ -3065,7 +3065,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2164:
 [0m             Some(ctx.load_texture(key.clone(), image, egui::TextureOptions::LINEAR))
          });
          let id = texture.as_ref().map(|t| t.id());
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2184:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2185:
                  let mut s = format!("{dirs} folder(s), {files} file(s)");
                  if let Some((_, bytes, count)) = &self.folder_size {
                      if *count > 0 {
@@ -3078,7 +3078,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2184:
 [0m                     }
                  }
                  s
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2196:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2197:
                  ui.label(RichText::new(&self.status).small().weak());
              }
              ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -3091,7 +3091,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2196:
 [0m                 ui.separator();
                  // View-mode shortcuts, like Explorer's status-bar buttons.
                  for v in ViewMode::ALL {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2203:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2204:
                      let active = self.current().view == v;
                      if ui
 [31m-                        .add(egui::Button::new(RichText::new(view_glyph(v)).size(13.0)).frame(active))
@@ -3102,7 +3102,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2203:
 [0m                         .on_hover_text(v.label())
                          .clicked()
                      {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2369:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2370:
                      (None, false) => entries.len() - 1,
                  };
                  if shift {
@@ -3114,7 +3114,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2369:
 [0m                     self.apply_click(next, &entries[next].path.clone(), mods, &entries);
                  } else {
                      self.current_mut().selection = vec![entries[next].path.clone()];
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2391:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2392:
              let paths = self.delete_confirm.clone();
              let permanent = self.delete_permanent;
              let mut action: Option<bool> = None;
@@ -3188,7 +3188,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2391:
 [0m             match action {
                  Some(true) => {
                      let mut errors = Vec::new();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2448:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2449:
          }
  
          if let Some(job) = &self.job {
@@ -3201,7 +3201,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2448:
 [0m             let label = job.label.clone();
              let done = job.done;
              let total = job.total;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2458:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2459:
                  .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
                  .show(ctx, |ui| {
                      ui.label(label);
@@ -3214,7 +3214,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2458:
 [0m                     ui.label(format!("{done} / {total}"));
                      if ui.button("Cancel").clicked() {
                          // The worker observes this flag between items.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2475:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2476:
  
          egui::TopBottomPanel::top("tabs").show(ctx, |ui| self.tab_bar(ui));
          egui::TopBottomPanel::top("commandbar").show(ctx, |ui| self.command_bar(ui));
@@ -3835,4 +3835,4 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:150:
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:166:
                      self.drivers.push(DriverRow {
                          name: s.name,
-                    
+           
