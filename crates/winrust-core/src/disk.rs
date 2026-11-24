@@ -33,13 +33,13 @@ pub enum DriveKind {
 impl DriveKind {
     pub fn label(self) -> &'static str {
         match self {
-            DriveKind::Fixed => "Local disk",
-            DriveKind::Removable => "Removable",
-            DriveKind::Remote => "Network",
-            DriveKind::CdRom => "Optical",
-            DriveKind::RamDisk => "RAM disk",
-            DriveKind::Unknown => "Unknown",
-            DriveKind::NoRoot => "Not ready",
+            DriveKind::Fixed => crate::i18n::ts("Local disk"),
+            DriveKind::Removable => crate::i18n::ts("Removable"),
+            DriveKind::Remote => crate::i18n::ts("Network"),
+            DriveKind::CdRom => crate::i18n::ts("Optical"),
+            DriveKind::RamDisk => crate::i18n::ts("RAM disk"),
+            DriveKind::Unknown => crate::i18n::ts("Unknown"),
+            DriveKind::NoRoot => crate::i18n::ts("Not ready"),
         }
     }
 }
@@ -412,6 +412,7 @@ pub fn format_size(bytes: u64) -> String {
     const KB: f64 = 1024.0;
     let b = bytes as f64;
     fn trimmed(v: f64, unit: &str, decimals: usize) -> String {
+        let unit = crate::i18n::ts(unit);
         let s = format!("{v:.decimals$}");
         let s = if s.contains('.') {
             s.trim_end_matches('0').trim_end_matches('.').to_string()

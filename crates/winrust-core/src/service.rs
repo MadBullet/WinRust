@@ -64,14 +64,14 @@ impl ServiceState {
 
     pub fn label(self) -> &'static str {
         match self {
-            Self::Stopped => "Stopped",
-            Self::StartPending => "Starting",
-            Self::StopPending => "Stopping",
-            Self::Running => "Running",
-            Self::ContinuePending => "Resuming",
-            Self::PausePending => "Pausing",
-            Self::Paused => "Paused",
-            Self::Unknown(_) => "Unknown",
+            Self::Stopped => crate::i18n::ts("Stopped"),
+            Self::StartPending => crate::i18n::ts("Starting"),
+            Self::StopPending => crate::i18n::ts("Stopping"),
+            Self::Running => crate::i18n::ts("Running"),
+            Self::ContinuePending => crate::i18n::ts("Resuming"),
+            Self::PausePending => crate::i18n::ts("Pausing"),
+            Self::Paused => crate::i18n::ts("Paused"),
+            Self::Unknown(_) => crate::i18n::ts("Unknown"),
         }
     }
 
@@ -119,13 +119,13 @@ impl StartType {
 
     pub fn label(self) -> &'static str {
         match self {
-            Self::Boot => "Boot",
-            Self::System => "System",
-            Self::Auto => "Automatic",
-            Self::AutoDelayed => "Automatic (Delayed Start)",
-            Self::Manual => "Manual",
-            Self::Disabled => "Disabled",
-            Self::Unknown(_) => "Unknown",
+            Self::Boot => crate::i18n::ts("Boot"),
+            Self::System => crate::i18n::ts("System"),
+            Self::Auto => crate::i18n::ts("Automatic"),
+            Self::AutoDelayed => crate::i18n::ts("Automatic (Delayed Start)"),
+            Self::Manual => crate::i18n::ts("Manual"),
+            Self::Disabled => crate::i18n::ts("Disabled"),
+            Self::Unknown(_) => crate::i18n::ts("Unknown"),
         }
     }
 
@@ -665,10 +665,10 @@ pub enum ServiceAction {
 impl ServiceAction {
     pub fn label(self) -> &'static str {
         match self {
-            Self::Start => "Start",
-            Self::Stop => "Stop",
-            Self::Pause => "Pause",
-            Self::Resume => "Resume",
+            Self::Start => crate::i18n::ts("Start"),
+            Self::Stop => crate::i18n::ts("Stop"),
+            Self::Pause => crate::i18n::ts("Pause"),
+            Self::Resume => crate::i18n::ts("Resume"),
         }
     }
 }

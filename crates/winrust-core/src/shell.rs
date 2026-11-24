@@ -49,87 +49,24 @@ pub enum KnownFolder {
 impl KnownFolder {
     pub fn label(self) -> &'static str {
         match self {
-            KnownFolder::Desktop => "Desktop",
-            KnownFolder::Downloads => "Downloads",
-            KnownFolder::Documents => "Documents",
-            KnownFolder::Pictures => "Pictures",
-            KnownFolder::Music => "Music",
-            KnownFolder::Videos => "Videos",
-            KnownFolder::Profile => "Home",
-            KnownFolder::LocalAppData => "Local AppData",
-            KnownFolder::RoamingAppData => "Roaming AppData",
-            KnownFolder::ProgramData => "ProgramData",
-            KnownFolder::Windows => "Windows",
-            KnownFolder::ProgramFiles => "Program Files",
-            KnownFolder::ProgramFilesX86 => "Program Files (x86)",
-            KnownFolder::Public => "Public",
-            KnownFolder::RecycleBin => "Recycle Bin",
-            KnownFolder::Computer => "This PC",
-            KnownFolder::Network => "Network",
+            KnownFolder::Desktop => crate::i18n::ts("Desktop"),
+            KnownFolder::Downloads => crate::i18n::ts("Downloads"),
+            KnownFolder::Documents => crate::i18n::ts("Documents"),
+            KnownFolder::Pictures => crate::i18n::ts("Pictures"),
+            KnownFolder::Music => crate::i18n::ts("Music"),
+            KnownFolder::Videos => crate::i18n::ts("Videos"),
+            KnownFolder::Profile => crate::i18n::ts("Home"),
+            KnownFolder::LocalAppData => crate::i18n::ts("Local AppData"),
+            KnownFolder::RoamingAppData => crate::i18n::ts("Roaming AppData"),
+            KnownFolder::ProgramData => crate::i18n::ts("ProgramData"),
+            KnownFolder::Windows => crate::i18n::ts("Windows"),
+            KnownFolder::ProgramFiles => crate::i18n::ts("Program Files"),
+            KnownFolder::ProgramFilesX86 => crate::i18n::ts("Program Files (x86)"),
+            KnownFolder::Public => crate::i18n::ts("Public"),
+            KnownFolder::RecycleBin => crate::i18n::ts("Recycle Bin"),
+            KnownFolder::Computer => crate::i18n::ts("This PC"),
+            KnownFolder::Network => crate::i18n::ts("Network"),
         }
-    }
-
-    fn guid(self) -> windows_sys::core::GUID {
-        use windows_sys::Win32::UI::Shell as S;
-        match self {
-            KnownFolder::Desktop => S::FOLDERID_Desktop,
-            KnownFolder::Downloads => S::FOLDERID_Downloads,
-            KnownFolder::Documents => S::FOLDERID_Documents,
-            KnownFolder::Pictures => S::FOLDERID_Pictures,
-            KnownFolder::Music => S::FOLDERID_Music,
-            KnownFolder::Videos => S::FOLDERID_Videos,
-            KnownFolder::Profile => S::FOLDERID_Profile,
-            KnownFolder::LocalAppData => S::FOLDERID_LocalAppData,
-            KnownFolder::RoamingAppData => S::FOLDERID_RoamingAppData,
-            KnownFolder::ProgramData => S::FOLDERID_ProgramData,
-            KnownFolder::Windows => S::FOLDERID_Windows,
-            KnownFolder::ProgramFiles => S::FOLDERID_ProgramFiles,
-            KnownFolder::ProgramFilesX86 => S::FOLDERID_ProgramFilesX86,
-            KnownFolder::Public => S::FOLDERID_Public,
-            KnownFolder::RecycleBin => S::FOLDERID_RecycleBinFolder,
-            KnownFolder::Computer => S::FOLDERID_ComputerFolder,
-            KnownFolder::Network => S::FOLDERID_NetworkFolder,
-        }
-    }
-
-    /// The on-disk path, or `None` for virtual shell folders.
-    pub fn path(self) -> Option<std::path::PathBuf> {
-        let guid = self.guid();
-        let mut psz: *mut u16 = std::ptr::null_mut();
-        let hr = unsafe { SHGetKnownFolderPath(&guid, 0, std::ptr::null_mut(), &mut psz) };
-        if hr < 0 || psz.is_null() {
-            return None;
-        }
-        let mut len = 0usize;
-        while unsafe { *psz.add(len) } != 0 {
-            len += 1;
-        }
-        let slice = unsafe { std::slice::from_raw_parts(psz, len) };
-        let s = String::from_utf16_lossy(slice);
-        unsafe {
-            windows_sys::Win32::System::Com::CoTaskMemFree(psz as *const c_void);
-        }
-        if s.is_empty() {
-            None
-        } else {
-            Some(std::path::PathBuf::from(s))
-        }
-    }
-
-    /// Everything Explorer lists in its sidebar tree.
-    pub fn sidebar() -> &'static [KnownFolder] {
-        &[
-            KnownFolder::Profile,
-            KnownFolder::Desktop,
-            KnownFolder::Downloads,
-            KnownFolder::Documents,
-            KnownFolder::Pictures,
-            KnownFolder::Music,
-            KnownFolder::Videos,
-            KnownFolder::Computer,
-            KnownFolder::Network,
-            KnownFolder::RecycleBin,
-        ]
     }
 }
 
