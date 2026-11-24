@@ -9,7 +9,7 @@ use wdk::println;
 use wdk_sys::{
     call_unsafe_wdf_function_binding, _WDF_EXECUTION_LEVEL, _WDF_IO_QUEUE_DISPATCH_TYPE,
     _WDF_SYNCHRONIZATION_SCOPE, _WDF_TRI_STATE, NTSTATUS, PWDFDEVICE_INIT, STATUS_SUCCESS,
-    UNICODE_STRING, WDFDEVICE, WDFDRIVER, WDFIOQUEUE, WDF_IO_QUEUE_CONFIG, WDF_NO_HANDLE,
+    UNICODE_STRING, WDFDEVICE, WDFDRIVER, WDFQUEUE, WDF_IO_QUEUE_CONFIG, WDF_NO_HANDLE,
     WDF_OBJECT_ATTRIBUTES,
 };
 
@@ -128,7 +128,7 @@ pub extern "C" fn evt_device_add(driver: WDFDRIVER, device_init: PWDFDEVICE_INIT
         EvtIoDeviceControl: Some(ioctl::evt_io_device_control),
         ..WDF_IO_QUEUE_CONFIG::default()
     };
-    let mut queue: WDFIOQUEUE = WDF_NO_HANDLE.cast();
+    let mut queue: WDFQUEUE = WDF_NO_HANDLE.cast();
     let mut queue_attributes = WDF_OBJECT_ATTRIBUTES {
         Size: WDF_OBJECT_ATTRIBUTES_SIZE,
         ExecutionLevel: _WDF_EXECUTION_LEVEL::WdfExecutionLevelInheritFromParent,

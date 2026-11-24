@@ -6,7 +6,7 @@
 //! to the Services app, and gives us the real Win32 error text on failure.
 
 use std::path::Path;
-use winrust_core::error::Result;
+use winrust_core::error::{Result, WinError};
 use winrust_core::registry::{self, Root};
 use winrust_core::service::ScManager;
 
@@ -26,9 +26,11 @@ pub fn driver_dir() -> std::path::PathBuf {
 /// Copy `source` into [`driver_dir`] under the canonical file name.
 pub fn stage(source: &Path) -> Result<std::path::PathBuf> {
     let dir = driver_dir();
-    std::fs::create_dir_all(&dir)?;
+    std::fs::create_dir_all(&dir)
+        .map_err(|e| WinError::Other(format!("create {}: {e}", dir.display())))?;
     let target = dir.join(DRIVER_FILE);
-    std::fs::copy(source, &target)?;
+    std::fs::copy(source, &target)
+        .map_err(|e| WinError::Other(format!("copy {}: {e}", source.display())))?;
     Ok(target)
 }
 

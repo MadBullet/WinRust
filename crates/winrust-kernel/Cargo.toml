@@ -22,6 +22,7 @@ winrust-kernel-abi.workspace = true
 wdk = "0.5"
 wdk-sys = "0.5"
 wdk-alloc = "0.4"
+wdk-panic = "0.5"
 
 [build-dependencies]
 wdk-build = "0.6"
