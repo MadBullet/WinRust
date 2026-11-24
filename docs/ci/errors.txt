@@ -1,0 +1,10 @@
+windows-sys dump failed:
+Traceback (most recent call last):
+  File "/home/runner/work/WinRust/WinRust/tools/api_digest.py", line 171, in main
+    bd = runpy.run_path("tools/build_digest.py")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 259, in _get_code_from_file
+  File "tools/build_digest.py", line 50
+    continue
+IndentationError: unexpected indent
