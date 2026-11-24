@@ -215,18 +215,25 @@ def main() -> None:
             m = re.search(r"pub fn run_native[^}]+?\n\}", src, re.S)
             if m:
                 out.append("\n##### eframe::run_native\n" + squeeze(m.group(0), 900))
+            m = re.search(r"pub trait App \{[^}]*?\n\}", src, re.S)
+            if m:
+                out.append("\n##### eframe::App\n" + squeeze(m.group(0), 1500))
+            m = re.search(r"pub struct CreationContext[^{]*\{[^}]*\n\}", src, re.S)
+            if m:
+                out.append("\n##### eframe::CreationContext\n" + squeeze(m.group(0), 800))
     except Exception:
         out.append("!! eframe dump failed:\n" + traceback.format_exc())
 
     try:
         eg = dirs["egui"]
         for rel, label in [
-            ("src/style.rs", "egui::style"),
-            ("src/data/mod.rs", "egui::data"),
+            ("src/text/fonts.rs", "egui::text::fonts"),
+            ("src/data/icon_data.rs", "egui::data::icon_data"),
             ("src/data/output.rs", "egui::output"),
             ("src/response.rs", "egui::response"),
             ("src/menu.rs", "egui::menu"),
             ("src/style.rs", "egui::style"),
+            ("src/containers/panel.rs", "egui::panel"),
         ]:
             path = os.path.join(eg, rel)
             if not os.path.isfile(path):
