@@ -2294,7 +2294,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:305:
 [0m[32m+                            );
 [0m                         });
                      });
-                     if ui
+                     if cols[0]
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:352:
                          .and_then(|s| s.path.clone());
                      match path {

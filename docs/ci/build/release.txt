@@ -1,17 +1,17 @@
    Compiling proc-macro2 v1.0.107
-   Compiling quote v1.0.47
    Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
    Compiling cfg-if v1.0.5
    Compiling stable_deref_trait v1.2.1
    Compiling log v0.4.35
-   Compiling windows-link v0.2.1
    Compiling syn v3.0.10
+   Compiling windows-link v0.2.1
    Compiling simd-adler32 v0.3.10
    Compiling smallvec v1.16.6
-   Compiling crc32fast v1.5.6
    Compiling adler2 v2.0.1
-   Compiling writeable v0.6.4
+   Compiling crc32fast v1.5.6
    Compiling utf_types v1.0.0
+   Compiling writeable v0.6.4
    Compiling litemap v0.8.3
    Compiling utf8_iter v1.1.0
    Compiling synstructure v0.14.0
@@ -19,107 +19,107 @@
    Compiling zerofrom-derive v0.1.8
    Compiling yoke-derive v0.8.4
    Compiling zerofrom v0.1.8
-   Compiling zerovec-derive v0.11.7
-   Compiling yoke v0.8.4
    Compiling bytemuck_derive v1.12.1
-   Compiling zerovec v0.11.9
+   Compiling yoke v0.8.4
+   Compiling zerovec-derive v0.11.7
    Compiling bytemuck v1.25.2
+   Compiling zerovec v0.11.9
    Compiling displaydoc v0.2.7
    Compiling potential_utf v0.1.6
+   Compiling tinystr v0.8.5
+   Compiling zerotrie v0.2.5
+   Compiling icu_locale_core v2.4.0
+   Compiling once_cell v1.21.4
+   Compiling icu_properties_data v2.4.0
    Compiling icu_normalizer_data v2.4.0
    Compiling khronos_api v3.1.0
-   Compiling once_cell v1.21.4
-   Compiling tinystr v0.8.5
-   Compiling icu_locale_core v2.4.0
-   Compiling zerotrie v0.2.5
    Compiling windows_x86_64_msvc v0.52.6
-   Compiling icu_properties_data v2.4.0
-   Compiling icu_collections v2.4.0
    Compiling icu_provider v2.4.0
+   Compiling icu_collections v2.4.0
    Compiling flate2 v1.1.11
-   Compiling autocfg v1.5.1
    Compiling cfg_aliases v0.2.2
+   Compiling autocfg v1.5.1
    Compiling xml-rs v0.8.29
-   Compiling icu_properties v2.4.0
-   Compiling gl_generator v0.14.0
    Compiling windows-targets v0.52.6
    Compiling icu_normalizer v2.4.0
+   Compiling gl_generator v0.14.0
+   Compiling icu_properties v2.4.0
+   Compiling parking_lot_core v0.9.12
    Compiling version_check v0.9.5
    Compiling shlex v2.0.1
    Compiling zerocopy v0.8.64
-   Compiling parking_lot_core v0.9.12
    Compiling find-msvc-tools v0.1.15
-   Compiling ahash v0.8.13
    Compiling idna_adapter v1.2.2
+   Compiling ahash v0.8.13
    Compiling cc v1.11.3
+   Compiling scopeguard v1.2.0
    Compiling bitflags v2.13.2
    Compiling ttf-parser v0.25.1
-   Compiling scopeguard v1.2.0
    Compiling percent-encoding v2.3.2
    Compiling form_urlencoded v1.2.3
-   Compiling lock_api v0.4.14
    Compiling ring v0.17.14
    Compiling owned_ttf_parser v0.25.1
+   Compiling lock_api v0.4.14
    Compiling idna v1.1.0
    Compiling emath v0.29.1
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
    Compiling windows-sys v0.61.2
+   Compiling ab_glyph_rasterizer v0.1.10
    Compiling float-cmp v0.9.0
    Compiling zeroize v1.9.2
    Compiling arrayvec v0.7.8
-   Compiling ab_glyph_rasterizer v0.1.10
-   Compiling ab_glyph v0.2.32
    Compiling rustls-pki-types v1.16.0
    Compiling strict-num v0.1.1
+   Compiling ab_glyph v0.2.32
    Compiling ecolor v0.29.1
-   Compiling parking_lot v0.12.5
    Compiling url v2.5.9
+   Compiling parking_lot v0.12.5
    Compiling windows-sys v0.52.0
    Compiling num-traits v0.2.19
    Compiling syn v2.0.119
-   Compiling epaint_default_fonts v0.29.1
-   Compiling nohash-hasher v0.2.0
-   Compiling arrayref v0.3.9
    Compiling serde_core v1.0.229
-   Compiling tiny-skia-path v0.11.4
+   Compiling arrayref v0.3.9
+   Compiling nohash-hasher v0.2.0
+   Compiling epaint_default_fonts v0.29.1
    Compiling epaint v0.29.1
+   Compiling tiny-skia-path v0.11.4
    Compiling kurbo v0.9.5
    Compiling glutin_wgl_sys v0.6.1
    Compiling glutin_egl_sys v0.7.1
    Compiling winit v0.30.13
    Compiling getrandom v0.2.17
-   Compiling serde v1.0.229
-   Compiling siphasher v0.3.11
-   Compiling siphasher v1.0.4
    Compiling pin-project-lite v0.2.18
-   Compiling tracing-core v0.1.36
-   Compiling memchr v2.8.3
-   Compiling unicase v2.10.0
    Compiling untrusted v0.9.0
+   Compiling tracing-core v0.1.36
    Compiling raw-window-handle v0.6.2
+   Compiling memchr v2.8.3
+   Compiling siphasher v1.0.4
+   Compiling serde v1.0.229
+   Compiling unicase v2.10.0
+   Compiling siphasher v0.3.11
    Compiling phf_shared v0.11.3
+   Compiling svgtypes v0.13.0
    Compiling aho-corasick v1.1.5
    Compiling tracing v0.1.44
-   Compiling svgtypes v0.13.0
    Compiling egui v0.29.1
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
    Compiling serde_derive v1.0.229
+   Compiling unicode-segmentation v1.13.3
+   Compiling error-code v3.4.0
+   Compiling rctree v0.5.0
+   Compiling pxfm v0.1.30
+   Compiling smol_str v0.2.2
+   Compiling weezl v0.1.12
+   Compiling litrs v1.0.1
+   Compiling color_quant v1.1.0
+   Compiling regex-syntax v0.8.12
    Compiling rustls v0.23.46
    Compiling cursor-icon v1.2.0
    Compiling dpi v0.1.2
-   Compiling error-code v3.4.0
-   Compiling color_quant v1.1.0
-   Compiling rctree v0.5.0
-   Compiling pxfm v0.1.30
-   Compiling weezl v0.1.12
-   Compiling regex-syntax v0.8.12
-   Compiling unicode-segmentation v1.13.3
-   Compiling litrs v1.0.1
-   Compiling smol_str v0.2.2
-   Compiling document-features v0.2.12
    Compiling regex-automata v0.4.19
+   Compiling document-features v0.2.12
    Compiling gif v0.14.2
    Compiling moxcms v0.8.1
    Compiling usvg-tree v0.37.0
@@ -131,21 +131,21 @@
    Compiling glutin-winit v0.5.0
    Compiling libloading v0.8.9
    Compiling simplecss v0.2.2
+   Compiling roxmltree v0.19.0
+   Compiling thiserror v1.0.69
    Compiling anstyle v1.0.14
    Compiling once_cell_polyfill v1.70.2
-   Compiling imagesize v0.12.0
-   Compiling byteorder-lite v0.1.0
-   Compiling thiserror v1.0.69
    Compiling data-url v0.3.2
    Compiling bitflags v1.3.2
-   Compiling roxmltree v0.19.0
-   Compiling winapi v0.3.9
    Compiling utf8parse v0.2.2
+   Compiling byteorder-lite v0.1.0
+   Compiling imagesize v0.12.0
+   Compiling winapi v0.3.9
    Compiling subtle v2.6.1
-   Compiling anstyle-parse v1.0.0
    Compiling usvg-parser v0.37.0
-   Compiling png v0.17.16
    Compiling image v0.25.10
+   Compiling anstyle-parse v1.0.0
+   Compiling png v0.17.16
    Compiling anstyle-wincon v3.0.11
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
@@ -154,21 +154,21 @@
    Compiling thiserror-impl v1.0.69
    Compiling webbrowser v1.2.7
    Compiling anstyle-query v1.1.5
-   Compiling glow v0.14.2
-   Compiling base64 v0.22.1
-   Compiling web-time v1.1.0
-   Compiling pico-args v0.5.0
-   Compiling colorchoice v1.0.5
-   Compiling xmlwriter v0.1.0
    Compiling is_terminal_polyfill v1.70.2
+   Compiling web-time v1.1.0
+   Compiling xmlwriter v0.1.0
    Compiling base64 v0.21.7
    Compiling jiff-core v1.0.1
-   Compiling usvg v0.37.0
-   Compiling jiff v1.0.2
-   Compiling egui_glow v0.29.1
+   Compiling glow v0.14.2
+   Compiling pico-args v0.5.0
+   Compiling colorchoice v1.0.5
+   Compiling base64 v0.22.1
    Compiling anstream v1.0.0
-   Compiling egui-winit v0.29.1
    Compiling ureq v2.12.1
+   Compiling usvg v0.37.0
+   Compiling egui_glow v0.29.1
+   Compiling jiff v1.0.2
+   Compiling egui-winit v0.29.1
    Compiling env_filter v2.1.0
    Compiling tiny-skia v0.11.4
    Compiling enum-map-derive v0.17.0
@@ -178,8 +178,11 @@
    Compiling mime v0.3.18
    Compiling eframe v0.29.1
    Compiling resvg v0.37.0
-   Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
    Compiling enum-map v2.7.3
+   Compiling env_logger v0.11.12
+   Compiling ehttp v0.5.0
+   Compiling egui_extras v0.29.1
+   Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
 warning: unused import: `to_wide`
   --> crates\winrust-core\src\process.rs:10:36
    |
@@ -200,7 +203,6 @@ warning: unused import: `from_wide`
 9 | use crate::wide::{from_wide, str_to_wide};
   |                   ^^^^^^^^^
 
-   Compiling env_logger v0.11.12
 warning: function `nonnull` is never used
    --> crates\winrust-core\src\process.rs:319:15
     |
@@ -209,42 +211,113 @@ warning: function `nonnull` is never used
     |
     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
 
-   Compiling ehttp v0.5.0
-   Compiling egui_extras v0.29.1
 warning: `winrust-core` (lib) generated 4 warnings (run `cargo fix --lib -p winrust-core` to apply 3 suggestions)
-   Compiling winrust-launcher v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
-error[E0501]: cannot borrow `*ui` as mutable because previous closure requires unique access
-   --> crates\winrust-launcher\src\main.rs:293:13
-    |
-293 |               ui.columns(2, |cols| {
-    |               ^  -------    ------ closure construction occurs here
-    |               |  |
-    |  _____________|  first borrow later used by call
-    | |
-294 | |                 cols[0].heading("Components");
-295 | |                 cols[0].add_space(4.0);
-296 | |                 let mut launch: Option<Component> = None;
-...   |
-326 | |                     if ui
-    | |                        -- first borrow occurs due to use of `*ui` in closure
-...   |
-384 | |             });
-    | |______________^ second borrow occurs here
+   Compiling winrust-taskmgr v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
+   Compiling winrust-services v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-services)
+warning: unused import: `Sender`
+  --> crates\winrust-taskmgr\src\app.rs:18:42
+   |
+18 | use std::sync::mpsc::{channel, Receiver, Sender};
+   |                                          ^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
 
-error[E0500]: closure requires unique access to `*ui` but it is already borrowed
-   --> crates\winrust-launcher\src\main.rs:293:27
+error[E0609]: no field `0` on type `Option<(u64, u64)>`
+   --> crates\winrust-taskmgr\src\app.rs:102:74
     |
-293 |             ui.columns(2, |cols| {
-    |             -- -------    ^^^^^^ closure construction occurs here
-    |             |  |
-    |             |  first borrow later used by call
-    |             borrow occurs here
-...
-326 |                     if ui
-    |                        -- second borrow occurs due to use of `*ui` in closure
+102 |                     Some((_, prev_cpu_100ns)) if p.created_100ns == prev.0 => {
+    |                                                                          ^ unknown field
+    |
+help: one of the expressions' fields has a field of the same name
+    |
+102 |                     Some((_, prev_cpu_100ns)) if p.created_100ns == prev.unwrap().0 => {
+    |                                                                          +++++++++
 
-Some errors have detailed explanations: E0500, E0501.
-For more information about an error, try `rustc --explain E0500`.
-error: could not compile `winrust-launcher` (bin "WinRust") due to 2 previous errors
+error[E0603]: constant `SERVICE_CHANGE_CONFIG` is private
+   --> crates\winrust-services\src\app.rs:117:66
+    |
+117 |         match scm.open_service(&dlg.name, winrust_core::service::SERVICE_CHANGE_CONFIG) {
+    |                                                                  ^^^^^^^^^^^^^^^^^^^^^ private constant
+    |
+note: the constant `SERVICE_CHANGE_CONFIG` is defined here
+   --> crates\winrust-core\src\service.rs:25:20
+    |
+ 25 |     SERVICE_WIN32, SERVICE_CHANGE_CONFIG, SERVICE_ENUMERATE_DEPENDENTS,
+    |                    ^^^^^^^^^^^^^^^^^^^^^
+help: import `SERVICE_CHANGE_CONFIG` directly
+    |
+117 -         match scm.open_service(&dlg.name, winrust_core::service::SERVICE_CHANGE_CONFIG) {
+117 +         match scm.open_service(&dlg.name, windows_sys::Win32::System::Services::SERVICE_CHANGE_CONFIG) {
+    |
+
+error[E0308]: mismatched types
+   --> crates\winrust-taskmgr\src\app.rs:453:17
+    |
+442 |           let mut table = TableBuilder::new(ui)
+    |  _________________________-
+443 | |             .striped(true)
+444 | |             .resizable(true)
+445 | |             .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+...   |
+450 | |             .column(Column::initial(70.0).at_least(50.0).clip(true))
+451 | |             .column(Column::remainder().at_least(80.0).clip(true));
+    | |__________________________________________________________________- expected due to this value
+452 |
+453 |           table = table.header(22.0, |mut header| {
+    |  _________________^
+454 | |             for (title, key) in [
+455 | |                 ("Name", SortBy::Name),
+456 | |                 ("Status", SortBy::Pid),
+...   |
+469 | |         });
+    | |__________^ expected `TableBuilder<'_>`, found `Table<'_>`
+
+error[E0308]: mismatched types
+   --> crates\winrust-services\src\app.rs:204:17
+    |
+194 |           let mut table = TableBuilder::new(ui)
+    |  _________________________-
+195 | |             .striped(true)
+196 | |             .resizable(true)
+197 | |             .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+...   |
+201 | |             .column(Column::initial(220.0).at_least(120.0).clip(true))
+202 | |             .column(Column::remainder().at_least(80.0).clip(true));
+    | |__________________________________________________________________- expected due to this value
+203 |
+204 |           table = table.header(22.0, |mut header| {
+    |  _________________^
+205 | |             for title in ["Name", "Status", "Start type", "Log on as", "Description"] {
+206 | |                 header.col(|ui| {
+207 | |                     ui.label(RichText::new(title).strong());
+...   |
+210 | |         });
+    | |__________^ expected `TableBuilder<'_>`, found `Table<'_>`
+
+warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
+   --> crates\winrust-taskmgr\src\app.rs:587:35
+    |
+587 |                 egui::Stroke::new(1.0, Color32::from_rgb(40, 40, 52)),
+    |                                   ^^^ help: explicitly specify the type as `f32`: `1.0_f32`
+    |
+    = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
+    = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
+    = note: `#[warn(float_literal_f32_fallback)]` (part of `#[warn(future_incompatible)]`) on by default
+
+warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
+   --> crates\winrust-taskmgr\src\app.rs:600:35
+    |
+600 |                 egui::Stroke::new(1.5, Color32::from_rgb(120, 200, 255)),
+    |                                   ^^^ help: explicitly specify the type as `f32`: `1.5_f32`
+    |
+    = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
+    = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
+
+Some errors have detailed explanations: E0308, E0603.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `winrust-services` (bin "winrust-services") due to 2 previous errors
 warning: build failed, waiting for other jobs to finish...
+Some errors have detailed explanations: E0308, E0609.
+warning: `winrust-taskmgr` (bin "winrust-taskmgr") generated 3 warnings
+error: could not compile `winrust-taskmgr` (bin "winrust-taskmgr") due to 2 previous errors; 3 warnings emitted
 exit=False
