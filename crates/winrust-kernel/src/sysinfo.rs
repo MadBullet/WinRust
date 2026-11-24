@@ -15,9 +15,22 @@
 //! All four are read-only and work on every Windows build.
 
 use wdk_sys::{
-    ntddk::{ExAllocatePool2, ExFreePool, ZwQuerySystemInformation},
+    ntddk::{ExAllocatePool2, ExFreePool},
     NTSTATUS, POOL_FLAG_NON_PAGED, STATUS_INFO_LENGTH_MISMATCH, STATUS_SUCCESS,
 };
+
+// `ZwQuerySystemInformation` is present in ntddk.h but bindgen's default
+// configuration for wdk-sys does not export it (it is not in the API subset the
+// crate allowlists).  Declaring it here is the documented, supported way to
+// reach an unbound ntoskrnl export from a Rust driver.
+extern "system" {
+    fn ZwQuerySystemInformation(
+        system_information_class: u32,
+        system_information: *mut core::ffi::c_void,
+        system_information_length: u32,
+        return_length: *mut u32,
+    ) -> NTSTATUS;
+}
 
 /// `SystemProcessInformation`.
 const CLASS_PROCESS: u32 = 5;
@@ -137,7 +150,7 @@ pub struct ProcessRow {
 /// layout.  The leading timings are read out of `reserved1` by offset because
 /// they sit inside the C `Reserved1[48]` array.
 #[repr(C)]
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy)]
 struct SystemProcessInformation {
     next_entry_offset: u32,
     number_of_threads: u32,

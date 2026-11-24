@@ -45,7 +45,7 @@ pub extern "C" fn evt_io_device_control(
             WdfRequestCompleteWithInformation,
             request,
             status,
-            written
+            written as u64
         );
     }
 }

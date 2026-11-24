@@ -95,12 +95,13 @@ pub extern "C" fn evt_device_add(driver: WDFDRIVER, device_init: PWDFDEVICE_INIT
         ..WDF_OBJECT_ATTRIBUTES::default()
     };
     let mut device: WDFDEVICE = WDF_NO_HANDLE.cast();
+    // `WdfDeviceCreate` takes `*mut PWDFDEVICE_INIT`, i.e. the *address* of our
+    // pointer variable: the framework nulls it once it consumes the init struct.
+    let mut init_slot = device_init;
     let status = unsafe {
         call_unsafe_wdf_function_binding!(
             WdfDeviceCreate,
-            // `WdfDeviceCreate` takes `*mut PWDFDEVICE_INIT`: the framework
-            // updates the caller's pointer when it consumes the init struct.
-            &raw mut { device_init },
+            &raw mut init_slot,
             &raw mut attributes,
             &raw mut device,
         )

@@ -83,7 +83,7 @@ pub fn allow(image: &str) {
 /// Number of blocked names.
 #[must_use]
 pub fn count() -> usize {
-    blocked_mut(Vec::len)
+    blocked_mut(|list| list.len())
 }
 
 /// Is the guard registered?
@@ -134,12 +134,12 @@ extern "C" fn notify(
     let Some(info) = (unsafe { info.as_ref() }) else {
         return;
     };
-    let Some(image) = (unsafe {
-        image_name(
-            info.ImageFileName.Buffer,
-            usize::from(info.ImageFileName.Length),
-        )
-    }) else {
+    // `ImageFileName` is `PUNICODE_STRING` in the WDK, so dereference it once
+    // and keep the reference for the two field reads.
+    let Some(name) = (unsafe { info.ImageFileName.as_ref() }) else {
+        return;
+    };
+    let Some(image) = (unsafe { image_name(name.Buffer, usize::from(name.Length)) }) else {
         return;
     };
     if is_blocked(&image) {
@@ -160,9 +160,7 @@ pub fn enable() -> bool {
     if REGISTERED.load(Ordering::Acquire) {
         return true;
     }
-    let status = unsafe {
-        PsSetCreateProcessNotifyRoutineEx(Some(notify as *const () as *mut core::ffi::c_void), 0)
-    };
+    let status = unsafe { PsSetCreateProcessNotifyRoutineEx(Some(notify), 0) };
     if !wdk::nt_success(status) {
         println!("WinRust: process notify registration failed {status:#010X}");
         return false;
@@ -179,7 +177,7 @@ pub fn disable() {
         return;
     }
     unsafe {
-        PsSetCreateProcessNotifyRoutineEx(Some(notify as *const () as *mut core::ffi::c_void), 1);
+        PsSetCreateProcessNotifyRoutineEx(Some(notify), 1);
     }
     blocked_mut(Vec::clear);
 }
