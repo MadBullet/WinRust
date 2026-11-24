@@ -51,7 +51,10 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Users", "Пользователи"),
     ("Services", "Службы"),
     ("Restart", "Перезапустить"),
-    ("Select a service to see details", "Выберите службу, чтобы увидеть подробности"),
+    (
+        "Select a service to see details",
+        "Выберите службу, чтобы увидеть подробности",
+    ),
     ("Admin", "Администратор"),
     ("This PC", "Этот компьютер"),
     ("Desktop", "Рабочий стол"),
@@ -142,8 +145,12 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Enumerate failed: {}", "Ошибка перечисления: {}"),
     ("{} Properties", "{}: свойства"),
     ("Applying changes…", "Применение изменений…"),
-    ("{} services · logged in as {}{} · {}",
-     "Служб: {} · вход выполнен как {}{} · {}"),
-    ("{}: start type = {}, description saved",
-     "{}: тип запуска = {}, описание сохранено"),
+    (
+        "{} services · logged in as {}{} · {}",
+        "Служб: {} · вход выполнен как {}{} · {}",
+    ),
+    (
+        "{}: start type = {}, description saved",
+        "{}: тип запуска = {}, описание сохранено",
+    ),
 ];

@@ -130,10 +130,9 @@ impl ServicesApp {
             None => {
                 self.scm = ScManager::connect().ok();
                 if self.scm.is_none() {
-                    self.status = ts(
-                        "Cannot open the Service Control Manager — run WinRust elevated.",
-                    )
-                    .to_string();
+                    self.status =
+                        ts("Cannot open the Service Control Manager — run WinRust elevated.")
+                            .to_string();
                 }
             }
         }
@@ -151,7 +150,12 @@ impl ServicesApp {
         };
         match winrust_core::service::control(&entry.name, action) {
             Ok(()) => {
-                self.status = format!("{}: {} — {}", entry.display_name, action.label(), t("requested"));
+                self.status = format!(
+                    "{}: {} — {}",
+                    entry.display_name,
+                    action.label(),
+                    t("requested")
+                );
                 // Give the SCM a moment, then refresh so the state is current.
                 std::thread::sleep(Duration::from_millis(120));
                 self.refresh();
@@ -262,7 +266,8 @@ impl ServicesApp {
                     .width(96.0)
                     .show_ui(ui, |ui| {
                         for l in Lang::ALL {
-                            if ui.selectable_label(lang == l, l.native_name()).clicked() && lang != l
+                            if ui.selectable_label(lang == l, l.native_name()).clicked()
+                                && lang != l
                             {
                                 lang = l;
                             }
@@ -332,9 +337,11 @@ impl ServicesApp {
                         Some(StartType::Disabled) => 5,
                         _ => 6,
                     };
-                    rank(a.start_type)
-                        .cmp(&rank(b.start_type))
-                        .then(a.display_name.to_lowercase().cmp(&b.display_name.to_lowercase()))
+                    rank(a.start_type).cmp(&rank(b.start_type)).then(
+                        a.display_name
+                            .to_lowercase()
+                            .cmp(&b.display_name.to_lowercase()),
+                    )
                 }
                 SortColumn::Logon => a
                     .logon_account
@@ -391,8 +398,10 @@ impl ServicesApp {
                     };
                     if ui
                         .add(
-                            egui::Button::new(RichText::new(format!("{}{arrow}", col.label())).strong())
-                                .frame(false),
+                            egui::Button::new(
+                                RichText::new(format!("{}{arrow}", col.label())).strong(),
+                            )
+                            .frame(false),
                         )
                         .on_hover_text(if self.sort_desc {
                             t("Sort ascending")
@@ -415,8 +424,7 @@ impl ServicesApp {
                 // Name (with the driver glyph, like services.msc)
                 row.col(|ui| {
                     let prefix = if s.is_driver { "⚙ " } else { "" };
-                    let resp =
-                        ui.selectable_label(selected, format!("{prefix}{}", s.display_name));
+                    let resp = ui.selectable_label(selected, format!("{prefix}{}", s.display_name));
                     if resp.clicked() {
                         clicked = Some(s.name.clone());
                     }
@@ -556,7 +564,10 @@ impl ServicesApp {
             ui.horizontal(|ui| {
                 let state = entry.state.unwrap_or(ServiceState::Stopped);
                 if ui
-                    .add_enabled(state == ServiceState::Stopped, egui::Button::new(t("Start")))
+                    .add_enabled(
+                        state == ServiceState::Stopped,
+                        egui::Button::new(t("Start")),
+                    )
                     .clicked()
                 {
                     self.do_action(ServiceAction::Start);
@@ -588,10 +599,7 @@ impl ServicesApp {
                 {
                     self.do_action(ServiceAction::Resume);
                 }
-                if ui
-                    .button(format!("{}…", t("Properties")))
-                    .clicked()
-                {
+                if ui.button(format!("{}…", t("Properties"))).clicked() {
                     self.open_props();
                 }
             });
