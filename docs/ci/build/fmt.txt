@@ -2800,7 +2800,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1884:
 [0m[31m-                    ui.painter().rect_stroke(
 [0m[31m-                        rect,
 [0m[31m-                        3.0,
-[0m[31m-                        egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
+[0m[31m-                        egui::Stroke::new(1.0_f32, ui.visuals().widgets.hovered.bg_stroke.color),
 [0m[32m+        egui::ScrollArea::vertical()
 [0m[32m+            .id_salt("content")
 [0m[32m+            .auto_shrink([false, false])
@@ -2833,7 +2833,10 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1884:
 [0m[32m+                        ui.painter().rect_stroke(
 [0m[32m+                            rect,
 [0m[32m+                            3.0,
-[0m[32m+                            egui::Stroke::new(1.0, ui.visuals().widgets.hovered.bg_stroke.color),
+[0m[32m+                            egui::Stroke::new(
+[0m[32m+                                1.0_f32,
+[0m[32m+                                ui.visuals().widgets.hovered.bg_stroke.color,
+[0m[32m+                            ),
 [0m[32m+                        );
 [0m[32m+                    }
 [0m[32m+                    let icon_rect = egui::Rect::from_min_size(
@@ -3834,8 +3837,4 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:141:
 [0m[32m+            ),
 [0m[32m+            (
 [0m[32m+                Root::LocalMachine,
-[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
-[0m[32m+                "HKLM Run",
-[0m[32m+            ),
-[0m         ] {
-             for (name, ty, data) in regi
+[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVer
