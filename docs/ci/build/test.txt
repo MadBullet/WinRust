@@ -1,0 +1,9 @@
+error: failed to load manifest for workspace member `D:\a\WinRust\WinRust\crates/winrust-taskmgr`
+referenced by workspace at `D:\a\WinRust\WinRust\Cargo.toml`
+
+Caused by:
+  failed to read `D:\a\WinRust\WinRust\crates\winrust-taskmgr\Cargo.toml`
+
+Caused by:
+  The system cannot find the path specified. (os error 3)
+exit=False
