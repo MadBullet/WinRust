@@ -251,8 +251,3 @@ pub fn delete_key(root: Root, path: &str, sub: &str) -> Result<()> {
     let rc = unsafe { RegDeleteKeyExW(key.raw(), wsub.as_ptr(), KEY_WOW64_64KEY, 0) };
     if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegDeleteKeyExW")) }
 }
-
-/// Close a raw key (helper for callers that opened one directly).
-pub fn close(hkey: HKEY) {
-    unsafe { RegCloseKey(hkey) };
-}

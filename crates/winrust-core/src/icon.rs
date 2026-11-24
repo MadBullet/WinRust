@@ -15,7 +15,10 @@ use windows_sys::Win32::UI::WindowsAndMessaging::{DrawIconEx, GetIconInfo, ICONI
 /// Convert an icon into tightly packed RGBA8 pixels (row-major, top-down).
 ///
 /// Returns `None` if GDI refuses to render the icon (extremely rare).
-pub fn hicon_to_rgba(hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON, w: u32, h: u32) -> Option<Vec<u8>> {
+///
+/// # Safety
+/// `hicon` must be a valid icon handle that stays alive for the call.
+pub unsafe fn hicon_to_rgba(hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON, w: u32, h: u32) -> Option<Vec<u8>> {
     if hicon.is_null() || w == 0 || h == 0 {
         return None;
     }

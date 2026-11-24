@@ -439,7 +439,7 @@ impl TaskManagerApp {
         let mut end_pid: Option<u32> = None;
         let mut new_priority: Option<(u32, Priority)> = None;
 
-        let mut table = TableBuilder::new(ui)
+        let table = TableBuilder::new(ui)
             .striped(true)
             .resizable(true)
             .cell_layout(egui::Layout::left_to_right(egui::Align::Center))

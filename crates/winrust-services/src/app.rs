@@ -191,7 +191,7 @@ impl ServicesApp {
 
         let mut clicked: Option<String> = None;
         let mut double_clicked = false;
-        let mut table = TableBuilder::new(ui)
+        let table = TableBuilder::new(ui)
             .striped(true)
             .resizable(true)
             .cell_layout(egui::Layout::left_to_right(egui::Align::Center))

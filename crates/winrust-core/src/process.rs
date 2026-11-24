@@ -7,10 +7,9 @@
 
 use crate::error::{check, Result, WinError};
 use crate::handle::Handle;
-use crate::wide::{from_wide_fixed, to_wide};
+use crate::wide::from_wide_fixed;
 use serde::{Deserialize, Serialize};
-use std::ffi::c_void;
-use windows_sys::Win32::Foundation::{FILETIME, HANDLE, MAX_PATH};
+use windows_sys::Win32::Foundation::{FILETIME, MAX_PATH};
 use windows_sys::Win32::System::Diagnostics::ToolHelp::{
     CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W, TH32CS_SNAPPROCESS,
 };
@@ -313,9 +312,4 @@ pub fn wait_for_exit(pid: u32, timeout_ms: u32) -> Result<u32> {
     let mut code = 0u32;
     check("GetExitCodeProcess", unsafe { GetExitCodeProcess(h.raw(), &mut code) })?;
     Ok(code)
-}
-
-/// Utility: convert a raw pointer that is non-null into `Option`.
-pub(crate) fn nonnull(p: *mut c_void) -> Option<*mut c_void> {
-    if p.is_null() { None } else { Some(p) }
 }

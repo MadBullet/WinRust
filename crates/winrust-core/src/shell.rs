@@ -264,7 +264,7 @@ pub fn file_info(path: impl AsRef<Path>, want_icon: bool) -> ShellItemInfo {
         return ShellItemInfo::default();
     }
     let icon_rgba = if want_icon && !info.hIcon.is_null() {
-        let rgba = crate::icon::hicon_to_rgba(info.hIcon, 16, 16);
+        let rgba = unsafe { crate::icon::hicon_to_rgba(info.hIcon, 16, 16) };
         unsafe { windows_sys::Win32::UI::WindowsAndMessaging::DestroyIcon(info.hIcon) };
         rgba
     } else {

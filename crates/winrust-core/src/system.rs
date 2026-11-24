@@ -161,7 +161,7 @@ pub fn os_info() -> OsInfo {
     unsafe {
         if let Ok(lib) = module_name("ntdll.dll") {
             if let Some(hm) = non_null_handle(GetModuleHandleW(lib.as_ptr())) {
-                if let Some(f) = GetProcAddress(hm, b"RtlGetVersion\0".as_ptr()) {
+                if let Some(f) = GetProcAddress(hm, c"RtlGetVersion".as_ptr() as *const u8) {
                     type RtlGetVersion = unsafe extern "system" fn(*mut OsVersionInfoExW) -> i32;
                     let f: RtlGetVersion = std::mem::transmute(f);
                     let mut vi: OsVersionInfoExW = std::mem::zeroed();

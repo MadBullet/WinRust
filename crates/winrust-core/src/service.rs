@@ -6,7 +6,7 @@
 
 use crate::error::{check, Result, WinError};
 use crate::handle::Handle;
-use crate::wide::{from_wide, str_to_wide};
+use crate::wide::str_to_wide;
 use serde::{Deserialize, Serialize};
 use windows_sys::Win32::System::Services::{
     ChangeServiceConfigW, ControlService, EnumDependentServicesW,
@@ -191,7 +191,7 @@ impl ScManager {
         if let Ok(drivers) = self.enumerate_filtered(SERVICE_DRIVER, true) {
             out.extend(drivers);
         }
-        out.sort_by(|a, b| a.display_name.to_lowercase().cmp(&b.display_name.to_lowercase()));
+        out.sort_by_key(|s| s.display_name.to_lowercase());
         Ok(out)
     }
 
