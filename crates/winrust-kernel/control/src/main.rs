@@ -255,7 +255,10 @@ fn blocked() -> Result<(), String> {
     let driver = Driver::connect().map_err(|e| e.to_string())?;
     println!("the driver keeps the list in RAM; use `block <name>` to add entries");
     let perf = driver.performance().map_err(|e| e.to_string())?;
-    println!("{} processes currently visible from kernel mode", perf.process_count);
+    println!(
+        "{} processes currently visible from kernel mode",
+        perf.process_count
+    );
     Ok(())
 }
 

@@ -189,13 +189,13 @@ impl Driver {
                 status: std::io::Error::last_os_error().raw_os_error().unwrap_or(0),
             });
         }
-        if (returned as usize) < std::mem::size_of::<ResponseHeader>() + std::mem::size_of::<GuardStatus>() {
+        if (returned as usize)
+            < std::mem::size_of::<ResponseHeader>() + std::mem::size_of::<GuardStatus>()
+        {
             return Err(DriverError::Protocol("short guard response".into()));
         }
         let offset = std::mem::size_of::<ResponseHeader>();
-        Ok(unsafe {
-            std::ptr::read_unaligned(output.as_ptr().add(offset).cast::<GuardStatus>())
-        })
+        Ok(unsafe { std::ptr::read_unaligned(output.as_ptr().add(offset).cast::<GuardStatus>()) })
     }
 
     fn paged<T: Copy>(

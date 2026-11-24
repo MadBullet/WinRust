@@ -94,7 +94,8 @@ fn handle_guard(request: WDFREQUEST) -> Result<usize, NTSTATUS> {
             &raw mut length
         )
     };
-    if !wdk::nt_success(status) || input.is_null() || length < core::mem::size_of::<GuardRequest>() {
+    if !wdk::nt_success(status) || input.is_null() || length < core::mem::size_of::<GuardRequest>()
+    {
         return Err(STATUS_INVALID_PARAMETER);
     }
     // SAFETY: at least `size_of::<GuardRequest>()` bytes were copied into this
