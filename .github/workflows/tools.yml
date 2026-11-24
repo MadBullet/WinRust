@@ -1,33 +1,29 @@
 name: tools
 
 on:
-  push:
-    branches: [arena/1e8c9b58-winrust]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  vendor:
-    runs-on: windows-latest
+  api-digest:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: describe toolchain
-        run: |
-          rustc -V | Out-File -Append -Encoding utf8 diag.txt
-          cargo -V | Out-File -Append -Encoding utf8 diag.txt
-          Get-ChildItem . | Out-File -Append -Encoding utf8 diag.txt
-      - name: fetch and vendor
-        shell: bash
-        run: |
-          python tools/probe-crates.py > vendor.log 2>&1
-          cat vendor.log >> diag.txt
-          mkdir -p vendored && cp -r /tmp/probe/vendor vendored/ 2>/dev/null
-          ls vendored/vendor | head -5 >> diag.txt
-          exit 0
-      - name: upload
-        if: always()
-        uses: actions/upload-artifact@v4
+      - uses: actions/setup-python@v5
         with:
-          name: vendor-src
-          path: |
-            vendored/vendor
-            diag.txt
+          python-version: "3.12"
+      - name: extract API digests
+        run: python tools/api_digest.py
+      - name: commit digests back to branch
+        run: |
+          git config user.name "WinRust CI"
+          git config user.email "ci@winrust.local"
+          git add docs/ci
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: refresh API digests [skip ci]"
+            git push
+          else
+            echo "no changes"
+          fi
