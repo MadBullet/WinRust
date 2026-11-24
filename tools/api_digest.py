@@ -205,6 +205,9 @@ def main() -> None:
             ("System/WinRT", "win-winrt.txt"),
             ("System/DataExchange", "win-clipboard.txt"),
             ("System/Ole", "win-ole.txt"),
+            ("System/Restore", "win-restore.txt"),
+            ("System/Recovery", "win-recovery.txt"),
+            ("System/ApplicationInstallationAndServicing", "win-appinstall.txt"),
         ]:
             sys.argv = ["build_digest.py", root, os.path.join(OUT_DIR, out_name), rel]
             bd["main"]()
