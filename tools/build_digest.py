@@ -39,7 +39,7 @@ def digest_file(path: str) -> list[str]:
         if k != -1 and k - end < 40:
             end = k + 1
         out.append("FN  " + squeeze(src[m.start():end], 460))
-    for m in re.finditer(r"pub const [A-Z0-9_]+(?:\s*:\s*[^=;]+)?\s*=[^;]*;", src):
+    for m in re.finditer(r"pub const [A-Za-z0-9_]+(?:\s*:\s*[^=;]+)?\s*=[^;]*;", src):
         out.append("CST " + squeeze(m.group(0), 220))
     for m in re.finditer(r"pub (?:struct|union) [A-Za-z0-9_]+", src):
         brace = src.find("{", m.end())

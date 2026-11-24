@@ -1,0 +1,14 @@
+[package]
+name = "winrust-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Safe Rust wrappers over the Win32 APIs that WinRust components are built on"
+
+[dependencies]
+windows-sys.workspace = true
+thiserror.workspace = true
+log.workspace = true
+serde.workspace = true
