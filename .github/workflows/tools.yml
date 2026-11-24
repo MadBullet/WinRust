@@ -18,8 +18,10 @@ jobs:
       - name: fetch and vendor
         shell: bash
         run: |
-          python tools/probe-crates.py > /tmp/vendor.log 2>&1
-          cat /tmp/vendor.log >> diag.txt
+          python tools/probe-crates.py > vendor.log 2>&1
+          cat vendor.log >> diag.txt
+          mkdir -p vendored && cp -r /tmp/probe/vendor vendored/ 2>/dev/null
+          ls vendored/vendor | head -5 >> diag.txt
           exit 0
       - name: upload
         if: always()
@@ -27,5 +29,5 @@ jobs:
         with:
           name: vendor-src
           path: |
-            /tmp/probe/vendor
+            vendored/vendor
             diag.txt
