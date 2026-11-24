@@ -166,6 +166,8 @@ def main() -> None:
         for g in groups:
             hits = sorted({f for f in feats if g.lower() in f.lower()})
             lines.append(f"{g}: {', '.join(hits)}")
+        extra = sorted({f for f in feats if any(k in f.lower() for k in ("dataexchange", "memory", "ole", "com"))})
+        lines.append("ALL: " + ", ".join(extra))
         with open(os.path.join(OUT_DIR, "features.txt"), "w", encoding="utf-8") as fh:
             fh.write("\n".join(lines))
         bd = runpy.run_path("tools/build_digest.py")
@@ -201,6 +203,8 @@ def main() -> None:
             ("System/Com", "win-com.txt"),
             ("UI/Controls", "win-controls.txt"),
             ("System/WinRT", "win-winrt.txt"),
+            ("System/DataExchange", "win-clipboard.txt"),
+            ("System/Ole", "win-ole.txt"),
         ]:
             sys.argv = ["build_digest.py", root, os.path.join(OUT_DIR, out_name), rel]
             bd["main"]()

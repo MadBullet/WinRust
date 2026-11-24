@@ -8,6 +8,10 @@ use std::ffi::c_void;
 use std::path::Path;
 use windows_sys::Win32::Foundation::HWND;
 use windows_sys::Win32::Storage::FileSystem::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO};
+use windows_sys::Win32::System::DataExchange::{
+    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData,
+};
+use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
 use windows_sys::Win32::UI::Shell::{
     SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
     SHFILEINFOW, SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
@@ -360,6 +364,57 @@ pub fn type_name_for_extension(ext: &str, is_dir: bool) -> String {
         return if is_dir { "File folder".into() } else { "File".into() };
     }
     from_wide(&info.szTypeName, info.szTypeName.len())
+}
+
+/// Read a text value from the clipboard (used for Ctrl+V of paths typed as text).
+pub fn clipboard_text() -> Option<String> {
+    unsafe {
+        if OpenClipboard(std::ptr::null_mut()) == 0 {
+            return None;
+        }
+        let handle = GetClipboardData(CF_UNICODETEXT as u32);
+        let mut out = None;
+        if !handle.is_null() {
+            let ptr = GlobalLock(handle) as *const u16;
+            if !ptr.is_null() {
+                let mut len = 0usize;
+                while *ptr.add(len) != 0 {
+                    len += 1;
+                }
+                out = Some(String::from_utf16_lossy(std::slice::from_raw_parts(ptr, len)));
+                GlobalUnlock(handle);
+            }
+        }
+        CloseClipboard();
+        out
+    }
+}
+
+/// Put text on the clipboard so it can be pasted into other applications.
+pub fn set_clipboard_text(text: &str) -> bool {
+    let wide: Vec<u16> = text.encode_utf16().chain(std::iter::once(0)).collect();
+    let bytes = wide.len() * 2;
+    unsafe {
+        if OpenClipboard(std::ptr::null_mut()) == 0 {
+            return false;
+        }
+        EmptyClipboard();
+        let mem = GlobalAlloc(GMEM_MOVEABLE, bytes);
+        if mem.is_null() {
+            CloseClipboard();
+            return false;
+        }
+        let dst = GlobalLock(mem) as *mut u16;
+        if dst.is_null() {
+            CloseClipboard();
+            return false;
+        }
+        std::ptr::copy_nonoverlapping(wide.as_ptr(), dst, wide.len());
+        GlobalUnlock(mem);
+        let ok = !SetClipboardData(CF_UNICODETEXT as u32, mem).is_null();
+        CloseClipboard();
+        ok
+    }
 }
 
 /// Resolve a shell item's display name only (cheap, no GDI).
