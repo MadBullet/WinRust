@@ -52,8 +52,38 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:323:
 [0m[32m+    })
 [0m }
  
- pub fn attributes(path: impl AsRef<Path>) -> Result<u32> {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:342:
+ /// Copy a file or a whole directory tree, like Explorer's Ctrl+C / Ctrl+V.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:349:
+         let f = to_wide(from);
+         let t = to_wide(to);
+         let fail_if_exists = if overwrite { 0 } else { 1 };
+[31m-        check(
+[0m[31m-            "CopyFileW",
+[0m[31m-            unsafe { windows_sys::Win32::Storage::FileSystem::CopyFileW(f.as_ptr(), t.as_ptr(), fail_if_exists) },
+[0m[31m-        )?;
+[0m[32m+        check("CopyFileW", unsafe {
+[0m[32m+            windows_sys::Win32::Storage::FileSystem::CopyFileW(
+[0m[32m+                f.as_ptr(),
+[0m[32m+                t.as_ptr(),
+[0m[32m+                fail_if_exists,
+[0m[32m+            )
+[0m[32m+        })?;
+[0m         Ok(1)
+     }
+ }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:364:
+     if !path.exists() {
+         return path.to_path_buf();
+     }
+[31m-    let stem = path.file_stem().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
+[0m[32m+    let stem = path
+[0m[32m+        .file_stem()
+[0m[32m+        .map(|s| s.to_string_lossy().to_string())
+[0m[32m+        .unwrap_or_default();
+[0m     let ext = path.extension().map(|s| s.to_string_lossy().to_string());
+     let parent = path.parent().map(|p| p.to_path_buf()).unwrap_or_default();
+     for n in 2..10_000 {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:396:
      if cur == u32::MAX {
          return Err(WinError::from_last_error("GetFileAttributesW"));
      }
@@ -1449,7 +1479,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:6:
 [0m };
  use windows_sys::Win32::System::Threading::GetSystemTimes;
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:75:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:90:
      unsafe {
          GetSystemTimes(&mut idle, &mut kernel, &mut user);
      }
@@ -1462,7 +1492,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:75:
 [0m }
  
  /// CPU usage percentage between two samples (0..=100).
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:183:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:198:
          "DisplayVersion",
      )
      .unwrap_or_default();
@@ -1477,7 +1507,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:183:
 [0m 
      let hostname = computer_name(ComputerNameDnsHostname);
      let domain = computer_name(ComputerNamePhysicalDnsDomain);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:213:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:228:
  }
  
  fn non_null_handle(h: *mut std::ffi::c_void) -> Option<*mut std::ffi::c_void> {
@@ -1490,7 +1520,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:213:
 [0m }
  
  #[allow(non_snake_case)]
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:260:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:275:
  /// Ask the shell to re-broadcast settings changes so apps re-read the
  /// environment (used after WinRust edits the user PATH).
  pub fn broadcast_settings_change() {
@@ -1501,7 +1531,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:260:
 [0m     let s = crate::wide::str_to_wide("Environment");
      unsafe {
          SendMessageTimeoutW(
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:282:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:297:
  
  /// Raise a process' working set limits (privilege `SeIncreaseWorkingSetPrivilege`).
  pub fn set_privilege(name: &str, enable: bool) -> Result<()> {
@@ -1514,7 +1544,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:282:
 [0m     use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
  
      let mut token = std::ptr::null_mut();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:290:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:305:
 [31m-    check(
 [0m[31m-        "OpenProcessToken",
 [0m[31m-        unsafe { OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &mut token) },
@@ -1529,7 +1559,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:290:
 [0m     let token = crate::handle::Handle::new(token).ok_or(WinError::Other("null token".into()))?;
  
      let mut luid = unsafe { std::mem::zeroed() };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:297:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:312:
      let wname = crate::wide::str_to_wide(name);
 [31m-    check(
 [0m[31m-        "LookupPrivilegeValueW",
@@ -1541,7 +1571,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:297:
 [0m 
      let mut tp: TOKEN_PRIVILEGES = unsafe { std::mem::zeroed() };
      tp.PrivilegeCount = 1;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:305:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:320:
      tp.Privileges[0].Luid = luid;
      tp.Privileges[0].Attributes = if enable { SE_PRIVILEGE_ENABLED } else { 0 };
  
@@ -1571,7 +1601,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:305:
 [0m }
  
  /// True when the machine has a battery (laptop / UPS-backed tablet).
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:335:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:350:
  pub fn idle_seconds() -> Option<u32> {
      use windows_sys::Win32::System::SystemInformation::GetTickCount;
      use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
@@ -1752,7 +1782,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:164:
 [0m         }
      }
  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:207:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:215:
          cc.egui_ctx.set_visuals(egui::Visuals::dark());
  
          let persisted = load_state();
@@ -1763,7 +1793,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:207:
 [0m         let tabs: Vec<Tab> = if persisted.tabs.is_empty() {
              vec![Tab::new(default_start)]
          } else {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:274:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:283:
          let tx = self.tx.clone();
          std::thread::spawn(move || {
              let result = disk::read_dir(&path, show_hidden).map_err(|e| e.to_string());
@@ -1776,7 +1806,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:274:
 [0m         });
      }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:281:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:290:
      fn navigate(&mut self, path: PathBuf) {
 [31m-        let prefs = self.folders.get(&path.to_string_lossy().to_string()).cloned();
 [0m[32m+        let prefs = self
@@ -1786,7 +1816,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:281:
 [0m         {
              let tab = self.current_mut();
              tab.history.truncate(tab.history_pos + 1);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:377:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:386:
          }
      }
  
@@ -1800,7 +1830,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:377:
 [0m         if let Some(entry) = self.icons.get(key) {
              return entry.texture.as_ref().map(|t| t.id());
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:398:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:407:
  
      fn top_bar(&mut self, ui: &mut egui::Ui) {
          ui.horizontal(|ui| {
@@ -1821,7 +1851,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:398:
 [0m                 self.go_forward();
              }
              if ui.button("▲").on_hover_text("Up one level").clicked() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:434:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:443:
                  }
              } else {
                  let mut target: Option<PathBuf> = None;
@@ -1882,7 +1912,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:434:
 [0m                 if let Some(t) = target {
                      self.navigate(t);
                  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:492:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:501:
          for folder in KnownFolder::sidebar() {
              let label = folder.label();
              let selected = self.nav_selected == Some(*folder);
@@ -1894,7 +1924,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:492:
 [0m                 self.nav_selected = Some(*folder);
                  if let Some(p) = folder.path() {
                      nav = Some(p);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:507:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:516:
          for drive in &self.drives {
              let p = PathBuf::from(&drive.root);
              let name = if drive.label.is_empty() {
@@ -1907,7 +1937,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:507:
 [0m             } else {
                  format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
              };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:516:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:525:
              } else {
                  0.0
              };
@@ -1918,7 +1948,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:516:
 [0m             ui.add(
                  egui::ProgressBar::new(1.0 - frac)
                      .desired_height(4.0)
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:539:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:548:
                      "{}  ·  {}  ·  {}",
                      who,
                      self.user.integrity,
@@ -1931,7 +1961,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:539:
 [0m                 ))
                  .small()
                  .weak(),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:546:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:555:
              );
              if !self.user.elevated {
 [31m-                ui.label(RichText::new("Tip: run elevated for protected folders").small().weak());
@@ -1943,9 +1973,49 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:546:
 [0m             }
          });
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:577:
-                     self.remember_prefs();
-                     self.refresh();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:588:
+                 }
+                 let has_sel = self.current().selected.is_some();
+                 let has_clip = self.clipboard.is_some();
+[31m-                if ui.add_enabled(has_sel, egui::Button::new("Copy")).on_hover_text("Ctrl+C").clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .add_enabled(has_sel, egui::Button::new("Copy"))
+[0m[32m+                    .on_hover_text("Ctrl+C")
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     if let Some(sel) = self.current().selected.clone() {
+[31m-                        self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: false });
+[0m[32m+                        self.clipboard = Some(FileClipboard {
+[0m[32m+                            paths: vec![sel.clone()],
+[0m[32m+                            cut: false,
+[0m[32m+                        });
+[0m                         self.status = format!("Copied: {}", sel.display());
+                     }
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:597:
+[31m-                if ui.add_enabled(has_sel, egui::Button::new("Cut")).on_hover_text("Ctrl+X").clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .add_enabled(has_sel, egui::Button::new("Cut"))
+[0m[32m+                    .on_hover_text("Ctrl+X")
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     if let Some(sel) = self.current().selected.clone() {
+[31m-                        self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: true });
+[0m[32m+                        self.clipboard = Some(FileClipboard {
+[0m[32m+                            paths: vec![sel.clone()],
+[0m[32m+                            cut: true,
+[0m[32m+                        });
+[0m                         self.status = format!("Cut: {}", sel.display());
+                     }
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:603:
+[31m-                if ui.add_enabled(has_clip, egui::Button::new("Paste")).on_hover_text("Ctrl+V").clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .add_enabled(has_clip, egui::Button::new("Paste"))
+[0m[32m+                    .on_hover_text("Ctrl+V")
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     self.paste_clipboard();
                  }
 [31m-                if ui.button("New folder").on_hover_text("Ctrl+Shift+N").clicked() {
 [0m[32m+                if ui
@@ -1956,7 +2026,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:577:
 [0m                     self.creating_folder = true;
                      self.new_folder_buffer = "New folder".into();
                  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:677:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:703:
              .resizable(true)
              .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
              .column(Column::initial(28.0).at_least(24.0).clip(true))
@@ -1971,7 +2041,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:677:
 [0m             .column(Column::initial(120.0).at_least(60.0).clip(true))
              .column(Column::initial(160.0).at_least(90.0).clip(true))
              .column(Column::remainder().at_least(80.0).clip(true))
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:696:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:722:
              ] {
                  header.col(|ui| {
                      let arrow = if sort_key == key {
@@ -1984,7 +2054,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:696:
 [0m                     } else {
                          ""
                      };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:703:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:729:
 [31m-                    if ui.add(egui::Button::new(RichText::new(format!("{name}{arrow}")).strong()).frame(false)).clicked() {
 [0m[32m+                    if ui
 [0m[32m+                        .add(
@@ -1996,7 +2066,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:703:
 [0m                         clicked_cell.set(Some(key));
                      }
                  });
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:716:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:742:
                  row.set_selected(selected);
  
                  row.col(|ui| {
@@ -2009,7 +2079,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:716:
 [0m                     let id = self.icon_for(ctx, &key, || {
                          let info = shell::file_info(&entry.path, true);
                          info.icon_rgba
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:779:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:805:
                  });
  
                  row.col(|ui| {
@@ -2022,7 +2092,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:779:
 [0m                     ui.label(RichText::new(size).monospace());
                  });
                  row.col(|ui| {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:805:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:831:
      fn list_view(&mut self, ui: &mut egui::Ui, entries: &[DirEntry]) {
          let mut open: Option<DirEntry> = None;
          let mut menu: Option<(PathBuf, ActionRequest)> = None;
@@ -2106,7 +2176,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:805:
 [0m         if let Some(entry) = open {
              self.open_entry(&entry);
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:849:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:875:
          }
      }
  
@@ -2242,7 +2312,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:849:
 [0m         if let Some(entry) = open {
              self.open_entry(&entry);
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:924:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:950:
                  }
              }
              ActionRequest::OpenWith => {
@@ -2254,7 +2324,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:924:
 [0m                     self.status = format!("Open with failed: {e}");
                  }
              }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:956:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:982:
              let tab = self.current();
              let files = tab.entries.iter().filter(|e| !e.is_dir).count();
              let dirs = tab.entries.iter().filter(|e| e.is_dir).count();
@@ -2276,7 +2346,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:956:
 [0m             if !self.status.is_empty() {
                  ui.separator();
                  ui.label(RichText::new(&self.status).small().weak());
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:964:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:990:
              }
              ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
 [31m-                ui.label(RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION"))).small().weak());
@@ -2288,7 +2358,52 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:964:
 [0m             });
          });
      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1172:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1062:
+         });
+         if let Some(sel) = self.current().selected.clone() {
+             if ctrl_c {
+[31m-                self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: false });
+[0m[32m+                self.clipboard = Some(FileClipboard {
+[0m[32m+                    paths: vec![sel.clone()],
+[0m[32m+                    cut: false,
+[0m[32m+                });
+[0m                 self.status = format!("Copied: {}", sel.display());
+             }
+             if ctrl_x {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1069:
+[31m-                self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: true });
+[0m[32m+                self.clipboard = Some(FileClipboard {
+[0m[32m+                    paths: vec![sel.clone()],
+[0m[32m+                    cut: true,
+[0m[32m+                });
+[0m                 self.status = format!("Cut: {}", sel.display());
+             }
+             if f2 {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1094:
+         let mut done = 0usize;
+         let mut errors: Vec<String> = Vec::new();
+         for src in &clip.paths {
+[31m-            let Some(name) = src.file_name() else { continue };
+[0m[32m+            let Some(name) = src.file_name() else {
+[0m[32m+                continue;
+[0m[32m+            };
+[0m             let mut dest = dest_dir.join(name);
+             if dest.exists() {
+                 dest = disk::unique_destination(&dest);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1113:
+         self.status = if errors.is_empty() {
+             format!("{verb} {done} item(s) to {}", dest_dir.display())
+         } else {
+[31m-            format!("{verb} {done}; {} failed — {}", errors.len(), errors.join("; "))
+[0m[32m+            format!(
+[0m[32m+                "{verb} {done}; {} failed — {}",
+[0m[32m+                errors.len(),
+[0m[32m+                errors.join("; ")
+[0m[32m+            )
+[0m         };
+         // A cut only clears the clipboard when everything moved.
+         if clip.cut && errors.is_empty() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1254:
      ];
      for path in candidates {
          if let Ok(bytes) = std::fs::read(path) {
@@ -3542,22 +3657,16 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:480:
          // Sort according to the selected column.
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:487:
          match self.sort_by {
-[31m-            SortBy::Name => display.sort_by(|a, b| a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase())),
-[0m[31m-            SortBy::Cpu => display.sort_by(|a, b| b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)),
-[0m[31m-            SortBy::Memory => display.sort_by(|a, b| b.info.private_bytes.cmp(&a.info.private_bytes)),
-[0m[31m-            SortBy::Disk => display.sort_by(|a, b| b.disk_bps.partial_cmp(&a.disk_bps).unwrap_or(std::cmp::Ordering::Equal)),
-[0m[31m-            SortBy::Network => display.sort_by(|a, b| b.net_bps.partial_cmp(&a.net_bps).unwrap_or(std::cmp::Ordering::Equal)),
-[0m[32m+            SortBy::Name => {
-[0m[32m+                display.sort_by(|a, b| a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase()))
-[0m[32m+            }
+             SortBy::Name => display.sort_by_key(|r| r.info.name.to_lowercase()),
+[31m-            SortBy::Cpu => display.sort_by(|a, b| b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)),
 [0m[32m+            SortBy::Cpu => display.sort_by(|a, b| {
 [0m[32m+                b.cpu_percent
 [0m[32m+                    .partial_cmp(&a.cpu_percent)
 [0m[32m+                    .unwrap_or(std::cmp::Ordering::Equal)
 [0m[32m+            }),
-[0m[32m+            SortBy::Memory => {
-[0m[32m+                display.sort_by(|a, b| b.info.private_bytes.cmp(&a.info.private_bytes))
-[0m[32m+            }
+[0m             SortBy::Memory => display.sort_by_key(|r| std::cmp::Reverse(r.info.private_bytes)),
+[31m-            SortBy::Disk => display.sort_by(|a, b| b.disk_bps.partial_cmp(&a.disk_bps).unwrap_or(std::cmp::Ordering::Equal)),
+[0m[31m-            SortBy::Network => display.sort_by(|a, b| b.net_bps.partial_cmp(&a.net_bps).unwrap_or(std::cmp::Ordering::Equal)),
 [0m[32m+            SortBy::Disk => display.sort_by(|a, b| {
 [0m[32m+                b.disk_bps
 [0m[32m+                    .partial_cmp(&a.disk_bps)
@@ -3712,10 +3821,10 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:655:
 [0m[32m+                "Committed: {}",
 [0m[32m+                used_mem_text(m.total_page_file - m.avail_page_file)
 [0m[32m+            ));
-[0m         });
-     }
- 
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:705:
+[0m             cols[0].separator();
+             cols[0].heading("Kernel CPU time");
+             // `snapshot.cpu` carries the cumulative 64-bit CPU time counters;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:715:
      /// mirroring Task Manager's "Set priority" submenu reachable without a
      /// right click. Uses the same `process::set_priority` path as the menu.
      fn priority_window(&mut self, ctx: &egui::Context) {
@@ -3734,7 +3843,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:705:
 [0m             self.priority_open = None;
              return;
          };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:798:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:808:
      fn users_tab(&mut self, ui: &mut egui::Ui) {
          ui.heading("Users");
          ui.separator();
@@ -3744,112 +3853,4 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:798:
 [0m[31m-            ui.label(RichText::new("Integrity").strong());
 [0m[31m-            ui.label(RichText::new("Elevated").strong());
 [0m[31m-            ui.end_row();
-[0m[31m-            ui.label(format!("{}\\{}", self.user.domain, self.user.account));
-[0m[31m-            ui.label("Console (current)");
-[0m[31m-            ui.label(self.user.integrity);
-[0m[31m-            ui.label(if self.user.elevated { "Yes" } else { "No" });
-[0m[31m-            ui.end_row();
-[0m[31m-        });
-[0m[32m+        egui::Grid::new("users_grid")
-[0m[32m+            .num_columns(4)
-[0m[32m+            .striped(true)
-[0m[32m+            .show(ui, |ui| {
-[0m[32m+                ui.label(RichText::new("User").strong());
-[0m[32m+                ui.label(RichText::new("Session").strong());
-[0m[32m+                ui.label(RichText::new("Integrity").strong());
-[0m[32m+                ui.label(RichText::new("Elevated").strong());
-[0m[32m+                ui.end_row();
-[0m[32m+                ui.label(format!("{}\\{}", self.user.domain, self.user.account));
-[0m[32m+                ui.label("Console (current)");
-[0m[32m+                ui.label(self.user.integrity);
-[0m[32m+                ui.label(if self.user.elevated { "Yes" } else { "No" });
-[0m[32m+                ui.end_row();
-[0m[32m+            });
-[0m         ui.add_space(10.0);
-[31m-        ui.label(RichText::new("Sessions are enumerated from the local session table.").small().weak());
-[0m[32m+        ui.label(
-[0m[32m+            RichText::new("Sessions are enumerated from the local session table.")
-[0m[32m+                .small()
-[0m[32m+                .weak(),
-[0m[32m+        );
-[0m         for s in enumerate_sessions() {
-             ui.label(s);
-         }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:834:
-         let mut pids: Vec<u32> = by_pid.keys().copied().collect();
-         pids.sort();
-         egui::ScrollArea::vertical().show(ui, |ui| {
-[31m-            egui::Grid::new("net_grid").num_columns(4).striped(true).show(ui, |ui| {
-[0m[31m-                ui.label(RichText::new("PID").strong());
-[0m[31m-                ui.label(RichText::new("Process").strong());
-[0m[31m-                ui.label(RichText::new("Connections").strong());
-[0m[31m-                ui.label(RichText::new("Local ports").strong());
-[0m[31m-                ui.end_row();
-[0m[31m-                for pid in pids {
-[0m[31m-                    let (count, ports) = &by_pid[&pid];
-[0m[31m-                    let name = self
-[0m[31m-                        .snapshot
-[0m[31m-                        .rows
-[0m[31m-                        .iter()
-[0m[31m-                        .find(|r| r.info.pid == pid)
-[0m[31m-                        .map(|r| r.info.name.clone())
-[0m[31m-                        .unwrap_or_else(|| "?".into());
-[0m[31m-                    ui.label(pid.to_string());
-[0m[31m-                    ui.label(name);
-[0m[31m-                    ui.label(count.to_string());
-[0m[31m-                    let mut p = ports.clone();
-[0m[31m-                    p.sort();
-[0m[31m-                    p.dedup();
-[0m[31m-                    let port_list = p.iter().take(8).map(|x| x.to_string()).collect::<Vec<_>>().join(", ");
-[0m[31m-                    ui.label(port_list);
-[0m[32m+            egui::Grid::new("net_grid")
-[0m[32m+                .num_columns(4)
-[0m[32m+                .striped(true)
-[0m[32m+                .show(ui, |ui| {
-[0m[32m+                    ui.label(RichText::new("PID").strong());
-[0m[32m+                    ui.label(RichText::new("Process").strong());
-[0m[32m+                    ui.label(RichText::new("Connections").strong());
-[0m[32m+                    ui.label(RichText::new("Local ports").strong());
-[0m                     ui.end_row();
-[31m-                }
-[0m[31m-            });
-[0m[32m+                    for pid in pids {
-[0m[32m+                        let (count, ports) = &by_pid[&pid];
-[0m[32m+                        let name = self
-[0m[32m+                            .snapshot
-[0m[32m+                            .rows
-[0m[32m+                            .iter()
-[0m[32m+                            .find(|r| r.info.pid == pid)
-[0m[32m+                            .map(|r| r.info.name.clone())
-[0m[32m+                            .unwrap_or_else(|| "?".into());
-[0m[32m+                        ui.label(pid.to_string());
-[0m[32m+                        ui.label(name);
-[0m[32m+                        ui.label(count.to_string());
-[0m[32m+                        let mut p = ports.clone();
-[0m[32m+                        p.sort();
-[0m[32m+                        p.dedup();
-[0m[32m+                        let port_list = p
-[0m[32m+                            .iter()
-[0m[32m+                            .take(8)
-[0m[32m+                            .map(|x| x.to_string())
-[0m[32m+                            .collect::<Vec<_>>()
-[0m[32m+                            .join(", ");
-[0m[32m+                        ui.label(port_list);
-[0m[32m+                        ui.end_row();
-[0m[32m+                    }
-[0m[32m+                });
-[0m         });
-     }
- 
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:870:
-             }
-             ui.label(RichText::new(format!("{} services", self.services.len())).weak());
-             if !self.user.elevated {
-[31m-                ui.label(RichText::new("(read-only without elevation)").small().weak());
-[0m[32m+                ui.label(
-[0m[32m+                    RichText::new("(read-only without elevation)")
-[0m[32m+                        .small()
-[0m[32m+                        .weak(),
-[0m[32m+                );
-[0m             }
-         });
+[0m[31m-            ui.label(format!("{}\\{}
