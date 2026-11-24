@@ -10,6 +10,7 @@ from __future__ import annotations
 import io
 import os
 import re
+import runpy
 import subprocess
 import sys
 import tarfile
@@ -149,60 +150,56 @@ def main() -> None:
         fh.write("\n".join(sorted(allrs)))
 
     # ---------------- windows-sys ----------------
-    out: list[str] = []
     try:
         root = dirs["windows-sys"]
         cargo = read(os.path.join(root, "Cargo.toml"))
         feats = re.findall(r"^(Win32_[A-Za-z0-9_]+)\s*=\s*\[", cargo, re.M)
-        out.append("### windows-sys 0.59.0 features of interest")
-        groups = [
-            "Services", "Registry", "ProcessStatus", "SystemInformation",
-            "Threading", "Environment", "Diagnostics", "Storage_FileSystem",
-            "Security", "IpHelper", "Globalization", "Graphics_Gdi", "UI_Shell",
-            "WindowsAndMessaging", "System_IO", "LibraryLoader", "Com",
-            "RemoteDesktop", "Power", "Console", "SystemInformation",
-        ]
+        lines = ["### windows-sys 0.59.0 features of interest"]
+        groups = ["Services", "Registry", "ProcessStatus", "SystemInformation",
+                  "Threading", "Environment", "Diagnostics", "Storage_FileSystem",
+                  "Security", "IpHelper", "Globalization", "Graphics_Gdi", "UI_Shell",
+                  "WindowsAndMessaging", "System_IO", "LibraryLoader", "Com",
+                  "RemoteDesktop", "Power", "Console", "ToolHelp", "JobObjects",
+                  "Pipes", "Memory", "Memory_NonVolatile"]
         for g in groups:
             hits = sorted({f for f in feats if g.lower() in f.lower()})
-            out.append(f"{g}: {', '.join(hits)}")
-        out.append("")
-
-        want = {
-            "System/Services": "services",
-            "System/Threading": "threading",
-            "System/ProcessStatus": "processstatus",
-            "System/SystemInformation": "sysinfo",
-            "System/Registry": "registry",
-            "System/Diagnostics/Debug": "debug",
-            "System/Environment": "environment",
-            "UI/Shell": "shell",
-            "UI/WindowsAndMessaging": "wam",
-            "Graphics/Gdi": "gdi",
-            "Storage/FileSystem": "filesystem",
-            "NetworkManagement/IpHelper": "iphelper",
-            "Security": "security",
-            "Security/Authorization": "authorization",
-            "Foundation": "foundation",
-            "Globalization": "globalization",
-            "System/LibraryLoader": "libraryloader",
-            "System/RemoteDesktop": "wtssession",
-            "System/Power": "power",
-            "System/Console": "console",
-            "System/Diagnostics/ToolHelp": "toolhelp",
-        }
-        base = os.path.join(root, "src", "Windows", "Win32")
-        for rel, label in want.items():
-            path = os.path.join(base, rel, "mod.rs")
-            if not os.path.isfile(path):
-                out.append(f"\n##### !! missing {rel}")
-                continue
-            dump_items(read(path), out, f"Win32::{rel.replace('/', '::')} ({label})")
+            lines.append(f"{g}: {', '.join(hits)}")
+        with open(os.path.join(OUT_DIR, "features.txt"), "w", encoding="utf-8") as fh:
+            fh.write("\n".join(lines))
+        bd = runpy.run_path("tools/build_digest.py")
+        sys.argv = ["build_digest.py", root, os.path.join(OUT_DIR, "win-services.txt"), "System/Services"]
+        bd["main"]()
+        for rel, out_name in [
+            ("System/Threading", "win-threading.txt"),
+            ("System/ProcessStatus", "win-processstatus.txt"),
+            ("System/SystemInformation", "win-sysinfo.txt"),
+            ("System/Registry", "win-registry.txt"),
+            ("System/Diagnostics/Debug", "win-debug.txt"),
+            ("System/Environment", "win-environment.txt"),
+            ("System/LibraryLoader", "win-libraryloader.txt"),
+            ("UI/Shell", "win-shell.txt"),
+            ("UI/WindowsAndMessaging", "win-wam.txt"),
+            ("Graphics/Gdi", "win-gdi.txt"),
+            ("Storage/FileSystem", "win-filesystem.txt"),
+            ("NetworkManagement/IpHelper", "win-iphelper.txt"),
+            ("Security", "win-security.txt"),
+            ("Security/Authorization", "win-authorization.txt"),
+            ("Foundation", "win-foundation.txt"),
+            ("Globalization", "win-globalization.txt"),
+            ("System/RemoteDesktop", "win-wts.txt"),
+            ("System/Power", "win-power.txt"),
+            ("System/Console", "win-console.txt"),
+            ("System/Diagnostics/ToolHelp", "win-toolhelp.txt"),
+            ("System/JobObjects", "win-jobs.txt"),
+            ("System/Pipes", "win-pipes.txt"),
+            ("System/Memory", "win-memory.txt"),
+            ("System/Memory/NonVolatile", "win-nvmem.txt"),
+        ]:
+            sys.argv = ["build_digest.py", root, os.path.join(OUT_DIR, out_name), rel]
+            bd["main"]()
     except Exception:
-        out.append("!! windows-sys dump failed:\n" + traceback.format_exc())
-    with open(os.path.join(OUT_DIR, "windows-sys.txt"), "w", encoding="utf-8") as fh:
-        fh.write("\n".join(out))
-    log(f"windows-sys.txt: {len(out)} items")
-    del out
+        with open(os.path.join(OUT_DIR, "errors.txt"), "a", encoding="utf-8") as fh:
+            fh.write("windows-sys dump failed:\n" + traceback.format_exc())
 
     # ---------------- eframe / egui / egui_extras ----------------
     out = []
@@ -335,9 +332,10 @@ def main() -> None:
         fh.write("\n".join(out))
     log(f"egui.txt: {len(out)} items")
 
-    for name in ("windows-sys.txt", "egui.txt"):
+    for name in sorted(os.listdir(OUT_DIR)):
         p = os.path.join(OUT_DIR, name)
-        log(f"{name}: {os.path.getsize(p)} bytes")
+        if os.path.isfile(p):
+            log(f"{name}: {os.path.getsize(p)} bytes")
 
 
 if __name__ == "__main__":
