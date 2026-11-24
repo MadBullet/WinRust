@@ -6,36 +6,36 @@
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
-  Downloaded proc-macro2 v1.0.107
-  Downloaded serde_core v1.0.229
-  Downloaded windows-targets v0.52.6
-  Downloaded thiserror-impl v1.0.69
-  Downloaded thiserror v1.0.69
   Downloaded unicode-ident v1.0.27
-  Downloaded serde_derive v1.0.229
-  Downloaded quote v1.0.47
+  Downloaded serde_core v1.0.229
+  Downloaded thiserror-impl v1.0.69
+  Downloaded windows-targets v0.52.6
   Downloaded log v0.4.35
+  Downloaded quote v1.0.47
+  Downloaded proc-macro2 v1.0.107
+  Downloaded thiserror v1.0.69
   Downloaded serde v1.0.229
-  Downloaded syn v2.0.119
   Downloaded syn v3.0.10
+  Downloaded syn v2.0.119
   Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
+  Downloaded serde_derive v1.0.229
    Compiling proc-macro2 v1.0.107
    Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
    Compiling windows_x86_64_msvc v0.52.6
    Compiling serde_core v1.0.229
-   Compiling thiserror v1.0.69
    Compiling serde v1.0.229
-   Compiling syn v2.0.119
-   Compiling syn v3.0.10
-   Compiling thiserror-impl v1.0.69
-   Compiling serde_derive v1.0.229
+   Compiling thiserror v1.0.69
    Compiling windows-targets v0.52.6
+   Compiling syn v3.0.10
+   Compiling syn v2.0.119
+   Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v1.0.69
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.58s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 36.55s
      Running unittests src\lib.rs (target\debug\build\winrust-core/49e2eb2be4a195d3\out\winrust_core-49e2eb2be4a195d3.exe)
 
 running 7 tests
