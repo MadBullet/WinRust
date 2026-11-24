@@ -21,65 +21,9 @@ TY  pub type EventLoopBuilderHook = Box<dyn FnOnce(&mut EventLoopBuilder<UserEve
 TY  pub type WindowBuilderHook = Box<dyn FnOnce(egui::ViewportBuilder) -> egui::ViewportBuilder>;
 TY  pub type AppCreator<'app> = Box<dyn 'app + FnOnce(&CreationContext<'_>) -> Result<Box<dyn 'app + App>, DynError>>;
 
-##### egui::style (src/style.rs)
-FN  pub fn new( formatter: impl 'static + Sync + Send + Fn(f64, RangeInclusive<usize>) -> String, )
-FN  pub fn format(&self, value: f64, decimals: RangeInclusive<usize>)
-FN  pub fn resolve(&self, style: &Style)
-FN  pub fn resolve(self, style: &Style)
-FN  pub fn interact(&self, response: &Response)
-FN  pub fn interact_selectable(&self, response: &Response, selected: bool)
-FN  pub fn noninteractive(&self)
-FN  pub fn text_styles(&self)
-FN  pub fn icon_rectangles(&self, rect: Rect)
-FN  pub fn solid()
-FN  pub fn thin()
-FN  pub fn floating()
-FN  pub fn allocated_width(&self)
-FN  pub fn ui(&mut self, ui: &mut Ui)
-FN  pub fn details_ui(&mut self, ui: &mut Ui)
-FN  pub fn new(points_per_second: f32, duration: Rangef)
-FN  pub fn none()
-FN  pub fn duration(t: f32)
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn noninteractive(&self)
-FN  pub fn text_color(&self)
-FN  pub fn weak_text_color(&self)
-FN  pub fn strong_text_color(&self)
-FN  pub fn window_fill(&self)
-FN  pub fn window_stroke(&self)
-FN  pub fn fade_out_to_color(&self)
-FN  pub fn gray_out(&self, color: Color32)
-FN  pub fn style(&self, response: &Response)
-FN  pub fn text_color(&self)
-FN  pub fn default_text_styles()
-FN  pub fn dark()
-FN  pub fn light()
-FN  pub fn dark()
-FN  pub fn light()
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn ui(&mut self, ui: &mut crate::Ui)
-FN  pub fn ui(&mut self, ui: &mut Ui)
-FN  pub fn toggle_button_ui(&mut self, ui: &mut Ui)
-ST  pub struct NumberFormatter( Arc<dyn 'static + Sync + Send + Fn(f64, RangeInclusive<usize>) -> String>, );
-ST  { pub override_text_style: Option<TextStyle>, pub override_font_id: Option<FontId>, pub override_text_valign: Option<Align>, pub text_styles: BTreeMap<TextStyle, FontId>, pub drag_value_text_style: TextStyle, pub number_formatter: NumberFormatter, pub wrap: Option<bool>, pub wrap_mode: Option<crate::TextWrapMode>, pub spacing: Spacing, pub interaction: Interaction, pub visuals: Visuals, pub animation_time: f32, pub debug: DebugOptions, pub explanation_tooltips: bool, pub url_in_tooltip: bool, pub always_scroll_the_only_direction: bool, pub scroll_animation: ScrollAnimation, }
-ST  { pub item_spacing: Vec2, pub window_margin: Margin, pub button_padding: Vec2, pub menu_margin: Margin, pub indent: f32, pub interact_size: Vec2, // TODO(emilk): rename min_interact_size ? pub slider_width: f32, pub slider_rail_height: f32, pub combo_width: f32, pub text_edit_width: f32, pub icon_width: f32, pub icon_width_inner: f32, pub icon_spacing: f32, pub default_area_size: Vec2, pub tooltip_width: f32, pub menu_width: f32, pub menu_spacing: f32, pub indent_ends_with_horizontal_line: bool, pub combo_height: f32, pub scroll: ScrollStyle, }
-ST  { pub floating: bool, pub bar_width: f32, pub handle_min_length: f32, pub bar_inner_margin: f32, pub bar_outer_margin: f32, pub floating_width: f32, pub floating_allocated_width: f32, pub foreground_color: bool, pub dormant_background_opacity: f32, pub active_background_opacity: f32, pub interact_background_opacity: f32, pub dormant_handle_opacity: f32, pub active_handle_opacity: f32, pub interact_handle_opacity: f32, }
-ST  { pub points_per_second: f32, pub duration: Rangef, }
-ST  { pub interact_radius: f32, pub resize_grab_radius_side: f32, pub resize_grab_radius_corner: f32, pub show_tooltips_only_when_still: bool, pub tooltip_delay: f32, pub tooltip_grace_time: f32, pub selectable_labels: bool, pub multi_widget_text_select: bool, }
-ST  { pub stroke: Stroke, pub preview: bool, pub blink: bool, pub on_duration: f32, pub off_duration: f32, }
-ST  { pub dark_mode: bool, pub override_text_color: Option<Color32>, pub widgets: Widgets, pub selection: Selection, pub hyperlink_color: Color32, pub faint_bg_color: Color32, pub extreme_bg_color: Color32, pub code_bg_color: Color32, pub warn_fg_color: Color32, pub error_fg_color: Color32, pub window_rounding: Rounding, pub window_shadow: Shadow, pub window_fill: Color32, pub window_stroke: Stroke, pub window_highlight_topmost: bool, pub menu_rounding: Rounding, pub panel_fill: Color32, pub popup_shadow: Shadow, pub resize_corner_size: f32, pub text_cursor: TextCursorStyle, pub clip_rect_margin: f32, pub button_frame: bool, pub collapsing_header_frame: bool, pub indent_has_left_vline: bool, pub striped: bool, pub slider_trailing_fill: bool, pub handle_shape: HandleShape, pub interact_cursor: Option<CursorIcon>, pub image_loading_spinners: bool, pub numeric_color_space: NumericColorSpace, }
-ST  { pub bg_fill: Color32, pub stroke: Stroke, }
-ST  { pub noninteractive: WidgetVisuals, pub inactive: WidgetVisuals, pub hovered: WidgetVisuals, pub active: WidgetVisuals, pub open: WidgetVisuals, }
-ST  { pub bg_fill: Color32, pub weak_bg_fill: Color32, pub bg_stroke: Stroke, pub rounding: Rounding, pub fg_stroke: Stroke, pub expansion: f32, }
-ST  { pub debug_on_hover: bool, pub debug_on_hover_with_all_modifiers: bool, pub hover_shows_next: bool, pub show_expand_width: bool, pub show_expand_height: bool, pub show_resize: bool, pub show_interactive_widgets: bool, pub show_widget_hits: bool, pub show_unaligned: bool, }
+##### !! missing src/text/fonts.rs
 
-##### egui::data (src/data/mod.rs)
+##### !! missing src/data/icon_data.rs
 
 ##### egui::output (src/data/output.rs)
 FN  pub fn append(&mut self, newer: Self)
@@ -254,6 +198,51 @@ ST  { pub bg_fill: Color32, pub stroke: Stroke, }
 ST  { pub noninteractive: WidgetVisuals, pub inactive: WidgetVisuals, pub hovered: WidgetVisuals, pub active: WidgetVisuals, pub open: WidgetVisuals, }
 ST  { pub bg_fill: Color32, pub weak_bg_fill: Color32, pub bg_stroke: Stroke, pub rounding: Rounding, pub fg_stroke: Stroke, pub expansion: f32, }
 ST  { pub debug_on_hover: bool, pub debug_on_hover_with_all_modifiers: bool, pub hover_shows_next: bool, pub show_expand_width: bool, pub show_expand_height: bool, pub show_resize: bool, pub show_interactive_widgets: bool, pub show_widget_hits: bool, pub show_unaligned: bool, }
+
+##### egui::panel (src/containers/panel.rs)
+FN  pub fn load(ctx: &Context, bar_id: Id)
+FN  pub fn size(&self)
+FN  pub fn left(id: impl Into<Id>)
+FN  pub fn right(id: impl Into<Id>)
+FN  pub fn new(side: Side, id: impl Into<Id>)
+FN  pub fn resizable(mut self, resizable: bool)
+FN  pub fn show_separator_line(mut self, show_separator_line: bool)
+FN  pub fn default_width(mut self, default_width: f32)
+FN  pub fn min_width(mut self, min_width: f32)
+FN  pub fn max_width(mut self, max_width: f32)
+FN  pub fn width_range(mut self, width_range: impl Into<Rangef>)
+FN  pub fn exact_width(mut self, width: f32)
+FN  pub fn frame(mut self, frame: Frame)
+FN  pub fn show_inside<R>( self, ui: &mut Ui, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show<R>( self, ctx: &Context, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show_animated<R>( self, ctx: &Context, is_expanded: bool, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show_animated_inside<R>( self, ui: &mut Ui, is_expanded: bool, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show_animated_between<R>( ctx: &Context, is_expanded: bool, collapsed_panel: Self, expanded_panel: Self, add_contents: impl FnOnce(&mut Ui, f32) -> R, )
+FN  pub fn show_animated_between_inside<R>( ui: &mut Ui, is_expanded: bool, collapsed_panel: Self, expanded_panel: Self, add_contents: impl FnOnce(&mut Ui, f32) -> R, )
+FN  pub fn top(id: impl Into<Id>)
+FN  pub fn bottom(id: impl Into<Id>)
+FN  pub fn new(side: TopBottomSide, id: impl Into<Id>)
+FN  pub fn resizable(mut self, resizable: bool)
+FN  pub fn show_separator_line(mut self, show_separator_line: bool)
+FN  pub fn default_height(mut self, default_height: f32)
+FN  pub fn min_height(mut self, min_height: f32)
+FN  pub fn max_height(mut self, max_height: f32)
+FN  pub fn height_range(mut self, height_range: impl Into<Rangef>)
+FN  pub fn exact_height(mut self, height: f32)
+FN  pub fn frame(mut self, frame: Frame)
+FN  pub fn show_inside<R>( self, ui: &mut Ui, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show<R>( self, ctx: &Context, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show_animated<R>( self, ctx: &Context, is_expanded: bool, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show_animated_inside<R>( self, ui: &mut Ui, is_expanded: bool, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show_animated_between<R>( ctx: &Context, is_expanded: bool, collapsed_panel: Self, expanded_panel: Self, add_contents: impl FnOnce(&mut Ui, f32) -> R, )
+FN  pub fn show_animated_between_inside<R>( ui: &mut Ui, is_expanded: bool, collapsed_panel: Self, expanded_panel: Self, add_contents: impl FnOnce(&mut Ui, f32) -> R, )
+FN  pub fn frame(mut self, frame: Frame)
+FN  pub fn show_inside<R>( self, ui: &mut Ui, add_contents: impl FnOnce(&mut Ui) -> R, )
+FN  pub fn show<R>( self, ctx: &Context, add_contents: impl FnOnce(&mut Ui) -> R, )
+ST  { pub rect: Rect, }
+ST  { side: Side, id: Id, frame: Option<Frame>, resizable: bool, show_separator_line: bool, default_width: f32, width_range: Rangef, }
+ST  { side: TopBottomSide, id: Id, frame: Option<Frame>, resizable: bool, show_separator_line: bool, default_height: Option<f32>, height_range: Rangef, }
+ST  { frame: Option<Frame>, }
 
 ##### egui::Context selected methods
 FN  pub fn set_fonts(&self, font_definitions: FontDefinitions)
