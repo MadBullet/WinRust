@@ -180,7 +180,7 @@ def main() -> None:
             "System/Console": "console",
             "System/Diagnostics/ToolHelp": "toolhelp",
         }
-        base = os.path.join(root, "src", "Windows", "Win32")
+        base = os.path.join(root, "src", "includes", "Win32")
         for rel, label in want.items():
             path = os.path.join(base, rel + ".rs")
             if not os.path.isfile(path):
@@ -214,8 +214,8 @@ def main() -> None:
     try:
         eg = dirs["egui"]
         for rel, label in [
-            ("src/fonts.rs", "egui::fonts"),
-            ("src/data/icon_data.rs", "egui::icon_data"),
+            ("src/style.rs", "egui::style"),
+            ("src/data/mod.rs", "egui::data"),
             ("src/data/output.rs", "egui::output"),
             ("src/response.rs", "egui::response"),
             ("src/menu.rs", "egui::menu"),
@@ -278,7 +278,9 @@ def main() -> None:
                 lines = [ln.strip() for ln in body.splitlines() if ln.strip()]
                 out.append(squeeze(" ".join(lines), 3000))
 
-        for rel in ["src/widgets/mod.rs", "src/ui.rs", "src/layout.rs"]:
+        for rel in ["src/widgets/mod.rs", "src/ui.rs", "src/layout.rs",
+                    "src/containers/panel.rs", "src/containers/mod.rs",
+                    "src/containers/frame.rs", "src/containers/collapsing_header.rs"]:
             path = os.path.join(eg, rel)
             if os.path.isfile(path):
                 src = read(path)
@@ -299,6 +301,16 @@ def main() -> None:
                             break
     except Exception:
         out.append("!! egui dump failed:\n" + traceback.format_exc())
+
+    try:
+        ef2 = dirs["eframe"]
+        for rel, label in [("src/icon_data.rs", "eframe::icon_data"),
+                           ("src/native/app_icon.rs", "eframe::app_icon")]:
+            path = os.path.join(ef2, rel)
+            if os.path.isfile(path):
+                dump_items(read(path), out, label)
+    except Exception:
+        out.append("!! eframe extra dump failed:\n" + traceback.format_exc())
 
     try:
         ex = dirs["egui_extras"]
