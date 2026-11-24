@@ -2,67 +2,67 @@ warning: profiles for the non root package will be ignored, specify profiles at 
 package:   D:\a\WinRust\WinRust\crates\winrust-kernel\Cargo.toml
 workspace: D:\a\WinRust\WinRust\Cargo.toml
  Downloading crates ...
-  Downloaded anyhow v1.0.105
-  Downloaded clap_lex v1.1.2
-  Downloaded windows-numerics v0.3.1
-  Downloaded cargo-platform v0.3.3
-  Downloaded bindgen v0.73.2
-  Downloaded windows-collections v0.3.2
   Downloaded cargo_metadata v0.23.1
-  Downloaded camino v1.2.6
-  Downloaded strsim v0.11.1
-  Downloaded thread_local v1.1.10
-  Downloaded scratch v1.0.9
-  Downloaded heck v0.5.0
-  Downloaded wdk-macros v0.5.2
-  Downloaded windows-threading v0.2.1
-  Downloaded windows-implement v0.60.2
-  Downloaded cfg-if v1.0.5
-  Downloaded fs4 v1.1.0
-  Downloaded once_cell v1.21.4
-  Downloaded shlex v2.0.1
-  Downloaded tracing-attributes v0.1.31
-  Downloaded wdk-panic v0.5.0
-  Downloaded windows-result v0.4.1
-  Downloaded clap-cargo v0.19.1
-  Downloaded rustc-hash v2.1.3
-  Downloaded matchers v0.2.0
-  Downloaded wdk-alloc v0.4.2
-  Downloaded windows-interface v0.59.3
-  Downloaded clap_derive v4.6.9
-  Downloaded windows-strings v0.5.1
-  Downloaded libloading v0.8.9
-  Downloaded bitflags v2.13.2
-  Downloaded tracing-log v0.2.0
-  Downloaded windows-future v0.3.2
-  Downloaded cexpr v0.6.0
-  Downloaded lazy_static v1.5.1
-  Downloaded paste v1.0.15
-  Downloaded rustversion v1.0.23
-  Downloaded glob v0.3.4
-  Downloaded wdk v0.5.0
-  Downloaded thiserror-impl v2.0.21
-  Downloaded either v1.19.0
-  Downloaded pin-project-lite v0.2.18
-  Downloaded nu-ansi-term v0.50.3
-  Downloaded thiserror v2.0.21
-  Downloaded clang-sys v1.9.1
-  Downloaded semver v1.0.28
-  Downloaded smallvec v1.16.6
   Downloaded find-msvc-tools v0.1.15
-  Downloaded prettyplease v0.3.0
-  Downloaded wdk-sys v0.5.2
-  Downloaded windows-core v0.62.2
-  Downloaded clap v4.6.9
-  Downloaded sharded-slab v0.1.7
-  Downloaded tracing-core v0.1.36
-  Downloaded cc v1.11.3
+  Downloaded anyhow v1.0.105
+  Downloaded cexpr v0.6.0
+  Downloaded bitflags v2.13.2
+  Downloaded fs4 v1.1.0
+  Downloaded clap_lex v1.1.2
   Downloaded minimal-lexical v0.2.1
-  Downloaded wdk-build v0.6.0
-  Downloaded nom v7.1.3
-  Downloaded clap_builder v4.6.7
+  Downloaded clap-cargo v0.19.1
+  Downloaded cfg-if v1.0.5
   Downloaded itertools v0.15.0
+  Downloaded nom v7.1.3
+  Downloaded camino v1.2.6
+  Downloaded cc v1.11.3
+  Downloaded clap_derive v4.6.9
+  Downloaded nu-ansi-term v0.50.3
+  Downloaded libloading v0.8.9
+  Downloaded clang-sys v1.9.1
+  Downloaded prettyplease v0.3.0
+  Downloaded lazy_static v1.5.1
+  Downloaded cargo-platform v0.3.3
+  Downloaded rustc-hash v2.1.3
+  Downloaded shlex v2.0.1
+  Downloaded glob v0.3.4
+  Downloaded heck v0.5.0
+  Downloaded matchers v0.2.0
+  Downloaded once_cell v1.21.4
+  Downloaded wdk-sys v0.5.2
+  Downloaded smallvec v1.16.6
+  Downloaded scratch v1.0.9
+  Downloaded semver v1.0.28
+  Downloaded wdk v0.5.0
+  Downloaded windows-collections v0.3.2
+  Downloaded windows-future v0.3.2
+  Downloaded clap_builder v4.6.7
+  Downloaded rustversion v1.0.23
+  Downloaded wdk-alloc v0.4.2
+  Downloaded windows-implement v0.60.2
+  Downloaded clap v4.6.9
+  Downloaded either v1.19.0
+  Downloaded windows-interface v0.59.3
+  Downloaded windows-result v0.4.1
+  Downloaded windows-strings v0.5.1
+  Downloaded wdk-panic v0.5.0
+  Downloaded thiserror-impl v2.0.21
+  Downloaded tracing-log v0.2.0
+  Downloaded windows-numerics v0.3.1
+  Downloaded paste v1.0.15
+  Downloaded thread_local v1.1.10
+  Downloaded tracing-attributes v0.1.31
+  Downloaded wdk-macros v0.5.2
+  Downloaded windows-core v0.62.2
+  Downloaded windows-threading v0.2.1
+  Downloaded sharded-slab v0.1.7
+  Downloaded pin-project-lite v0.2.18
+  Downloaded strsim v0.11.1
+  Downloaded tracing-core v0.1.36
+  Downloaded thiserror v2.0.21
+  Downloaded wdk-build v0.6.0
   Downloaded tracing-subscriber v0.3.23
+  Downloaded bindgen v0.73.2
   Downloaded tracing v0.1.44
   Downloaded libc v0.2.191
   Downloaded windows v0.62.2
@@ -72,70 +72,70 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
    Compiling windows-link v0.2.1
    Compiling memchr v2.8.3
    Compiling windows-sys v0.61.2
-   Compiling syn v2.0.119
    Compiling syn v3.0.10
+   Compiling syn v2.0.119
    Compiling serde_core v1.0.229
    Compiling windows-interface v0.59.3
    Compiling windows-implement v0.60.2
    Compiling aho-corasick v1.1.5
-   Compiling windows-strings v0.5.1
    Compiling windows-result v0.4.1
-   Compiling regex-syntax v0.8.12
-   Compiling anstyle v1.0.14
-   Compiling glob v0.3.4
-   Compiling zmij v1.0.23
-   Compiling utf8parse v0.2.2
+   Compiling windows-strings v0.5.1
    Compiling once_cell_polyfill v1.70.2
-   Compiling anstyle-wincon v3.0.11
+   Compiling anstyle v1.0.14
+   Compiling zmij v1.0.23
+   Compiling glob v0.3.4
+   Compiling regex-syntax v0.8.12
+   Compiling utf8parse v0.2.2
    Compiling anstyle-parse v1.0.0
-   Compiling regex-automata v0.4.19
    Compiling clang-sys v1.9.1
+   Compiling anstyle-wincon v3.0.11
    Compiling windows-core v0.62.2
    Compiling anstyle-query v1.1.5
-   Compiling libc v0.2.191
-   Compiling once_cell v1.21.4
-   Compiling colorchoice v1.0.5
    Compiling rustversion v1.0.23
-   Compiling serde_json v1.0.154
-   Compiling is_terminal_polyfill v1.70.2
-   Compiling serde v1.0.229
+   Compiling regex-automata v0.4.19
    Compiling prettyplease v0.3.0
+   Compiling colorchoice v1.0.5
+   Compiling libc v0.2.191
+   Compiling serde_json v1.0.154
+   Compiling once_cell v1.21.4
+   Compiling serde v1.0.229
+   Compiling is_terminal_polyfill v1.70.2
    Compiling anstream v1.0.0
    Compiling tracing-core v0.1.36
    Compiling serde_derive v1.0.229
-   Compiling clap_lex v1.1.2
-   Compiling minimal-lexical v0.2.1
-   Compiling strsim v0.11.1
-   Compiling thiserror v2.0.21
    Compiling cfg-if v1.0.5
-   Compiling camino v1.2.6
    Compiling heck v0.5.0
    Compiling log v0.4.35
+   Compiling minimal-lexical v0.2.1
+   Compiling camino v1.2.6
    Compiling itoa v1.0.19
-   Compiling clap_derive v4.6.9
+   Compiling clap_lex v1.1.2
+   Compiling strsim v0.11.1
+   Compiling thiserror v2.0.21
    Compiling clap_builder v4.6.7
    Compiling nom v7.1.3
-   Compiling thiserror-impl v2.0.21
+   Compiling clap_derive v4.6.9
    Compiling tracing-attributes v0.1.31
-   Compiling libloading v0.8.9
+   Compiling thiserror-impl v2.0.21
    Compiling windows-threading v0.2.1
+   Compiling libloading v0.8.9
    Compiling anyhow v1.0.105
-   Compiling shlex v2.0.1
    Compiling pin-project-lite v0.2.18
-   Compiling bindgen v0.73.2
+   Compiling shlex v2.0.1
    Compiling paste v1.0.15
+   Compiling bindgen v0.73.2
    Compiling tracing v0.1.44
    Compiling windows-future v0.3.2
+   Compiling clap v4.6.9
    Compiling wdk-build v0.6.0
    Compiling cexpr v0.6.0
-   Compiling clap v4.6.9
    Compiling regex v1.13.2
-   Compiling windows-numerics v0.3.1
    Compiling windows-collections v0.3.2
-   Compiling cargo-platform v0.3.3
+   Compiling windows-numerics v0.3.1
    Compiling semver v1.0.28
-   Compiling bitflags v2.13.2
+   Compiling cargo-platform v0.3.3
    Compiling rustc-hash v2.1.3
+   Compiling bitflags v2.13.2
    Compiling cargo_metadata v0.23.1
    Compiling windows v0.62.2
    Compiling clap-cargo v0.19.1
@@ -160,18 +160,6 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
    Compiling wdk-alloc v0.4.2
    Compiling winrust-kernel v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-kernel)
    Compiling winrust-kernel-abi v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-error[E0432]: unresolved import `wdk_sys::ntddk::ZwQuerySystemInformation`
-  --> crates\winrust-kernel\src\sysinfo.rs:18:42
-   |
-18 |     ntddk::{ExAllocatePool2, ExFreePool, ZwQuerySystemInformation},
-   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^ no `ZwQuerySystemInformation` in `ntddk`
-   |
-help: a similar name exists in the module
-   |
-18 -     ntddk::{ExAllocatePool2, ExFreePool, ZwQuerySystemInformation},
-18 +     ntddk::{ExAllocatePool2, ExFreePool, IoQueryFileInformation},
-   |
-
 warning: unused import: `wdk::println`
   --> crates\winrust-kernel\src\ioctl.rs:13:5
    |
@@ -221,143 +209,45 @@ error[E0308]: mismatched types
 75 |         return status;
    |                ^^^^^^ expected `i32`, found `()`
 
-error[E0745]: cannot take address of a temporary
-   --> crates\winrust-kernel\src\device.rs:103:22
-    |
-103 |             &raw mut { device_init },
-    |                      ^^^^^^^^^^^^^^^ temporary value
-
-error[E0631]: type mismatch in function arguments
-  --> crates\winrust-kernel\src\guard.rs:86:17
-   |
-86 |     blocked_mut(Vec::len)
-   |     ----------- ^^^^^^^^
-   |     |           |
-   |     |           expected due to this
-   |     |           found signature defined here
-   |     required by a bound introduced by this call
-   |
-   = note: expected function signature `for<'a> fn(&'a mut Vec<String, alloc::alloc::Global>) -> _`
-              found function signature `fn(&Vec<_, _>) -> _`
-note: required by a bound in `blocked_mut`
-  --> crates\winrust-kernel\src\guard.rs:43:27
-   |
-43 | fn blocked_mut<R>(f: impl FnOnce(&mut Vec<String>) -> R) -> R {
-   |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `blocked_mut`
-help: consider wrapping the function in a closure
-   |
-86 |     blocked_mut(|arg0: &mut Vec<String>| Vec::len(&*arg0))
-   |                 ++++++++++++++++++++++++         ++++++++
-
-error[E0609]: no field `Buffer` on type `*const _UNICODE_STRING`
-   --> crates\winrust-kernel\src\guard.rs:139:32
-    |
-139 |             info.ImageFileName.Buffer,
-    |                                ^^^^^^ unknown field
-    |
-help: `info.ImageFileName` is a raw pointer; try dereferencing it
-    |
-139 |             (*info.ImageFileName).Buffer,
-    |             ++                  +
-
-error[E0609]: no field `Length` on type `*const _UNICODE_STRING`
-   --> crates\winrust-kernel\src\guard.rs:140:44
-    |
-140 |             usize::from(info.ImageFileName.Length),
-    |                                            ^^^^^^ unknown field
-    |
-help: `info.ImageFileName` is a raw pointer; try dereferencing it
-    |
-140 |             usize::from((*info.ImageFileName).Length),
-    |                         ++                  +
-
 error[E0308]: mismatched types
-   --> crates\winrust-kernel\src\guard.rs:164:48
+   --> crates\winrust-kernel\src\guard.rs:163:66
     |
-164 |         PsSetCreateProcessNotifyRoutineEx(Some(notify as *const () as *mut core::ffi::c_void), 0)
-    |                                           ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected fn pointer, found `*mut c_void`
-    |                                           |
-    |                                           arguments to this enum variant are incorrect
+163 |     let status = unsafe { PsSetCreateProcessNotifyRoutineEx(Some(notify), 0) };
+    |                                                             ---- ^^^^^^ expected fn pointer, found fn item
+    |                                                             |
+    |                                                             arguments to this enum variant are incorrect
     |
-    = note: expected fn pointer `unsafe extern "C" fn(*mut _KPROCESS, *mut c_void, *mut _PS_CREATE_NOTIFY_INFO)`
-              found raw pointer `*mut c_void`
-help: the type constructed contains `*mut c_void` due to the type of the argument passed
-   --> crates\winrust-kernel\src\guard.rs:164:43
+    = note: expected fn pointer `unsafe extern "C" fn(*mut _KPROCESS, _, _)`
+                  found fn item `extern "C" fn(*mut c_void, _, _) {notify}`
+help: the type constructed contains `extern "C" fn(*mut c_void, *mut c_void, *mut _PS_CREATE_NOTIFY_INFO) {notify}` due to the type of the argument passed
+   --> crates\winrust-kernel\src\guard.rs:163:61
     |
-164 |         PsSetCreateProcessNotifyRoutineEx(Some(notify as *const () as *mut core::ffi::c_void), 0)
-    |                                           ^^^^^---------------------------------------------^
-    |                                                |
-    |                                                this argument influences the type of `Some`
+163 |     let status = unsafe { PsSetCreateProcessNotifyRoutineEx(Some(notify), 0) };
+    |                                                             ^^^^^------^
+    |                                                                  |
+    |                                                                  this argument influences the type of `Some`
 note: tuple variant defined here
    --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\option.rs:606:4
 
 error[E0308]: mismatched types
-   --> crates\winrust-kernel\src\guard.rs:182:48
+   --> crates\winrust-kernel\src\guard.rs:180:48
     |
-182 |         PsSetCreateProcessNotifyRoutineEx(Some(notify as *const () as *mut core::ffi::c_void), 1);
-    |                                           ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected fn pointer, found `*mut c_void`
+180 |         PsSetCreateProcessNotifyRoutineEx(Some(notify), 1);
+    |                                           ---- ^^^^^^ expected fn pointer, found fn item
     |                                           |
     |                                           arguments to this enum variant are incorrect
     |
-    = note: expected fn pointer `unsafe extern "C" fn(*mut _KPROCESS, *mut c_void, *mut _PS_CREATE_NOTIFY_INFO)`
-              found raw pointer `*mut c_void`
-help: the type constructed contains `*mut c_void` due to the type of the argument passed
-   --> crates\winrust-kernel\src\guard.rs:182:43
+    = note: expected fn pointer `unsafe extern "C" fn(*mut _KPROCESS, _, _)`
+                  found fn item `extern "C" fn(*mut c_void, _, _) {notify}`
+help: the type constructed contains `extern "C" fn(*mut c_void, *mut c_void, *mut _PS_CREATE_NOTIFY_INFO) {notify}` due to the type of the argument passed
+   --> crates\winrust-kernel\src\guard.rs:180:43
     |
-182 |         PsSetCreateProcessNotifyRoutineEx(Some(notify as *const () as *mut core::ffi::c_void), 1);
-    |                                           ^^^^^---------------------------------------------^
+180 |         PsSetCreateProcessNotifyRoutineEx(Some(notify), 1);
+    |                                           ^^^^^------^
     |                                                |
     |                                                this argument influences the type of `Some`
 note: tuple variant defined here
    --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\option.rs:606:4
-
-error[E0308]: mismatched types
-  --> crates\winrust-kernel\src\ioctl.rs:48:13
-   |
-44 | /         call_unsafe_wdf_function_binding!(
-45 | |             WdfRequestCompleteWithInformation,
-46 | |             request,
-47 | |             status,
-48 | |             written
-   | |             ^^^^^^^ expected `u64`, found `usize`
-49 | |         );
-   | |_________- arguments to this function are incorrect
-   |
-note: function defined here
-  --> crates\winrust-kernel\src\ioctl.rs:44:9
-   |
-44 | /         call_unsafe_wdf_function_binding!(
-45 | |             WdfRequestCompleteWithInformation,
-46 | |             request,
-47 | |             status,
-48 | |             written
-49 | |         );
-   | |_________^
-   = note: this error originates in the macro `$crate::__proc_macros::call_unsafe_wdf_function_binding` which comes from the expansion of the macro `call_unsafe_wdf_function_binding` (in Nightly builds, run with -Z macro-backtrace for more info)
-help: you can convert a `usize` to a `u64` and panic if the converted value doesn't fit
-   |
-48 |             written.try_into().unwrap()
-   |                    ++++++++++++++++++++
-
-error[E0277]: the trait bound `[u8; 48]: Default` is not satisfied
-   --> crates\winrust-kernel\src\sysinfo.rs:144:5
-    |
-140 | #[derive(Clone, Copy, Default)]
-    |                       ------- in this derive macro expansion
-...
-144 |     reserved1: [u8; 48],
-    |     ^^^^^^^^^^^^^^^^^^^ the trait `Default` is not implemented for `[u8; 48]`
-    |
-    = help: the following other types implement trait `Default`:
-              &[T]
-              &mut [T]
-              [T; 0]
-              [T; 1]
-              [T; 2]
-              [T; 3]
-              [T; 4]
-              [T; 5]
-            and 27 others
 
 warning: unnecessary `unsafe` block
   --> crates\winrust-kernel\src\guard.rs:61:20
@@ -367,8 +257,19 @@ warning: unnecessary `unsafe` block
    |
    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
 
-Some errors have detailed explanations: E0277, E0308, E0432, E0609, E0631, E0745.
+error[E0596]: cannot borrow `info.CreationStatus` as mutable, as it is behind a `&` reference
+   --> crates\winrust-kernel\src\guard.rs:150:17
+    |
+134 |     let Some(info) = (unsafe { info.as_ref() }) else {
+    |              ---- consider changing this binding's type to be: `&mut _PS_CREATE_NOTIFY_INFO`
+...
+150 |                 core::ptr::addr_of_mut!(info.CreationStatus),
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `info` is a `&` reference, so it cannot be borrowed as mutable
+    |
+    = note: this error originates in the macro `core::ptr::addr_of_mut` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+Some errors have detailed explanations: E0277, E0308, E0596.
 For more information about an error, try `rustc --explain E0277`.
 warning: `winrust-kernel` (lib) generated 2 warnings
-error: could not compile `winrust-kernel` (lib) due to 12 previous errors; 2 warnings emitted
+error: could not compile `winrust-kernel` (lib) due to 6 previous errors; 2 warnings emitted
 exit=101
