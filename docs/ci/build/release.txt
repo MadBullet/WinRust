@@ -1,11 +1,11 @@
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
    Compiling cfg-if v1.0.5
-   Compiling log v0.4.35
-   Compiling syn v3.0.10
    Compiling stable_deref_trait v1.2.1
+   Compiling log v0.4.35
    Compiling windows-link v0.2.1
+   Compiling syn v3.0.10
    Compiling simd-adler32 v0.3.10
    Compiling smallvec v1.16.6
    Compiling crc32fast v1.5.6
@@ -19,23 +19,23 @@
    Compiling zerofrom-derive v0.1.8
    Compiling yoke-derive v0.8.4
    Compiling zerofrom v0.1.8
-   Compiling bytemuck_derive v1.12.1
-   Compiling yoke v0.8.4
    Compiling zerovec-derive v0.11.7
+   Compiling yoke v0.8.4
+   Compiling bytemuck_derive v1.12.1
+   Compiling zerovec v0.11.9
    Compiling bytemuck v1.25.2
    Compiling displaydoc v0.2.7
-   Compiling zerovec v0.11.9
    Compiling potential_utf v0.1.6
-   Compiling tinystr v0.8.5
-   Compiling zerotrie v0.2.5
-   Compiling icu_locale_core v2.4.0
    Compiling icu_normalizer_data v2.4.0
    Compiling khronos_api v3.1.0
+   Compiling once_cell v1.21.4
+   Compiling tinystr v0.8.5
+   Compiling icu_locale_core v2.4.0
+   Compiling zerotrie v0.2.5
    Compiling windows_x86_64_msvc v0.52.6
    Compiling icu_properties_data v2.4.0
-   Compiling once_cell v1.21.4
-   Compiling icu_provider v2.4.0
    Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
    Compiling flate2 v1.1.11
    Compiling autocfg v1.5.1
    Compiling cfg_aliases v0.2.2
@@ -44,34 +44,34 @@
    Compiling gl_generator v0.14.0
    Compiling windows-targets v0.52.6
    Compiling icu_normalizer v2.4.0
-   Compiling find-msvc-tools v0.1.15
-   Compiling parking_lot_core v0.9.12
    Compiling version_check v0.9.5
-   Compiling zerocopy v0.8.64
    Compiling shlex v2.0.1
-   Compiling cc v1.11.3
+   Compiling zerocopy v0.8.64
+   Compiling parking_lot_core v0.9.12
+   Compiling find-msvc-tools v0.1.15
    Compiling ahash v0.8.13
    Compiling idna_adapter v1.2.2
+   Compiling cc v1.11.3
+   Compiling bitflags v2.13.2
    Compiling ttf-parser v0.25.1
    Compiling scopeguard v1.2.0
-   Compiling bitflags v2.13.2
    Compiling percent-encoding v2.3.2
    Compiling form_urlencoded v1.2.3
-   Compiling owned_ttf_parser v0.25.1
    Compiling lock_api v0.4.14
    Compiling ring v0.17.14
+   Compiling owned_ttf_parser v0.25.1
    Compiling idna v1.1.0
    Compiling emath v0.29.1
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
    Compiling windows-sys v0.61.2
-   Compiling zeroize v1.9.2
    Compiling float-cmp v0.9.0
+   Compiling zeroize v1.9.2
    Compiling arrayvec v0.7.8
    Compiling ab_glyph_rasterizer v0.1.10
    Compiling ab_glyph v0.2.32
-   Compiling strict-num v0.1.1
    Compiling rustls-pki-types v1.16.0
+   Compiling strict-num v0.1.1
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
    Compiling url v2.5.9
@@ -85,44 +85,44 @@
    Compiling tiny-skia-path v0.11.4
    Compiling epaint v0.29.1
    Compiling kurbo v0.9.5
-   Compiling glutin_egl_sys v0.7.1
    Compiling glutin_wgl_sys v0.6.1
+   Compiling glutin_egl_sys v0.7.1
    Compiling winit v0.30.13
    Compiling getrandom v0.2.17
-   Compiling pin-project-lite v0.2.18
-   Compiling untrusted v0.9.0
    Compiling serde v1.0.229
-   Compiling raw-window-handle v0.6.2
+   Compiling siphasher v0.3.11
+   Compiling siphasher v1.0.4
+   Compiling pin-project-lite v0.2.18
    Compiling tracing-core v0.1.36
    Compiling memchr v2.8.3
-   Compiling siphasher v1.0.4
    Compiling unicase v2.10.0
-   Compiling siphasher v0.3.11
+   Compiling untrusted v0.9.0
+   Compiling raw-window-handle v0.6.2
    Compiling phf_shared v0.11.3
-   Compiling svgtypes v0.13.0
    Compiling aho-corasick v1.1.5
    Compiling tracing v0.1.44
+   Compiling svgtypes v0.13.0
    Compiling egui v0.29.1
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
    Compiling serde_derive v1.0.229
-   Compiling error-code v3.4.0
    Compiling rustls v0.23.46
+   Compiling cursor-icon v1.2.0
    Compiling dpi v0.1.2
-   Compiling weezl v0.1.12
+   Compiling error-code v3.4.0
+   Compiling color_quant v1.1.0
+   Compiling rctree v0.5.0
    Compiling pxfm v0.1.30
+   Compiling weezl v0.1.12
    Compiling regex-syntax v0.8.12
+   Compiling unicode-segmentation v1.13.3
    Compiling litrs v1.0.1
    Compiling smol_str v0.2.2
-   Compiling rctree v0.5.0
-   Compiling cursor-icon v1.2.0
-   Compiling color_quant v1.1.0
-   Compiling unicode-segmentation v1.13.3
-   Compiling gif v0.14.2
-   Compiling usvg-tree v0.37.0
    Compiling document-features v0.2.12
    Compiling regex-automata v0.4.19
+   Compiling gif v0.14.2
    Compiling moxcms v0.8.1
+   Compiling usvg-tree v0.37.0
    Compiling clipboard-win v5.4.3
    Compiling rustls-webpki v0.103.17
    Compiling phf v0.11.3
@@ -131,22 +131,22 @@
    Compiling glutin-winit v0.5.0
    Compiling libloading v0.8.9
    Compiling simplecss v0.2.2
-   Compiling thiserror v1.0.69
-   Compiling utf8parse v0.2.2
    Compiling anstyle v1.0.14
-   Compiling winapi v0.3.9
+   Compiling once_cell_polyfill v1.70.2
    Compiling imagesize v0.12.0
    Compiling byteorder-lite v0.1.0
-   Compiling bitflags v1.3.2
-   Compiling subtle v2.6.1
+   Compiling thiserror v1.0.69
    Compiling data-url v0.3.2
-   Compiling once_cell_polyfill v1.70.2
+   Compiling bitflags v1.3.2
    Compiling roxmltree v0.19.0
-   Compiling anstyle-wincon v3.0.11
+   Compiling winapi v0.3.9
+   Compiling utf8parse v0.2.2
+   Compiling subtle v2.6.1
+   Compiling anstyle-parse v1.0.0
    Compiling usvg-parser v0.37.0
    Compiling png v0.17.16
    Compiling image v0.25.10
-   Compiling anstyle-parse v1.0.0
+   Compiling anstyle-wincon v3.0.11
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
    Compiling arboard v3.7.0
@@ -154,21 +154,21 @@
    Compiling thiserror-impl v1.0.69
    Compiling webbrowser v1.2.7
    Compiling anstyle-query v1.1.5
-   Compiling base64 v0.21.7
-   Compiling web-time v1.1.0
-   Compiling jiff-core v1.0.1
-   Compiling xmlwriter v0.1.0
    Compiling glow v0.14.2
-   Compiling is_terminal_polyfill v1.70.2
-   Compiling pico-args v0.5.0
    Compiling base64 v0.22.1
+   Compiling web-time v1.1.0
+   Compiling pico-args v0.5.0
    Compiling colorchoice v1.0.5
-   Compiling anstream v1.0.0
-   Compiling ureq v2.12.1
+   Compiling xmlwriter v0.1.0
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling base64 v0.21.7
+   Compiling jiff-core v1.0.1
    Compiling usvg v0.37.0
-   Compiling egui_glow v0.29.1
    Compiling jiff v1.0.2
+   Compiling egui_glow v0.29.1
+   Compiling anstream v1.0.0
    Compiling egui-winit v0.29.1
+   Compiling ureq v2.12.1
    Compiling env_filter v2.1.0
    Compiling tiny-skia v0.11.4
    Compiling enum-map-derive v0.17.0
@@ -179,20 +179,7 @@
    Compiling eframe v0.29.1
    Compiling resvg v0.37.0
    Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-error[E0432]: unresolved import `windows_sys::Win32::System::SystemInformation::FileTimeToSystemTime`
-   --> crates\winrust-core\src\disk.rs:173:9
-    |
-173 |     use windows_sys::Win32::System::SystemInformation::FileTimeToSystemTime;
-    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^--------------------
-    |                                                        |
-    |                                                        no `FileTimeToSystemTime` in `Win32::System::SystemInformation`
-
-error[E0425]: cannot find value `SYNCHRONIZE` in module `windows_sys::Win32::Foundation`
-   --> crates\winrust-core\src\process.rs:308:60
-    |
-308 |     let h = open_with(pid, windows_sys::Win32::Foundation::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
-    |                                                            ^^^^^^^^^^^ not found in `windows_sys::Win32::Foundation`
-
+   Compiling enum-map v2.7.3
 warning: unused import: `to_wide`
   --> crates\winrust-core\src\process.rs:10:36
    |
@@ -213,26 +200,51 @@ warning: unused import: `from_wide`
 9 | use crate::wide::{from_wide, str_to_wide};
   |                   ^^^^^^^^^
 
-warning: unused import: `windows_sys::Win32::Foundation::ERROR_SUCCESS`
-  --> crates\winrust-core\src\service.rs:11:5
-   |
-11 | use windows_sys::Win32::Foundation::ERROR_SUCCESS;
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-warning: unused imports: `CloseServiceHandle` and `SERVICE_ACTIVE`
-  --> crates\winrust-core\src\service.rs:13:27
-   |
-13 |     ChangeServiceConfigW, CloseServiceHandle, ControlService, EnumDependentServicesW,
-   |                           ^^^^^^^^^^^^^^^^^^
-...
-18 |     SERVICE_ACCEPT_STOP, SERVICE_ACTIVE, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
-   |                          ^^^^^^^^^^^^^^
-
-   Compiling enum-map v2.7.3
    Compiling env_logger v0.11.12
-Some errors have detailed explanations: E0425, E0432.
-For more information about an error, try `rustc --explain E0425`.
-warning: `winrust-core` (lib) generated 5 warnings
-error: could not compile `winrust-core` (lib) due to 2 previous errors; 5 warnings emitted
+warning: function `nonnull` is never used
+   --> crates\winrust-core\src\process.rs:319:15
+    |
+319 | pub(crate) fn nonnull(p: *mut c_void) -> Option<*mut c_void> {
+    |               ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling ehttp v0.5.0
+   Compiling egui_extras v0.29.1
+warning: `winrust-core` (lib) generated 4 warnings (run `cargo fix --lib -p winrust-core` to apply 3 suggestions)
+   Compiling winrust-launcher v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
+error[E0501]: cannot borrow `*ui` as mutable because previous closure requires unique access
+   --> crates\winrust-launcher\src\main.rs:293:13
+    |
+293 |               ui.columns(2, |cols| {
+    |               ^  -------    ------ closure construction occurs here
+    |               |  |
+    |  _____________|  first borrow later used by call
+    | |
+294 | |                 cols[0].heading("Components");
+295 | |                 cols[0].add_space(4.0);
+296 | |                 let mut launch: Option<Component> = None;
+...   |
+326 | |                     if ui
+    | |                        -- first borrow occurs due to use of `*ui` in closure
+...   |
+384 | |             });
+    | |______________^ second borrow occurs here
+
+error[E0500]: closure requires unique access to `*ui` but it is already borrowed
+   --> crates\winrust-launcher\src\main.rs:293:27
+    |
+293 |             ui.columns(2, |cols| {
+    |             -- -------    ^^^^^^ closure construction occurs here
+    |             |  |
+    |             |  first borrow later used by call
+    |             borrow occurs here
+...
+326 |                     if ui
+    |                        -- second borrow occurs due to use of `*ui` in closure
+
+Some errors have detailed explanations: E0500, E0501.
+For more information about an error, try `rustc --explain E0500`.
+error: could not compile `winrust-launcher` (bin "WinRust") due to 2 previous errors
 warning: build failed, waiting for other jobs to finish...
 exit=False

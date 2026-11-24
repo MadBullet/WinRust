@@ -29,7 +29,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:117:
 [0m             kind: Some(kind),
              total_bytes: total,
              free_bytes: free,
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:267:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:270:
                  .cmp(&extension(&b.name).to_lowercase())
                  .then_with(|| a.name.to_lowercase().cmp(&b.name.to_lowercase())),
          };
@@ -42,7 +42,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:267:
 [0m     });
  }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:320:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:323:
      if replace {
          flags |= MOVEFILE_REPLACE_EXISTING;
      }
@@ -53,7 +53,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:320:
 [0m }
  
  pub fn attributes(path: impl AsRef<Path>) -> Result<u32> {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:339:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:342:
      if cur == u32::MAX {
          return Err(WinError::from_last_error("GetFileAttributesW"));
      }
@@ -622,11 +622,12 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:305:
  
  /// Wait until a process exits.  Returns the exit code.
  pub fn wait_for_exit(pid: u32, timeout_ms: u32) -> Result<u32> {
-[31m-    let h = open_with(pid, windows_sys::Win32::Foundation::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
+[31m-    let h = open_with(pid, windows_sys::Win32::System::Threading::PROCESS_SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
 [0m[31m-    let r = unsafe { windows_sys::Win32::System::Threading::WaitForSingleObject(h.raw(), timeout_ms) };
 [0m[32m+    let h = open_with(
 [0m[32m+        pid,
-[0m[32m+        windows_sys::Win32::Foundation::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION,
+[0m[32m+        windows_sys::Win32::System::Threading::PROCESS_SYNCHRONIZE
+[0m[32m+            | PROCESS_QUERY_LIMITED_INFORMATION,
 [0m[32m+    )?;
 [0m[32m+    let r =
 [0m[32m+        unsafe { windows_sys::Win32::System::Threading::WaitForSingleObject(h.raw(), timeout_ms) };
@@ -760,38 +761,40 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:249:
 [0m }
  
  /// Close a raw key (helper for callers that opened one directly).
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:11:
- use windows_sys::Win32::Foundation::ERROR_SUCCESS;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:9:
+ use crate::wide::{from_wide, str_to_wide};
+ use serde::{Deserialize, Serialize};
  use windows_sys::Win32::System::Services::{
-     ChangeServiceConfigW, CloseServiceHandle, ControlService, EnumDependentServicesW,
-[31m-    EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W,
+[31m-    ChangeServiceConfigW, ControlService, EnumDependentServicesW,
+[0m[31m-    EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W,
 [0m[31m-    QueryServiceConfigW, QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW,
 [0m[31m-    ENUM_SERVICE_TYPE, QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
-[0m[32m+    EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W, QueryServiceConfigW,
-[0m[32m+    QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW, ENUM_SERVICE_TYPE,
-[0m[32m+    QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
-[0m     SC_MANAGER_ENUMERATE_SERVICE, SC_STATUS_PROCESS_INFO, SERVICE_ACCEPT_PAUSE_CONTINUE,
-[31m-    SERVICE_ACCEPT_STOP, SERVICE_ACTIVE, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+[0m[31m-    SC_MANAGER_ENUMERATE_SERVICE, SC_STATUS_PROCESS_INFO, SERVICE_ACCEPT_PAUSE_CONTINUE,
+[0m[31m-    SERVICE_ACCEPT_STOP, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
 [0m[31m-    SERVICE_CONFIG_DESCRIPTION, SERVICE_CONTINUE_PENDING, SERVICE_CONTROL_CONTINUE,
 [0m[31m-    SERVICE_CONTROL_PAUSE, SERVICE_CONTROL_STOP, SERVICE_DELAYED_AUTO_START_INFO,
 [0m[31m-    SERVICE_DEMAND_START, SERVICE_DESCRIPTIONW, SERVICE_DISABLED, SERVICE_DRIVER,
-[0m[31m-    SERVICE_NO_CHANGE, SERVICE_PAUSED, SERVICE_PAUSE_PENDING, SERVICE_QUERY_CONFIG,
-[0m[31m-    SERVICE_QUERY_STATUS, SERVICE_RUNNING, SERVICE_START, SERVICE_STATE_ALL, SERVICE_STATUS,
+[0m[32m+    ChangeServiceConfigW, ControlService, EnumDependentServicesW, EnumServicesStatusExW,
+[0m[32m+    OpenSCManagerW, OpenServiceW, QueryServiceConfig2W, QueryServiceConfigW, QueryServiceStatusEx,
+[0m[32m+    StartServiceW, ENUM_SERVICE_STATUSW, ENUM_SERVICE_TYPE, QUERY_SERVICE_CONFIGW,
+[0m[32m+    SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT, SC_MANAGER_ENUMERATE_SERVICE,
+[0m[32m+    SC_STATUS_PROCESS_INFO, SERVICE_ACCEPT_PAUSE_CONTINUE, SERVICE_ACCEPT_STOP,
+[0m[32m+    SERVICE_CHANGE_CONFIG, SERVICE_CONFIG_DELAYED_AUTO_START_INFO, SERVICE_CONFIG_DESCRIPTION,
+[0m[32m+    SERVICE_CONTINUE_PENDING, SERVICE_CONTROL_CONTINUE, SERVICE_CONTROL_PAUSE,
+[0m[32m+    SERVICE_CONTROL_STOP, SERVICE_DELAYED_AUTO_START_INFO, SERVICE_DEMAND_START,
+[0m[32m+    SERVICE_DESCRIPTIONW, SERVICE_DISABLED, SERVICE_DRIVER, SERVICE_ENUMERATE_DEPENDENTS,
+[0m     SERVICE_NO_CHANGE, SERVICE_PAUSED, SERVICE_PAUSE_PENDING, SERVICE_QUERY_CONFIG,
+[31m-    SERVICE_QUERY_STATUS, SERVICE_RUNNING, SERVICE_START, SERVICE_STATE_ALL, SERVICE_STATUS,
 [0m[31m-    SERVICE_START_PENDING,
 [0m[31m-    SERVICE_STATUS_PROCESS, SERVICE_STOP, SERVICE_STOPPED, SERVICE_STOP_PENDING,
 [0m[31m-    SERVICE_WIN32, SERVICE_CHANGE_CONFIG, SERVICE_ENUMERATE_DEPENDENTS,
-[0m[32m+    SERVICE_ACCEPT_STOP, SERVICE_ACTIVE, SERVICE_CHANGE_CONFIG,
-[0m[32m+    SERVICE_CONFIG_DELAYED_AUTO_START_INFO, SERVICE_CONFIG_DESCRIPTION, SERVICE_CONTINUE_PENDING,
-[0m[32m+    SERVICE_CONTROL_CONTINUE, SERVICE_CONTROL_PAUSE, SERVICE_CONTROL_STOP,
-[0m[32m+    SERVICE_DELAYED_AUTO_START_INFO, SERVICE_DEMAND_START, SERVICE_DESCRIPTIONW, SERVICE_DISABLED,
-[0m[32m+    SERVICE_DRIVER, SERVICE_ENUMERATE_DEPENDENTS, SERVICE_NO_CHANGE, SERVICE_PAUSED,
-[0m[32m+    SERVICE_PAUSE_PENDING, SERVICE_QUERY_CONFIG, SERVICE_QUERY_STATUS, SERVICE_RUNNING,
-[0m[32m+    SERVICE_START, SERVICE_START_PENDING, SERVICE_STATE_ALL, SERVICE_STATUS,
-[0m[32m+    SERVICE_STATUS_PROCESS, SERVICE_STOP, SERVICE_STOPPED, SERVICE_STOP_PENDING, SERVICE_WIN32,
+[0m[32m+    SERVICE_QUERY_STATUS, SERVICE_RUNNING, SERVICE_START, SERVICE_START_PENDING, SERVICE_STATE_ALL,
+[0m[32m+    SERVICE_STATUS, SERVICE_STATUS_PROCESS, SERVICE_STOP, SERVICE_STOPPED, SERVICE_STOP_PENDING,
+[0m[32m+    SERVICE_WIN32,
 [0m };
  
  /// A service's runtime state.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:71:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:70:
      }
  
      pub fn is_busy(self) -> bool {
@@ -803,7 +806,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:71:
 [0m     }
  }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:92:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:91:
          match v {
              0 => Self::Boot,
              1 => Self::System,
@@ -818,7 +821,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:92:
 [0m             3 => Self::Manual,
              4 => Self::Disabled,
              other => Self::Unknown(other),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:160:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:159:
  
  impl ScManager {
      pub fn connect() -> Result<Self> {
@@ -839,7 +842,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:160:
 [0m         }
      }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:171:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:170:
          let w = str_to_wide(name);
          let h = unsafe { OpenServiceW(self.h.raw() as SC_HANDLE, w.as_ptr(), access) };
          match Handle::new(h) {
@@ -851,7 +854,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:171:
 [0m             None => Err(WinError::from_last_error("OpenServiceW")),
          }
      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:184:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:183:
          if let Ok(drivers) = self.enumerate_filtered(SERVICE_DRIVER, true) {
              out.extend(drivers);
          }
@@ -864,7 +867,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:184:
 [0m         Ok(out)
      }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:191:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:190:
 [31m-    fn enumerate_filtered(&self, service_type: ENUM_SERVICE_TYPE, is_driver: bool) -> Result<Vec<ServiceEntry>> {
 [0m[32m+    fn enumerate_filtered(
 [0m[32m+        &self,
@@ -874,7 +877,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:191:
 [0m         let mut needed = 0u32;
          let mut count = 0u32;
          let mut resume = 0u32;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:234:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:233:
          }
  
          let mut out = Vec::with_capacity(entries as usize);
@@ -884,7 +887,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:234:
 [0m         for i in 0..entries as usize {
              let e = unsafe { &*base.add(i) };
              let name = ptr_to_string(e.lpServiceName);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:251:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:250:
                  ..Default::default()
              };
              // Configuration + description, best-effort (needs SERVICE_QUERY_CONFIG).
@@ -896,7 +899,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:251:
 [0m                 if let Some(cfg) = svc.config() {
                      entry.start_type = Some(cfg.0);
                      entry.binary_path = cfg.1;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:296:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:295:
      pub fn status(&self) -> Result<SERVICE_STATUS_PROCESS> {
          let mut buf = [0u8; std::mem::size_of::<SERVICE_STATUS_PROCESS>()];
          let mut needed = 0u32;
@@ -924,7 +927,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:296:
 [0m         Ok(unsafe { std::ptr::read_unaligned(buf.as_ptr() as *const SERVICE_STATUS_PROCESS) })
      }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:314:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:313:
      pub fn state(&self) -> Option<ServiceState> {
 [31m-        self.status().ok().map(|s| ServiceState::from_raw(s.dwCurrentState))
 [0m[32m+        self.status()
@@ -933,7 +936,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:314:
 [0m     }
  
      /// `(start_type, binary_path, logon_account, load_order_group)`
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:326:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:325:
          }
          let mut buf = vec![0u8; needed as usize];
          let ok = unsafe {
@@ -947,7 +950,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:326:
 [0m         };
          if ok == 0 {
              return None;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:350:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:349:
      }
  
      pub fn delayed_auto_start(&self) -> Option<bool> {
@@ -958,7 +961,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:350:
 [0m         let mut needed = 0u32;
          let ok = unsafe {
              QueryServiceConfig2W(
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:361:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:360:
                  &mut needed,
              )
          };
@@ -971,7 +974,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:361:
 [0m     }
  
      pub fn description(&self) -> Option<String> {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:368:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:367:
          let mut needed = 0u32;
          unsafe {
 [31m-            QueryServiceConfig2W(self.raw(), SERVICE_CONFIG_DESCRIPTION, std::ptr::null_mut(), 0, &mut needed);
@@ -985,7 +988,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:368:
 [0m         }
          if needed < std::mem::size_of::<SERVICE_DESCRIPTIONW>() as u32 {
              return None;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:387:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:386:
          }
          let desc = unsafe { &*(buf.as_ptr() as *const SERVICE_DESCRIPTIONW) };
          let s = ptr_to_string(desc.lpDescription);
@@ -998,7 +1001,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:387:
 [0m     }
  
      /// Services that must be running before this one can start.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:395:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:394:
          let mut needed = 0u32;
          let mut count = 0u32;
          unsafe {
@@ -1014,7 +1017,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:395:
 [0m         }
          if needed == 0 {
              return Vec::new();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:424:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:423:
      }
  
      pub fn start(&self) -> Result<()> {
@@ -1025,7 +1028,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:424:
 [0m     }
  
      pub fn stop(&self) -> Result<()> {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:431:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:430:
 [31m-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
 [0m[31m-        check("ControlService(STOP)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_STOP, &mut st) })
 [0m[32m+        let mut st = SERVICE_STATUS {
@@ -1043,7 +1046,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:431:
 [0m     }
  
      pub fn pause(&self) -> Result<()> {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:436:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:435:
 [31m-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
 [0m[31m-        check("ControlService(PAUSE)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_PAUSE, &mut st) })
 [0m[32m+        let mut st = SERVICE_STATUS {
@@ -1061,7 +1064,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:436:
 [0m     }
  
      pub fn resume(&self) -> Result<()> {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:441:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:440:
 [31m-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
 [0m[31m-        check("ControlService(CONTINUE)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_CONTINUE, &mut st) })
 [0m[32m+        let mut st = SERVICE_STATUS {
@@ -1079,7 +1082,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:441:
 [0m     }
  
      /// Change the start type (and optionally the binary path).
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:451:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:450:
                  SERVICE_NO_CHANGE,
                  start.raw(),
                  SERVICE_NO_CHANGE,
@@ -1090,7 +1093,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:451:
 [0m                 std::ptr::null(),
                  std::ptr::null_mut(),
                  std::ptr::null(),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:464:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:463:
              return Err(WinError::from_last_error("ChangeServiceConfigW"));
          }
          // Delayed start is a separate flag.
@@ -1105,7 +1108,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:464:
 [0m         if matches!(start, StartType::Auto | StartType::AutoDelayed) {
              unsafe {
                  QueryServiceConfig2W(
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:475:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:474:
                      std::ptr::null_mut(),
                  );
              }
