@@ -1,1 +1,6 @@
-1.6G	target
+-rwxr-xr-x 2 runneradmin 197121 4118016 Nov 24 20:01 target/release/WinRust.exe
+-rwxr-xr-x 2 runneradmin 197121 4301312 Nov 24 19:59 target/release/winrust-explorer.exe
+-rwxr-xr-x 2 runneradmin 197121 4081664 Nov 24 19:59 target/release/winrust-services.exe
+-rwxr-xr-x 2 runneradmin 197121 4117504 Nov 24 20:00 target/release/winrust-sysctl.exe
+-rwxr-xr-x 2 runneradmin 197121 4196864 Nov 24 20:00 target/release/winrust-taskmgr.exe
+2.2G	target

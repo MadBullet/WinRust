@@ -1150,7 +1150,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:275:
 [0m[32m+    }
 [0m }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:144:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:158:
  /// Copy every `path` that exists into a fresh timestamped backup directory and
  /// write `session.json`.  Missing files are recorded with `existed: false` so a
  /// rollback knows to delete a file that WinRust created from scratch.
@@ -1168,7 +1168,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:144:
 [0m 
      let mut entries = Vec::with_capacity(paths.len());
      for (index, path) in paths.iter().enumerate() {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:186:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:200:
          restore_sequence,
          entries,
      };
@@ -1178,7 +1178,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:186:
 [0m     std::fs::write(dir.join("session.json"), json)
          .map_err(|e| WinError::Other(format!("write manifest: {e}")))?;
      Ok(session)
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:207:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\restore.rs:221:
          } else if entry.original.exists() {
              match std::fs::remove_file(&entry.original) {
                  Ok(()) => log.push(format!("removed {}", entry.original.display())),

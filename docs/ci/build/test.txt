@@ -6,86 +6,61 @@
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
+  Downloaded serde_core v1.0.229
   Downloaded itoa v1.0.19
   Downloaded windows-targets v0.52.6
-  Downloaded log v0.4.35
-  Downloaded memchr v2.8.3
   Downloaded quote v1.0.47
-  Downloaded serde_core v1.0.229
-  Downloaded thiserror v1.0.69
   Downloaded zmij v1.0.23
-  Downloaded serde_derive v1.0.229
+  Downloaded thiserror v1.0.69
   Downloaded thiserror-impl v1.0.69
   Downloaded unicode-ident v1.0.27
   Downloaded proc-macro2 v1.0.107
+  Downloaded log v0.4.35
+  Downloaded serde_derive v1.0.229
   Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
   Downloaded serde_json v1.0.154
   Downloaded syn v2.0.119
   Downloaded syn v3.0.10
   Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
-   Compiling serde_core v1.0.229
+   Compiling unicode-ident v1.0.27
    Compiling windows_x86_64_msvc v0.52.6
+   Compiling serde_core v1.0.229
    Compiling zmij v1.0.23
    Compiling syn v2.0.119
    Compiling syn v3.0.10
-   Compiling serde v1.0.229
    Compiling serde_json v1.0.154
+   Compiling serde v1.0.229
    Compiling thiserror v1.0.69
-   Compiling windows-targets v0.52.6
-   Compiling thiserror-impl v1.0.69
    Compiling serde_derive v1.0.229
-   Compiling memchr v2.8.3
+   Compiling thiserror-impl v1.0.69
+   Compiling windows-targets v0.52.6
    Compiling itoa v1.0.19
+   Compiling memchr v2.8.3
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.2.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-error[E0308]: mismatched types
-   --> crates\winrust-core\src\install.rs:257:17
-    |
-236 | /         match integration {
-237 | |             Integration::Portable => {
-238 | |                 actions.push("Portable: nothing to undo".into());
-...   |
-257 | |                 Ok(())
-    | |                 ^^^^^^ expected `()`, found `Result<(), _>`
-...   |
-268 | |         }
-    | |_________- expected this to be `()`
-    |
-    = note: expected unit type `()`
-                    found enum `std::result::Result<(), _>`
-help: you might have meant to return this value
-    |
-257 |                 return Ok(())
-    |                 ++++++
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 40.27s
+     Running unittests src\lib.rs (target\debug\build\winrust-core/05210772f9f03b2b\out\winrust_core-05210772f9f03b2b.exe)
 
-error[E0793]: reference to field of packed struct is unaligned
-  --> crates\winrust-core\src\restore.rs:52:5
-   |
-52 |     info.szDescription[..len].copy_from_slice(&desc[..len]);
-   |     ^^^^^^^^^^^^^^^^^^
-   |
-   = note: this struct is 1-byte aligned, but the type of this field may require higher alignment
-   = note: creating a misaligned reference is undefined behavior (even if that reference is never dereferenced)
-   = help: copy the field contents to a local variable, or replace the reference with a raw pointer and use `read_unaligned`/`write_unaligned` (loads and stores via `*p` must be properly aligned even when using raw pointers)
+running 7 tests
+test disk::tests::civil_dates ... ok
+test disk::tests::extensions ... ok
+test disk::tests::local_time_roundtrip ... ok
+test disk::tests::size_formatting ... ok
+test wide::tests::roundtrip_ascii ... ok
+test wide::tests::roundtrip_cyrillic ... ok
+test wide::tests::stops_at_nul ... ok
 
-error[E0793]: reference to field of packed struct is unaligned
-  --> crates\winrust-core\src\restore.rs:75:55
-   |
-75 |         message: format!("Restore point #{} created", status.llSequenceNumber),
-   |                                                       ^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = note: this struct is 1-byte aligned, but the type of this field may require higher alignment
-   = note: creating a misaligned reference is undefined behavior (even if that reference is never dereferenced)
-   = help: copy the field contents to a local variable, or replace the reference with a raw pointer and use `read_unaligned`/`write_unaligned` (loads and stores via `*p` must be properly aligned even when using raw pointers)
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-Some errors have detailed explanations: E0308, E0793.
-For more information about an error, try `rustc --explain E0308`.
-error: could not compile `winrust-core` (lib) due to 3 previous errors
-warning: build failed, waiting for other jobs to finish...
-error: could not compile `winrust-core` (lib test) due to 3 previous errors
-exit=False
+   Doc-tests winrust_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+exit=True
