@@ -123,6 +123,21 @@ def main() -> None:
             dirs[name] = ""
             log(f"!! failed to fetch {name}: {traceback.format_exc()}")
 
+    # report the actual layout so paths can be corrected
+    listing = []
+    for name, d in dirs.items():
+        if not d:
+            continue
+        for root, subdirs, files in os.walk(d):
+            depth = root[len(d):].count(os.sep)
+            if depth > 2:
+                subdirs[:] = []
+                continue
+            rel = root[len(d):].lstrip(os.sep) or "."
+            listing.append(f"{name}: {rel}/ -> dirs={sorted(subdirs)[:8]} files={sorted(files)[:8]}")
+    with open("docs/ci/layout.txt", "w", encoding="utf-8") as fh:
+        fh.write("\n".join(listing))
+
     # ---------------- windows-sys ----------------
     out: list[str] = []
     try:
