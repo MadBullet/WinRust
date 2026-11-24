@@ -25,6 +25,14 @@ use windows_sys::Win32::System::Services::{
     SERVICE_WIN32, SERVICE_CHANGE_CONFIG, SERVICE_ENUMERATE_DEPENDENTS,
 };
 
+/// Access rights used when opening a service handle.
+pub const ACCESS_QUERY_CONFIG: u32 = SERVICE_QUERY_CONFIG;
+pub const ACCESS_CHANGE_CONFIG: u32 = SERVICE_CHANGE_CONFIG;
+pub const ACCESS_QUERY_STATUS: u32 = SERVICE_QUERY_STATUS;
+pub const ACCESS_START: u32 = SERVICE_START;
+pub const ACCESS_STOP: u32 = SERVICE_STOP;
+pub const ACCESS_PAUSE_CONTINUE: u32 = SERVICE_PAUSE_CONTINUE;
+
 /// A service's runtime state.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ServiceState {

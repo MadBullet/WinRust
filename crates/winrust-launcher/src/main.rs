@@ -297,7 +297,7 @@ impl eframe::App for LauncherApp {
                 let mut select: Option<Component> = None;
                 for status in &self.components {
                     let selected = self.selected == status.component;
-                    let frame = egui::Frame::group(ui.style()).fill(if selected {
+                    let frame = egui::Frame::group(cols[0].style()).fill(if selected {
                         Color32::from_rgb(40, 46, 60)
                     } else {
                         Color32::from_rgb(28, 30, 36)

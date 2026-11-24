@@ -114,7 +114,7 @@ impl ServicesApp {
             self.status = "No SCM connection".into();
             return;
         };
-        match scm.open_service(&dlg.name, winrust_core::service::SERVICE_CHANGE_CONFIG) {
+        match scm.open_service(&dlg.name, winrust_core::service::ACCESS_CHANGE_CONFIG) {
             Ok(svc) => {
                 let bin = if dlg.binary_path.is_empty() { None } else { Some(dlg.binary_path.as_str()) };
                 match svc.set_start_type(dlg.start_type, bin) {
@@ -201,7 +201,7 @@ impl ServicesApp {
             .column(Column::initial(220.0).at_least(120.0).clip(true))
             .column(Column::remainder().at_least(80.0).clip(true));
 
-        table = table.header(22.0, |mut header| {
+        let table = table.header(22.0, |mut header| {
             for title in ["Name", "Status", "Start type", "Log on as", "Description"] {
                 header.col(|ui| {
                     ui.label(RichText::new(title).strong());

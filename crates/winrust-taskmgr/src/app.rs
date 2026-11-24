@@ -99,7 +99,7 @@ fn spawn_sampler(interval: Duration) -> Sampler {
                 new_proc.insert(p.pid, key);
                 let prev = prev_proc.get(&p.pid).copied();
                 let cpu_percent = match prev {
-                    Some((_, prev_cpu_100ns)) if p.created_100ns == prev.0 => {
+                    Some((prev_created, prev_cpu_100ns)) if p.created_100ns == prev_created => {
                         let delta = p.cpu_time_100ns.saturating_sub(prev_cpu_100ns) as f64;
                         // 100ns units -> percent of one core -> percent of all cores
                         (delta / 10_000_000.0 / wall / cores * 100.0) as f32
@@ -450,7 +450,7 @@ impl TaskManagerApp {
             .column(Column::initial(70.0).at_least(50.0).clip(true))
             .column(Column::remainder().at_least(80.0).clip(true));
 
-        table = table.header(22.0, |mut header| {
+        let table = table.header(22.0, |mut header| {
             for (title, key) in [
                 ("Name", SortBy::Name),
                 ("Status", SortBy::Pid),
