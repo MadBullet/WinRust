@@ -9,7 +9,7 @@ use crate::handle::Handle;
 use crate::wide::str_to_wide;
 use serde::{Deserialize, Serialize};
 use windows_sys::Win32::System::Services::{
-    ChangeServiceConfigW, ControlService, EnumDependentServicesW,
+    ChangeServiceConfig2W, ChangeServiceConfigW, ControlService, EnumDependentServicesW,
     EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W,
     QueryServiceConfigW, QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW,
     ENUM_SERVICE_TYPE, QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
@@ -493,6 +493,23 @@ impl ServiceHandle {
             if ok == 0 {
                 return Err(WinError::from_last_error("ChangeServiceConfig2W(delayed)"));
             }
+        }
+        Ok(())
+    }
+
+    /// Replace the service description (`sc description`, services.msc field).
+    pub fn set_description(&self, text: &str) -> Result<()> {
+        let mut w = str_to_wide(text);
+        let desc = SERVICE_DESCRIPTIONW { lpDescription: w.as_mut_ptr() };
+        let ok = unsafe {
+            ChangeServiceConfig2W(
+                self.raw(),
+                SERVICE_CONFIG_DESCRIPTION,
+                &desc as *const _ as *const std::ffi::c_void,
+            )
+        };
+        if ok == 0 {
+            return Err(WinError::from_last_error("ChangeServiceConfig2W(description)"));
         }
         Ok(())
     }

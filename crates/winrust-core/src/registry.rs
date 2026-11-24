@@ -2,13 +2,12 @@
 //! page and the system-control panel).
 
 use crate::error::{Result, WinError};
-use crate::handle::Handle;
 use crate::wide::{from_wide, str_to_wide};
 use windows_sys::Win32::Foundation::ERROR_SUCCESS;
 use windows_sys::Win32::System::Registry::{
     RegCloseKey, RegCreateKeyExW, RegDeleteKeyExW, RegDeleteValueW, RegEnumKeyExW, RegEnumValueW,
     RegOpenKeyExW, RegQueryValueExW, RegSetValueExW, HKEY, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE,
-    KEY_READ, KEY_SET_VALUE, KEY_WOW64_64KEY, REG_DWORD, REG_OPTION_NON_VOLATILE, REG_SZ,
+    KEY_READ, KEY_SET_VALUE, KEY_WOW64_64KEY, REG_BINARY, REG_DWORD, REG_OPTION_NON_VOLATILE, REG_SZ,
 };
 
 /// Predefined root keys supported by the wrapper.
@@ -27,9 +26,22 @@ impl Root {
     }
 }
 
-/// An open registry key, closed on drop.
+/// An open registry key, closed with `RegCloseKey` on drop.
+///
+/// (`CloseHandle` happens to work on `HKEY`s as well, but `RegCloseKey` is the
+/// documented API, so the key owns the handle directly instead of routing it
+/// through [`crate::handle::Handle`].)
 pub struct Key {
-    handle: Handle,
+    hkey: HKEY,
+}
+
+impl Drop for Key {
+    fn drop(&mut self) {
+        if !self.hkey.is_null() {
+            unsafe { RegCloseKey(self.hkey) };
+            self.hkey = std::ptr::null_mut();
+        }
+    }
 }
 
 impl Key {
@@ -42,12 +54,14 @@ impl Key {
         if rc != ERROR_SUCCESS {
             return Err(WinError::from_code(rc, "RegOpenKeyExW"));
         }
-        let handle = Handle::new(hkey as _).ok_or_else(|| WinError::Other("null HKEY".into()))?;
-        Ok(Self { handle })
+        if hkey.is_null() {
+            return Err(WinError::Other("null HKEY".into()));
+        }
+        Ok(Self { hkey })
     }
 
     pub fn raw(&self) -> HKEY {
-        self.handle.raw() as HKEY
+        self.hkey
     }
 
     /// Sub-key names of this key.
@@ -137,6 +151,16 @@ impl Key {
         };
         if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegSetValueExW")) }
     }
+
+    /// Arbitrary binary value (`REG_BINARY`), used for the `StartupApproved`
+    /// enable/disable blobs that Task Manager writes.
+    pub fn set_binary(&self, name: &str, data: &[u8]) -> Result<()> {
+        let wname = str_to_wide(name);
+        let rc = unsafe {
+            RegSetValueExW(self.raw(), wname.as_ptr(), 0, REG_BINARY, data.as_ptr(), data.len() as u32)
+        };
+        if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegSetValueExW(binary)")) }
+    }
 }
 
 /// Read a string from `HKLM` directly (convenience used by `system.rs`).
@@ -179,8 +203,10 @@ pub fn open_for_write(root: Root, path: &str) -> Result<Key> {
     if rc != ERROR_SUCCESS {
         return Err(WinError::from_code(rc, "RegCreateKeyExW"));
     }
-    let handle = Handle::new(hkey as _).ok_or_else(|| WinError::Other("null HKEY".into()))?;
-    Ok(Key { handle })
+    if hkey.is_null() {
+        return Err(WinError::Other("null HKEY".into()));
+    }
+    Ok(Key { hkey })
 }
 
 /// Enumerate values as `(name, type, data)`.

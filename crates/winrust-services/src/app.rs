@@ -117,9 +117,16 @@ impl ServicesApp {
         match scm.open_service(&dlg.name, winrust_core::service::ACCESS_CHANGE_CONFIG) {
             Ok(svc) => {
                 let bin = if dlg.binary_path.is_empty() { None } else { Some(dlg.binary_path.as_str()) };
-                match svc.set_start_type(dlg.start_type, bin) {
+                let result = svc
+                    .set_start_type(dlg.start_type, bin)
+                    .and_then(|()| svc.set_description(&dlg.description));
+                match result {
                     Ok(()) => {
-                        self.status = format!("{}: start type set to {}", dlg.name, dlg.start_type.label());
+                        self.status = format!(
+                            "{}: start type = {}, description saved",
+                            dlg.name,
+                            dlg.start_type.label()
+                        );
                         self.props = None;
                         self.refresh();
                     }
@@ -363,10 +370,23 @@ impl ServicesApp {
                     ui.label("Log on as:");
                     ui.label(if dlg.logon_account.is_empty() { "—" } else { &dlg.logon_account });
                     ui.end_row();
+                    ui.label("Description:");
+                    ui.add(
+                        egui::TextEdit::multiline(&mut dlg.description)
+                            .desired_rows(3)
+                            .desired_width(380.0),
+                    );
+                    ui.end_row();
                 });
                 ui.add_space(8.0);
+                if self.action_busy {
+                    ui.horizontal(|ui| {
+                        ui.spinner();
+                        ui.label("Applying changes…");
+                    });
+                }
                 ui.horizontal(|ui| {
-                    if ui.button("Apply").clicked() {
+                    if ui.add_enabled(!self.action_busy, egui::Button::new("Apply")).clicked() {
                         apply = true;
                     }
                     if ui.button("Cancel").clicked() {
@@ -375,7 +395,9 @@ impl ServicesApp {
                 });
             });
         if apply {
+            self.action_busy = true;
             self.apply_props(&dlg);
+            self.action_busy = false;
         } else if !cancel {
             self.props = Some(dlg);
         }

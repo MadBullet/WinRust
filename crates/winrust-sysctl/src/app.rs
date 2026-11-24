@@ -155,7 +155,7 @@ impl SysCtlApp {
                 }
             }
         }
-        self.startup.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+        self.startup.sort_by_key(|s| s.name.to_lowercase());
     }
 
     fn reload_drivers(&mut self) {
@@ -172,7 +172,7 @@ impl SysCtlApp {
                 }
             }
         }
-        self.drivers.sort_by(|a, b| a.display.to_lowercase().cmp(&b.display.to_lowercase()));
+        self.drivers.sort_by_key(|d| d.display.to_lowercase());
     }
 
     fn reload_power(&mut self) {
@@ -225,7 +225,7 @@ impl SysCtlApp {
         r.push_str(&format!("Uptime: {} ms\n\n", system::uptime_ms()));
         r.push_str("Top processes by memory:\n");
         let mut procs = process::enumerate().unwrap_or_default();
-        procs.sort_by(|a, b| b.private_bytes.cmp(&a.private_bytes));
+        procs.sort_by_key(|p| std::cmp::Reverse(p.private_bytes));
         for p in procs.iter().take(15) {
             r.push_str(&format!("  {:>6}  {:>10} KB  {}\n", p.pid, p.private_bytes / 1024, p.name));
         }
@@ -414,6 +414,13 @@ impl SysCtlApp {
         egui::ScrollArea::vertical().show(ui, |ui| {
             for item in &self.startup {
                 ui.horizontal(|ui| {
+                    let (dot, color) = if item.enabled {
+                        ("●", Color32::from_rgb(120, 220, 120))
+                    } else {
+                        ("○", Color32::GRAY)
+                    };
+                    ui.label(RichText::new(dot).color(color))
+                        .on_hover_text(if item.enabled { "Enabled" } else { "Disabled" });
                     ui.vertical(|ui| {
                         ui.label(RichText::new(&item.name).strong());
                         ui.label(RichText::new(&item.command).small().weak());
@@ -446,7 +453,7 @@ impl SysCtlApp {
         let mut pick: Option<String> = None;
         for (guid, name, active) in &self.power_plans {
             let label = friendly_power_name(name);
-            if ui.radio(*active, format!("{label}")).clicked() {
+            if ui.radio(*active, label.clone()).clicked() {
                 pick = Some(guid.clone());
             }
         }

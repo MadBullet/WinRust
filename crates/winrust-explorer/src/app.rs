@@ -76,26 +76,13 @@ impl SortKeySerde {
             SortKeySerde::Type => SortKey::Type,
         }
     }
-    fn next_header(self) -> (SortKeySerde, bool) {
-        (self, true)
-    }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 struct PersistedState {
     tabs: Vec<PathBuf>,
     active_tab: usize,
     folders: HashMap<String, FolderPrefs>,
-}
-
-impl Default for PersistedState {
-    fn default() -> Self {
-        Self {
-            tabs: vec![],
-            active_tab: 0,
-            folders: HashMap::new(),
-        }
-    }
 }
 
 fn state_path() -> Option<PathBuf> {
@@ -458,6 +445,7 @@ impl ExplorerApp {
                             let text = if label.is_empty() {
                                 path.display().to_string()
                             } else if idx == 0 {
+                                // Drive letters already read well on their own.
                                 label
                             } else {
                                 label
@@ -765,11 +753,9 @@ impl ExplorerApp {
                                 ui.close_menu();
                             }
                         }
-                        if !entry.is_dir {
-                            if ui.button("Run as administrator").clicked() {
-                                menu = Some((entry.path.clone(), ActionRequest::RunAsAdmin));
-                                ui.close_menu();
-                            }
+                        if !entry.is_dir && ui.button("Run as administrator").clicked() {
+                            menu = Some((entry.path.clone(), ActionRequest::RunAsAdmin));
+                            ui.close_menu();
                         }
                         ui.separator();
                         if ui.button("Rename").clicked() {
@@ -1186,7 +1172,7 @@ fn install_fonts(ctx: &egui::Context) {
     ];
     for path in candidates {
         if let Ok(bytes) = std::fs::read(path) {
-            fonts.font_data.insert("segoe".to_string(), egui::FontData::from_owned(bytes).into());
+            fonts.font_data.insert("segoe".to_string(), egui::FontData::from_owned(bytes));
             fonts.families.entry(egui::FontFamily::Proportional).or_default().insert(0, "segoe".to_string());
             fonts.families.entry(egui::FontFamily::Monospace).or_default().push("segoe".to_string());
             break;

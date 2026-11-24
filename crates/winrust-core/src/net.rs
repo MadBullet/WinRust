@@ -3,8 +3,10 @@
 
 use crate::error::{Result, WinError};
 use windows_sys::Win32::NetworkManagement::IpHelper::{
-    GetExtendedTcpTable, GetExtendedUdpTable, MIB_TCPROW_OWNER_PID, MIB_UDPROW_OWNER_PID,
-    TCP_TABLE_OWNER_PID_ALL, UDP_TABLE_OWNER_PID,
+    GetExtendedTcpTable, GetExtendedUdpTable, GetPerTcpConnectionEStats, MIB_TCPROW_LH,
+    MIB_TCPROW_OWNER_PID, MIB_UDPROW_OWNER_PID, SetPerTcpConnectionEStats,
+    TCP_ESTATS_DATA_ROD_v0, TCP_ESTATS_DATA_RW_v0, TCP_TABLE_OWNER_PID_ALL, TcpConnectionEstatsData,
+    UDP_TABLE_OWNER_PID,
 };
 use windows_sys::Win32::Foundation::ERROR_INSUFFICIENT_BUFFER;
 use serde::{Deserialize, Serialize};
@@ -214,6 +216,106 @@ pub fn udp_listeners() -> Vec<Connection> {
         }
     }
     out
+}
+
+/// Per-process cumulative network byte totals (in + out), for Task Manager's
+/// "Network" column and the Resource Monitor.
+///
+/// Windows only exposes byte counts per *TCP connection* through the
+/// extended-statistics API, so the flow is: enable data collection on each
+/// connection once (`TCP_ESTATS_DATA_RW_v0`), then read the read-only data
+/// (`TCP_ESTATS_DATA_ROD_v0` = bytes in + bytes out) and sum it per PID.
+/// The first call for a connection returns "not ready", which simply means the
+/// process shows 0 B/s until the next tick — exactly how Task Manager behaves.
+pub fn net_bytes_per_pid() -> std::collections::HashMap<u32, u64> {
+    let mut out: std::collections::HashMap<u32, u64> = std::collections::HashMap::new();
+    for row in tcp_owner_rows() {
+        let Some(rb) = tcp_bytes_for_row(&row) else { continue };
+        *out.entry(row.dwOwningPid).or_insert(0) += rb;
+    }
+    out
+}
+
+fn estats_row(row: &MIB_TCPROW_OWNER_PID) -> MIB_TCPROW_LH {
+    MIB_TCPROW_LH {
+        Anonymous: windows_sys::Win32::NetworkManagement::IpHelper::MIB_TCPROW_LH_0 {
+            dwState: row.dwState,
+            State: row.dwState as i32,
+        },
+        dwLocalAddr: row.dwLocalAddr,
+        dwLocalPort: row.dwLocalPort,
+        dwRemoteAddr: row.dwRemoteAddr,
+        dwRemotePort: row.dwRemotePort,
+    }
+}
+
+fn tcp_bytes_for_row(row: &MIB_TCPROW_OWNER_PID) -> Option<u64> {
+    let lh = estats_row(row);
+    const NO_ERROR_CODE: u32 = 0;
+    // 1. Make sure collection is on; ignore the result (it fails harmlessly when
+    //    already enabled for this connection).
+    let rw = TCP_ESTATS_DATA_RW_v0 { EnableCollection: 1u8 };
+    unsafe {
+        SetPerTcpConnectionEStats(
+            &lh,
+            TcpConnectionEstatsData,
+            &rw as *const TCP_ESTATS_DATA_RW_v0 as *const u8,
+            0,
+            std::mem::size_of::<TCP_ESTATS_DATA_RW_v0>() as u32,
+            0,
+        );
+    }
+    // 2. Read the counters.
+    let mut rod: TCP_ESTATS_DATA_ROD_v0 = unsafe { std::mem::zeroed() };
+    let rc = unsafe {
+        GetPerTcpConnectionEStats(
+            &lh,
+            TcpConnectionEstatsData,
+            std::ptr::null_mut(),
+            0,
+            0,
+            std::ptr::null_mut(),
+            0,
+            0,
+            &mut rod as *mut TCP_ESTATS_DATA_ROD_v0 as *mut u8,
+            0,
+            std::mem::size_of::<TCP_ESTATS_DATA_ROD_v0>() as u32,
+        )
+    };
+    if rc != NO_ERROR_CODE {
+        return None;
+    }
+    Some(rod.DataBytesIn.saturating_add(rod.DataBytesOut))
+}
+
+/// Raw IPv4 TCP owner rows (shared helper so the byte counter reuses the table).
+fn tcp_owner_rows() -> Vec<MIB_TCPROW_OWNER_PID> {
+    let mut size = 0u32;
+    let rc = unsafe {
+        GetExtendedTcpTable(std::ptr::null_mut(), &mut size, 0, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0)
+    };
+    if (rc != ERROR_INSUFFICIENT_BUFFER && rc != 0) || size == 0 {
+        return Vec::new();
+    }
+    let mut buf = vec![0u8; size as usize];
+    let rc = unsafe {
+        GetExtendedTcpTable(buf.as_mut_ptr() as *mut _, &mut size, 0, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0)
+    };
+    if rc != 0 {
+        return Vec::new();
+    }
+    let count = unsafe { *(buf.as_ptr() as *const u32) } as usize;
+    let offset = std::mem::size_of::<u32>();
+    let row_size = std::mem::size_of::<MIB_TCPROW_OWNER_PID>();
+    if offset + count * row_size > buf.len() {
+        return Vec::new();
+    }
+    let mut rows = Vec::with_capacity(count);
+    for i in 0..count {
+        let row = unsafe { std::ptr::read_unaligned(buf.as_ptr().add(offset + i * row_size) as *const MIB_TCPROW_OWNER_PID) };
+        rows.push(row);
+    }
+    rows
 }
 
 /// Resolve a PID to its listening port list (used by the services view to show

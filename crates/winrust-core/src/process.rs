@@ -15,7 +15,8 @@ use windows_sys::Win32::System::Diagnostics::ToolHelp::{
 };
 use windows_sys::Win32::System::ProcessStatus::{K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS_EX};
 use windows_sys::Win32::System::Threading::{
-    GetExitCodeProcess, GetPriorityClass, GetProcessTimes, OpenProcess, OpenThread, QueryFullProcessImageNameW,
+    GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters, GetProcessTimes,
+    OpenProcess, OpenThread, QueryFullProcessImageNameW, IO_COUNTERS,
     ResumeThread, SetPriorityClass, SetProcessAffinityMask, SuspendThread,
     IDLE_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS,
     ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS,
@@ -45,6 +46,14 @@ pub struct ProcessInfo {
     pub priority: Priority,
     /// True when the process is currently suspended by WinRust.
     pub suspended: bool,
+    /// Open handles, as shown by Resource Monitor (0 when inaccessible).
+    pub handles: u32,
+    /// Cumulative bytes read from storage (I/O counters).
+    pub io_read_bytes: u64,
+    /// Cumulative bytes written to storage.
+    pub io_write_bytes: u64,
+    /// Cumulative bytes read/written by other (non-file) I/O operations.
+    pub io_other_bytes: u64,
     /// Access we managed to obtain: `full`, `limited`, `denied`.
     pub access: AccessLevel,
 }
@@ -169,6 +178,18 @@ fn enrich(info: &mut ProcessInfo) {
         if unsafe { K32GetProcessMemoryInfo(h.raw(), &mut mem as *mut _ as *mut _, mem.cb) } != 0 {
             info.working_set = mem.WorkingSetSize as u64;
             info.private_bytes = mem.PrivateUsage as u64;
+        }
+
+        let mut io: IO_COUNTERS = unsafe { std::mem::zeroed() };
+        if unsafe { GetProcessIoCounters(h.raw(), &mut io) } != 0 {
+            info.io_read_bytes = io.ReadTransferCount;
+            info.io_write_bytes = io.WriteTransferCount;
+            info.io_other_bytes = io.OtherTransferCount;
+        }
+
+        let mut handles = 0u32;
+        if unsafe { GetProcessHandleCount(h.raw(), &mut handles) } != 0 {
+            info.handles = handles;
         }
 
         let prio = unsafe { GetPriorityClass(h.raw()) };

@@ -15,7 +15,7 @@ use eframe::egui;
 use egui::{Color32, RichText};
 use egui_extras::{Column, TableBuilder};
 use std::collections::HashMap;
-use std::sync::mpsc::{channel, Receiver, Sender};
+use std::sync::mpsc::{channel, Receiver};
 use std::time::{Duration, Instant};
 use winrust_core::net::{self, Connection};
 use winrust_core::process::{self, AccessLevel, Priority, ProcessInfo};
@@ -53,6 +53,10 @@ impl Tab {
 struct Row {
     info: ProcessInfo,
     cpu_percent: f32,
+    /// Bytes/s read+written, sampled between snapshots (Task Manager "Disk").
+    disk_bps: f64,
+    /// Bytes/s over TCP/UDP, sampled between snapshots (Task Manager "Network").
+    net_bps: f64,
     /// Processes hosted in the same application group (e.g. all Chrome tabs).
     group: String,
     /// Total memory of the whole group, shown on the group header.
@@ -83,6 +87,9 @@ fn spawn_sampler(interval: Duration) -> Sampler {
     std::thread::spawn(move || {
         let mut prev_cpu = system::cpu_sample();
         let mut prev_proc: HashMap<u32, (u64, u64)> = HashMap::new();
+        // pid -> (read+write bytes, other bytes) from the previous tick
+        let mut prev_io: HashMap<u32, (u64, u64)> = HashMap::new();
+        let mut prev_net: HashMap<u32, u64> = HashMap::new();
         let mut prev_wall = Instant::now();
         let cores = system::cpu_count().max(1) as f64;
         while !stop2.load(std::sync::atomic::Ordering::Relaxed) {
@@ -92,8 +99,14 @@ fn spawn_sampler(interval: Duration) -> Sampler {
             let procs = process::enumerate().unwrap_or_default();
             let wall = prev_wall.elapsed().as_secs_f64().max(0.001);
 
+            // Network counters are only refreshed every tick; the map keeps
+            // the last measured byte totals per pid so we can diff them.
+            let net_totals = net::net_bytes_per_pid();
+
             let mut rows = Vec::with_capacity(procs.len());
             let mut new_proc = HashMap::with_capacity(procs.len());
+            let mut new_io: HashMap<u32, (u64, u64)> = HashMap::with_capacity(procs.len());
+            let mut new_net: HashMap<u32, u64> = HashMap::with_capacity(procs.len());
             for p in procs {
                 let key = (p.created_100ns, p.cpu_time_100ns);
                 new_proc.insert(p.pid, key);
@@ -106,10 +119,24 @@ fn spawn_sampler(interval: Duration) -> Sampler {
                     }
                     _ => 0.0,
                 };
+                let io_total = p.io_read_bytes.saturating_add(p.io_write_bytes);
+                let disk_bps = match prev_io.get(&p.pid) {
+                    Some((prev_total, _)) => io_total.saturating_sub(*prev_total) as f64 / wall,
+                    None => 0.0,
+                };
+                new_io.insert(p.pid, (io_total, p.io_other_bytes));
+                let net_total = net_totals.get(&p.pid).copied().unwrap_or(0);
+                new_net.insert(p.pid, net_total);
+                let net_bps = match prev_net.get(&p.pid) {
+                    Some(prev_total) => net_total.saturating_sub(*prev_total) as f64 / wall,
+                    None => 0.0,
+                };
                 let group = group_key(&p);
-                rows.push(Row { info: p, cpu_percent, group, ..Default::default() });
+                rows.push(Row { info: p, cpu_percent, disk_bps, net_bps, group, ..Default::default() });
             }
             prev_proc = new_proc;
+            prev_io = new_io;
+            prev_net = new_net;
             prev_cpu = now_cpu;
             prev_wall = Instant::now();
 
@@ -234,17 +261,58 @@ impl StartupItem {
                 } else {
                     String::new()
                 };
+                let exe = exe_from_command(&cmd);
+                let published = if exe.is_empty() {
+                    String::new()
+                } else {
+                    let vi = shell::version_info(&exe);
+                    if vi.company.is_empty() { vi.description } else { vi.company }
+                };
                 out.push(StartupItem {
                     name,
                     command: cmd,
                     location: label.into(),
+                    // Below, StartupApproved tells us the real on/off state.
                     enabled: true,
-                    published: String::new(),
+                    published,
                 });
             }
         }
-        out.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+        // Task Manager marks disabled startup items in StartupApproved\Run as a
+        // 12-byte blob whose first dword is 2 (enabled) / 3 (disabled).
+        for (root, approved_path) in [
+            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"),
+            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"),
+        ] {
+            for (name, _ty, data) in registry::enum_values(approved_path, root) {
+                if data.len() < 4 {
+                    continue;
+                }
+                let flag = u32::from_le_bytes([data[0], data[1], data[2], data[3]]);
+                let disabled = flag & 0xFF != 2;
+                if let Some(item) = out.iter_mut().find(|i| i.name.eq_ignore_ascii_case(&name)) {
+                    item.enabled = !disabled;
+                }
+            }
+        }
+        out.sort_by_key(|s| s.name.to_lowercase());
         out
+    }
+
+    /// Toggle a startup entry the way Task Manager does: write the 12-byte
+    /// `StartupApproved\Run` blob (0x02 = enabled, 0x03 = disabled) instead of
+    /// deleting the Run value, so the entry stays visible and re-enableable.
+    fn set_enabled(item: &StartupItem, enable: bool) -> Result<(), String> {
+        use winrust_core::registry::{self, Root};
+        let (root, path) = if item.location.starts_with("HKLM") {
+            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run")
+        } else {
+            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run")
+        };
+        let key = registry::open_for_write(root, path).map_err(|e| e.to_string())?;
+        let mut blob = [0u8; 12];
+        blob[0] = if enable { 2 } else { 3 };
+        key.set_binary(&item.name, &blob).map_err(|e| e.to_string())
     }
 }
 
@@ -364,9 +432,14 @@ impl TaskManagerApp {
                     }
                 }
             }
+            if ui.add_enabled(can_end, egui::Button::new("Priority…")).clicked() {
+                if let Some(row) = &selected {
+                    self.priority_open = Some(row.info.pid);
+                }
+            }
             // Priority selector
             egui::ComboBox::from_id_salt("prio")
-                .selected_text("Priority…")
+                .selected_text("Set priority")
                 .show_ui(ui, |ui| {
                     if let Some(row) = &selected {
                         for p in process::ALL_PRIORITIES {
@@ -415,8 +488,8 @@ impl TaskManagerApp {
             SortBy::Name => display.sort_by(|a, b| a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase())),
             SortBy::Cpu => display.sort_by(|a, b| b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)),
             SortBy::Memory => display.sort_by(|a, b| b.info.private_bytes.cmp(&a.info.private_bytes)),
-            SortBy::Disk => {}
-            SortBy::Network => {}
+            SortBy::Disk => display.sort_by(|a, b| b.disk_bps.partial_cmp(&a.disk_bps).unwrap_or(std::cmp::Ordering::Equal)),
+            SortBy::Network => display.sort_by(|a, b| b.net_bps.partial_cmp(&a.net_bps).unwrap_or(std::cmp::Ordering::Equal)),
             SortBy::Pid => display.sort_by_key(|r| r.info.pid),
         }
         if !self.sort_desc {
@@ -447,7 +520,8 @@ impl TaskManagerApp {
             .column(Column::initial(70.0).at_least(50.0).clip(true))
             .column(Column::initial(90.0).at_least(60.0).clip(true))
             .column(Column::initial(110.0).at_least(80.0).clip(true))
-            .column(Column::initial(70.0).at_least(50.0).clip(true))
+            .column(Column::initial(80.0).at_least(60.0).clip(true))
+            .column(Column::initial(80.0).at_least(60.0).clip(true))
             .column(Column::remainder().at_least(80.0).clip(true));
 
         let table = table.header(22.0, |mut header| {
@@ -456,6 +530,8 @@ impl TaskManagerApp {
                 ("Status", SortBy::Pid),
                 ("CPU", SortBy::Cpu),
                 ("Memory", SortBy::Memory),
+                ("Disk", SortBy::Disk),
+                ("Network", SortBy::Network),
                 ("Priority", SortBy::Pid),
                 ("Exe", SortBy::Name),
             ] {
@@ -521,6 +597,14 @@ impl TaskManagerApp {
                     ui.label(RichText::new(memory_mb(r.info.private_bytes)).monospace());
                 });
                 row.col(|ui| {
+                    let color = heat_color(r.disk_bps as f32 / 1024.0, 200.0);
+                    ui.label(RichText::new(rate_text(r.disk_bps)).color(color).monospace());
+                });
+                row.col(|ui| {
+                    let color = heat_color(r.net_bps as f32 / 1024.0, 200.0);
+                    ui.label(RichText::new(rate_text(r.net_bps)).color(color).monospace());
+                });
+                row.col(|ui| {
                     ui.label(RichText::new(r.info.priority.label()).weak());
                 });
                 row.col(|ui| {
@@ -584,7 +668,7 @@ impl TaskManagerApp {
             let y = rect.top() + rect.height() * i as f32 / 4.0;
             painter.line_segment(
                 [egui::pos2(rect.left(), y), egui::pos2(rect.right(), y)],
-                egui::Stroke::new(1.0, Color32::from_rgb(40, 40, 52)),
+                egui::Stroke::new(1.0_f32, Color32::from_rgb(40, 40, 52)),
             );
         }
         let n = data.len();
@@ -597,7 +681,7 @@ impl TaskManagerApp {
         if points.len() > 1 {
             painter.add(egui::Shape::line(
                 points.clone(),
-                egui::Stroke::new(1.5, Color32::from_rgb(120, 200, 255)),
+                egui::Stroke::new(1.5_f32, Color32::from_rgb(120, 200, 255)),
             ));
             let mut fill = points;
             fill.push(egui::pos2(rect.right(), rect.bottom()));
@@ -617,6 +701,47 @@ impl TaskManagerApp {
         );
     }
 
+    /// Full priority selector window opened from the toolbar "Priority…" combo,
+    /// mirroring Task Manager's "Set priority" submenu reachable without a
+    /// right click. Uses the same `process::set_priority` path as the menu.
+    fn priority_window(&mut self, ctx: &egui::Context) {
+        let Some(pid) = self.priority_open else { return };
+        let Some(row) = self.snapshot.rows.iter().find(|r| r.info.pid == pid).cloned() else {
+            self.priority_open = None;
+            return;
+        };
+        let mut keep_open = true;
+        let mut chosen: Option<Priority> = None;
+        egui::Window::new(format!("Priority — {}", row.info.name))
+            .collapsible(false)
+            .resizable(false)
+            .open(&mut keep_open)
+            .show(ctx, |ui| {
+                ui.label(RichText::new(format!("Current: {}", row.info.priority.label())).weak());
+                ui.separator();
+                for p in process::ALL_PRIORITIES {
+                    if ui
+                        .add(egui::RadioButton::new(row.info.priority == p, p.label()))
+                        .clicked()
+                    {
+                        chosen = Some(p);
+                    }
+                }
+                if ui.button("Cancel").clicked() {
+                    self.priority_open = None;
+                }
+            });
+        if let Some(p) = chosen {
+            match process::set_priority(pid, p) {
+                Ok(()) => self.status = format!("{} -> {}", row.info.name, p.label()),
+                Err(e) => self.status = format!("Priority change failed: {e}"),
+            }
+            self.priority_open = None;
+        } else if !keep_open {
+            self.priority_open = None;
+        }
+    }
+
     fn startup_tab(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
             ui.label(RichText::new("Startup apps").strong());
@@ -625,16 +750,25 @@ impl TaskManagerApp {
             }
         });
         ui.separator();
+        let mut toggle: Option<(usize, bool)> = None;
+        let mut status_note: Option<String> = None;
         egui::ScrollArea::vertical().show(ui, |ui| {
-            for item in &self.startup {
+            for (idx, item) in self.startup.iter().enumerate() {
                 ui.horizontal(|ui| {
-                    ui.checkbox(&mut false, "");
+                    let mut on = item.enabled;
+                    if ui.checkbox(&mut on, "").changed() {
+                        toggle = Some((idx, on));
+                    }
                     ui.vertical(|ui| {
                         ui.label(RichText::new(&item.name).strong());
                         ui.label(RichText::new(&item.command).small().weak());
                     });
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         ui.label(RichText::new(&item.location).small().weak());
+                        if !item.published.is_empty() {
+                            ui.label(RichText::new(&item.published).small());
+                            ui.separator();
+                        }
                     });
                 });
                 ui.separator();
@@ -643,6 +777,22 @@ impl TaskManagerApp {
                 ui.label("No startup entries found in HKCU/HKLM Run keys.");
             }
         });
+        if let Some((idx, enable)) = toggle {
+            match StartupItem::set_enabled(&self.startup[idx], enable) {
+                Ok(()) => {
+                    status_note = Some(format!(
+                        "{} {}",
+                        self.startup[idx].name,
+                        if enable { "enabled" } else { "disabled" }
+                    ));
+                    self.startup = StartupItem::scan();
+                }
+                Err(e) => status_note = Some(format!("Registry update failed: {e}")),
+            }
+        }
+        if let Some(note) = status_note {
+            self.status = note;
+        }
     }
 
     fn users_tab(&mut self, ui: &mut egui::Ui) {
@@ -802,7 +952,33 @@ impl eframe::App for TaskManagerApp {
             Tab::Network => self.network_tab(ui),
             Tab::Services => self.services_tab(ui),
         });
+        self.priority_window(ctx);
         self.confirm_modal(ctx);
+    }
+}
+
+/// First token of a startup command line, with quotes stripped.
+fn exe_from_command(cmd: &str) -> String {
+    let t = cmd.trim();
+    if let Some(rest) = t.strip_prefix('"') {
+        if let Some(end) = rest.find('"') {
+            return rest[..end].to_string();
+        }
+        return rest.to_string();
+    }
+    t.split_whitespace().next().unwrap_or("").to_string()
+}
+
+/// Format a byte-per-second rate the way Task Manager does (B/s, KB/s, MB/s).
+fn rate_text(bps: f64) -> String {
+    if bps < 1024.0 {
+        format!("{bps:.0} B/s")
+    } else if bps < 1024.0 * 1024.0 {
+        format!("{:.1} KB/s", bps / 1024.0)
+    } else if bps < 1024.0 * 1024.0 * 1024.0 {
+        format!("{:.1} MB/s", bps / (1024.0 * 1024.0))
+    } else {
+        format!("{:.2} GB/s", bps / (1024.0 * 1024.0 * 1024.0))
     }
 }
 

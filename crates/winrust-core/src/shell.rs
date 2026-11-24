@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::ffi::c_void;
 use std::path::Path;
 use windows_sys::Win32::Foundation::HWND;
+use windows_sys::Win32::Storage::FileSystem::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO};
 use windows_sys::Win32::UI::Shell::{
     SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
     SHFILEINFOW, SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
@@ -278,6 +279,73 @@ pub fn file_info(path: impl AsRef<Path>, want_icon: bool) -> ShellItemInfo {
 }
 
 /// Resolve a shell item's display name only (cheap, no GDI).
+/// Version metadata embedded in an executable/DLL (`FileVersion`, `CompanyName`).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct VersionInfo {
+    pub file_version: String,
+    pub product_name: String,
+    pub company: String,
+    pub description: String,
+}
+
+/// Read the VS_VERSIONINFO block of a file.  Returns empty strings when the
+/// file carries no version resource (plain data files, scripts, ...).
+pub fn version_info(path: impl AsRef<Path>) -> VersionInfo {
+    let wide = crate::wide::str_to_wide(&path.as_ref().to_string_lossy());
+    let mut handle = 0u32;
+    let size = unsafe { GetFileVersionInfoSizeW(wide.as_ptr(), &mut handle) };
+    if size == 0 {
+        return VersionInfo::default();
+    }
+    let mut buf = vec![0u8; size as usize];
+    if unsafe { GetFileVersionInfoW(wide.as_ptr(), 0, size, buf.as_mut_ptr() as *mut _) } == 0 {
+        return VersionInfo::default();
+    }
+
+    let mut out = VersionInfo::default();
+
+    // Fixed block: gives us the numeric version.
+    let mut fixed_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
+    let mut fixed_len = 0u32;
+    if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\"), &mut fixed_ptr, &mut fixed_len) } != 0
+        && fixed_len as usize >= std::mem::size_of::<VS_FIXEDFILEINFO>()
+    {
+        let ffi = unsafe { &*(fixed_ptr as *const VS_FIXEDFILEINFO) };
+        let ms = (ffi.dwFileVersionMS >> 16, ffi.dwFileVersionMS & 0xFFFF);
+        let ls = (ffi.dwFileVersionLS >> 16, ffi.dwFileVersionLS & 0xFFFF);
+        out.file_version = format!("{}.{}.{}.{}", ms.0, ms.1, ls.0, ls.1);
+    }
+
+    // Strings live in `\StringFileInfo\<langcodepage>\<name>`.
+    let mut trans_ptr: *mut std::ffi::c_void = std::ptr::null_mut();
+    let mut trans_len = 0u32;
+    if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\VarFileInfo\\Translation"), &mut trans_ptr, &mut trans_len) } != 0
+        && trans_len >= 4
+    {
+        let words = unsafe { std::slice::from_raw_parts(trans_ptr as *const u16, trans_len as usize / 2) };
+        let lang = words[0];
+        let cp = words[1];
+        for (key, slot) in [
+            ("ProductName", &mut out.product_name),
+            ("CompanyName", &mut out.company),
+            ("FileDescription", &mut out.description),
+        ] {
+            let sub = format!("\\StringFileInfo\\{lang:04x}{cp:04x}\\{key}");
+            let mut p: *mut std::ffi::c_void = std::ptr::null_mut();
+            let mut len = 0u32;
+            if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w(&sub), &mut p, &mut len) } != 0 && len > 0 {
+                let chars = unsafe { std::slice::from_raw_parts(p as *const u16, len as usize) };
+                *slot = crate::wide::from_wide(chars, chars.len()).trim_end_matches('\0').to_string();
+            }
+        }
+    }
+    out
+}
+
+fn w(s: &str) -> Vec<u16> {
+    crate::wide::str_to_wide(s)
+}
+
 pub fn display_name(path: impl AsRef<Path>) -> String {
     file_info(path, false).display_name
 }
