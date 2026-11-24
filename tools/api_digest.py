@@ -190,9 +190,9 @@ def main() -> None:
             "System/Console": "console",
             "System/Diagnostics/ToolHelp": "toolhelp",
         }
-        base = os.path.join(root, "src", "includes", "Win32")
+        base = os.path.join(root, "src", "Windows", "Win32")
         for rel, label in want.items():
-            path = os.path.join(base, rel + ".rs")
+            path = os.path.join(base, rel, "mod.rs")
             if not os.path.isfile(path):
                 out.append(f"\n##### !! missing {rel}")
                 continue
