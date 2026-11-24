@@ -118,20 +118,21 @@ unsafe fn image_name(buffer: *const u16, length: usize) -> Option<String> {
     Some(out)
 }
 
-/// `PCREATE_PROCESS_NOTIFY_ROUTINE_EX`.
+/// `PCREATE_PROCESS_NOTIFY_ROUTINE_EX`, with the exact parameter types the
+/// binding declares: `PsSetCreateProcessNotifyRoutineEx` takes a typed function
+/// pointer, so `&mut`-ness, `unsafe`, and `*mut _KPROCESS` all have to match.
 ///
-/// The signature is a private detail of the binding: the addresses are handed
-/// to `PsSetCreateProcessNotifyRoutineEx` as a `*mut c_void`, which is exactly
-/// what the WDK does in C (`(PVOID)callback`).
-extern "C" fn notify(
-    _parent: *mut core::ffi::c_void,
+/// # Safety
+///
+/// Called by the kernel only.  `info` points to a valid
+/// `PS_CREATE_NOTIFY_INFO` for process *creation*; process *exit* passes null,
+/// which is why the check comes first.
+unsafe extern "C" fn notify(
+    _parent: *mut wdk_sys::_KPROCESS,
     _pid: *mut core::ffi::c_void,
     info: *mut PS_CREATE_NOTIFY_INFO,
 ) {
-    // SAFETY: the kernel guarantees a valid `PS_CREATE_NOTIFY_INFO` while the
-    // callback runs when `info` is non-null; process *exit* notifications pass
-    // null, which is why the check comes first.
-    let Some(info) = (unsafe { info.as_ref() }) else {
+    let Some(info) = (unsafe { info.as_mut() }) else {
         return;
     };
     // `ImageFileName` is `PUNICODE_STRING` in the WDK, so dereference it once
@@ -144,13 +145,9 @@ extern "C" fn notify(
     };
     if is_blocked(&image) {
         // The calling `CreateProcess` then fails with "Access is denied", which
-        // is what a policy block should look like to user mode.
-        unsafe {
-            core::ptr::write_unaligned(
-                core::ptr::addr_of_mut!(info.CreationStatus),
-                STATUS_ACCESS_DENIED,
-            );
-        }
+        // is what a policy block should look like to user mode.  `info` came
+        // from `as_mut`, so writing through it is sound for this callback.
+        info.CreationStatus = STATUS_ACCESS_DENIED;
         println!("WinRust: refused to start blocked image {image}");
     }
 }
