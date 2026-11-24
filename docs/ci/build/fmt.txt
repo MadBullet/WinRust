@@ -1,37 +1,3642 @@
-`cargo metadata` exited with an error: error: failed to load manifest for workspace member `D:\a\WinRust\WinRust\crates/winrust/src-tauri`
-referenced by workspace at `D:\a\WinRust\WinRust\Cargo.toml`
-
-Caused by:
-  failed to read `D:\a\WinRust\WinRust\crates\winrust\src-tauri\Cargo.toml`
-
-Caused by:
-  The system cannot find the path specified. (os error 3)
-
-This utility formats all bin and lib files of the current crate using rustfmt.
-
-Usage: cargo fmt [OPTIONS] [-- <rustfmt_options>...]
-
-Arguments:
-  [rustfmt_options]...  Options passed to rustfmt
-
-Options:
-  -q, --quiet
-          No output printed to stdout
-  -v, --verbose
-          Use verbose output
-      --version
-          Print rustfmt version and exit
-  -p, --package <package>...
-          Specify package to format
-      --manifest-path <manifest-path>
-          Specify path to Cargo.toml
-      --message-format <message-format>
-          Specify message-format: short|human
-      --all
-          Format all packages, and also their local path-based dependencies
-      --check
-          Run rustfmt in check mode
-  -h, --help
-          Print help
-
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:13:
+ use windows_sys::Win32::Storage::FileSystem::{
+     FindClose, FindFirstFileW, FindNextFileW, GetDiskFreeSpaceExW, GetDriveTypeW,
+     GetFileAttributesW, GetLogicalDrives, GetVolumeInformationW, MoveFileExW, SetFileAttributesW,
+[31m-    WIN32_FIND_DATAW, FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_READONLY,
+[0m[31m-    FILE_ATTRIBUTE_SYSTEM, MOVEFILE_COPY_ALLOWED, MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH,
+[0m[32m+    FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_READONLY,
+[0m[32m+    FILE_ATTRIBUTE_SYSTEM, MOVEFILE_COPY_ALLOWED, MOVEFILE_REPLACE_EXISTING,
+[0m[32m+    MOVEFILE_WRITE_THROUGH, WIN32_FIND_DATAW,
+[0m };
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:117:
+ 
+         out.push(VolumeInfo {
+             root,
+[31m-            label: if volume_ok { from_wide(&label, label.len()) } else { String::new() },
+[0m[31m-            fs_name: if volume_ok { from_wide(&fs, fs.len()) } else { String::new() },
+[0m[32m+            label: if volume_ok {
+[0m[32m+                from_wide(&label, label.len())
+[0m[32m+            } else {
+[0m[32m+                String::new()
+[0m[32m+            },
+[0m[32m+            fs_name: if volume_ok {
+[0m[32m+                from_wide(&fs, fs.len())
+[0m[32m+            } else {
+[0m[32m+                String::new()
+[0m[32m+            },
+[0m             kind: Some(kind),
+             total_bytes: total,
+             free_bytes: free,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:266:
+                 .cmp(&extension(&b.name).to_lowercase())
+                 .then_with(|| a.name.to_lowercase().cmp(&b.name.to_lowercase())),
+         };
+[31m-        if ascending { inner } else { inner.reverse() }
+[0m[32m+        if ascending {
+[0m[32m+            inner
+[0m[32m+        } else {
+[0m[32m+            inner.reverse()
+[0m[32m+        }
+[0m     });
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:319:
+     if replace {
+         flags |= MOVEFILE_REPLACE_EXISTING;
+     }
+[31m-    check("MoveFileExW", unsafe { MoveFileExW(f.as_ptr(), t.as_ptr(), flags) })
+[0m[32m+    check("MoveFileExW", unsafe {
+[0m[32m+        MoveFileExW(f.as_ptr(), t.as_ptr(), flags)
+[0m[32m+    })
+[0m }
+ 
+ pub fn attributes(path: impl AsRef<Path>) -> Result<u32> {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\disk.rs:338:
+     if cur == u32::MAX {
+         return Err(WinError::from_last_error("GetFileAttributesW"));
+     }
+[31m-    let next = if readonly { cur | FILE_ATTRIBUTE_READONLY } else { cur & !FILE_ATTRIBUTE_READONLY };
+[0m[31m-    check("SetFileAttributesW", unsafe { SetFileAttributesW(w.as_ptr(), next) })
+[0m[32m+    let next = if readonly {
+[0m[32m+        cur | FILE_ATTRIBUTE_READONLY
+[0m[32m+    } else {
+[0m[32m+        cur & !FILE_ATTRIBUTE_READONLY
+[0m[32m+    };
+[0m[32m+    check("SetFileAttributesW", unsafe {
+[0m[32m+        SetFileAttributesW(w.as_ptr(), next)
+[0m[32m+    })
+[0m }
+ 
+ /// Total size of a folder tree, with a hard cap to keep the UI responsive.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\error.rs:8:
+ #[derive(Debug, Clone)]
+ pub enum WinError {
+     /// The last-error code returned by a Win32 call.
+[31m-    Api { code: u32, message: String, context: &'static str },
+[0m[32m+    Api {
+[0m[32m+        code: u32,
+[0m[32m+        message: String,
+[0m[32m+        context: &'static str,
+[0m[32m+    },
+[0m     /// Access denied — very common for services / other users' processes.
+     AccessDenied { context: &'static str },
+     /// The object does not exist (process exited, key deleted, ...).
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\error.rs:29:
+ 
+     pub fn from_code(code: u32, context: &'static str) -> Self {
+         match code {
+[31m-            windows_sys::Win32::Foundation::ERROR_ACCESS_DENIED => {
+[0m[31m-                Self::AccessDenied { context }
+[0m[31m-            }
+[0m[32m+            windows_sys::Win32::Foundation::ERROR_ACCESS_DENIED => Self::AccessDenied { context },
+[0m             windows_sys::Win32::Foundation::ERROR_FILE_NOT_FOUND
+             | windows_sys::Win32::Foundation::ERROR_PATH_NOT_FOUND
+             | windows_sys::Win32::Foundation::ERROR_SERVICE_DOES_NOT_EXIST
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\error.rs:38:
+[31m-            | windows_sys::Win32::Foundation::ERROR_INVALID_HANDLE => {
+[0m[31m-                Self::NotFound { context }
+[0m[31m-            }
+[0m[32m+            | windows_sys::Win32::Foundation::ERROR_INVALID_HANDLE => Self::NotFound { context },
+[0m             windows_sys::Win32::Foundation::ERROR_INSUFFICIENT_BUFFER
+             | windows_sys::Win32::Foundation::ERROR_MORE_DATA => Self::Buffer { context },
+[31m-            _ => Self::Api { code, message: message_for(code), context },
+[0m[32m+            _ => Self::Api {
+[0m[32m+                code,
+[0m[32m+                message: message_for(code),
+[0m[32m+                context,
+[0m[32m+            },
+[0m         }
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\error.rs:62:
+ impl fmt::Display for WinError {
+     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+         match self {
+[31m-            Self::Api { code, message, context } => {
+[0m[32m+            Self::Api {
+[0m[32m+                code,
+[0m[32m+                message,
+[0m[32m+                context,
+[0m[32m+            } => {
+[0m                 write!(f, "{context}: {message} (0x{code:08X})")
+             }
+             Self::AccessDenied { context } => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\handle.rs:1:
+ //! RAII ownership for Win32 kernel handles.
+ 
+[31m-use crate::error::{WinError, Result};
+[0m[32m+use crate::error::{Result, WinError};
+[0m use windows_sys::Win32::Foundation::{CloseHandle, HANDLE, INVALID_HANDLE_VALUE};
+ 
+ /// An owned kernel handle.  Dropping it calls `CloseHandle` exactly once.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:6:
+ 
+ use windows_sys::Win32::Foundation::HWND;
+ use windows_sys::Win32::Graphics::Gdi::{
+[31m-    CreateCompatibleDC, CreateCompatibleBitmap, CreateDIBSection, DeleteDC, DeleteObject, GetDC,
+[0m[32m+    CreateCompatibleBitmap, CreateCompatibleDC, CreateDIBSection, DeleteDC, DeleteObject, GetDC,
+[0m     ReleaseDC, SelectObject, BITMAPINFO, BITMAPINFOHEADER, BI_RGB, DIB_RGB_COLORS, HBITMAP, HDC,
+     HGDIOBJ,
+ };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:13:
+[31m-use windows_sys::Win32::UI::WindowsAndMessaging::{DrawIconEx, GetIconInfo, ICONINFO, DI_MASK, DI_NORMAL};
+[0m[32m+use windows_sys::Win32::UI::WindowsAndMessaging::{
+[0m[32m+    DrawIconEx, GetIconInfo, DI_MASK, DI_NORMAL, ICONINFO,
+[0m[32m+};
+[0m 
+ /// Convert an icon into tightly packed RGBA8 pixels (row-major, top-down).
+ ///
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:17:
+ /// Returns `None` if GDI refuses to render the icon (extremely rare).
+[31m-pub fn hicon_to_rgba(hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON, w: u32, h: u32) -> Option<Vec<u8>> {
+[0m[32m+pub fn hicon_to_rgba(
+[0m[32m+    hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON,
+[0m[32m+    w: u32,
+[0m[32m+    h: u32,
+[0m[32m+) -> Option<Vec<u8>> {
+[0m     if hicon.is_null() || w == 0 || h == 0 {
+         return None;
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:46:
+         };
+ 
+         let mut bits: *mut std::ffi::c_void = std::ptr::null_mut();
+[31m-        let dib: HBITMAP = CreateDIBSection(mem, &bmi, DIB_RGB_COLORS, &mut bits, std::ptr::null_mut(), 0);
+[0m[32m+        let dib: HBITMAP = CreateDIBSection(
+[0m[32m+            mem,
+[0m[32m+            &bmi,
+[0m[32m+            DIB_RGB_COLORS,
+[0m[32m+            &mut bits,
+[0m[32m+            std::ptr::null_mut(),
+[0m[32m+            0,
+[0m[32m+        );
+[0m         if dib.is_null() || bits.is_null() {
+             DeleteDC(mem);
+             ReleaseDC(std::ptr::null_mut() as HWND, screen);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:59:
+         std::ptr::write_bytes(bits as *mut u8, 0, (w * h * 4) as usize);
+ 
+         // Draw the icon (DI_NORMAL blends color+mask with alpha).
+[31m-        let drawn = DrawIconEx(mem, 0, 0, hicon, w as i32, h as i32, 0, std::ptr::null_mut(), DI_NORMAL);
+[0m[32m+        let drawn = DrawIconEx(
+[0m[32m+            mem,
+[0m[32m+            0,
+[0m[32m+            0,
+[0m[32m+            hicon,
+[0m[32m+            w as i32,
+[0m[32m+            h as i32,
+[0m[32m+            0,
+[0m[32m+            std::ptr::null_mut(),
+[0m[32m+            DI_NORMAL,
+[0m[32m+        );
+[0m         if drawn == 0 {
+             // Fallback: legacy icons drawn via mask only.
+[31m-            DrawIconEx(mem, 0, 0, hicon, w as i32, h as i32, 0, std::ptr::null_mut(), DI_MASK);
+[0m[32m+            DrawIconEx(
+[0m[32m+                mem,
+[0m[32m+                0,
+[0m[32m+                0,
+[0m[32m+                hicon,
+[0m[32m+                w as i32,
+[0m[32m+                h as i32,
+[0m[32m+                0,
+[0m[32m+                std::ptr::null_mut(),
+[0m[32m+                DI_MASK,
+[0m[32m+            );
+[0m         }
+ 
+         let mut rgba = vec![0u8; (w * h * 4) as usize];
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:2:
+ //! "Network" and the Resource Monitor's "Network" tab.
+ 
+ use crate::error::{Result, WinError};
+[32m+use serde::{Deserialize, Serialize};
+[0m[32m+use windows_sys::Win32::Foundation::ERROR_INSUFFICIENT_BUFFER;
+[0m use windows_sys::Win32::NetworkManagement::IpHelper::{
+     GetExtendedTcpTable, GetExtendedUdpTable, MIB_TCPROW_OWNER_PID, MIB_UDPROW_OWNER_PID,
+     TCP_TABLE_OWNER_PID_ALL, UDP_TABLE_OWNER_PID,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:8:
+ };
+[31m-use windows_sys::Win32::Foundation::ERROR_INSUFFICIENT_BUFFER;
+[0m[31m-use serde::{Deserialize, Serialize};
+[0m 
+ const AF_INET: u32 = 2;
+ const AF_INET6: u32 = 23;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:44:
+ }
+ 
+ const TCP_STATES: [&str; 13] = [
+[31m-    "", "CLOSED", "LISTENING", "SYN_SENT", "SYN_RECV", "ESTABLISHED", "FIN_WAIT1", "FIN_WAIT2",
+[0m[31m-    "CLOSE_WAIT", "CLOSING", "LAST_ACK", "TIME_WAIT", "DELETE_TCB",
+[0m[32m+    "",
+[0m[32m+    "CLOSED",
+[0m[32m+    "LISTENING",
+[0m[32m+    "SYN_SENT",
+[0m[32m+    "SYN_RECV",
+[0m[32m+    "ESTABLISHED",
+[0m[32m+    "FIN_WAIT1",
+[0m[32m+    "FIN_WAIT2",
+[0m[32m+    "CLOSE_WAIT",
+[0m[32m+    "CLOSING",
+[0m[32m+    "LAST_ACK",
+[0m[32m+    "TIME_WAIT",
+[0m[32m+    "DELETE_TCB",
+[0m ];
+ 
+ fn ipv4_to_string(raw: u32) -> String {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:67:
+     }
+     // Special-case IPv4-mapped addresses.
+     if groups[..5].iter().all(|&g| g == 0) && groups[5] == 0xFFFF {
+[31m-        return format!("::ffff:{}", ipv4_to_string(u32::from_be_bytes([b[12], b[13], b[14], b[15]])));
+[0m[32m+        return format!(
+[0m[32m+            "::ffff:{}",
+[0m[32m+            ipv4_to_string(u32::from_be_bytes([b[12], b[13], b[14], b[15]]))
+[0m[32m+        );
+[0m     }
+     let mut best_start = usize::MAX;
+     let mut best_len = 0usize;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:87:
+         }
+     }
+     if best_len < 2 {
+[31m-        return groups.iter().map(|g| format!("{g:x}")).collect::<Vec<_>>().join(":");
+[0m[32m+        return groups
+[0m[32m+            .iter()
+[0m[32m+            .map(|g| format!("{g:x}"))
+[0m[32m+            .collect::<Vec<_>>()
+[0m[32m+            .join(":");
+[0m     }
+[31m-    let head = groups[..best_start].iter().map(|g| format!("{g:x}")).collect::<Vec<_>>().join(":");
+[0m[31m-    let tail = groups[best_start + best_len..].iter().map(|g| format!("{g:x}")).collect::<Vec<_>>().join(":");
+[0m[32m+    let head = groups[..best_start]
+[0m[32m+        .iter()
+[0m[32m+        .map(|g| format!("{g:x}"))
+[0m[32m+        .collect::<Vec<_>>()
+[0m[32m+        .join(":");
+[0m[32m+    let tail = groups[best_start + best_len..]
+[0m[32m+        .iter()
+[0m[32m+        .map(|g| format!("{g:x}"))
+[0m[32m+        .collect::<Vec<_>>()
+[0m[32m+        .join(":");
+[0m     format!("{head}::{tail}")
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:97:
+ fn tcp_table(family: u32) -> Result<Vec<MIB_TCPROW_OWNER_PID>> {
+     let mut size = 0u32;
+     let rc = unsafe {
+[31m-        GetExtendedTcpTable(std::ptr::null_mut(), &mut size, 0, family, TCP_TABLE_OWNER_PID_ALL, 0)
+[0m[32m+        GetExtendedTcpTable(
+[0m[32m+            std::ptr::null_mut(),
+[0m[32m+            &mut size,
+[0m[32m+            0,
+[0m[32m+            family,
+[0m[32m+            TCP_TABLE_OWNER_PID_ALL,
+[0m[32m+            0,
+[0m[32m+        )
+[0m     };
+     if rc != ERROR_INSUFFICIENT_BUFFER && rc != 0 {
+         return Err(WinError::from_code(rc, "GetExtendedTcpTable(size)"));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:107:
+     }
+     let mut buf = vec![0u8; size as usize];
+     let rc = unsafe {
+[31m-        GetExtendedTcpTable(buf.as_mut_ptr() as *mut _, &mut size, 0, family, TCP_TABLE_OWNER_PID_ALL, 0)
+[0m[32m+        GetExtendedTcpTable(
+[0m[32m+            buf.as_mut_ptr() as *mut _,
+[0m[32m+            &mut size,
+[0m[32m+            0,
+[0m[32m+            family,
+[0m[32m+            TCP_TABLE_OWNER_PID_ALL,
+[0m[32m+            0,
+[0m[32m+        )
+[0m     };
+     if rc != 0 {
+         return Err(WinError::from_code(rc, "GetExtendedTcpTable"));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:121:
+     }
+     let mut rows = Vec::with_capacity(count);
+     for i in 0..count {
+[31m-        let row = unsafe { std::ptr::read_unaligned(buf.as_ptr().add(offset + i * row_size) as *const MIB_TCPROW_OWNER_PID) };
+[0m[32m+        let row = unsafe {
+[0m[32m+            std::ptr::read_unaligned(
+[0m[32m+                buf.as_ptr().add(offset + i * row_size) as *const MIB_TCPROW_OWNER_PID
+[0m[32m+            )
+[0m[32m+        };
+[0m         rows.push(row);
+     }
+     Ok(rows)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:130:
+ fn udp_table(family: u32) -> Result<Vec<MIB_UDPROW_OWNER_PID>> {
+     let mut size = 0u32;
+     let rc = unsafe {
+[31m-        GetExtendedUdpTable(std::ptr::null_mut(), &mut size, 0, family, UDP_TABLE_OWNER_PID, 0)
+[0m[32m+        GetExtendedUdpTable(
+[0m[32m+            std::ptr::null_mut(),
+[0m[32m+            &mut size,
+[0m[32m+            0,
+[0m[32m+            family,
+[0m[32m+            UDP_TABLE_OWNER_PID,
+[0m[32m+            0,
+[0m[32m+        )
+[0m     };
+     if rc != ERROR_INSUFFICIENT_BUFFER && rc != 0 {
+         return Err(WinError::from_code(rc, "GetExtendedUdpTable(size)"));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:140:
+     }
+     let mut buf = vec![0u8; size as usize];
+     let rc = unsafe {
+[31m-        GetExtendedUdpTable(buf.as_mut_ptr() as *mut _, &mut size, 0, family, UDP_TABLE_OWNER_PID, 0)
+[0m[32m+        GetExtendedUdpTable(
+[0m[32m+            buf.as_mut_ptr() as *mut _,
+[0m[32m+            &mut size,
+[0m[32m+            0,
+[0m[32m+            family,
+[0m[32m+            UDP_TABLE_OWNER_PID,
+[0m[32m+            0,
+[0m[32m+        )
+[0m     };
+     if rc != 0 {
+         return Err(WinError::from_code(rc, "GetExtendedUdpTable"));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:153:
+     }
+     let mut rows = Vec::with_capacity(count);
+     for i in 0..count {
+[31m-        let row = unsafe { std::ptr::read_unaligned(buf.as_ptr().add(offset + i * row_size) as *const MIB_UDPROW_OWNER_PID) };
+[0m[32m+        let row = unsafe {
+[0m[32m+            std::ptr::read_unaligned(
+[0m[32m+                buf.as_ptr().add(offset + i * row_size) as *const MIB_UDPROW_OWNER_PID
+[0m[32m+            )
+[0m[32m+        };
+[0m         rows.push(row);
+     }
+     Ok(rows)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:168:
+                 protocol: Protocol::Tcp,
+                 local_addr: ipv4_to_string(r.dwLocalAddr),
+                 local_port: port_from_net(r.dwLocalPort),
+[31m-                remote_addr: if r.dwRemoteAddr == 0 { String::new() } else { ipv4_to_string(r.dwRemoteAddr) },
+[0m[32m+                remote_addr: if r.dwRemoteAddr == 0 {
+[0m[32m+                    String::new()
+[0m[32m+                } else {
+[0m[32m+                    ipv4_to_string(r.dwRemoteAddr)
+[0m[32m+                },
+[0m                 remote_port: port_from_net(r.dwRemotePort),
+[31m-                state: TCP_STATES.get(r.dwState as usize).copied().unwrap_or("").to_string(),
+[0m[32m+                state: TCP_STATES
+[0m[32m+                    .get(r.dwState as usize)
+[0m[32m+                    .copied()
+[0m[32m+                    .unwrap_or("")
+[0m[32m+                    .to_string(),
+[0m                 pid: r.dwOwningPid,
+             });
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:189:
+                 local_port: port_from_net(r.dwLocalPort),
+                 remote_addr: String::new(),
+                 remote_port: port_from_net(r.dwRemotePort),
+[31m-                state: TCP_STATES.get(r.dwState as usize).copied().unwrap_or("").to_string(),
+[0m[32m+                state: TCP_STATES
+[0m[32m+                    .get(r.dwState as usize)
+[0m[32m+                    .copied()
+[0m[32m+                    .unwrap_or("")
+[0m[32m+                    .to_string(),
+[0m                 pid: r.dwOwningPid,
+             });
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:14:
+ use windows_sys::Win32::System::Diagnostics::ToolHelp::{
+     CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W, TH32CS_SNAPPROCESS,
+ };
+[31m-use windows_sys::Win32::System::ProcessStatus::{K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS_EX};
+[0m[32m+use windows_sys::Win32::System::ProcessStatus::{
+[0m[32m+    K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS_EX,
+[0m[32m+};
+[0m use windows_sys::Win32::System::Threading::{
+[31m-    GetExitCodeProcess, GetPriorityClass, GetProcessTimes, OpenProcess, OpenThread, QueryFullProcessImageNameW,
+[0m[31m-    ResumeThread, SetPriorityClass, SetProcessAffinityMask, SuspendThread,
+[0m[31m-    IDLE_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS,
+[0m[31m-    ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS,
+[0m[31m-    PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SUSPEND_RESUME, PROCESS_TERMINATE,
+[0m[31m-    PROCESS_SET_INFORMATION, PROCESS_QUERY_INFORMATION, PROCESS_NAME_WIN32, THREAD_SUSPEND_RESUME,
+[0m[32m+    GetExitCodeProcess, GetPriorityClass, GetProcessTimes, OpenProcess, OpenThread,
+[0m[32m+    QueryFullProcessImageNameW, ResumeThread, SetPriorityClass, SetProcessAffinityMask,
+[0m[32m+    SuspendThread, ABOVE_NORMAL_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS,
+[0m[32m+    IDLE_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS, PROCESS_NAME_WIN32, PROCESS_QUERY_INFORMATION,
+[0m[32m+    PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SET_INFORMATION, PROCESS_SUSPEND_RESUME,
+[0m[32m+    PROCESS_TERMINATE, REALTIME_PRIORITY_CLASS, THREAD_SUSPEND_RESUME,
+[0m };
+ 
+ /// One row of the Task Manager process list, as far as Task Manager shows it.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:137:
+         ok = unsafe { Process32NextW(snap.raw(), &mut entry) };
+     }
+ 
+[31m-    out.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()).then(a.pid.cmp(&b.pid)));
+[0m[32m+    out.sort_by(|a, b| {
+[0m[32m+        a.name
+[0m[32m+            .to_lowercase()
+[0m[32m+            .cmp(&b.name.to_lowercase())
+[0m[32m+            .then(a.pid.cmp(&b.pid))
+[0m[32m+    });
+[0m     Ok(out)
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:149:
+         info.access = AccessLevel::Limited;
+         let mut buf = [0u16; MAX_PATH as usize];
+         let mut len = buf.len() as u32;
+[31m-        let ok = unsafe { QueryFullProcessImageNameW(h.raw(), PROCESS_NAME_WIN32, buf.as_mut_ptr(), &mut len) };
+[0m[32m+        let ok = unsafe {
+[0m[32m+            QueryFullProcessImageNameW(h.raw(), PROCESS_NAME_WIN32, buf.as_mut_ptr(), &mut len)
+[0m[32m+        };
+[0m         if ok != 0 {
+             info.exe_path = crate::wide::from_wide(&buf, len as usize);
+             info.access = AccessLevel::Full;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:159:
+         let mut exit = unsafe { std::mem::zeroed::<FILETIME>() };
+         let mut kernel = unsafe { std::mem::zeroed::<FILETIME>() };
+         let mut user = unsafe { std::mem::zeroed::<FILETIME>() };
+[31m-        if unsafe { GetProcessTimes(h.raw(), &mut creation, &mut exit, &mut kernel, &mut user) } != 0 {
+[0m[32m+        if unsafe { GetProcessTimes(h.raw(), &mut creation, &mut exit, &mut kernel, &mut user) }
+[0m[32m+            != 0
+[0m[32m+        {
+[0m             info.created_100ns = filetime_to_u64(&creation);
+             info.cpu_time_100ns = filetime_to_u64(&kernel) + filetime_to_u64(&user);
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:201:
+ fn open_full(pid: u32) -> Option<Handle> {
+     let h = unsafe {
+         OpenProcess(
+[31m-            PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE | PROCESS_SET_INFORMATION,
+[0m[32m+            PROCESS_QUERY_INFORMATION
+[0m[32m+                | PROCESS_VM_READ
+[0m[32m+                | PROCESS_TERMINATE
+[0m[32m+                | PROCESS_SET_INFORMATION,
+[0m             0,
+             pid,
+         )
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:216:
+ /// Terminate a process (Task Manager's "End task").
+ pub fn terminate(pid: u32) -> Result<()> {
+     let h = open_with(pid, PROCESS_TERMINATE)?;
+[31m-    check("TerminateProcess", unsafe { windows_sys::Win32::System::Threading::TerminateProcess(h.raw(), 1) })
+[0m[32m+    check("TerminateProcess", unsafe {
+[0m[32m+        windows_sys::Win32::System::Threading::TerminateProcess(h.raw(), 1)
+[0m[32m+    })
+[0m }
+ 
+ /// Change a process priority class.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:223:
+ pub fn set_priority(pid: u32, priority: Priority) -> Result<()> {
+     let h = open_with(pid, PROCESS_SET_INFORMATION)?;
+[31m-    check("SetPriorityClass", unsafe { SetPriorityClass(h.raw(), priority.flag()) })
+[0m[32m+    check("SetPriorityClass", unsafe {
+[0m[32m+        SetPriorityClass(h.raw(), priority.flag())
+[0m[32m+    })
+[0m }
+ 
+ /// Suspend every thread of a process (a WinRust extension over Task Manager).
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:229:
+ pub fn suspend(pid: u32) -> Result<usize> {
+     let h = open_with(pid, PROCESS_SUSPEND_RESUME)?;
+[31m-    let n = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(4 /* TH32CS_SNAPTHREAD */, 0) };
+[0m[32m+    let n = unsafe {
+[0m[32m+        windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(
+[0m[32m+            4, /* TH32CS_SNAPTHREAD */
+[0m[32m+            0,
+[0m[32m+        )
+[0m[32m+    };
+[0m     let snap = match Handle::new(n) {
+         Some(s) => s,
+[31m-        None => return Err(WinError::from_last_error("CreateToolhelp32Snapshot(threads)")),
+[0m[32m+        None => {
+[0m[32m+            return Err(WinError::from_last_error(
+[0m[32m+                "CreateToolhelp32Snapshot(threads)",
+[0m[32m+            ))
+[0m[32m+        }
+[0m     };
+[31m-    let mut te: windows_sys::Win32::System::Diagnostics::ToolHelp::THREADENTRY32 = unsafe { std::mem::zeroed() };
+[0m[32m+    let mut te: windows_sys::Win32::System::Diagnostics::ToolHelp::THREADENTRY32 =
+[0m[32m+        unsafe { std::mem::zeroed() };
+[0m     te.dwSize = std::mem::size_of_val(&te) as u32;
+     let mut count = 0;
+[31m-    let mut ok = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32First(snap.raw(), &mut te) };
+[0m[32m+    let mut ok = unsafe {
+[0m[32m+        windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32First(snap.raw(), &mut te)
+[0m[32m+    };
+[0m     while ok != 0 {
+         if te.th32OwnerProcessID == pid {
+             let th = unsafe { OpenThread(THREAD_SUSPEND_RESUME, 0, te.th32ThreadID) };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:245:
+                 count += 1;
+             }
+         }
+[31m-        ok = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32Next(snap.raw(), &mut te) };
+[0m[32m+        ok = unsafe {
+[0m[32m+            windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32Next(snap.raw(), &mut te)
+[0m[32m+        };
+[0m     }
+     let _ = h;
+     Ok(count)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:254:
+ /// Resume every thread of a process.
+ pub fn resume(pid: u32) -> Result<usize> {
+     let h = open_with(pid, PROCESS_SUSPEND_RESUME)?;
+[31m-    let n = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(4, 0) };
+[0m[32m+    let n = unsafe {
+[0m[32m+        windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(4, 0)
+[0m[32m+    };
+[0m     let snap = match Handle::new(n) {
+         Some(s) => s,
+[31m-        None => return Err(WinError::from_last_error("CreateToolhelp32Snapshot(threads)")),
+[0m[32m+        None => {
+[0m[32m+            return Err(WinError::from_last_error(
+[0m[32m+                "CreateToolhelp32Snapshot(threads)",
+[0m[32m+            ))
+[0m[32m+        }
+[0m     };
+[31m-    let mut te: windows_sys::Win32::System::Diagnostics::ToolHelp::THREADENTRY32 = unsafe { std::mem::zeroed() };
+[0m[32m+    let mut te: windows_sys::Win32::System::Diagnostics::ToolHelp::THREADENTRY32 =
+[0m[32m+        unsafe { std::mem::zeroed() };
+[0m     te.dwSize = std::mem::size_of_val(&te) as u32;
+     let mut count = 0;
+[31m-    let mut ok = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32First(snap.raw(), &mut te) };
+[0m[32m+    let mut ok = unsafe {
+[0m[32m+        windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32First(snap.raw(), &mut te)
+[0m[32m+    };
+[0m     while ok != 0 {
+         if te.th32OwnerProcessID == pid {
+             let th = unsafe { OpenThread(THREAD_SUSPEND_RESUME, 0, te.th32ThreadID) };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:271:
+                 count += 1;
+             }
+         }
+[31m-        ok = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32Next(snap.raw(), &mut te) };
+[0m[32m+        ok = unsafe {
+[0m[32m+            windows_sys::Win32::System::Diagnostics::ToolHelp::Thread32Next(snap.raw(), &mut te)
+[0m[32m+        };
+[0m     }
+     let _ = h;
+     Ok(count)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:281:
+ pub fn set_affinity(pid: u32, mask: usize) -> Result<()> {
+     let h = open_with(pid, PROCESS_SET_INFORMATION)?;
+     let cores = crate::system::cpu_count();
+[31m-    let mask = if mask == 0 { (1usize << cores.min(64)) - 1 } else { mask };
+[0m[31m-    check("SetProcessAffinityMask", unsafe { SetProcessAffinityMask(h.raw(), mask) })
+[0m[32m+    let mask = if mask == 0 {
+[0m[32m+        (1usize << cores.min(64)) - 1
+[0m[32m+    } else {
+[0m[32m+        mask
+[0m[32m+    };
+[0m[32m+    check("SetProcessAffinityMask", unsafe {
+[0m[32m+        SetProcessAffinityMask(h.raw(), mask)
+[0m[32m+    })
+[0m }
+ 
+ /// Current affinity mask of a process.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:290:
+     let h = open_with(pid, PROCESS_QUERY_INFORMATION)?;
+     let mut proc_mask = 0usize;
+     let mut sys_mask = 0usize;
+[31m-    check(
+[0m[31m-        "GetProcessAffinityMask",
+[0m[31m-        unsafe { windows_sys::Win32::System::Threading::GetProcessAffinityMask(h.raw(), &mut proc_mask, &mut sys_mask) },
+[0m[31m-    )?;
+[0m[32m+    check("GetProcessAffinityMask", unsafe {
+[0m[32m+        windows_sys::Win32::System::Threading::GetProcessAffinityMask(
+[0m[32m+            h.raw(),
+[0m[32m+            &mut proc_mask,
+[0m[32m+            &mut sys_mask,
+[0m[32m+        )
+[0m[32m+    })?;
+[0m     Ok((proc_mask, sys_mask))
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:304:
+ 
+ /// Wait until a process exits.  Returns the exit code.
+ pub fn wait_for_exit(pid: u32, timeout_ms: u32) -> Result<u32> {
+[31m-    let h = open_with(pid, windows_sys::Win32::System::Threading::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
+[0m[31m-    let r = unsafe { windows_sys::Win32::System::Threading::WaitForSingleObject(h.raw(), timeout_ms) };
+[0m[32m+    let h = open_with(
+[0m[32m+        pid,
+[0m[32m+        windows_sys::Win32::System::Threading::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION,
+[0m[32m+    )?;
+[0m[32m+    let r =
+[0m[32m+        unsafe { windows_sys::Win32::System::Threading::WaitForSingleObject(h.raw(), timeout_ms) };
+[0m     if r != windows_sys::Win32::Foundation::WAIT_OBJECT_0 {
+         return Err(WinError::Other(format!("wait timed out or failed: {r}")));
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:312:
+     let mut code = 0u32;
+[31m-    check("GetExitCodeProcess", unsafe { GetExitCodeProcess(h.raw(), &mut code) })?;
+[0m[32m+    check("GetExitCodeProcess", unsafe {
+[0m[32m+        GetExitCodeProcess(h.raw(), &mut code)
+[0m[32m+    })?;
+[0m     Ok(code)
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:317:
+ /// Utility: convert a raw pointer that is non-null into `Option`.
+ pub(crate) fn nonnull(p: *mut c_void) -> Option<*mut c_void> {
+[31m-    if p.is_null() { None } else { Some(p) }
+[0m[32m+    if p.is_null() {
+[0m[32m+        None
+[0m[32m+    } else {
+[0m[32m+        Some(p)
+[0m[32m+    }
+[0m }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:37:
+         let wpath = str_to_wide(path);
+         let mut hkey: HKEY = std::ptr::null_mut();
+         let rc = unsafe {
+[31m-            RegOpenKeyExW(root.key(), wpath.as_ptr(), 0, KEY_READ | KEY_WOW64_64KEY, &mut hkey)
+[0m[32m+            RegOpenKeyExW(
+[0m[32m+                root.key(),
+[0m[32m+                wpath.as_ptr(),
+[0m[32m+                0,
+[0m[32m+                KEY_READ | KEY_WOW64_64KEY,
+[0m[32m+                &mut hkey,
+[0m[32m+            )
+[0m         };
+         if rc != ERROR_SUCCESS {
+             return Err(WinError::from_code(rc, "RegOpenKeyExW"));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:81:
+     /// Raw value bytes plus the registry type.
+     pub fn value_raw(&self, name: Option<&str>) -> Result<(u32, Vec<u8>)> {
+         let wname = name.map(str_to_wide);
+[31m-        let name_ptr = wname.as_ref().map(|w| w.as_ptr()).unwrap_or(std::ptr::null());
+[0m[32m+        let name_ptr = wname
+[0m[32m+            .as_ref()
+[0m[32m+            .map(|w| w.as_ptr())
+[0m[32m+            .unwrap_or(std::ptr::null());
+[0m 
+         // First call sizes the buffer.
+         let mut ty = 0u32;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:88:
+         let mut size = 0u32;
+         let rc = unsafe {
+[31m-            RegQueryValueExW(self.raw(), name_ptr, std::ptr::null(), &mut ty, std::ptr::null_mut(), &mut size)
+[0m[32m+            RegQueryValueExW(
+[0m[32m+                self.raw(),
+[0m[32m+                name_ptr,
+[0m[32m+                std::ptr::null(),
+[0m[32m+                &mut ty,
+[0m[32m+                std::ptr::null_mut(),
+[0m[32m+                &mut size,
+[0m[32m+            )
+[0m         };
+         if rc != ERROR_SUCCESS {
+             return Err(WinError::from_code(rc, "RegQueryValueExW(size)"));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:94:
+         }
+         let mut data = vec![0u8; size.max(1) as usize];
+         let rc = unsafe {
+[31m-            RegQueryValueExW(self.raw(), name_ptr, std::ptr::null(), &mut ty, data.as_mut_ptr(), &mut size)
+[0m[32m+            RegQueryValueExW(
+[0m[32m+                self.raw(),
+[0m[32m+                name_ptr,
+[0m[32m+                std::ptr::null(),
+[0m[32m+                &mut ty,
+[0m[32m+                data.as_mut_ptr(),
+[0m[32m+                &mut size,
+[0m[32m+            )
+[0m         };
+         if rc != ERROR_SUCCESS {
+             return Err(WinError::from_code(rc, "RegQueryValueExW"));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:133:
+         let bytes: Vec<u8> = wide.iter().flat_map(|w| w.to_le_bytes()).collect();
+         let wname = str_to_wide(name);
+         let rc = unsafe {
+[31m-            RegSetValueExW(self.raw(), wname.as_ptr(), 0, REG_SZ, bytes.as_ptr(), bytes.len() as u32)
+[0m[32m+            RegSetValueExW(
+[0m[32m+                self.raw(),
+[0m[32m+                wname.as_ptr(),
+[0m[32m+                0,
+[0m[32m+                REG_SZ,
+[0m[32m+                bytes.as_ptr(),
+[0m[32m+                bytes.len() as u32,
+[0m[32m+            )
+[0m         };
+[31m-        if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegSetValueExW")) }
+[0m[32m+        if rc == ERROR_SUCCESS {
+[0m[32m+            Ok(())
+[0m[32m+        } else {
+[0m[32m+            Err(WinError::from_code(rc, "RegSetValueExW"))
+[0m[32m+        }
+[0m     }
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:241:
+     let key = open_for_write(root, path)?;
+     let wname = str_to_wide(name);
+     let rc = unsafe { RegDeleteValueW(key.raw(), wname.as_ptr()) };
+[31m-    if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegDeleteValueW")) }
+[0m[32m+    if rc == ERROR_SUCCESS {
+[0m[32m+        Ok(())
+[0m[32m+    } else {
+[0m[32m+        Err(WinError::from_code(rc, "RegDeleteValueW"))
+[0m[32m+    }
+[0m }
+ 
+ /// Delete a sub-key tree node.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:249:
+     let key = open_for_write(root, path)?;
+     let wsub = str_to_wide(sub);
+     let rc = unsafe { RegDeleteKeyExW(key.raw(), wsub.as_ptr(), KEY_WOW64_64KEY, 0) };
+[31m-    if rc == ERROR_SUCCESS { Ok(()) } else { Err(WinError::from_code(rc, "RegDeleteKeyExW")) }
+[0m[32m+    if rc == ERROR_SUCCESS {
+[0m[32m+        Ok(())
+[0m[32m+    } else {
+[0m[32m+        Err(WinError::from_code(rc, "RegDeleteKeyExW"))
+[0m[32m+    }
+[0m }
+ 
+ /// Close a raw key (helper for callers that opened one directly).
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:11:
+ use windows_sys::Win32::Foundation::ERROR_SUCCESS;
+ use windows_sys::Win32::System::Services::{
+     ChangeServiceConfigW, CloseServiceHandle, ControlService, EnumDependentServicesW,
+[31m-    EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W,
+[0m[31m-    QueryServiceConfigW, QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW,
+[0m[31m-    ENUM_SERVICE_TYPE, QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
+[0m[32m+    EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W, QueryServiceConfigW,
+[0m[32m+    QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW, ENUM_SERVICE_TYPE,
+[0m[32m+    QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
+[0m     SC_MANAGER_ENUMERATE_SERVICE, SC_STATUS_PROCESS_INFO, SERVICE_ACCEPT_PAUSE_CONTINUE,
+[31m-    SERVICE_ACCEPT_STOP, SERVICE_ACTIVE, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+[0m[31m-    SERVICE_CONFIG_DESCRIPTION, SERVICE_CONTINUE_PENDING, SERVICE_CONTROL_CONTINUE,
+[0m[31m-    SERVICE_CONTROL_PAUSE, SERVICE_CONTROL_STOP, SERVICE_DELAYED_AUTO_START_INFO,
+[0m[31m-    SERVICE_DEMAND_START, SERVICE_DESCRIPTIONW, SERVICE_DISABLED, SERVICE_DRIVER,
+[0m[32m+    SERVICE_ACCEPT_STOP, SERVICE_ACTIVE, SERVICE_CHANGE_CONFIG,
+[0m[32m+    SERVICE_CONFIG_DELAYED_AUTO_START_INFO, SERVICE_CONFIG_DESCRIPTION, SERVICE_CONTINUE,
+[0m[32m+    SERVICE_CONTINUE_PENDING, SERVICE_CONTROL_CONTINUE, SERVICE_CONTROL_PAUSE,
+[0m[32m+    SERVICE_CONTROL_STOP, SERVICE_DELAYED_AUTO_START_INFO, SERVICE_DEMAND_START,
+[0m[32m+    SERVICE_DESCRIPTIONW, SERVICE_DISABLED, SERVICE_DRIVER, SERVICE_ENUMERATE_DEPENDENTS,
+[0m     SERVICE_NO_CHANGE, SERVICE_PAUSED, SERVICE_PAUSE_PENDING, SERVICE_QUERY_CONFIG,
+[31m-    SERVICE_QUERY_STATUS, SERVICE_RUNNING, SERVICE_START, SERVICE_STATE_ALL, SERVICE_STATUS,
+[0m[31m-    SERVICE_START_PENDING, SERVICE_PAUSE_PENDING, SERVICE_CONTINUE,
+[0m[31m-    SERVICE_STATUS_PROCESS, SERVICE_STOP, SERVICE_STOPPED, SERVICE_STOP_PENDING,
+[0m[31m-    SERVICE_WIN32, SERVICE_CHANGE_CONFIG, SERVICE_ENUMERATE_DEPENDENTS,
+[0m[32m+    SERVICE_QUERY_STATUS, SERVICE_RUNNING, SERVICE_START, SERVICE_START_PENDING, SERVICE_STATE_ALL,
+[0m[32m+    SERVICE_STATUS, SERVICE_STATUS_PROCESS, SERVICE_STOP, SERVICE_STOPPED, SERVICE_STOP_PENDING,
+[0m[32m+    SERVICE_WIN32,
+[0m };
+ 
+ /// A service's runtime state.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:71:
+     }
+ 
+     pub fn is_busy(self) -> bool {
+[31m-        matches!(self, Self::StartPending | Self::StopPending | Self::PausePending | Self::ContinuePending)
+[0m[32m+        matches!(
+[0m[32m+            self,
+[0m[32m+            Self::StartPending | Self::StopPending | Self::PausePending | Self::ContinuePending
+[0m[32m+        )
+[0m     }
+ }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:92:
+         match v {
+             0 => Self::Boot,
+             1 => Self::System,
+[31m-            2 => if delayed { Self::AutoDelayed } else { Self::Auto },
+[0m[32m+            2 => {
+[0m[32m+                if delayed {
+[0m[32m+                    Self::AutoDelayed
+[0m[32m+                } else {
+[0m[32m+                    Self::Auto
+[0m[32m+                }
+[0m[32m+            }
+[0m             3 => Self::Manual,
+             4 => Self::Disabled,
+             other => Self::Unknown(other),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:160:
+ 
+ impl ScManager {
+     pub fn connect() -> Result<Self> {
+[31m-        let h = unsafe { OpenSCManagerW(std::ptr::null(), std::ptr::null(), SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE) };
+[0m[32m+        let h = unsafe {
+[0m[32m+            OpenSCManagerW(
+[0m[32m+                std::ptr::null(),
+[0m[32m+                std::ptr::null(),
+[0m[32m+                SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE,
+[0m[32m+            )
+[0m[32m+        };
+[0m         match Handle::new(h) {
+             Some(h) => Ok(Self { h }),
+[31m-            None => Err(WinError::from_last_error("OpenSCManagerW (elevation required?)")),
+[0m[32m+            None => Err(WinError::from_last_error(
+[0m[32m+                "OpenSCManagerW (elevation required?)",
+[0m[32m+            )),
+[0m         }
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:171:
+         let w = str_to_wide(name);
+         let h = unsafe { OpenServiceW(self.h.raw() as SC_HANDLE, w.as_ptr(), access) };
+         match Handle::new(h) {
+[31m-            Some(h) => Ok(ServiceHandle { h, name: name.to_string() }),
+[0m[32m+            Some(h) => Ok(ServiceHandle {
+[0m[32m+                h,
+[0m[32m+                name: name.to_string(),
+[0m[32m+            }),
+[0m             None => Err(WinError::from_last_error("OpenServiceW")),
+         }
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:184:
+         if let Ok(drivers) = self.enumerate_filtered(SERVICE_DRIVER, true) {
+             out.extend(drivers);
+         }
+[31m-        out.sort_by(|a, b| a.display_name.to_lowercase().cmp(&b.display_name.to_lowercase()));
+[0m[32m+        out.sort_by(|a, b| {
+[0m[32m+            a.display_name
+[0m[32m+                .to_lowercase()
+[0m[32m+                .cmp(&b.display_name.to_lowercase())
+[0m[32m+        });
+[0m         Ok(out)
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:191:
+[31m-    fn enumerate_filtered(&self, service_type: ENUM_SERVICE_TYPE, is_driver: bool) -> Result<Vec<ServiceEntry>> {
+[0m[32m+    fn enumerate_filtered(
+[0m[32m+        &self,
+[0m[32m+        service_type: ENUM_SERVICE_TYPE,
+[0m[32m+        is_driver: bool,
+[0m[32m+    ) -> Result<Vec<ServiceEntry>> {
+[0m         let mut needed = 0u32;
+         let mut count = 0u32;
+         let mut resume = 0u32;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:234:
+         }
+ 
+         let mut out = Vec::with_capacity(entries as usize);
+[31m-        let base = buf.as_ptr() as *const windows_sys::Win32::System::Services::ENUM_SERVICE_STATUS_PROCESSW;
+[0m[32m+        let base = buf.as_ptr()
+[0m[32m+            as *const windows_sys::Win32::System::Services::ENUM_SERVICE_STATUS_PROCESSW;
+[0m         for i in 0..entries as usize {
+             let e = unsafe { &*base.add(i) };
+             let name = ptr_to_string(e.lpServiceName);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:251:
+                 ..Default::default()
+             };
+             // Configuration + description, best-effort (needs SERVICE_QUERY_CONFIG).
+[31m-            if let Ok(svc) = self.open_service(&name, SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS) {
+[0m[32m+            if let Ok(svc) = self.open_service(
+[0m[32m+                &name,
+[0m[32m+                SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS,
+[0m[32m+            ) {
+[0m                 if let Some(cfg) = svc.config() {
+                     entry.start_type = Some(cfg.0);
+                     entry.binary_path = cfg.1;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:296:
+     pub fn status(&self) -> Result<SERVICE_STATUS_PROCESS> {
+         let mut buf = [0u8; std::mem::size_of::<SERVICE_STATUS_PROCESS>()];
+         let mut needed = 0u32;
+[31m-        check(
+[0m[31m-            "QueryServiceStatusEx",
+[0m[31m-            unsafe {
+[0m[31m-                QueryServiceStatusEx(
+[0m[31m-                    self.raw(),
+[0m[31m-                    SC_STATUS_PROCESS_INFO,
+[0m[31m-                    buf.as_mut_ptr(),
+[0m[31m-                    buf.len() as u32,
+[0m[31m-                    &mut needed,
+[0m[31m-                )
+[0m[31m-            },
+[0m[31m-        )?;
+[0m[32m+        check("QueryServiceStatusEx", unsafe {
+[0m[32m+            QueryServiceStatusEx(
+[0m[32m+                self.raw(),
+[0m[32m+                SC_STATUS_PROCESS_INFO,
+[0m[32m+                buf.as_mut_ptr(),
+[0m[32m+                buf.len() as u32,
+[0m[32m+                &mut needed,
+[0m[32m+            )
+[0m[32m+        })?;
+[0m         Ok(unsafe { std::ptr::read_unaligned(buf.as_ptr() as *const SERVICE_STATUS_PROCESS) })
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:314:
+     pub fn state(&self) -> Option<ServiceState> {
+[31m-        self.status().ok().map(|s| ServiceState::from_raw(s.dwCurrentState))
+[0m[32m+        self.status()
+[0m[32m+            .ok()
+[0m[32m+            .map(|s| ServiceState::from_raw(s.dwCurrentState))
+[0m     }
+ 
+     /// `(start_type, binary_path, logon_account, load_order_group)`
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:326:
+         }
+         let mut buf = vec![0u8; needed as usize];
+         let ok = unsafe {
+[31m-            QueryServiceConfigW(self.raw(), buf.as_mut_ptr() as *mut QUERY_SERVICE_CONFIGW, needed, &mut needed)
+[0m[32m+            QueryServiceConfigW(
+[0m[32m+                self.raw(),
+[0m[32m+                buf.as_mut_ptr() as *mut QUERY_SERVICE_CONFIGW,
+[0m[32m+                needed,
+[0m[32m+                &mut needed,
+[0m[32m+            )
+[0m         };
+         if ok == 0 {
+             return None;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:350:
+     }
+ 
+     pub fn delayed_auto_start(&self) -> Option<bool> {
+[31m-        let mut info = SERVICE_DELAYED_AUTO_START_INFO { fDelayedAutostart: 0 };
+[0m[32m+        let mut info = SERVICE_DELAYED_AUTO_START_INFO {
+[0m[32m+            fDelayedAutostart: 0,
+[0m[32m+        };
+[0m         let mut needed = 0u32;
+         let ok = unsafe {
+             QueryServiceConfig2W(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:361:
+                 &mut needed,
+             )
+         };
+[31m-        if ok != 0 { Some(info.fDelayedAutostart != 0) } else { None }
+[0m[32m+        if ok != 0 {
+[0m[32m+            Some(info.fDelayedAutostart != 0)
+[0m[32m+        } else {
+[0m[32m+            None
+[0m[32m+        }
+[0m     }
+ 
+     pub fn description(&self) -> Option<String> {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:368:
+         let mut needed = 0u32;
+         unsafe {
+[31m-            QueryServiceConfig2W(self.raw(), SERVICE_CONFIG_DESCRIPTION, std::ptr::null_mut(), 0, &mut needed);
+[0m[32m+            QueryServiceConfig2W(
+[0m[32m+                self.raw(),
+[0m[32m+                SERVICE_CONFIG_DESCRIPTION,
+[0m[32m+                std::ptr::null_mut(),
+[0m[32m+                0,
+[0m[32m+                &mut needed,
+[0m[32m+            );
+[0m         }
+         if needed < std::mem::size_of::<SERVICE_DESCRIPTIONW>() as u32 {
+             return None;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:387:
+         }
+         let desc = unsafe { &*(buf.as_ptr() as *const SERVICE_DESCRIPTIONW) };
+         let s = ptr_to_string(desc.lpDescription);
+[31m-        if s.is_empty() { None } else { Some(s) }
+[0m[32m+        if s.is_empty() {
+[0m[32m+            None
+[0m[32m+        } else {
+[0m[32m+            Some(s)
+[0m[32m+        }
+[0m     }
+ 
+     /// Services that must be running before this one can start.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:395:
+         let mut needed = 0u32;
+         let mut count = 0u32;
+         unsafe {
+[31m-            EnumDependentServicesW(self.raw(), SERVICE_STATE_ALL, std::ptr::null_mut(), 0, &mut needed, &mut count);
+[0m[32m+            EnumDependentServicesW(
+[0m[32m+                self.raw(),
+[0m[32m+                SERVICE_STATE_ALL,
+[0m[32m+                std::ptr::null_mut(),
+[0m[32m+                0,
+[0m[32m+                &mut needed,
+[0m[32m+                &mut count,
+[0m[32m+            );
+[0m         }
+         if needed == 0 {
+             return Vec::new();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:424:
+     }
+ 
+     pub fn start(&self) -> Result<()> {
+[31m-        check("StartServiceW", unsafe { StartServiceW(self.raw(), 0, std::ptr::null()) })
+[0m[32m+        check("StartServiceW", unsafe {
+[0m[32m+            StartServiceW(self.raw(), 0, std::ptr::null())
+[0m[32m+        })
+[0m     }
+ 
+     pub fn stop(&self) -> Result<()> {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:431:
+[31m-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
+[0m[31m-        check("ControlService(STOP)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_STOP, &mut st) })
+[0m[32m+        let mut st = SERVICE_STATUS {
+[0m[32m+            dwServiceType: 0,
+[0m[32m+            dwCurrentState: 0,
+[0m[32m+            dwControlsAccepted: 0,
+[0m[32m+            dwWin32ExitCode: 0,
+[0m[32m+            dwServiceSpecificExitCode: 0,
+[0m[32m+            dwCheckPoint: 0,
+[0m[32m+            dwWaitHint: 0,
+[0m[32m+        };
+[0m[32m+        check("ControlService(STOP)", unsafe {
+[0m[32m+            ControlService(self.raw(), SERVICE_CONTROL_STOP, &mut st)
+[0m[32m+        })
+[0m     }
+ 
+     pub fn pause(&self) -> Result<()> {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:436:
+[31m-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
+[0m[31m-        check("ControlService(PAUSE)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_PAUSE, &mut st) })
+[0m[32m+        let mut st = SERVICE_STATUS {
+[0m[32m+            dwServiceType: 0,
+[0m[32m+            dwCurrentState: 0,
+[0m[32m+            dwControlsAccepted: 0,
+[0m[32m+            dwWin32ExitCode: 0,
+[0m[32m+            dwServiceSpecificExitCode: 0,
+[0m[32m+            dwCheckPoint: 0,
+[0m[32m+            dwWaitHint: 0,
+[0m[32m+        };
+[0m[32m+        check("ControlService(PAUSE)", unsafe {
+[0m[32m+            ControlService(self.raw(), SERVICE_CONTROL_PAUSE, &mut st)
+[0m[32m+        })
+[0m     }
+ 
+     pub fn resume(&self) -> Result<()> {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:441:
+[31m-        let mut st = SERVICE_STATUS { dwServiceType: 0, dwCurrentState: 0, dwControlsAccepted: 0, dwWin32ExitCode: 0, dwServiceSpecificExitCode: 0, dwCheckPoint: 0, dwWaitHint: 0 };
+[0m[31m-        check("ControlService(CONTINUE)", unsafe { ControlService(self.raw(), SERVICE_CONTROL_CONTINUE, &mut st) })
+[0m[32m+        let mut st = SERVICE_STATUS {
+[0m[32m+            dwServiceType: 0,
+[0m[32m+            dwCurrentState: 0,
+[0m[32m+            dwControlsAccepted: 0,
+[0m[32m+            dwWin32ExitCode: 0,
+[0m[32m+            dwServiceSpecificExitCode: 0,
+[0m[32m+            dwCheckPoint: 0,
+[0m[32m+            dwWaitHint: 0,
+[0m[32m+        };
+[0m[32m+        check("ControlService(CONTINUE)", unsafe {
+[0m[32m+            ControlService(self.raw(), SERVICE_CONTROL_CONTINUE, &mut st)
+[0m[32m+        })
+[0m     }
+ 
+     /// Change the start type (and optionally the binary path).
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:451:
+                 SERVICE_NO_CHANGE,
+                 start.raw(),
+                 SERVICE_NO_CHANGE,
+[31m-                wbin.as_ref().map(|w| w.as_ptr()).unwrap_or(std::ptr::null()),
+[0m[32m+                wbin.as_ref()
+[0m[32m+                    .map(|w| w.as_ptr())
+[0m[32m+                    .unwrap_or(std::ptr::null()),
+[0m                 std::ptr::null(),
+                 std::ptr::null_mut(),
+                 std::ptr::null(),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:464:
+             return Err(WinError::from_last_error("ChangeServiceConfigW"));
+         }
+         // Delayed start is a separate flag.
+[31m-        let mut delayed = SERVICE_DELAYED_AUTO_START_INFO { fDelayedAutostart: if start == StartType::AutoDelayed { 1 } else { 0 } };
+[0m[32m+        let mut delayed = SERVICE_DELAYED_AUTO_START_INFO {
+[0m[32m+            fDelayedAutostart: if start == StartType::AutoDelayed {
+[0m[32m+                1
+[0m[32m+            } else {
+[0m[32m+                0
+[0m[32m+            },
+[0m[32m+        };
+[0m         if matches!(start, StartType::Auto | StartType::AutoDelayed) {
+             unsafe {
+                 QueryServiceConfig2W(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:475:
+                     std::ptr::null_mut(),
+                 );
+             }
+[31m-            delayed.fDelayedAutostart = if start == StartType::AutoDelayed { 1 } else { 0 };
+[0m[32m+            delayed.fDelayedAutostart = if start == StartType::AutoDelayed {
+[0m[32m+                1
+[0m[32m+            } else {
+[0m[32m+                0
+[0m[32m+            };
+[0m             let ok = unsafe {
+                 windows_sys::Win32::System::Services::ChangeServiceConfig2W(
+                     self.raw(),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:8:
+ use std::path::Path;
+ use windows_sys::Win32::Foundation::HWND;
+ use windows_sys::Win32::UI::Shell::{
+[31m-    SHFileOperationW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW, SHFILEINFOW,
+[0m[31m-    SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
+[0m[31m-    FOF_NOERRORUI, FOF_WANTNUKEWARNING, SEE_MASK_INVOKEIDLIST, SEE_MASK_NOCLOSEPROCESS,
+[0m[31m-    SEE_MASK_NOASYNC, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_SMALLICON, SHGFI_TYPENAME,
+[0m[31m-    SHGFI_USEFILEATTRIBUTES,
+[0m[32m+    SHFileOperationW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW, FOF_ALLOWUNDO,
+[0m[32m+    FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_WANTNUKEWARNING, FO_DELETE, SEE_MASK_INVOKEIDLIST,
+[0m[32m+    SEE_MASK_NOASYNC, SEE_MASK_NOCLOSEPROCESS, SHELLEXECUTEINFOW, SHFILEINFOW, SHFILEOPSTRUCTW,
+[0m[32m+    SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_SMALLICON, SHGFI_TYPENAME, SHGFI_USEFILEATTRIBUTES,
+[0m };
+ use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:101:
+         unsafe {
+             windows_sys::Win32::System::Com::CoTaskMemFree(psz as *const c_void);
+         }
+[31m-        if s.is_empty() { None } else { Some(std::path::PathBuf::from(s)) }
+[0m[32m+        if s.is_empty() {
+[0m[32m+            None
+[0m[32m+        } else {
+[0m[32m+            Some(std::path::PathBuf::from(s))
+[0m[32m+        }
+[0m     }
+ 
+     /// Everything Explorer lists in its sidebar tree.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:135:
+         )
+     };
+     // ShellExecuteW returns a value > 32 on success.
+[31m-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute failed ({rc})"))) }
+[0m[32m+    if rc as isize > 32 {
+[0m[32m+        Ok(())
+[0m[32m+    } else {
+[0m[32m+        Err(WinError::Other(format!("ShellExecute failed ({rc})")))
+[0m[32m+    }
+[0m }
+ 
+ /// Open with an explicit verb: "edit", "runas" (UAC elevation), "properties".
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:152:
+             SW_SHOWNORMAL,
+         )
+     };
+[31m-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute({verb}) failed ({rc})"))) }
+[0m[32m+    if rc as isize > 32 {
+[0m[32m+        Ok(())
+[0m[32m+    } else {
+[0m[32m+        Err(WinError::Other(format!(
+[0m[32m+            "ShellExecute({verb}) failed ({rc})"
+[0m[32m+        )))
+[0m[32m+    }
+[0m }
+ 
+ /// Show the shell's "Properties" dialog for a path.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:171:
+ /// Launch an executable with command-line arguments, waiting for the handle.
+ ///
+ /// Returns the process id when the shell reports one.
+[31m-pub fn execute(path: impl AsRef<Path>, args: &str, working_dir: Option<&Path>) -> Result<Option<u32>> {
+[0m[32m+pub fn execute(
+[0m[32m+    path: impl AsRef<Path>,
+[0m[32m+    args: &str,
+[0m[32m+    working_dir: Option<&Path>,
+[0m[32m+) -> Result<Option<u32>> {
+[0m     let mut info: SHELLEXECUTEINFOW = unsafe { std::mem::zeroed() };
+     info.cbSize = std::mem::size_of::<SHELLEXECUTEINFOW>() as u32;
+     info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:191:
+         let pid = unsafe { windows_sys::Win32::System::Threading::GetProcessId(info.hProcess) };
+         // wrap in an owned handle so it closes when scope ends
+         let _owned = Handle::new(info.hProcess);
+[31m-        if pid == 0 { None } else { Some(pid) }
+[0m[32m+        if pid == 0 {
+[0m[32m+            None
+[0m[32m+        } else {
+[0m[32m+            Some(pid)
+[0m[32m+        }
+[0m     };
+     Ok(pid)
+ }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:215:
+     op.fFlags = (FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_WANTNUKEWARNING) as u16;
+     let rc = unsafe { SHFileOperationW(&mut op) };
+     if rc != 0 {
+[31m-        return Err(WinError::Other(format!("SHFileOperationW failed with {rc}")));
+[0m[32m+        return Err(WinError::Other(format!(
+[0m[32m+            "SHFileOperationW failed with {rc}"
+[0m[32m+        )));
+[0m     }
+     if op.fAnyOperationsAborted != 0 {
+         return Err(WinError::Other("delete was cancelled".into()));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:250:
+ pub fn file_info(path: impl AsRef<Path>, want_icon: bool) -> ShellItemInfo {
+     let w = to_wide(path.as_ref());
+     let mut info: SHFILEINFOW = unsafe { std::mem::zeroed() };
+[31m-    let flags = SHGFI_DISPLAYNAME | SHGFI_TYPENAME | if want_icon { SHGFI_ICON | SHGFI_SMALLICON } else { 0 };
+[0m[32m+    let flags = SHGFI_DISPLAYNAME
+[0m[32m+        | SHGFI_TYPENAME
+[0m[32m+        | if want_icon {
+[0m[32m+            SHGFI_ICON | SHGFI_SMALLICON
+[0m[32m+        } else {
+[0m[32m+            0
+[0m[32m+        };
+[0m     let ok = unsafe {
+         SHGetFileInfoW(
+             w.as_ptr(),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:257:
+[31m-            if want_icon { 0x80 /* FILE_ATTRIBUTE_NORMAL */ } else { 0 },
+[0m[32m+            if want_icon {
+[0m[32m+                0x80 /* FILE_ATTRIBUTE_NORMAL */
+[0m[32m+            } else {
+[0m[32m+                0
+[0m[32m+            },
+[0m             &mut info,
+             std::mem::size_of::<SHFILEINFOW>() as u32,
+[31m-            flags | if want_icon { SHGFI_USEFILEATTRIBUTES } else { 0 },
+[0m[32m+            flags
+[0m[32m+                | if want_icon {
+[0m[32m+                    SHGFI_USEFILEATTRIBUTES
+[0m[32m+                } else {
+[0m[32m+                    0
+[0m[32m+                },
+[0m         )
+     };
+     if ok == 0 {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:301:
+             SW_SHOWNORMAL,
+         )
+     };
+[31m-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("launch failed ({rc})"))) }
+[0m[32m+    if rc as isize > 32 {
+[0m[32m+        Ok(())
+[0m[32m+    } else {
+[0m[32m+        Err(WinError::Other(format!("launch failed ({rc})")))
+[0m[32m+    }
+[0m }
+ 
+ /// The desktop window handle (used to parent modal dialogs).
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:6:
+ use windows_sys::Win32::Foundation::FILETIME;
+ use windows_sys::Win32::System::LibraryLoader::{GetModuleHandleW, GetProcAddress, LoadLibraryW};
+ use windows_sys::Win32::System::SystemInformation::{
+[31m-    GetComputerNameExW, GetNativeSystemInfo, GetPhysicallyInstalledSystemMemory, GetTickCount64,
+[0m[31m-    GlobalMemoryStatusEx, COMPUTER_NAME_FORMAT, MEMORYSTATUSEX, SYSTEM_INFO,
+[0m[31m-    ComputerNameDnsHostname, ComputerNamePhysicalDnsDomain,
+[0m[32m+    ComputerNameDnsHostname, ComputerNamePhysicalDnsDomain, GetComputerNameExW,
+[0m[32m+    GetNativeSystemInfo, GetPhysicallyInstalledSystemMemory, GetTickCount64, GlobalMemoryStatusEx,
+[0m[32m+    COMPUTER_NAME_FORMAT, MEMORYSTATUSEX, SYSTEM_INFO,
+[0m };
+ use windows_sys::Win32::System::Threading::GetSystemTimes;
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:75:
+     unsafe {
+         GetSystemTimes(&mut idle, &mut kernel, &mut user);
+     }
+[31m-    CpuSample { idle: ft64(&idle), kernel: ft64(&kernel), user: ft64(&user) }
+[0m[32m+    CpuSample {
+[0m[32m+        idle: ft64(&idle),
+[0m[32m+        kernel: ft64(&kernel),
+[0m[32m+        user: ft64(&user),
+[0m[32m+    }
+[0m }
+ 
+ /// CPU usage percentage between two samples (0..=100).
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:183:
+         "DisplayVersion",
+     )
+     .unwrap_or_default();
+[31m-    let ubr = crate::registry::read_machine_u32(
+[0m[31m-        r"SOFTWARE\Microsoft\Windows NT\CurrentVersion",
+[0m[31m-        "UBR",
+[0m[31m-    )
+[0m[31m-    .unwrap_or(0);
+[0m[32m+    let ubr =
+[0m[32m+        crate::registry::read_machine_u32(r"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "UBR")
+[0m[32m+            .unwrap_or(0);
+[0m 
+     let hostname = computer_name(ComputerNameDnsHostname);
+     let domain = computer_name(ComputerNamePhysicalDnsDomain);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:213:
+ }
+ 
+ fn non_null_handle(h: *mut std::ffi::c_void) -> Option<*mut std::ffi::c_void> {
+[31m-    if h.is_null() { None } else { Some(h) }
+[0m[32m+    if h.is_null() {
+[0m[32m+        None
+[0m[32m+    } else {
+[0m[32m+        Some(h)
+[0m[32m+    }
+[0m }
+ 
+ #[allow(non_snake_case)]
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:260:
+ /// Ask the shell to re-broadcast settings changes so apps re-read the
+ /// environment (used after WinRust edits the user PATH).
+ pub fn broadcast_settings_change() {
+[31m-    use windows_sys::Win32::UI::WindowsAndMessaging::{SendMessageTimeoutW, HWND_BROADCAST, SMTO_ABORTIFHUNG, WM_SETTINGCHANGE};
+[0m[32m+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+[0m[32m+        SendMessageTimeoutW, HWND_BROADCAST, SMTO_ABORTIFHUNG, WM_SETTINGCHANGE,
+[0m[32m+    };
+[0m     let s = crate::wide::str_to_wide("Environment");
+     unsafe {
+         SendMessageTimeoutW(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:282:
+ 
+ /// Raise a process' working set limits (privilege `SeIncreaseWorkingSetPrivilege`).
+ pub fn set_privilege(name: &str, enable: bool) -> Result<()> {
+[31m-    use windows_sys::Win32::Security::{LookupPrivilegeValueW, TOKEN_ADJUST_PRIVILEGES, TOKEN_QUERY};
+[0m[31m-    use windows_sys::Win32::Security::{TOKEN_PRIVILEGES, SE_PRIVILEGE_ENABLED};
+[0m[32m+    use windows_sys::Win32::Security::{
+[0m[32m+        LookupPrivilegeValueW, TOKEN_ADJUST_PRIVILEGES, TOKEN_QUERY,
+[0m[32m+    };
+[0m[32m+    use windows_sys::Win32::Security::{SE_PRIVILEGE_ENABLED, TOKEN_PRIVILEGES};
+[0m     use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
+ 
+     let mut token = std::ptr::null_mut();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:290:
+[31m-    check(
+[0m[31m-        "OpenProcessToken",
+[0m[31m-        unsafe { OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &mut token) },
+[0m[31m-    )?;
+[0m[32m+    check("OpenProcessToken", unsafe {
+[0m[32m+        OpenProcessToken(
+[0m[32m+            GetCurrentProcess(),
+[0m[32m+            TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+[0m[32m+            &mut token,
+[0m[32m+        )
+[0m[32m+    })?;
+[0m     let token = crate::handle::Handle::new(token).ok_or(WinError::Other("null token".into()))?;
+ 
+     let mut luid = unsafe { std::mem::zeroed() };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:297:
+     let wname = crate::wide::str_to_wide(name);
+[31m-    check(
+[0m[31m-        "LookupPrivilegeValueW",
+[0m[31m-        unsafe { LookupPrivilegeValueW(std::ptr::null(), wname.as_ptr(), &mut luid) },
+[0m[31m-    )?;
+[0m[32m+    check("LookupPrivilegeValueW", unsafe {
+[0m[32m+        LookupPrivilegeValueW(std::ptr::null(), wname.as_ptr(), &mut luid)
+[0m[32m+    })?;
+[0m 
+     let mut tp: TOKEN_PRIVILEGES = unsafe { std::mem::zeroed() };
+     tp.PrivilegeCount = 1;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:305:
+     tp.Privileges[0].Luid = luid;
+     tp.Privileges[0].Attributes = if enable { SE_PRIVILEGE_ENABLED } else { 0 };
+ 
+[31m-    check(
+[0m[31m-        "AdjustTokenPrivileges",
+[0m[31m-        unsafe {
+[0m[31m-            windows_sys::Win32::Security::AdjustTokenPrivileges(
+[0m[31m-                token.raw(),
+[0m[31m-                0,
+[0m[31m-                &tp,
+[0m[31m-                std::mem::size_of::<TOKEN_PRIVILEGES>() as u32,
+[0m[31m-                std::ptr::null_mut(),
+[0m[31m-                std::ptr::null_mut(),
+[0m[31m-            )
+[0m[31m-        },
+[0m[31m-    )
+[0m[32m+    check("AdjustTokenPrivileges", unsafe {
+[0m[32m+        windows_sys::Win32::Security::AdjustTokenPrivileges(
+[0m[32m+            token.raw(),
+[0m[32m+            0,
+[0m[32m+            &tp,
+[0m[32m+            std::mem::size_of::<TOKEN_PRIVILEGES>() as u32,
+[0m[32m+            std::ptr::null_mut(),
+[0m[32m+            std::ptr::null_mut(),
+[0m[32m+        )
+[0m[32m+    })
+[0m }
+ 
+ /// True when the machine has a battery (laptop / UPS-backed tablet).
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\system.rs:335:
+ pub fn idle_seconds() -> Option<u32> {
+     use windows_sys::Win32::System::SystemInformation::GetTickCount;
+     use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
+[31m-    let mut info = LASTINPUTINFO { cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32, dwTime: 0 };
+[0m[32m+    let mut info = LASTINPUTINFO {
+[0m[32m+        cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32,
+[0m[32m+        dwTime: 0,
+[0m[32m+    };
+[0m     if unsafe { GetLastInputInfo(&mut info) } == 0 {
+         return None;
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:25:
+ impl Token {
+     pub fn current() -> Result<Self> {
+         let mut h = std::ptr::null_mut();
+[31m-        check(
+[0m[31m-            "OpenProcessToken",
+[0m[31m-            unsafe { OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &mut h) },
+[0m[31m-        )?;
+[0m[31m-        Handle::new(h).map(Token).ok_or_else(|| WinError::Other("null token".into()))
+[0m[32m+        check("OpenProcessToken", unsafe {
+[0m[32m+            OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &mut h)
+[0m[32m+        })?;
+[0m[32m+        Handle::new(h)
+[0m[32m+            .map(Token)
+[0m[32m+            .ok_or_else(|| WinError::Other("null token".into()))
+[0m     }
+ 
+     fn query<T: Copy>(&self, class: i32) -> Result<T> {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:60:
+                 return Err(WinError::from_last_error("GetTokenInformation"));
+             }
+             if big.len() < std::mem::size_of::<T>() {
+[31m-                return Err(WinError::Buffer { context: "GetTokenInformation" });
+[0m[32m+                return Err(WinError::Buffer {
+[0m[32m+                    context: "GetTokenInformation",
+[0m[32m+                });
+[0m             }
+             return Ok(unsafe { std::ptr::read_unaligned(big.as_ptr() as *const T) });
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:67:
+         if buf.len() < std::mem::size_of::<T>() {
+[31m-            return Err(WinError::Buffer { context: "GetTokenInformation" });
+[0m[32m+            return Err(WinError::Buffer {
+[0m[32m+                context: "GetTokenInformation",
+[0m[32m+            });
+[0m         }
+         Ok(unsafe { std::ptr::read_unaligned(buf.as_ptr() as *const T) })
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:81:
+     fn user_sid(&self) -> Option<OwnedSid> {
+         let mut needed = 0u32;
+         unsafe {
+[31m-            GetTokenInformation(self.0.raw(), TokenUser, std::ptr::null_mut(), 0, &mut needed);
+[0m[32m+            GetTokenInformation(
+[0m[32m+                self.0.raw(),
+[0m[32m+                TokenUser,
+[0m[32m+                std::ptr::null_mut(),
+[0m[32m+                0,
+[0m[32m+                &mut needed,
+[0m[32m+            );
+[0m         }
+         if needed == 0 {
+             return None;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:88:
+         }
+         let mut buf = vec![0u8; needed as usize];
+         let ok = unsafe {
+[31m-            GetTokenInformation(self.0.raw(), TokenUser, buf.as_mut_ptr() as *mut _, needed, &mut needed)
+[0m[32m+            GetTokenInformation(
+[0m[32m+                self.0.raw(),
+[0m[32m+                TokenUser,
+[0m[32m+                buf.as_mut_ptr() as *mut _,
+[0m[32m+                needed,
+[0m[32m+                &mut needed,
+[0m[32m+            )
+[0m         };
+         if ok == 0 {
+             return None;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:125:
+         if ok == 0 {
+             return None;
+         }
+[31m-        Some((from_wide(&name, name_len as usize), from_wide(&domain, domain_len as usize)))
+[0m[32m+        Some((
+[0m[32m+            from_wide(&name, name_len as usize),
+[0m[32m+            from_wide(&domain, domain_len as usize),
+[0m[32m+        ))
+[0m     }
+ 
+     /// String SID (`S-1-5-21-...`).
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:132:
+     pub fn sid_string(&self) -> Option<String> {
+         let sid = self.user_sid()?;
+         let mut out: *mut u16 = std::ptr::null_mut();
+[31m-        let ok = unsafe { windows_sys::Win32::Security::Authorization::ConvertSidToStringSidW(sid.as_ptr(), &mut out) };
+[0m[32m+        let ok = unsafe {
+[0m[32m+            windows_sys::Win32::Security::Authorization::ConvertSidToStringSidW(
+[0m[32m+                sid.as_ptr(),
+[0m[32m+                &mut out,
+[0m[32m+            )
+[0m[32m+        };
+[0m         if ok == 0 || out.is_null() {
+             return None;
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:149:
+     pub fn integrity(&self) -> &'static str {
+         let mut needed = 0u32;
+         unsafe {
+[31m-            GetTokenInformation(self.0.raw(), TokenIntegrityLevel, std::ptr::null_mut(), 0, &mut needed);
+[0m[32m+            GetTokenInformation(
+[0m[32m+                self.0.raw(),
+[0m[32m+                TokenIntegrityLevel,
+[0m[32m+                std::ptr::null_mut(),
+[0m[32m+                0,
+[0m[32m+                &mut needed,
+[0m[32m+            );
+[0m         }
+         if needed == 0 {
+             return "Unknown";
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:156:
+         }
+         let mut buf = vec![0u8; needed as usize];
+         let ok = unsafe {
+[31m-            GetTokenInformation(self.0.raw(), TokenIntegrityLevel, buf.as_mut_ptr() as *mut _, needed, &mut needed)
+[0m[32m+            GetTokenInformation(
+[0m[32m+                self.0.raw(),
+[0m[32m+                TokenIntegrityLevel,
+[0m[32m+                buf.as_mut_ptr() as *mut _,
+[0m[32m+                needed,
+[0m[32m+                &mut needed,
+[0m[32m+            )
+[0m         };
+         if ok == 0 {
+             return "Unknown";
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:163:
+         }
+[31m-        let label = unsafe { &*(buf.as_ptr() as *const windows_sys::Win32::Security::TOKEN_MANDATORY_LABEL) };
+[0m[32m+        let label = unsafe {
+[0m[32m+            &*(buf.as_ptr() as *const windows_sys::Win32::Security::TOKEN_MANDATORY_LABEL)
+[0m[32m+        };
+[0m         let sid = label.Label.Sid;
+         let count = unsafe { *windows_sys::Win32::Security::GetSidSubAuthorityCount(sid) };
+         if count == 0 {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\user.rs:168:
+             return "Unknown";
+         }
+[31m-        let rid = unsafe { *windows_sys::Win32::Security::GetSidSubAuthority(sid, (count - 1) as u32) };
+[0m[32m+        let rid =
+[0m[32m+            unsafe { *windows_sys::Win32::Security::GetSidSubAuthority(sid, (count - 1) as u32) };
+[0m         match rid {
+             0x0000 => "Untrusted",
+             0x1000 => "Low",
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:37:
+             ViewMode::SmallIcons => "Small icons",
+         }
+     }
+[31m-    const ALL: [ViewMode; 4] = [ViewMode::Details, ViewMode::List, ViewMode::Tiles, ViewMode::SmallIcons];
+[0m[32m+    const ALL: [ViewMode; 4] = [
+[0m[32m+        ViewMode::Details,
+[0m[32m+        ViewMode::List,
+[0m[32m+        ViewMode::Tiles,
+[0m[32m+        ViewMode::SmallIcons,
+[0m[32m+    ];
+[0m }
+ 
+ #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:177:
+         Some(n) => n.to_string_lossy().to_string(),
+         None => {
+             let s = p.to_string_lossy().to_string();
+[31m-            if s.is_empty() { "This PC".into() } else { s }
+[0m[32m+            if s.is_empty() {
+[0m[32m+                "This PC".into()
+[0m[32m+            } else {
+[0m[32m+                s
+[0m[32m+            }
+[0m         }
+     }
+ }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:220:
+         cc.egui_ctx.set_visuals(egui::Visuals::dark());
+ 
+         let persisted = load_state();
+[31m-        let default_start = KnownFolder::Profile.path().unwrap_or_else(|| PathBuf::from("C:\\"));
+[0m[32m+        let default_start = KnownFolder::Profile
+[0m[32m+            .path()
+[0m[32m+            .unwrap_or_else(|| PathBuf::from("C:\\"));
+[0m         let tabs: Vec<Tab> = if persisted.tabs.is_empty() {
+             vec![Tab::new(default_start)]
+         } else {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:287:
+         let tx = self.tx.clone();
+         std::thread::spawn(move || {
+             let result = disk::read_dir(&path, show_hidden).map_err(|e| e.to_string());
+[31m-            let _ = tx.send(Listing { tab_index, request_id, result });
+[0m[32m+            let _ = tx.send(Listing {
+[0m[32m+                tab_index,
+[0m[32m+                request_id,
+[0m[32m+                result,
+[0m[32m+            });
+[0m         });
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:294:
+     fn navigate(&mut self, path: PathBuf) {
+[31m-        let prefs = self.folders.get(&path.to_string_lossy().to_string()).cloned();
+[0m[32m+        let prefs = self
+[0m[32m+            .folders
+[0m[32m+            .get(&path.to_string_lossy().to_string())
+[0m[32m+            .cloned();
+[0m         {
+             let tab = self.current_mut();
+             tab.history.truncate(tab.history_pos + 1);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:390:
+         }
+     }
+ 
+[31m-    fn icon_for(&mut self, ctx: &egui::Context, key: &str, fetch: impl FnOnce() -> Option<Vec<u8>>) -> Option<egui::TextureId> {
+[0m[32m+    fn icon_for(
+[0m[32m+        &mut self,
+[0m[32m+        ctx: &egui::Context,
+[0m[32m+        key: &str,
+[0m[32m+        fetch: impl FnOnce() -> Option<Vec<u8>>,
+[0m[32m+    ) -> Option<egui::TextureId> {
+[0m         if let Some(entry) = self.icons.get(key) {
+             return entry.texture.as_ref().map(|t| t.id());
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:411:
+ 
+     fn top_bar(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+         ui.horizontal(|ui| {
+[31m-            if ui.add_enabled(self.current().can_back(), egui::Button::new("◀")).on_hover_text("Back").clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(self.current().can_back(), egui::Button::new("◀"))
+[0m[32m+                .on_hover_text("Back")
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.go_back();
+             }
+[31m-            if ui.add_enabled(self.current().can_forward(), egui::Button::new("▶")).on_hover_text("Forward").clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(self.current().can_forward(), egui::Button::new("▶"))
+[0m[32m+                .on_hover_text("Forward")
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.go_forward();
+             }
+             if ui.button("▲").on_hover_text("Up one level").clicked() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:447:
+                 }
+             } else {
+                 let mut target: Option<PathBuf> = None;
+[31m-                egui::ScrollArea::horizontal().id_salt("breadcrumb").show(ui, |ui| {
+[0m[31m-                    ui.horizontal(|ui| {
+[0m[31m-                        let path = self.current().path.clone();
+[0m[31m-                        let mut acc = PathBuf::new();
+[0m[31m-                        ui.label(RichText::new("🗀").size(15.0));
+[0m[31m-                        for (idx, comp) in path.components().enumerate() {
+[0m[31m-                            acc.push(comp);
+[0m[31m-                            let label = comp.as_os_str().to_string_lossy().to_string();
+[0m[31m-                            let text = if label.is_empty() {
+[0m[31m-                                path.display().to_string()
+[0m[31m-                            } else if idx == 0 {
+[0m[31m-                                label
+[0m[31m-                            } else {
+[0m[31m-                                label
+[0m[31m-                            };
+[0m[31m-                            if ui.link(text).clicked() {
+[0m[31m-                                target = Some(acc.clone());
+[0m[32m+                egui::ScrollArea::horizontal()
+[0m[32m+                    .id_salt("breadcrumb")
+[0m[32m+                    .show(ui, |ui| {
+[0m[32m+                        ui.horizontal(|ui| {
+[0m[32m+                            let path = self.current().path.clone();
+[0m[32m+                            let mut acc = PathBuf::new();
+[0m[32m+                            ui.label(RichText::new("🗀").size(15.0));
+[0m[32m+                            for (idx, comp) in path.components().enumerate() {
+[0m[32m+                                acc.push(comp);
+[0m[32m+                                let label = comp.as_os_str().to_string_lossy().to_string();
+[0m[32m+                                let text = if label.is_empty() {
+[0m[32m+                                    path.display().to_string()
+[0m[32m+                                } else if idx == 0 {
+[0m[32m+                                    label
+[0m[32m+                                } else {
+[0m[32m+                                    label
+[0m[32m+                                };
+[0m[32m+                                if ui.link(text).clicked() {
+[0m[32m+                                    target = Some(acc.clone());
+[0m[32m+                                }
+[0m[32m+                                ui.label("›");
+[0m                             }
+[31m-                            ui.label("›");
+[0m[31m-                        }
+[0m[31m-                        if ui.small_button("✎").on_hover_text("Type a path").clicked() {
+[0m[31m-                            let p = self.current().path.display().to_string();
+[0m[31m-                            self.current_mut().address_edit = Some(p);
+[0m[31m-                        }
+[0m[32m+                            if ui.small_button("✎").on_hover_text("Type a path").clicked() {
+[0m[32m+                                let p = self.current().path.display().to_string();
+[0m[32m+                                self.current_mut().address_edit = Some(p);
+[0m[32m+                            }
+[0m[32m+                        });
+[0m                     });
+[31m-                });
+[0m                 if let Some(t) = target {
+                     self.navigate(t);
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:504:
+         for folder in KnownFolder::sidebar() {
+             let label = folder.label();
+             let selected = self.nav_selected == Some(*folder);
+[31m-            if ui.selectable_label(selected, format!("  {label}")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .selectable_label(selected, format!("  {label}"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.nav_selected = Some(*folder);
+                 if let Some(p) = folder.path() {
+                     nav = Some(p);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:519:
+         for drive in &self.drives {
+             let p = PathBuf::from(&drive.root);
+             let name = if drive.label.is_empty() {
+[31m-                format!("{} {}", drive.root.trim_end_matches('\\'), drive.kind.map(|k| k.label()).unwrap_or(""))
+[0m[32m+                format!(
+[0m[32m+                    "{} {}",
+[0m[32m+                    drive.root.trim_end_matches('\\'),
+[0m[32m+                    drive.kind.map(|k| k.label()).unwrap_or("")
+[0m[32m+                )
+[0m             } else {
+                 format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
+             };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:528:
+             } else {
+                 0.0
+             };
+[31m-            let resp = ui.add(egui::Button::new(RichText::new(format!("  💽 {name}")).size(13.0)).frame(false));
+[0m[32m+            let resp = ui.add(
+[0m[32m+                egui::Button::new(RichText::new(format!("  💽 {name}")).size(13.0)).frame(false),
+[0m[32m+            );
+[0m             ui.add(
+                 egui::ProgressBar::new(1.0 - frac)
+                     .desired_height(4.0)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:551:
+                     "{}  ·  {}  ·  {}",
+                     who,
+                     self.user.integrity,
+[31m-                    if self.user.elevated { "admin" } else { "standard" }
+[0m[32m+                    if self.user.elevated {
+[0m[32m+                        "admin"
+[0m[32m+                    } else {
+[0m[32m+                        "standard"
+[0m[32m+                    }
+[0m                 ))
+                 .small()
+                 .weak(),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:558:
+             );
+             if !self.user.elevated {
+[31m-                ui.label(RichText::new("Tip: run elevated for protected folders").small().weak());
+[0m[32m+                ui.label(
+[0m[32m+                    RichText::new("Tip: run elevated for protected folders")
+[0m[32m+                        .small()
+[0m[32m+                        .weak(),
+[0m[32m+                );
+[0m             }
+         });
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:589:
+                     self.remember_prefs();
+                     self.refresh();
+                 }
+[31m-                if ui.button("New folder").on_hover_text("Ctrl+Shift+N").clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .button("New folder")
+[0m[32m+                    .on_hover_text("Ctrl+Shift+N")
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     self.creating_folder = true;
+                     self.new_folder_buffer = "New folder".into();
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:690:
+             .resizable(true)
+             .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+             .column(Column::initial(28.0).at_least(24.0).clip(true))
+[31m-            .column(Column::initial(300.0).at_least(140.0).clip(true).resizable(true).range(120.0..=1200.0))
+[0m[32m+            .column(
+[0m[32m+                Column::initial(300.0)
+[0m[32m+                    .at_least(140.0)
+[0m[32m+                    .clip(true)
+[0m[32m+                    .resizable(true)
+[0m[32m+                    .range(120.0..=1200.0),
+[0m[32m+            )
+[0m             .column(Column::initial(120.0).at_least(60.0).clip(true))
+             .column(Column::initial(160.0).at_least(90.0).clip(true))
+             .column(Column::remainder().at_least(80.0).clip(true))
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:709:
+             ] {
+                 header.col(|ui| {
+                     let arrow = if sort_key == key {
+[31m-                        if sort_asc { " ▲" } else { " ▼" }
+[0m[32m+                        if sort_asc {
+[0m[32m+                            " ▲"
+[0m[32m+                        } else {
+[0m[32m+                            " ▼"
+[0m[32m+                        }
+[0m                     } else {
+                         ""
+                     };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:716:
+[31m-                    if ui.add(egui::Button::new(RichText::new(format!("{name}{arrow}")).strong()).frame(false)).clicked() {
+[0m[32m+                    if ui
+[0m[32m+                        .add(
+[0m[32m+                            egui::Button::new(RichText::new(format!("{name}{arrow}")).strong())
+[0m[32m+                                .frame(false),
+[0m[32m+                        )
+[0m[32m+                        .clicked()
+[0m[32m+                    {
+[0m                         clicked_sort = Some(key);
+                     }
+                 });
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:728:
+                 row.set_selected(selected);
+ 
+                 row.col(|ui| {
+[31m-                    let key = if entry.is_dir { "dir".to_string() } else { format!("ext:{}", disk::extension(&entry.name).to_lowercase()) };
+[0m[32m+                    let key = if entry.is_dir {
+[0m[32m+                        "dir".to_string()
+[0m[32m+                    } else {
+[0m[32m+                        format!("ext:{}", disk::extension(&entry.name).to_lowercase())
+[0m[32m+                    };
+[0m                     let id = self.icon_for(ctx, &key, || {
+                         let info = shell::file_info(&entry.path, true);
+                         info.icon_rgba
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:793:
+                 });
+ 
+                 row.col(|ui| {
+[31m-                    let size = if entry.is_dir { String::new() } else { disk::format_size(entry.size) };
+[0m[32m+                    let size = if entry.is_dir {
+[0m[32m+                        String::new()
+[0m[32m+                    } else {
+[0m[32m+                        disk::format_size(entry.size)
+[0m[32m+                    };
+[0m                     ui.label(RichText::new(size).monospace());
+                 });
+                 row.col(|ui| {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:819:
+     fn list_view(&mut self, ui: &mut egui::Ui, entries: &[DirEntry]) {
+         let mut open: Option<DirEntry> = None;
+         let mut menu: Option<(PathBuf, ActionRequest)> = None;
+[31m-        egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
+[0m[31m-            let width = ui.available_width().max(600.0);
+[0m[31m-            let cols = ((width / 220.0).floor() as usize).max(1);
+[0m[31m-            for chunk in entries.chunks(cols) {
+[0m[31m-                ui.horizontal(|ui| {
+[0m[31m-                    for entry in chunk {
+[0m[31m-                        let selected = self.current().selected.as_deref() == Some(entry.path.as_path());
+[0m[31m-                        let label = format!("{} {}", if entry.is_dir { "🗀" } else { "🗎" }, entry.name);
+[0m[31m-                        let resp = ui.add_sized([width / cols as f32 - 8.0, 20.0], egui::Button::new(label).selected(selected).frame(false));
+[0m[31m-                        if resp.clicked() {
+[0m[31m-                            self.current_mut().selected = Some(entry.path.clone());
+[0m[31m-                        }
+[0m[31m-                        if resp.double_clicked() {
+[0m[31m-                            open = Some(entry.clone());
+[0m[31m-                        }
+[0m[31m-                        resp.context_menu(|ui| {
+[0m[31m-                            if ui.button("Open").clicked() {
+[0m[31m-                                menu = Some((entry.path.clone(), ActionRequest::Open));
+[0m[31m-                                ui.close_menu();
+[0m[32m+        egui::ScrollArea::both()
+[0m[32m+            .auto_shrink([false, false])
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                let width = ui.available_width().max(600.0);
+[0m[32m+                let cols = ((width / 220.0).floor() as usize).max(1);
+[0m[32m+                for chunk in entries.chunks(cols) {
+[0m[32m+                    ui.horizontal(|ui| {
+[0m[32m+                        for entry in chunk {
+[0m[32m+                            let selected =
+[0m[32m+                                self.current().selected.as_deref() == Some(entry.path.as_path());
+[0m[32m+                            let label =
+[0m[32m+                                format!("{} {}", if entry.is_dir { "🗀" } else { "🗎" }, entry.name);
+[0m[32m+                            let resp = ui.add_sized(
+[0m[32m+                                [width / cols as f32 - 8.0, 20.0],
+[0m[32m+                                egui::Button::new(label).selected(selected).frame(false),
+[0m[32m+                            );
+[0m[32m+                            if resp.clicked() {
+[0m[32m+                                self.current_mut().selected = Some(entry.path.clone());
+[0m                             }
+[31m-                            if ui.button("Delete").clicked() {
+[0m[31m-                                menu = Some((entry.path.clone(), ActionRequest::Delete));
+[0m[31m-                                ui.close_menu();
+[0m[32m+                            if resp.double_clicked() {
+[0m[32m+                                open = Some(entry.clone());
+[0m                             }
+[31m-                            if ui.button("Properties").clicked() {
+[0m[31m-                                menu = Some((entry.path.clone(), ActionRequest::Properties));
+[0m[31m-                                ui.close_menu();
+[0m[31m-                            }
+[0m[31m-                        });
+[0m[31m-                        // pad to keep columns aligned
+[0m[31m-                        let used = ui.available_width();
+[0m[31m-                        let _ = used;
+[0m[31m-                    }
+[0m[31m-                });
+[0m[31m-            }
+[0m[31m-        });
+[0m[32m+                            resp.context_menu(|ui| {
+[0m[32m+                                if ui.button("Open").clicked() {
+[0m[32m+                                    menu = Some((entry.path.clone(), ActionRequest::Open));
+[0m[32m+                                    ui.close_menu();
+[0m[32m+                                }
+[0m[32m+                                if ui.button("Delete").clicked() {
+[0m[32m+                                    menu = Some((entry.path.clone(), ActionRequest::Delete));
+[0m[32m+                                    ui.close_menu();
+[0m[32m+                                }
+[0m[32m+                                if ui.button("Properties").clicked() {
+[0m[32m+                                    menu = Some((entry.path.clone(), ActionRequest::Properties));
+[0m[32m+                                    ui.close_menu();
+[0m[32m+                                }
+[0m[32m+                            });
+[0m[32m+                            // pad to keep columns aligned
+[0m[32m+                            let used = ui.available_width();
+[0m[32m+                            let _ = used;
+[0m[32m+                        }
+[0m[32m+                    });
+[0m[32m+                }
+[0m[32m+            });
+[0m         if let Some(entry) = open {
+             self.open_entry(&entry);
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:863:
+         }
+     }
+ 
+[31m-    fn tiles_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry], tile_h: f32) {
+[0m[32m+    fn tiles_view(
+[0m[32m+        &mut self,
+[0m[32m+        ui: &mut egui::Ui,
+[0m[32m+        ctx: &egui::Context,
+[0m[32m+        entries: &[DirEntry],
+[0m[32m+        tile_h: f32,
+[0m[32m+    ) {
+[0m         let mut open: Option<DirEntry> = None;
+         let mut menu: Option<(PathBuf, ActionRequest)> = None;
+[31m-        egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
+[0m[31m-            let avail = ui.available_width().max(320.0);
+[0m[31m-            let icon_size = tile_h - 34.0;
+[0m[31m-            let cols = ((avail / 128.0).floor() as usize).max(1);
+[0m[31m-            for chunk in entries.chunks(cols) {
+[0m[31m-                ui.horizontal(|ui| {
+[0m[31m-                    for entry in chunk {
+[0m[31m-                        let selected = self.current().selected.as_deref() == Some(entry.path.as_path());
+[0m[31m-                        ui.allocate_ui(egui::vec2(124.0, tile_h), |ui| {
+[0m[31m-                            ui.vertical_centered(|ui| {
+[0m[31m-                                let key = if entry.is_dir { "dir".to_string() } else { format!("ext:{}", disk::extension(&entry.name).to_lowercase()) };
+[0m[31m-                                let id = self.icon_for(ctx, &key, || {
+[0m[31m-                                    let info = shell::file_info(&entry.path, true);
+[0m[31m-                                    info.icon_rgba
+[0m[31m-                                });
+[0m[31m-                                let resp = if let Some(id) = id {
+[0m[31m-                                    ui.add(egui::ImageButton::new(egui::Image::new((id, egui::vec2(icon_size, icon_size)))).selected(selected))
+[0m[31m-                                } else {
+[0m[31m-                                    let t = if entry.is_dir { "🗀" } else { "🗎" };
+[0m[31m-                                    ui.add(egui::Button::new(RichText::new(t).size(icon_size * 0.7)).selected(selected))
+[0m[31m-                                };
+[0m[31m-                                if resp.clicked() {
+[0m[31m-                                    self.current_mut().selected = Some(entry.path.clone());
+[0m[31m-                                }
+[0m[31m-                                if resp.double_clicked() {
+[0m[31m-                                    open = Some(entry.clone());
+[0m[31m-                                }
+[0m[31m-                                resp.context_menu(|ui| {
+[0m[31m-                                    if ui.button("Open").clicked() {
+[0m[31m-                                        menu = Some((entry.path.clone(), ActionRequest::Open));
+[0m[31m-                                        ui.close_menu();
+[0m[32m+        egui::ScrollArea::both()
+[0m[32m+            .auto_shrink([false, false])
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                let avail = ui.available_width().max(320.0);
+[0m[32m+                let icon_size = tile_h - 34.0;
+[0m[32m+                let cols = ((avail / 128.0).floor() as usize).max(1);
+[0m[32m+                for chunk in entries.chunks(cols) {
+[0m[32m+                    ui.horizontal(|ui| {
+[0m[32m+                        for entry in chunk {
+[0m[32m+                            let selected =
+[0m[32m+                                self.current().selected.as_deref() == Some(entry.path.as_path());
+[0m[32m+                            ui.allocate_ui(egui::vec2(124.0, tile_h), |ui| {
+[0m[32m+                                ui.vertical_centered(|ui| {
+[0m[32m+                                    let key = if entry.is_dir {
+[0m[32m+                                        "dir".to_string()
+[0m[32m+                                    } else {
+[0m[32m+                                        format!(
+[0m[32m+                                            "ext:{}",
+[0m[32m+                                            disk::extension(&entry.name).to_lowercase()
+[0m[32m+                                        )
+[0m[32m+                                    };
+[0m[32m+                                    let id = self.icon_for(ctx, &key, || {
+[0m[32m+                                        let info = shell::file_info(&entry.path, true);
+[0m[32m+                                        info.icon_rgba
+[0m[32m+                                    });
+[0m[32m+                                    let resp = if let Some(id) = id {
+[0m[32m+                                        ui.add(
+[0m[32m+                                            egui::ImageButton::new(egui::Image::new((
+[0m[32m+                                                id,
+[0m[32m+                                                egui::vec2(icon_size, icon_size),
+[0m[32m+                                            )))
+[0m[32m+                                            .selected(selected),
+[0m[32m+                                        )
+[0m[32m+                                    } else {
+[0m[32m+                                        let t = if entry.is_dir { "🗀" } else { "🗎" };
+[0m[32m+                                        ui.add(
+[0m[32m+                                            egui::Button::new(
+[0m[32m+                                                RichText::new(t).size(icon_size * 0.7),
+[0m[32m+                                            )
+[0m[32m+                                            .selected(selected),
+[0m[32m+                                        )
+[0m[32m+                                    };
+[0m[32m+                                    if resp.clicked() {
+[0m[32m+                                        self.current_mut().selected = Some(entry.path.clone());
+[0m                                     }
+[31m-                                    if ui.button("Delete").clicked() {
+[0m[31m-                                        menu = Some((entry.path.clone(), ActionRequest::Delete));
+[0m[31m-                                        ui.close_menu();
+[0m[32m+                                    if resp.double_clicked() {
+[0m[32m+                                        open = Some(entry.clone());
+[0m                                     }
+[31m-                                    if ui.button("Properties").clicked() {
+[0m[31m-                                        menu = Some((entry.path.clone(), ActionRequest::Properties));
+[0m[31m-                                        ui.close_menu();
+[0m[31m-                                    }
+[0m[32m+                                    resp.context_menu(|ui| {
+[0m[32m+                                        if ui.button("Open").clicked() {
+[0m[32m+                                            menu = Some((entry.path.clone(), ActionRequest::Open));
+[0m[32m+                                            ui.close_menu();
+[0m[32m+                                        }
+[0m[32m+                                        if ui.button("Delete").clicked() {
+[0m[32m+                                            menu =
+[0m[32m+                                                Some((entry.path.clone(), ActionRequest::Delete));
+[0m[32m+                                            ui.close_menu();
+[0m[32m+                                        }
+[0m[32m+                                        if ui.button("Properties").clicked() {
+[0m[32m+                                            menu = Some((
+[0m[32m+                                                entry.path.clone(),
+[0m[32m+                                                ActionRequest::Properties,
+[0m[32m+                                            ));
+[0m[32m+                                            ui.close_menu();
+[0m[32m+                                        }
+[0m[32m+                                    });
+[0m[32m+                                    let short = truncate_middle(&entry.name, 18);
+[0m[32m+                                    ui.label(RichText::new(short).size(11.0));
+[0m                                 });
+[31m-                                let short = truncate_middle(&entry.name, 18);
+[0m[31m-                                ui.label(RichText::new(short).size(11.0));
+[0m                             });
+[31m-                        });
+[0m[31m-                    }
+[0m[31m-                });
+[0m[31m-            }
+[0m[31m-        });
+[0m[32m+                        }
+[0m[32m+                    });
+[0m[32m+                }
+[0m[32m+            });
+[0m         if let Some(entry) = open {
+             self.open_entry(&entry);
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:938:
+                 }
+             }
+             ActionRequest::OpenWith => {
+[31m-                if let Err(e) = shell::launch("rundll32.exe", &format!("shell32.dll,OpenAs_RunDLL {}", path.display())) {
+[0m[32m+                if let Err(e) = shell::launch(
+[0m[32m+                    "rundll32.exe",
+[0m[32m+                    &format!("shell32.dll,OpenAs_RunDLL {}", path.display()),
+[0m[32m+                ) {
+[0m                     self.status = format!("Open with failed: {e}");
+                 }
+             }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:970:
+             let tab = self.current();
+             let files = tab.entries.iter().filter(|e| !e.is_dir).count();
+             let dirs = tab.entries.iter().filter(|e| e.is_dir).count();
+[31m-            let total: u64 = tab.entries.iter().filter(|e| !e.is_dir).map(|e| e.size).sum();
+[0m[31m-            ui.label(RichText::new(format!("{dirs} folders, {files} files · {}", disk::format_size(total))).small());
+[0m[32m+            let total: u64 = tab
+[0m[32m+                .entries
+[0m[32m+                .iter()
+[0m[32m+                .filter(|e| !e.is_dir)
+[0m[32m+                .map(|e| e.size)
+[0m[32m+                .sum();
+[0m[32m+            ui.label(
+[0m[32m+                RichText::new(format!(
+[0m[32m+                    "{dirs} folders, {files} files · {}",
+[0m[32m+                    disk::format_size(total)
+[0m[32m+                ))
+[0m[32m+                .small(),
+[0m[32m+            );
+[0m             if !self.status.is_empty() {
+                 ui.separator();
+                 ui.label(RichText::new(&self.status).small().weak());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:978:
+             }
+             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+[31m-                ui.label(RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION"))).small().weak());
+[0m[32m+                ui.label(
+[0m[32m+                    RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION")))
+[0m[32m+                        .small()
+[0m[32m+                        .weak(),
+[0m[32m+                );
+[0m             });
+         });
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1186:
+     ];
+     for path in candidates {
+         if let Ok(bytes) = std::fs::read(path) {
+[31m-            fonts.font_data.insert("segoe".to_string(), egui::FontData::from_owned(bytes).into());
+[0m[31m-            fonts.families.entry(egui::FontFamily::Proportional).or_default().insert(0, "segoe".to_string());
+[0m[31m-            fonts.families.entry(egui::FontFamily::Monospace).or_default().push("segoe".to_string());
+[0m[32m+            fonts.font_data.insert(
+[0m[32m+                "segoe".to_string(),
+[0m[32m+                egui::FontData::from_owned(bytes).into(),
+[0m[32m+            );
+[0m[32m+            fonts
+[0m[32m+                .families
+[0m[32m+                .entry(egui::FontFamily::Proportional)
+[0m[32m+                .or_default()
+[0m[32m+                .insert(0, "segoe".to_string());
+[0m[32m+            fonts
+[0m[32m+                .families
+[0m[32m+                .entry(egui::FontFamily::Monospace)
+[0m[32m+                .or_default()
+[0m[32m+                .push("segoe".to_string());
+[0m             break;
+         }
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:105:
+ 
+ fn find_component(exe: &str) -> Option<PathBuf> {
+     let dirs = [
+[31m-        std::env::current_exe().ok().and_then(|p| p.parent().map(Path::to_path_buf)),
+[0m[32m+        std::env::current_exe()
+[0m[32m+            .ok()
+[0m[32m+            .and_then(|p| p.parent().map(Path::to_path_buf)),
+[0m         std::env::current_dir().ok(),
+     ];
+     for dir in dirs.into_iter().flatten() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:112:
+[31m-        for candidate in [dir.join(exe), dir.join("target").join("release").join(exe), dir.join("target").join("debug").join(exe)] {
+[0m[32m+        for candidate in [
+[0m[32m+            dir.join(exe),
+[0m[32m+            dir.join("target").join("release").join(exe),
+[0m[32m+            dir.join("target").join("debug").join(exe),
+[0m[32m+        ] {
+[0m             if candidate.is_file() {
+                 return Some(candidate);
+             }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:131:
+ fn pid_of(exe: &str) -> Option<u32> {
+     let procs = process::enumerate().ok()?;
+     let target = exe.to_lowercase();
+[31m-    procs.iter().find(|p| p.name.to_lowercase() == target).map(|p| p.pid)
+[0m[32m+    procs
+[0m[32m+        .iter()
+[0m[32m+        .find(|p| p.name.to_lowercase() == target)
+[0m[32m+        .map(|p| p.pid)
+[0m }
+ 
+ impl LauncherApp {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:142:
+             .map(|c| {
+                 let path = find_component(c.exe());
+                 let pid = path.as_ref().and_then(|_| pid_of(c.exe()));
+[31m-                ComponentStatus { component: *c, path, running: pid.is_some(), pid }
+[0m[32m+                ComponentStatus {
+[0m[32m+                    component: *c,
+[0m[32m+                    path,
+[0m[32m+                    running: pid.is_some(),
+[0m[32m+                    pid,
+[0m[32m+                }
+[0m             })
+             .collect();
+         Self {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:185:
+             if let Ok(scm) = ScManager::connect() {
+                 if let Ok(list) = scm.enumerate() {
+                     self.services_total = list.len();
+[31m-                    self.services_running = list.iter().filter(|s| s.state == Some(ServiceState::Running)).count();
+[0m[32m+                    self.services_running = list
+[0m[32m+                        .iter()
+[0m[32m+                        .filter(|s| s.state == Some(ServiceState::Running))
+[0m[32m+                        .count();
+[0m                 }
+             }
+             self.last_services = Instant::now();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:193:
+     }
+ 
+     fn launch(&mut self, c: Component) {
+[31m-        let Some(status) = self.components.iter().find(|s| s.component == c) else { return };
+[0m[32m+        let Some(status) = self.components.iter().find(|s| s.component == c) else {
+[0m[32m+            return;
+[0m[32m+        };
+[0m         if status.running {
+             self.status = format!("{} is already running", c.title());
+             return;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:200:
+         }
+         let Some(path) = status.path.clone() else {
+[31m-            self.status = format!("{} not found — build it with: cargo build --release -p {}", c.exe(), pkg_name(c));
+[0m[32m+            self.status = format!(
+[0m[32m+                "{} not found — build it with: cargo build --release -p {}",
+[0m[32m+                c.exe(),
+[0m[32m+                pkg_name(c)
+[0m[32m+            );
+[0m             return;
+         };
+         match shell::execute(&path, "", None) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:212:
+         // "Replace Explorer" is implemented as a deliberate, explicit action:
+         // it starts the WinRust shell and stops the system shell, which Windows
+         // restarts automatically at logon unless it is replaced system-wide.
+[31m-        let Some(status) = self.components.iter().find(|s| s.component == Component::Explorer) else { return };
+[0m[32m+        let Some(status) = self
+[0m[32m+            .components
+[0m[32m+            .iter()
+[0m[32m+            .find(|s| s.component == Component::Explorer)
+[0m[32m+        else {
+[0m[32m+            return;
+[0m[32m+        };
+[0m         let Some(path) = status.path.clone() else {
+             self.status = "WinRust Explorer binary not found".into();
+             return;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:305:
+                     frame.show(&mut cols[0], |ui| {
+                         ui.horizontal(|ui| {
+                             ui.vertical(|ui| {
+[31m-                                ui.label(RichText::new(status.component.title()).strong().size(15.0));
+[0m[31m-                                ui.label(RichText::new(format!("replaces {}", status.component.replaces())).small().weak());
+[0m[32m+                                ui.label(
+[0m[32m+                                    RichText::new(status.component.title()).strong().size(15.0),
+[0m[32m+                                );
+[0m[32m+                                ui.label(
+[0m[32m+                                    RichText::new(format!(
+[0m[32m+                                        "replaces {}",
+[0m[32m+                                        status.component.replaces()
+[0m[32m+                                    ))
+[0m[32m+                                    .small()
+[0m[32m+                                    .weak(),
+[0m[32m+                                );
+[0m                             });
+[31m-                            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+[0m[31m-                                if status.running {
+[0m[31m-                                    ui.label(RichText::new("running").small().color(Color32::from_rgb(120, 220, 120)));
+[0m[31m-                                } else if status.path.is_none() {
+[0m[31m-                                    ui.label(RichText::new("not built").small().color(Color32::from_rgb(230, 170, 120)));
+[0m[31m-                                } else {
+[0m[31m-                                    ui.label(RichText::new("ready").small().weak());
+[0m[31m-                                }
+[0m[31m-                                let btn = ui.add_enabled(!status.running && status.path.is_some(), egui::Button::new("Launch"));
+[0m[31m-                                if btn.clicked() {
+[0m[31m-                                    launch = Some(status.component);
+[0m[31m-                                }
+[0m[31m-                            });
+[0m[32m+                            ui.with_layout(
+[0m[32m+                                egui::Layout::right_to_left(egui::Align::Center),
+[0m[32m+                                |ui| {
+[0m[32m+                                    if status.running {
+[0m[32m+                                        ui.label(
+[0m[32m+                                            RichText::new("running")
+[0m[32m+                                                .small()
+[0m[32m+                                                .color(Color32::from_rgb(120, 220, 120)),
+[0m[32m+                                        );
+[0m[32m+                                    } else if status.path.is_none() {
+[0m[32m+                                        ui.label(
+[0m[32m+                                            RichText::new("not built")
+[0m[32m+                                                .small()
+[0m[32m+                                                .color(Color32::from_rgb(230, 170, 120)),
+[0m[32m+                                        );
+[0m[32m+                                    } else {
+[0m[32m+                                        ui.label(RichText::new("ready").small().weak());
+[0m[32m+                                    }
+[0m[32m+                                    let btn = ui.add_enabled(
+[0m[32m+                                        !status.running && status.path.is_some(),
+[0m[32m+                                        egui::Button::new("Launch"),
+[0m[32m+                                    );
+[0m[32m+                                    if btn.clicked() {
+[0m[32m+                                        launch = Some(status.component);
+[0m[32m+                                    }
+[0m[32m+                                },
+[0m[32m+                            );
+[0m                         });
+                     });
+                     if ui
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:352:
+                         .and_then(|s| s.path.clone());
+                     match path {
+                         Some(p) => {
+[31m-                            cols[1].label(RichText::new(format!("Binary: {}", p.display())).small().weak());
+[0m[32m+                            cols[1].label(
+[0m[32m+                                RichText::new(format!("Binary: {}", p.display()))
+[0m[32m+                                    .small()
+[0m[32m+                                    .weak(),
+[0m[32m+                            );
+[0m                         }
+                         None => {
+                             cols[1].label(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:359:
+[31m-                                RichText::new(format!("Build with: cargo build --release -p {}", pkg_name(sel)))
+[0m[31m-                                    .small()
+[0m[31m-                                    .color(Color32::from_rgb(240, 190, 110)),
+[0m[32m+                                RichText::new(format!(
+[0m[32m+                                    "Build with: cargo build --release -p {}",
+[0m[32m+                                    pkg_name(sel)
+[0m[32m+                                ))
+[0m[32m+                                .small()
+[0m[32m+                                .color(Color32::from_rgb(240, 190, 110)),
+[0m                             );
+                         }
+                     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:374:
+                     )
+                     .small(),
+                 );
+[31m-                if cols[1].add(egui::Button::new("Start WinRust Explorer as shell")).clicked() {
+[0m[32m+                if cols[1]
+[0m[32m+                    .add(egui::Button::new("Start WinRust Explorer as shell"))
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     self.block_with_explorer();
+                 }
+                 cols[1].add_space(10.0);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:67:
+             None => {
+                 self.scm = ScManager::connect().ok();
+                 if self.scm.is_none() {
+[31m-                    self.status = "Cannot open the Service Control Manager — run WinRust elevated.".into();
+[0m[32m+                    self.status =
+[0m[32m+                        "Cannot open the Service Control Manager — run WinRust elevated.".into();
+[0m                 }
+             }
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:116:
+         };
+         match scm.open_service(&dlg.name, winrust_core::service::SERVICE_CHANGE_CONFIG) {
+             Ok(svc) => {
+[31m-                let bin = if dlg.binary_path.is_empty() { None } else { Some(dlg.binary_path.as_str()) };
+[0m[32m+                let bin = if dlg.binary_path.is_empty() {
+[0m[32m+                    None
+[0m[32m+                } else {
+[0m[32m+                    Some(dlg.binary_path.as_str())
+[0m[32m+                };
+[0m                 match svc.set_start_type(dlg.start_type, bin) {
+                     Ok(()) => {
+[31m-                        self.status = format!("{}: start type set to {}", dlg.name, dlg.start_type.label());
+[0m[32m+                        self.status =
+[0m[32m+                            format!("{}: start type set to {}", dlg.name, dlg.start_type.label());
+[0m                         self.props = None;
+                         self.refresh();
+                     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:139:
+             }
+             ui.separator();
+             let enabled = self.selected.is_some();
+[31m-            if ui.add_enabled(enabled, egui::Button::new("▶ Start")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(enabled, egui::Button::new("▶ Start"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.do_action(ServiceAction::Start);
+             }
+[31m-            if ui.add_enabled(enabled, egui::Button::new("⏹ Stop")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(enabled, egui::Button::new("⏹ Stop"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.do_action(ServiceAction::Stop);
+             }
+[31m-            if ui.add_enabled(enabled, egui::Button::new("⏸ Pause")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(enabled, egui::Button::new("⏸ Pause"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.do_action(ServiceAction::Pause);
+             }
+[31m-            if ui.add_enabled(enabled, egui::Button::new("⏵ Resume")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(enabled, egui::Button::new("⏵ Resume"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.do_action(ServiceAction::Resume);
+             }
+[31m-            if ui.add_enabled(enabled, egui::Button::new("⟲ Restart")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(enabled, egui::Button::new("⟲ Restart"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.do_action(ServiceAction::Stop);
+                 self.do_action(ServiceAction::Start);
+             }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:158:
+[31m-            if ui.add_enabled(enabled, egui::Button::new("Properties…")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(enabled, egui::Button::new("Properties…"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.open_props();
+             }
+             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:162:
+[31m-                ui.add_sized([220.0, 22.0], egui::TextEdit::singleline(&mut self.filter).hint_text("🔍 Filter services"));
+[0m[32m+                ui.add_sized(
+[0m[32m+                    [220.0, 22.0],
+[0m[32m+                    egui::TextEdit::singleline(&mut self.filter).hint_text("🔍 Filter services"),
+[0m[32m+                );
+[0m             });
+         });
+         if !self.user.elevated {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:240:
+                     ui.label(s.start_type.map(|x| x.label()).unwrap_or("—"));
+                 });
+                 row.col(|ui| {
+[31m-                    let acct = if s.logon_account.is_empty() { "—" } else { &s.logon_account };
+[0m[32m+                    let acct = if s.logon_account.is_empty() {
+[0m[32m+                        "—"
+[0m[32m+                    } else {
+[0m[32m+                        &s.logon_account
+[0m[32m+                    };
+[0m                     ui.label(RichText::new(acct).weak());
+                 });
+                 row.col(|ui| {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:247:
+[31m-                    let desc = if s.description.is_empty() { String::new() } else { shorten(&s.description, 70) };
+[0m[32m+                    let desc = if s.description.is_empty() {
+[0m[32m+                        String::new()
+[0m[32m+                    } else {
+[0m[32m+                        shorten(&s.description, 70)
+[0m[32m+                    };
+[0m                     ui.label(RichText::new(desc).weak());
+                 });
+             });
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:269:
+             ui.heading(RichText::new(&entry.display_name).size(16.0));
+             ui.label(RichText::new(&entry.name).monospace().weak());
+             ui.add_space(6.0);
+[31m-            egui::Grid::new("svc_details").num_columns(2).spacing([16.0, 6.0]).show(ui, |ui| {
+[0m[31m-                ui.label(RichText::new("Service name").strong());
+[0m[31m-                ui.label(&entry.name);
+[0m[31m-                ui.end_row();
+[0m[31m-                ui.label(RichText::new("Display name").strong());
+[0m[31m-                ui.label(&entry.display_name);
+[0m[31m-                ui.end_row();
+[0m[31m-                ui.label(RichText::new("Description").strong());
+[0m[31m-                if ui.button("Show").clicked() {
+[0m[31m-                    // Description is shown inline below; this button exists so the
+[0m[31m-                    // layout stays identical to services.msc.
+[0m[31m-                }
+[0m[31m-                ui.end_row();
+[0m[31m-                ui.label(RichText::new("Path to executable").strong());
+[0m[31m-                ui.label(RichText::new(&entry.binary_path).monospace());
+[0m[31m-                ui.end_row();
+[0m[31m-                ui.label(RichText::new("Start type").strong());
+[0m[31m-                ui.label(entry.start_type.map(|x| x.label()).unwrap_or("—"));
+[0m[31m-                ui.end_row();
+[0m[31m-                ui.label(RichText::new("Log On As").strong());
+[0m[31m-                ui.label(if entry.logon_account.is_empty() { "—" } else { &entry.logon_account });
+[0m[31m-                ui.end_row();
+[0m[31m-                ui.label(RichText::new("Process ID").strong());
+[0m[31m-                ui.label(if entry.pid == 0 { "—".to_string() } else { entry.pid.to_string() });
+[0m[31m-                ui.end_row();
+[0m[31m-            });
+[0m[32m+            egui::Grid::new("svc_details")
+[0m[32m+                .num_columns(2)
+[0m[32m+                .spacing([16.0, 6.0])
+[0m[32m+                .show(ui, |ui| {
+[0m[32m+                    ui.label(RichText::new("Service name").strong());
+[0m[32m+                    ui.label(&entry.name);
+[0m[32m+                    ui.end_row();
+[0m[32m+                    ui.label(RichText::new("Display name").strong());
+[0m[32m+                    ui.label(&entry.display_name);
+[0m[32m+                    ui.end_row();
+[0m[32m+                    ui.label(RichText::new("Description").strong());
+[0m[32m+                    if ui.button("Show").clicked() {
+[0m[32m+                        // Description is shown inline below; this button exists so the
+[0m[32m+                        // layout stays identical to services.msc.
+[0m[32m+                    }
+[0m[32m+                    ui.end_row();
+[0m[32m+                    ui.label(RichText::new("Path to executable").strong());
+[0m[32m+                    ui.label(RichText::new(&entry.binary_path).monospace());
+[0m[32m+                    ui.end_row();
+[0m[32m+                    ui.label(RichText::new("Start type").strong());
+[0m[32m+                    ui.label(entry.start_type.map(|x| x.label()).unwrap_or("—"));
+[0m[32m+                    ui.end_row();
+[0m[32m+                    ui.label(RichText::new("Log On As").strong());
+[0m[32m+                    ui.label(if entry.logon_account.is_empty() {
+[0m[32m+                        "—"
+[0m[32m+                    } else {
+[0m[32m+                        &entry.logon_account
+[0m[32m+                    });
+[0m[32m+                    ui.end_row();
+[0m[32m+                    ui.label(RichText::new("Process ID").strong());
+[0m[32m+                    ui.label(if entry.pid == 0 {
+[0m[32m+                        "—".to_string()
+[0m[32m+                    } else {
+[0m[32m+                        entry.pid.to_string()
+[0m[32m+                    });
+[0m[32m+                    ui.end_row();
+[0m[32m+                });
+[0m             if !entry.description.is_empty() {
+                 ui.add_space(6.0);
+                 ui.label(RichText::new("Description").strong());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:310:
+             ui.add_space(8.0);
+             ui.horizontal(|ui| {
+                 let state = entry.state.unwrap_or(ServiceState::Stopped);
+[31m-                if ui.add_enabled(state == ServiceState::Stopped, egui::Button::new("Start")).clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .add_enabled(state == ServiceState::Stopped, egui::Button::new("Start"))
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     self.do_action(ServiceAction::Start);
+                 }
+[31m-                if ui.add_enabled(state == ServiceState::Running && entry.accepts_stop, egui::Button::new("Stop")).clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .add_enabled(
+[0m[32m+                        state == ServiceState::Running && entry.accepts_stop,
+[0m[32m+                        egui::Button::new("Stop"),
+[0m[32m+                    )
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     self.do_action(ServiceAction::Stop);
+                 }
+[31m-                if ui.add_enabled(state == ServiceState::Running && entry.can_pause, egui::Button::new("Pause")).clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .add_enabled(
+[0m[32m+                        state == ServiceState::Running && entry.can_pause,
+[0m[32m+                        egui::Button::new("Pause"),
+[0m[32m+                    )
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     self.do_action(ServiceAction::Pause);
+                 }
+[31m-                if ui.add_enabled(state == ServiceState::Paused, egui::Button::new("Resume")).clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .add_enabled(state == ServiceState::Paused, egui::Button::new("Resume"))
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     self.do_action(ServiceAction::Resume);
+                 }
+                 if ui.button("Properties…").clicked() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:330:
+     }
+ 
+     fn props_modal(&mut self, ctx: &egui::Context) {
+[31m-        let Some(mut dlg) = self.props.take() else { return };
+[0m[32m+        let Some(mut dlg) = self.props.take() else {
+[0m[32m+            return;
+[0m[32m+        };
+[0m         let mut apply = false;
+         let mut cancel = false;
+         egui::Window::new(format!("{} Properties", dlg.display_name))
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:339:
+             .default_width(520.0)
+             .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+             .show(ctx, |ui| {
+[31m-                egui::Grid::new("props_grid").num_columns(2).spacing([12.0, 8.0]).show(ui, |ui| {
+[0m[31m-                    ui.label("Service name:");
+[0m[31m-                    ui.label(RichText::new(&dlg.name).monospace());
+[0m[31m-                    ui.end_row();
+[0m[31m-                    ui.label("Display name:");
+[0m[31m-                    ui.label(&dlg.display_name);
+[0m[31m-                    ui.end_row();
+[0m[31m-                    ui.label("Path to executable:");
+[0m[31m-                    ui.add(egui::TextEdit::singleline(&mut dlg.binary_path).desired_width(380.0));
+[0m[31m-                    ui.end_row();
+[0m[31m-                    ui.label("Startup type:");
+[0m[31m-                    egui::ComboBox::from_id_salt("starttype")
+[0m[31m-                        .selected_text(dlg.start_type.label())
+[0m[31m-                        .show_ui(ui, |ui| {
+[0m[31m-                            for opt in StartType::OPTIONS {
+[0m[31m-                                if ui.selectable_label(dlg.start_type == opt, opt.label()).clicked() {
+[0m[31m-                                    dlg.start_type = opt;
+[0m[32m+                egui::Grid::new("props_grid")
+[0m[32m+                    .num_columns(2)
+[0m[32m+                    .spacing([12.0, 8.0])
+[0m[32m+                    .show(ui, |ui| {
+[0m[32m+                        ui.label("Service name:");
+[0m[32m+                        ui.label(RichText::new(&dlg.name).monospace());
+[0m[32m+                        ui.end_row();
+[0m[32m+                        ui.label("Display name:");
+[0m[32m+                        ui.label(&dlg.display_name);
+[0m[32m+                        ui.end_row();
+[0m[32m+                        ui.label("Path to executable:");
+[0m[32m+                        ui.add(
+[0m[32m+                            egui::TextEdit::singleline(&mut dlg.binary_path).desired_width(380.0),
+[0m[32m+                        );
+[0m[32m+                        ui.end_row();
+[0m[32m+                        ui.label("Startup type:");
+[0m[32m+                        egui::ComboBox::from_id_salt("starttype")
+[0m[32m+                            .selected_text(dlg.start_type.label())
+[0m[32m+                            .show_ui(ui, |ui| {
+[0m[32m+                                for opt in StartType::OPTIONS {
+[0m[32m+                                    if ui
+[0m[32m+                                        .selectable_label(dlg.start_type == opt, opt.label())
+[0m[32m+                                        .clicked()
+[0m[32m+                                    {
+[0m[32m+                                        dlg.start_type = opt;
+[0m[32m+                                    }
+[0m                                 }
+[31m-                            }
+[0m[32m+                            });
+[0m[32m+                        ui.end_row();
+[0m[32m+                        ui.label("Log on as:");
+[0m[32m+                        ui.label(if dlg.logon_account.is_empty() {
+[0m[32m+                            "—"
+[0m[32m+                        } else {
+[0m[32m+                            &dlg.logon_account
+[0m                         });
+[31m-                    ui.end_row();
+[0m[31m-                    ui.label("Log on as:");
+[0m[31m-                    ui.label(if dlg.logon_account.is_empty() { "—" } else { &dlg.logon_account });
+[0m[31m-                    ui.end_row();
+[0m[31m-                });
+[0m[32m+                        ui.end_row();
+[0m[32m+                    });
+[0m                 ui.add_space(8.0);
+                 ui.horizontal(|ui| {
+                     if ui.button("Apply").clicked() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-services\src\app.rs:391:
+                     RichText::new(format!(
+                         "{} services · logged in as {}{} · {}",
+                         self.services.len(),
+[31m-                        if self.user.domain.is_empty() { String::new() } else { format!("{}\\", self.user.domain) },
+[0m[31m-                        if self.user.account.is_empty() { "user".into() } else { self.user.account.clone() },
+[0m[32m+                        if self.user.domain.is_empty() {
+[0m[32m+                            String::new()
+[0m[32m+                        } else {
+[0m[32m+                            format!("{}\\", self.user.domain)
+[0m[32m+                        },
+[0m[32m+                        if self.user.account.is_empty() {
+[0m[32m+                            "user".into()
+[0m[32m+                        } else {
+[0m[32m+                            self.user.account.clone()
+[0m[32m+                        },
+[0m                         self.user.integrity
+                     ))
+                     .small()
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:128:
+ 
+     fn reload_env(&mut self) {
+         self.env.clear();
+[31m-        for name in ["PATH", "TEMP", "TMP", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "SystemRoot", "ComSpec"] {
+[0m[32m+        for name in [
+[0m[32m+            "PATH",
+[0m[32m+            "TEMP",
+[0m[32m+            "TMP",
+[0m[32m+            "USERPROFILE",
+[0m[32m+            "APPDATA",
+[0m[32m+            "LOCALAPPDATA",
+[0m[32m+            "SystemRoot",
+[0m[32m+            "ComSpec",
+[0m[32m+        ] {
+[0m             if let Ok(v) = std::env::var(name) {
+[31m-                self.env.push(EnvVar { scope: "User", name: name.to_string(), value: v });
+[0m[32m+                self.env.push(EnvVar {
+[0m[32m+                    scope: "User",
+[0m[32m+                    name: name.to_string(),
+[0m[32m+                    value: v,
+[0m[32m+                });
+[0m             }
+         }
+[31m-        if let Some(path) = registry::read_machine_string(r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", "Path") {
+[0m[31m-            self.env.push(EnvVar { scope: "System", name: "PATH".into(), value: path });
+[0m[32m+        if let Some(path) = registry::read_machine_string(
+[0m[32m+            r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment",
+[0m[32m+            "Path",
+[0m[32m+        ) {
+[0m[32m+            self.env.push(EnvVar {
+[0m[32m+                scope: "System",
+[0m[32m+                name: "PATH".into(),
+[0m[32m+                value: path,
+[0m[32m+            });
+[0m         }
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:141:
+     fn reload_startup(&mut self) {
+         self.startup.clear();
+         for (root, path, label) in [
+[31m-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKCU Run"),
+[0m[31m-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKLM Run"),
+[0m[32m+            (
+[0m[32m+                Root::CurrentUser,
+[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+[0m[32m+                "HKCU Run",
+[0m[32m+            ),
+[0m[32m+            (
+[0m[32m+                Root::LocalMachine,
+[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+[0m[32m+                "HKLM Run",
+[0m[32m+            ),
+[0m         ] {
+             for (name, ty, data) in registry::enum_values(path, root) {
+                 if ty == 1 || ty == 2 {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:150:
+                         .chunks_exact(2)
+                         .map(|c| u16::from_le_bytes([c[0], c[1]]))
+                         .collect();
+[31m-                    let cmd = String::from_utf16_lossy(&units).trim_end_matches('\0').to_string();
+[0m[31m-                    self.startup.push(StartupRow { name, command: cmd, location: label, enabled: true });
+[0m[32m+                    let cmd = String::from_utf16_lossy(&units)
+[0m[32m+                        .trim_end_matches('\0')
+[0m[32m+                        .to_string();
+[0m[32m+                    self.startup.push(StartupRow {
+[0m[32m+                        name,
+[0m[32m+                        command: cmd,
+[0m[32m+                        location: label,
+[0m[32m+                        enabled: true,
+[0m[32m+                    });
+[0m                 }
+             }
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:158:
+[31m-        self.startup.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+[0m[32m+        self.startup
+[0m[32m+            .sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+[0m     }
+ 
+     fn reload_drivers(&mut self) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:166:
+                     self.drivers.push(DriverRow {
+                         name: s.name,
+                         display: s.display_name,
+[31m-                        state: s.state.map(|x| x.label().to_string()).unwrap_or_else(|| "—".into()),
+[0m[31m-                        start: s.start_type.map(|x| x.label().to_string()).unwrap_or_else(|| "—".into()),
+[0m[32m+                        state: s
+[0m[32m+                            .state
+[0m[32m+                            .map(|x| x.label().to_string())
+[0m[32m+                            .unwrap_or_else(|| "—".into()),
+[0m[32m+                        start: s
+[0m[32m+                            .start_type
+[0m[32m+                            .map(|x| x.label().to_string())
+[0m[32m+                            .unwrap_or_else(|| "—".into()),
+[0m                     });
+                 }
+             }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:174:
+         }
+[31m-        self.drivers.sort_by(|a, b| a.display.to_lowercase().cmp(&b.display.to_lowercase()));
+[0m[32m+        self.drivers
+[0m[32m+            .sort_by(|a, b| a.display.to_lowercase().cmp(&b.display.to_lowercase()));
+[0m     }
+ 
+     fn reload_power(&mut self) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:181:
+         let path = r"SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes";
+         if let Ok(key) = registry::Key::open(Root::LocalMachine, path) {
+             for guid in key.subkeys() {
+[31m-                let friendly = registry::read_machine_string(
+[0m[31m-                    &format!(r"{path}\{guid}"),
+[0m[31m-                    "FriendlyName",
+[0m[31m-                )
+[0m[31m-                .unwrap_or_else(|| guid.clone());
+[0m[32m+                let friendly =
+[0m[32m+                    registry::read_machine_string(&format!(r"{path}\{guid}"), "FriendlyName")
+[0m[32m+                        .unwrap_or_else(|| guid.clone());
+[0m                 let active = registry::read_machine_string(path, "ActivePowerScheme")
+                     .map(|a| a.eq_ignore_ascii_case(&guid))
+                     .unwrap_or(false);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:213:
+         let mut r = String::new();
+         r.push_str("WinRust support report\n======================\n\n");
+         r.push_str(&format!("Generated: {}\n", chrono_like_now()));
+[31m-        r.push_str(&format!("OS: {} build {} (UBR {}) {}\n", self.os.product_name, self.os.build, self.os.ubr, self.os.display_version));
+[0m[31m-        r.push_str(&format!("Host: {} domain {}\n", self.os.hostname, self.os.domain));
+[0m[31m-        r.push_str(&format!("CPU: {} logical, arch {}\n", self.cpu.logical, self.cpu.arch));
+[0m[31m-        r.push_str(&format!("RAM: {} of {}\n", system::MemoryStatus::used_phys(&self.memory), self.memory.total_phys));
+[0m         r.push_str(&format!(
+[32m+            "OS: {} build {} (UBR {}) {}\n",
+[0m[32m+            self.os.product_name, self.os.build, self.os.ubr, self.os.display_version
+[0m[32m+        ));
+[0m[32m+        r.push_str(&format!(
+[0m[32m+            "Host: {} domain {}\n",
+[0m[32m+            self.os.hostname, self.os.domain
+[0m[32m+        ));
+[0m[32m+        r.push_str(&format!(
+[0m[32m+            "CPU: {} logical, arch {}\n",
+[0m[32m+            self.cpu.logical, self.cpu.arch
+[0m[32m+        ));
+[0m[32m+        r.push_str(&format!(
+[0m[32m+            "RAM: {} of {}\n",
+[0m[32m+            system::MemoryStatus::used_phys(&self.memory),
+[0m[32m+            self.memory.total_phys
+[0m[32m+        ));
+[0m[32m+        r.push_str(&format!(
+[0m             "User: {}\\{} ({}, {})\n",
+[31m-            self.user.domain, self.user.account, self.user.integrity,
+[0m[31m-            if self.user.elevated { "elevated" } else { "not elevated" }
+[0m[32m+            self.user.domain,
+[0m[32m+            self.user.account,
+[0m[32m+            self.user.integrity,
+[0m[32m+            if self.user.elevated {
+[0m[32m+                "elevated"
+[0m[32m+            } else {
+[0m[32m+                "not elevated"
+[0m[32m+            }
+[0m         ));
+         r.push_str(&format!("Uptime: {} ms\n\n", system::uptime_ms()));
+         r.push_str("Top processes by memory:\n");
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:227:
+         let mut procs = process::enumerate().unwrap_or_default();
+         procs.sort_by(|a, b| b.private_bytes.cmp(&a.private_bytes));
+         for p in procs.iter().take(15) {
+[31m-            r.push_str(&format!("  {:>6}  {:>10} KB  {}\n", p.pid, p.private_bytes / 1024, p.name));
+[0m[32m+            r.push_str(&format!(
+[0m[32m+                "  {:>6}  {:>10} KB  {}\n",
+[0m[32m+                p.pid,
+[0m[32m+                p.private_bytes / 1024,
+[0m[32m+                p.name
+[0m[32m+            ));
+[0m         }
+         r.push_str("\nServices not running (auto-start):\n");
+         if let Ok(scm) = ScManager::connect() {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:256:
+         ui.add_space(6.0);
+         ui.separator();
+         for s in Section::ALL {
+[31m-            if ui.selectable_label(self.section == s, format!("  {}", s.label())).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .selectable_label(self.section == s, format!("  {}", s.label()))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 self.section = s;
+             }
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:270:
+     fn overview(&mut self, ui: &mut egui::Ui) {
+         ui.heading("System overview");
+         ui.separator();
+[31m-        egui::Grid::new("overview_grid").num_columns(2).spacing([24.0, 8.0]).show(ui, |ui| {
+[0m[31m-            ui.label(RichText::new("Operating system").strong());
+[0m[31m-            ui.label(system::os_summary());
+[0m[31m-            ui.end_row();
+[0m[31m-            ui.label(RichText::new("Build").strong());
+[0m[31m-            ui.label(format!("{}.{}", self.os.build, self.os.ubr));
+[0m[31m-            ui.end_row();
+[0m[31m-            ui.label(RichText::new("Architecture").strong());
+[0m[31m-            ui.label(self.cpu.arch);
+[0m[31m-            ui.end_row();
+[0m[31m-            ui.label(RichText::new("Logical processors").strong());
+[0m[31m-            ui.label(self.cpu.logical.to_string());
+[0m[31m-            ui.end_row();
+[0m[31m-            ui.label(RichText::new("Memory").strong());
+[0m[31m-            ui.label(format!(
+[0m[31m-                "{} in use of {} ({:.0}%)",
+[0m[31m-                system::MemoryStatus::used_phys(&self.memory) / 1_048_576,
+[0m[31m-                self.memory.total_phys / 1_048_576,
+[0m[31m-                self.memory.used_percent()
+[0m[31m-            ));
+[0m[31m-            ui.end_row();
+[0m[31m-            ui.label(RichText::new("Uptime").strong());
+[0m[31m-            let up = system::uptime_ms() / 1000;
+[0m[31m-            ui.label(format!("{}d {}h {}m", up / 86400, (up % 86400) / 3600, (up % 3600) / 60));
+[0m[31m-            ui.end_row();
+[0m[31m-            ui.label(RichText::new("Elevation").strong());
+[0m[31m-            ui.label(if self.user.elevated {
+[0m[31m-                RichText::new("Administrator").color(Color32::from_rgb(140, 220, 140))
+[0m[31m-            } else {
+[0m[31m-                RichText::new("Standard user").color(Color32::from_rgb(230, 200, 120))
+[0m[32m+        egui::Grid::new("overview_grid")
+[0m[32m+            .num_columns(2)
+[0m[32m+            .spacing([24.0, 8.0])
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                ui.label(RichText::new("Operating system").strong());
+[0m[32m+                ui.label(system::os_summary());
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(RichText::new("Build").strong());
+[0m[32m+                ui.label(format!("{}.{}", self.os.build, self.os.ubr));
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(RichText::new("Architecture").strong());
+[0m[32m+                ui.label(self.cpu.arch);
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(RichText::new("Logical processors").strong());
+[0m[32m+                ui.label(self.cpu.logical.to_string());
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(RichText::new("Memory").strong());
+[0m[32m+                ui.label(format!(
+[0m[32m+                    "{} in use of {} ({:.0}%)",
+[0m[32m+                    system::MemoryStatus::used_phys(&self.memory) / 1_048_576,
+[0m[32m+                    self.memory.total_phys / 1_048_576,
+[0m[32m+                    self.memory.used_percent()
+[0m[32m+                ));
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(RichText::new("Uptime").strong());
+[0m[32m+                let up = system::uptime_ms() / 1000;
+[0m[32m+                ui.label(format!(
+[0m[32m+                    "{}d {}h {}m",
+[0m[32m+                    up / 86400,
+[0m[32m+                    (up % 86400) / 3600,
+[0m[32m+                    (up % 3600) / 60
+[0m[32m+                ));
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(RichText::new("Elevation").strong());
+[0m[32m+                ui.label(if self.user.elevated {
+[0m[32m+                    RichText::new("Administrator").color(Color32::from_rgb(140, 220, 140))
+[0m[32m+                } else {
+[0m[32m+                    RichText::new("Standard user").color(Color32::from_rgb(230, 200, 120))
+[0m[32m+                });
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(RichText::new("Account").strong());
+[0m[32m+                ui.label(format!("{}\\{}", self.user.domain, self.user.account));
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(RichText::new("SID").strong());
+[0m[32m+                ui.label(RichText::new(&self.user.sid).monospace().small());
+[0m[32m+                ui.end_row();
+[0m             });
+[31m-            ui.end_row();
+[0m[31m-            ui.label(RichText::new("Account").strong());
+[0m[31m-            ui.label(format!("{}\\{}", self.user.domain, self.user.account));
+[0m[31m-            ui.end_row();
+[0m[31m-            ui.label(RichText::new("SID").strong());
+[0m[31m-            ui.label(RichText::new(&self.user.sid).monospace().small());
+[0m[31m-            ui.end_row();
+[0m[31m-        });
+[0m         ui.add_space(12.0);
+         if ui.button("Re-open Task Manager components").clicked() {
+             let _ = process::enumerate();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:324:
+ 
+     fn environment(&mut self, ui: &mut egui::Ui) {
+         ui.heading("Environment variables");
+[31m-        ui.label(RichText::new("Edit PATH and other variables; changes are written through to the registry.").small().weak());
+[0m[32m+        ui.label(
+[0m[32m+            RichText::new(
+[0m[32m+                "Edit PATH and other variables; changes are written through to the registry.",
+[0m[32m+            )
+[0m[32m+            .small()
+[0m[32m+            .weak(),
+[0m[32m+        );
+[0m         ui.separator();
+         let mut edit: Option<(usize, String)> = None;
+[31m-        egui::ScrollArea::vertical().max_height(380.0).show(ui, |ui| {
+[0m[31m-            egui::Grid::new("env_grid").num_columns(3).striped(true).show(ui, |ui| {
+[0m[31m-                ui.label(RichText::new("Scope").strong());
+[0m[31m-                ui.label(RichText::new("Name").strong());
+[0m[31m-                ui.label(RichText::new("Value").strong());
+[0m[31m-                ui.end_row();
+[0m[31m-                for (i, var) in self.env.iter().enumerate() {
+[0m[31m-                    ui.label(var.scope);
+[0m[31m-                    ui.label(RichText::new(&var.name).monospace());
+[0m[31m-                    ui.horizontal(|ui| {
+[0m[31m-                        ui.label(RichText::new(truncate(&var.value, 80)).small());
+[0m[31m-                        if ui.small_button("Edit").clicked() {
+[0m[31m-                            edit = Some((i, var.value.clone()));
+[0m[32m+        egui::ScrollArea::vertical()
+[0m[32m+            .max_height(380.0)
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                egui::Grid::new("env_grid")
+[0m[32m+                    .num_columns(3)
+[0m[32m+                    .striped(true)
+[0m[32m+                    .show(ui, |ui| {
+[0m[32m+                        ui.label(RichText::new("Scope").strong());
+[0m[32m+                        ui.label(RichText::new("Name").strong());
+[0m[32m+                        ui.label(RichText::new("Value").strong());
+[0m[32m+                        ui.end_row();
+[0m[32m+                        for (i, var) in self.env.iter().enumerate() {
+[0m[32m+                            ui.label(var.scope);
+[0m[32m+                            ui.label(RichText::new(&var.name).monospace());
+[0m[32m+                            ui.horizontal(|ui| {
+[0m[32m+                                ui.label(RichText::new(truncate(&var.value, 80)).small());
+[0m[32m+                                if ui.small_button("Edit").clicked() {
+[0m[32m+                                    edit = Some((i, var.value.clone()));
+[0m[32m+                                }
+[0m[32m+                            });
+[0m[32m+                            ui.end_row();
+[0m                         }
+                     });
+[31m-                    ui.end_row();
+[0m[31m-                }
+[0m             });
+[31m-        });
+[0m         if let Some((i, value)) = edit {
+             self.env_edit = Some((i, value));
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:355:
+                 .resizable(true)
+                 .default_width(700.0)
+                 .show(ui.ctx(), |ui| {
+[31m-                    ui.add(egui::TextEdit::multiline(&mut value).desired_rows(6).desired_width(660.0));
+[0m[32m+                    ui.add(
+[0m[32m+                        egui::TextEdit::multiline(&mut value)
+[0m[32m+                            .desired_rows(6)
+[0m[32m+                            .desired_width(660.0),
+[0m[32m+                    );
+[0m                     ui.horizontal(|ui| {
+                         if ui.button("Save").clicked() {
+                             let name = self.env[i].name.clone();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:363:
+                             let result = if scope == "User" {
+                                 registry::set_user_env(&name, &value)
+                             } else {
+[31m-                                match registry::open_for_write(Root::LocalMachine, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment") {
+[0m[32m+                                match registry::open_for_write(
+[0m[32m+                                    Root::LocalMachine,
+[0m[32m+                                    r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment",
+[0m[32m+                                ) {
+[0m                                     Ok(key) => key.set_string(&name, &value),
+                                     Err(e) => Err(e),
+                                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:434:
+ 
+     fn power_section(&mut self, ui: &mut egui::Ui) {
+         ui.heading("Power plans");
+[31m-        ui.label(RichText::new("Switching plans writes ActivePowerScheme and broadcasts the change.").small().weak());
+[0m[32m+        ui.label(
+[0m[32m+            RichText::new("Switching plans writes ActivePowerScheme and broadcasts the change.")
+[0m[32m+                .small()
+[0m[32m+                .weak(),
+[0m[32m+        );
+[0m         ui.separator();
+         let mut pick: Option<String> = None;
+         for (guid, name, active) in &self.power_plans {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:454:
+         ui.label(RichText::new("Session power").strong());
+         egui::Grid::new("power_grid").num_columns(2).show(ui, |ui| {
+             ui.label("Battery present:");
+[31m-            ui.label(if system::pnp_battery_present() { "yes" } else { "no" });
+[0m[32m+            ui.label(if system::pnp_battery_present() {
+[0m[32m+                "yes"
+[0m[32m+            } else {
+[0m[32m+                "no"
+[0m[32m+            });
+[0m             ui.end_row();
+             ui.label("Idle time:");
+             ui.label(format!("{} s", system::idle_seconds().unwrap_or(0)));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:480:
+             ui.label(&self.os.hostname);
+             ui.end_row();
+             ui.label(RichText::new("Domain").strong());
+[31m-            ui.label(if self.os.domain.is_empty() { "—" } else { &self.os.domain });
+[0m[32m+            ui.label(if self.os.domain.is_empty() {
+[0m[32m+                "—"
+[0m[32m+            } else {
+[0m[32m+                &self.os.domain
+[0m[32m+            });
+[0m             ui.end_row();
+         });
+         ui.add_space(8.0);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:494:
+         ui.label(RichText::new("Enumerated from the kernel/service database — the same list Device Manager's 'drivers' tab uses.").small().weak());
+         ui.separator();
+         let mut filter = String::new();
+[31m-        let filter_copy = ui.data(|d| d.get_temp::<String>(egui::Id::new("kernel_filter"))).unwrap_or_default();
+[0m[32m+        let filter_copy = ui
+[0m[32m+            .data(|d| d.get_temp::<String>(egui::Id::new("kernel_filter")))
+[0m[32m+            .unwrap_or_default();
+[0m         filter.push_str(&filter_copy);
+         ui.horizontal(|ui| {
+             ui.add(egui::TextEdit::singleline(&mut filter).hint_text("🔍 Filter drivers"));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:508:
+         let rows: Vec<&DriverRow> = self
+             .drivers
+             .iter()
+[31m-            .filter(|d| needle.is_empty() || d.display.to_lowercase().contains(&needle) || d.name.to_lowercase().contains(&needle))
+[0m[32m+            .filter(|d| {
+[0m[32m+                needle.is_empty()
+[0m[32m+                    || d.display.to_lowercase().contains(&needle)
+[0m[32m+                    || d.name.to_lowercase().contains(&needle)
+[0m[32m+            })
+[0m             .collect();
+         let mut table = TableBuilder::new(ui)
+             .striped(true)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:535:
+                     ui.label(RichText::new(&d.name).monospace().small());
+                 });
+                 row.col(|ui| {
+[31m-                    let color = if d.state == "Running" { Color32::from_rgb(120, 220, 120) } else { Color32::GRAY };
+[0m[32m+                    let color = if d.state == "Running" {
+[0m[32m+                        Color32::from_rgb(120, 220, 120)
+[0m[32m+                    } else {
+[0m[32m+                        Color32::GRAY
+[0m[32m+                    };
+[0m                     ui.label(RichText::new(&d.state).color(color));
+                 });
+                 row.col(|ui| {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:571:
+         ui.separator();
+         let report = self.report.clone();
+         egui::ScrollArea::both().show(ui, |ui| {
+[31m-            ui.add(egui::TextEdit::multiline(&mut report.as_str()).desired_width(f32::INFINITY).desired_rows(28).font(egui::TextStyle::Monospace));
+[0m[32m+            ui.add(
+[0m[32m+                egui::TextEdit::multiline(&mut report.as_str())
+[0m[32m+                    .desired_width(f32::INFINITY)
+[0m[32m+                    .desired_rows(28)
+[0m[32m+                    .font(egui::TextStyle::Monospace),
+[0m[32m+            );
+[0m         });
+     }
+ }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:587:
+                     ui.label(RichText::new(&self.status).small());
+                 }
+                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+[31m-                    ui.label(RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION"))).small().weak());
+[0m[32m+                    ui.label(
+[0m[32m+                        RichText::new(format!("WinRust {}", env!("CARGO_PKG_VERSION")))
+[0m[32m+                            .small()
+[0m[32m+                            .weak(),
+[0m[32m+                    );
+[0m                 });
+             });
+         });
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:597:
+             .width_range(170.0..=320.0)
+             .show(ctx, |ui| self.sidebar(ui));
+         egui::CentralPanel::default().show(ctx, |ui| {
+[31m-            egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| match self.section {
+[0m[31m-                Section::Overview => self.overview(ui),
+[0m[31m-                Section::Environment => self.environment(ui),
+[0m[31m-                Section::Startup => self.startup_section(ui),
+[0m[31m-                Section::Power => self.power_section(ui),
+[0m[31m-                Section::Network => self.network_section(ui),
+[0m[31m-                Section::Kernel => self.kernel_section(ui),
+[0m[31m-                Section::Support => self.support_section(ui),
+[0m[31m-            });
+[0m[32m+            egui::ScrollArea::vertical()
+[0m[32m+                .auto_shrink([false, false])
+[0m[32m+                .show(ui, |ui| match self.section {
+[0m[32m+                    Section::Overview => self.overview(ui),
+[0m[32m+                    Section::Environment => self.environment(ui),
+[0m[32m+                    Section::Startup => self.startup_section(ui),
+[0m[32m+                    Section::Power => self.power_section(ui),
+[0m[32m+                    Section::Network => self.network_section(ui),
+[0m[32m+                    Section::Kernel => self.kernel_section(ui),
+[0m[32m+                    Section::Support => self.support_section(ui),
+[0m[32m+                });
+[0m         });
+         ctx.request_repaint_after(Duration::from_millis(1000));
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:45:
+             Tab::Services => "Services",
+         }
+     }
+[31m-    const ALL: [Tab; 6] = [Tab::Processes, Tab::Performance, Tab::Startup, Tab::Users, Tab::Network, Tab::Services];
+[0m[32m+    const ALL: [Tab; 6] = [
+[0m[32m+        Tab::Processes,
+[0m[32m+        Tab::Performance,
+[0m[32m+        Tab::Startup,
+[0m[32m+        Tab::Users,
+[0m[32m+        Tab::Network,
+[0m[32m+        Tab::Services,
+[0m[32m+    ];
+[0m }
+ 
+ /// One row with computed CPU%, grouped the way Task Manager groups by app.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:107:
+                     _ => 0.0,
+                 };
+                 let group = group_key(&p);
+[31m-                rows.push(Row { info: p, cpu_percent, group, ..Default::default() });
+[0m[32m+                rows.push(Row {
+[0m[32m+                    info: p,
+[0m[32m+                    cpu_percent,
+[0m[32m+                    group,
+[0m[32m+                    ..Default::default()
+[0m[32m+                });
+[0m             }
+             prev_proc = new_proc;
+             prev_cpu = now_cpu;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:218:
+         let mut out = Vec::new();
+         // Run keys
+         for (root, path, label) in [
+[31m-            (Root::CurrentUser, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKCU Run"),
+[0m[31m-            (Root::LocalMachine, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "HKLM Run"),
+[0m[32m+            (
+[0m[32m+                Root::CurrentUser,
+[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+[0m[32m+                "HKCU Run",
+[0m[32m+            ),
+[0m[32m+            (
+[0m[32m+                Root::LocalMachine,
+[0m[32m+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+[0m[32m+                "HKLM Run",
+[0m[32m+            ),
+[0m         ] {
+             for (name, ty, data) in registry::enum_values(path, root) {
+                 let cmd = if ty == 1 || ty == 2 {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:321:
+             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                 if let Some(sel) = self.selected {
+                     if let Some(row) = self.snapshot.rows.iter().find(|r| r.info.pid == sel) {
+[31m-                        ui.label(RichText::new(format!("{}  ·  PID {}", row.info.name, sel)).small().weak());
+[0m[32m+                        ui.label(
+[0m[32m+                            RichText::new(format!("{}  ·  PID {}", row.info.name, sel))
+[0m[32m+                                .small()
+[0m[32m+                                .weak(),
+[0m[32m+                        );
+[0m                     }
+                 }
+                 ui.label(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:338:
+ 
+     fn processes_tab(&mut self, ui: &mut egui::Ui) {
+         ui.horizontal(|ui| {
+[31m-            ui.add_sized([240.0, 22.0], egui::TextEdit::singleline(&mut self.search).hint_text("🔍 Search processes"));
+[0m[32m+            ui.add_sized(
+[0m[32m+                [240.0, 22.0],
+[0m[32m+                egui::TextEdit::singleline(&mut self.search).hint_text("🔍 Search processes"),
+[0m[32m+            );
+[0m             ui.checkbox(&mut self.group_by_app, "Group by app");
+             ui.separator();
+[31m-            let selected = self.selected.and_then(|pid| self.snapshot.rows.iter().find(|r| r.info.pid == pid).cloned());
+[0m[32m+            let selected = self.selected.and_then(|pid| {
+[0m[32m+                self.snapshot
+[0m[32m+                    .rows
+[0m[32m+                    .iter()
+[0m[32m+                    .find(|r| r.info.pid == pid)
+[0m[32m+                    .cloned()
+[0m[32m+            });
+[0m             let can_end = selected.is_some();
+[31m-            if ui.add_enabled(can_end, egui::Button::new("End task")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(can_end, egui::Button::new("End task"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 if let Some(row) = &selected {
+                     self.confirm_kill = Some((row.info.pid, row.info.name.clone()));
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:350:
+             }
+[31m-            if ui.add_enabled(can_end, egui::Button::new("Suspend")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(can_end, egui::Button::new("Suspend"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 if let Some(row) = &selected {
+                     match process::suspend(row.info.pid) {
+[31m-                        Ok(n) => self.status = format!("Suspended {n} threads of {}", row.info.name),
+[0m[32m+                        Ok(n) => {
+[0m[32m+                            self.status = format!("Suspended {n} threads of {}", row.info.name)
+[0m[32m+                        }
+[0m                         Err(e) => self.status = format!("Suspend failed: {e}"),
+                     }
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:358:
+             }
+[31m-            if ui.add_enabled(can_end, egui::Button::new("Resume")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(can_end, egui::Button::new("Resume"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 if let Some(row) = &selected {
+                     match process::resume(row.info.pid) {
+                         Ok(n) => self.status = format!("Resumed {n} threads of {}", row.info.name),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:370:
+                 .show_ui(ui, |ui| {
+                     if let Some(row) = &selected {
+                         for p in process::ALL_PRIORITIES {
+[31m-                            if ui.selectable_label(row.info.priority == p, p.label()).clicked() {
+[0m[32m+                            if ui
+[0m[32m+                                .selectable_label(row.info.priority == p, p.label())
+[0m[32m+                                .clicked()
+[0m[32m+                            {
+[0m                                 match process::set_priority(row.info.pid, p) {
+[31m-                                    Ok(()) => self.status = format!("{} -> {}", row.info.name, p.label()),
+[0m[32m+                                    Ok(()) => {
+[0m[32m+                                        self.status = format!("{} -> {}", row.info.name, p.label())
+[0m[32m+                                    }
+[0m                                     Err(e) => self.status = format!("Priority change failed: {e}"),
+                                 }
+                             }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:381:
+                         ui.label("Select a process first");
+                     }
+                 });
+[31m-            if ui.add_enabled(can_end, egui::Button::new("Open file location")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(can_end, egui::Button::new("Open file location"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 if let Some(row) = &selected {
+                     if !row.info.exe_path.is_empty() {
+                         let _ = shell::open(std::path::Path::new(&row.info.exe_path));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:388:
+                     }
+                 }
+             }
+[31m-            if ui.add_enabled(can_end, egui::Button::new("Properties")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .add_enabled(can_end, egui::Button::new("Properties"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 if let Some(row) = &selected {
+                     if !row.info.exe_path.is_empty() {
+                         let _ = shell::show_properties(&row.info.exe_path);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:407:
+             .snapshot
+             .rows
+             .iter()
+[31m-            .filter(|r| needle.is_empty() || r.info.name.to_lowercase().contains(&needle) || r.info.pid.to_string() == needle)
+[0m[32m+            .filter(|r| {
+[0m[32m+                needle.is_empty()
+[0m[32m+                    || r.info.name.to_lowercase().contains(&needle)
+[0m[32m+                    || r.info.pid.to_string() == needle
+[0m[32m+            })
+[0m             .cloned()
+             .collect();
+         // Sort according to the selected column.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:414:
+         match self.sort_by {
+[31m-            SortBy::Name => display.sort_by(|a, b| a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase())),
+[0m[31m-            SortBy::Cpu => display.sort_by(|a, b| b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)),
+[0m[31m-            SortBy::Memory => display.sort_by(|a, b| b.info.private_bytes.cmp(&a.info.private_bytes)),
+[0m[32m+            SortBy::Name => {
+[0m[32m+                display.sort_by(|a, b| a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase()))
+[0m[32m+            }
+[0m[32m+            SortBy::Cpu => display.sort_by(|a, b| {
+[0m[32m+                b.cpu_percent
+[0m[32m+                    .partial_cmp(&a.cpu_percent)
+[0m[32m+                    .unwrap_or(std::cmp::Ordering::Equal)
+[0m[32m+            }),
+[0m[32m+            SortBy::Memory => {
+[0m[32m+                display.sort_by(|a, b| b.info.private_bytes.cmp(&a.info.private_bytes))
+[0m[32m+            }
+[0m             SortBy::Disk => {}
+             SortBy::Network => {}
+             SortBy::Pid => display.sort_by_key(|r| r.info.pid),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:424:
+         }
+         // Group by app when requested.
+         if self.group_by_app {
+[31m-            display.sort_by(|a, b| a.group.cmp(&b.group).then(b.cpu_percent.partial_cmp(&a.cpu_percent).unwrap_or(std::cmp::Ordering::Equal)));
+[0m[32m+            display.sort_by(|a, b| {
+[0m[32m+                a.group.cmp(&b.group).then(
+[0m[32m+                    b.cpu_percent
+[0m[32m+                        .partial_cmp(&a.cpu_percent)
+[0m[32m+                        .unwrap_or(std::cmp::Ordering::Equal),
+[0m[32m+                )
+[0m[32m+            });
+[0m         }
+ 
+         let total_cpu: f32 = self.snapshot.cpu_percent;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:431:
+         let total_mem = self.snapshot.memory.used_phys();
+         ui.horizontal(|ui| {
+[31m-            ui.label(RichText::new(format!("CPU {total_cpu:.1}%  ·  Memory {}", used_mem_text(total_mem))).strong());
+[0m[31m-            ui.label(RichText::new(format!("({:.1}%)", self.snapshot.memory.used_percent())).weak());
+[0m[32m+            ui.label(
+[0m[32m+                RichText::new(format!(
+[0m[32m+                    "CPU {total_cpu:.1}%  ·  Memory {}",
+[0m[32m+                    used_mem_text(total_mem)
+[0m[32m+                ))
+[0m[32m+                .strong(),
+[0m[32m+            );
+[0m[32m+            ui.label(
+[0m[32m+                RichText::new(format!("({:.1}%)", self.snapshot.memory.used_percent())).weak(),
+[0m[32m+            );
+[0m         });
+ 
+         let mut clicked: Option<u32> = None;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:460:
+                 ("Exe", SortBy::Name),
+             ] {
+                 header.col(|ui| {
+[31m-                    let arrow = if self.sort_by == key { if self.sort_desc { " ▼" } else { " ▲" } } else { "" };
+[0m[31m-                    if ui.add(egui::Button::new(RichText::new(format!("{title}{arrow}")).strong()).frame(false)).clicked() {
+[0m[32m+                    let arrow = if self.sort_by == key {
+[0m[32m+                        if self.sort_desc {
+[0m[32m+                            " ▼"
+[0m[32m+                        } else {
+[0m[32m+                            " ▲"
+[0m[32m+                        }
+[0m[32m+                    } else {
+[0m[32m+                        ""
+[0m[32m+                    };
+[0m[32m+                    if ui
+[0m[32m+                        .add(
+[0m[32m+                            egui::Button::new(RichText::new(format!("{title}{arrow}")).strong())
+[0m[32m+                                .frame(false),
+[0m[32m+                        )
+[0m[32m+                        .clicked()
+[0m[32m+                    {
+[0m                         sort_col = Some(key);
+                     }
+                 });
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:492:
+                             let _ = process::resume(r.info.pid);
+                             ui.close_menu();
+                         }
+[31m-                        if !r.info.exe_path.is_empty() && ui.button("Open file location").clicked() {
+[0m[32m+                        if !r.info.exe_path.is_empty() && ui.button("Open file location").clicked()
+[0m[32m+                        {
+[0m                             let _ = shell::open(std::path::Path::new(&r.info.exe_path));
+                             ui.close_menu();
+                         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:510:
+                     });
+                 });
+                 row.col(|ui| {
+[31m-                    let text = if r.info.access == AccessLevel::Denied { "Access denied" } else { "Running" };
+[0m[32m+                    let text = if r.info.access == AccessLevel::Denied {
+[0m[32m+                        "Access denied"
+[0m[32m+                    } else {
+[0m[32m+                        "Running"
+[0m[32m+                    };
+[0m                     ui.label(RichText::new(text).weak());
+                 });
+                 row.col(|ui| {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:517:
+                     let color = heat_color(r.cpu_percent, 10.0);
+[31m-                    ui.label(RichText::new(format!("{:.1}%", r.cpu_percent)).color(color).monospace());
+[0m[32m+                    ui.label(
+[0m[32m+                        RichText::new(format!("{:.1}%", r.cpu_percent))
+[0m[32m+                            .color(color)
+[0m[32m+                            .monospace(),
+[0m[32m+                    );
+[0m                 });
+                 row.col(|ui| {
+                     ui.label(RichText::new(memory_mb(r.info.private_bytes)).monospace());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:558:
+         ui.columns(2, |cols| {
+             cols[0].heading("CPU");
+             self.graph(&mut cols[0], &self.history_cpu.clone(), 100.0, "CPU");
+[31m-            cols[0].label(format!("{} · {} logical processors", self.cpu_info.arch, self.cpu_info.logical));
+[0m[31m-            cols[0].label(format!("Uptime: {}", format_uptime(self.snapshot.uptime_ms)));
+[0m[32m+            cols[0].label(format!(
+[0m[32m+                "{} · {} logical processors",
+[0m[32m+                self.cpu_info.arch, self.cpu_info.logical
+[0m[32m+            ));
+[0m[32m+            cols[0].label(format!(
+[0m[32m+                "Uptime: {}",
+[0m[32m+                format_uptime(self.snapshot.uptime_ms)
+[0m[32m+            ));
+[0m             cols[0].separator();
+             cols[0].heading("Memory");
+             self.graph(&mut cols[1], &self.history_mem.clone(), 100.0, "Memory");
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:566:
+             let m = self.snapshot.memory;
+[31m-            cols[0].label(format!("In use: {} ({:.0}%)", used_mem_text(m.used_phys()), m.used_percent()));
+[0m[32m+            cols[0].label(format!(
+[0m[32m+                "In use: {} ({:.0}%)",
+[0m[32m+                used_mem_text(m.used_phys()),
+[0m[32m+                m.used_percent()
+[0m[32m+            ));
+[0m             cols[0].label(format!("Available: {}", used_mem_text(m.avail_phys)));
+             cols[0].label(format!("Total: {}", used_mem_text(m.total_phys)));
+             if let Some(ram) = self.ram_installed {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:571:
+                 cols[0].label(format!("Installed RAM: {}", used_mem_text(ram)));
+             }
+[31m-            cols[0].label(format!("Committed: {}", used_mem_text(m.total_page_file - m.avail_page_file)));
+[0m[32m+            cols[0].label(format!(
+[0m[32m+                "Committed: {}",
+[0m[32m+                used_mem_text(m.total_page_file - m.avail_page_file)
+[0m[32m+            ));
+[0m         });
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:648:
+     fn users_tab(&mut self, ui: &mut egui::Ui) {
+         ui.heading("Users");
+         ui.separator();
+[31m-        egui::Grid::new("users_grid").num_columns(4).striped(true).show(ui, |ui| {
+[0m[31m-            ui.label(RichText::new("User").strong());
+[0m[31m-            ui.label(RichText::new("Session").strong());
+[0m[31m-            ui.label(RichText::new("Integrity").strong());
+[0m[31m-            ui.label(RichText::new("Elevated").strong());
+[0m[31m-            ui.end_row();
+[0m[31m-            ui.label(format!("{}\\{}", self.user.domain, self.user.account));
+[0m[31m-            ui.label("Console (current)");
+[0m[31m-            ui.label(self.user.integrity);
+[0m[31m-            ui.label(if self.user.elevated { "Yes" } else { "No" });
+[0m[31m-            ui.end_row();
+[0m[31m-        });
+[0m[32m+        egui::Grid::new("users_grid")
+[0m[32m+            .num_columns(4)
+[0m[32m+            .striped(true)
+[0m[32m+            .show(ui, |ui| {
+[0m[32m+                ui.label(RichText::new("User").strong());
+[0m[32m+                ui.label(RichText::new("Session").strong());
+[0m[32m+                ui.label(RichText::new("Integrity").strong());
+[0m[32m+                ui.label(RichText::new("Elevated").strong());
+[0m[32m+                ui.end_row();
+[0m[32m+                ui.label(format!("{}\\{}", self.user.domain, self.user.account));
+[0m[32m+                ui.label("Console (current)");
+[0m[32m+                ui.label(self.user.integrity);
+[0m[32m+                ui.label(if self.user.elevated { "Yes" } else { "No" });
+[0m[32m+                ui.end_row();
+[0m[32m+            });
+[0m         ui.add_space(10.0);
+[31m-        ui.label(RichText::new("Sessions are enumerated from the local session table.").small().weak());
+[0m[32m+        ui.label(
+[0m[32m+            RichText::new("Sessions are enumerated from the local session table.")
+[0m[32m+                .small()
+[0m[32m+                .weak(),
+[0m[32m+        );
+[0m         for s in enumerate_sessions() {
+             ui.label(s);
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:684:
+         let mut pids: Vec<u32> = by_pid.keys().copied().collect();
+         pids.sort();
+         egui::ScrollArea::vertical().show(ui, |ui| {
+[31m-            egui::Grid::new("net_grid").num_columns(4).striped(true).show(ui, |ui| {
+[0m[31m-                ui.label(RichText::new("PID").strong());
+[0m[31m-                ui.label(RichText::new("Process").strong());
+[0m[31m-                ui.label(RichText::new("Connections").strong());
+[0m[31m-                ui.label(RichText::new("Local ports").strong());
+[0m[31m-                ui.end_row();
+[0m[31m-                for pid in pids {
+[0m[31m-                    let (count, ports) = &by_pid[&pid];
+[0m[31m-                    let name = self
+[0m[31m-                        .snapshot
+[0m[31m-                        .rows
+[0m[31m-                        .iter()
+[0m[31m-                        .find(|r| r.info.pid == pid)
+[0m[31m-                        .map(|r| r.info.name.clone())
+[0m[31m-                        .unwrap_or_else(|| "?".into());
+[0m[31m-                    ui.label(pid.to_string());
+[0m[31m-                    ui.label(name);
+[0m[31m-                    ui.label(count.to_string());
+[0m[31m-                    let mut p = ports.clone();
+[0m[31m-                    p.sort();
+[0m[31m-                    p.dedup();
+[0m[31m-                    let port_list = p.iter().take(8).map(|x| x.to_string()).collect::<Vec<_>>().join(", ");
+[0m[31m-                    ui.label(port_list);
+[0m[32m+            egui::Grid::new("net_grid")
+[0m[32m+                .num_columns(4)
+[0m[32m+                .striped(true)
+[0m[32m+                .show(ui, |ui| {
+[0m[32m+                    ui.label(RichText::new("PID").strong());
+[0m[32m+                    ui.label(RichText::new("Process").strong());
+[0m[32m+                    ui.label(RichText::new("Connections").strong());
+[0m[32m+                    ui.label(RichText::new("Local ports").strong());
+[0m                     ui.end_row();
+[31m-                }
+[0m[31m-            });
+[0m[32m+                    for pid in pids {
+[0m[32m+                        let (count, ports) = &by_pid[&pid];
+[0m[32m+                        let name = self
+[0m[32m+                            .snapshot
+[0m[32m+                            .rows
+[0m[32m+                            .iter()
+[0m[32m+                            .find(|r| r.info.pid == pid)
+[0m[32m+                            .map(|r| r.info.name.clone())
+[0m[32m+                            .unwrap_or_else(|| "?".into());
+[0m[32m+                        ui.label(pid.to_string());
+[0m[32m+                        ui.label(name);
+[0m[32m+                        ui.label(count.to_string());
+[0m[32m+                        let mut p = ports.clone();
+[0m[32m+                        p.sort();
+[0m[32m+                        p.dedup();
+[0m[32m+                        let port_list = p
+[0m[32m+                            .iter()
+[0m[32m+                            .take(8)
+[0m[32m+                            .map(|x| x.to_string())
+[0m[32m+                            .collect::<Vec<_>>()
+[0m[32m+                            .join(", ");
+[0m[32m+                        ui.label(port_list);
+[0m[32m+                        ui.end_row();
+[0m[32m+                    }
+[0m[32m+                });
+[0m         });
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:720:
+             }
+             ui.label(RichText::new(format!("{} services", self.services.len())).weak());
+             if !self.user.elevated {
+[31m-                ui.label(RichText::new("(read-only without elevation)").small().weak());
+[0m[32m+                ui.label(
+[0m[32m+                    RichText::new("(read-only without elevation)")
+[0m[32m+                        .small()
+[0m[32m+                        .weak(),
+[0m[32m+                );
+[0m             }
+         });
+         ui.separator();
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:727:
+         egui::ScrollArea::vertical().show(ui, |ui| {
+[31m-            egui::Grid::new("services_grid").num_columns(4).striped(true).show(ui, |ui| {
+[0m[31m-                ui.label(RichText::new("Name").strong());
+[0m[31m-                ui.label(RichText::new("Status").strong());
+[0m[31m-                ui.label(RichText::new("Start type").strong());
+[0m[31m-                ui.label(RichText::new("PID").strong());
+[0m[31m-                ui.end_row();
+[0m[31m-                for s in &self.services {
+[0m[31m-                    ui.label(&s.display_name);
+[0m[31m-                    let state = s.state.map(|x| x.label()).unwrap_or("—");
+[0m[31m-                    let color = match s.state {
+[0m[31m-                        Some(ServiceState::Running) => Color32::from_rgb(120, 220, 120),
+[0m[31m-                        Some(ServiceState::Stopped) => Color32::from_rgb(220, 120, 120),
+[0m[31m-                        _ => Color32::GRAY,
+[0m[31m-                    };
+[0m[31m-                    ui.label(RichText::new(state).color(color));
+[0m[31m-                    ui.label(s.start_type.map(|x| x.label()).unwrap_or("—"));
+[0m[31m-                    ui.label(if s.pid == 0 { String::new() } else { s.pid.to_string() });
+[0m[32m+            egui::Grid::new("services_grid")
+[0m[32m+                .num_columns(4)
+[0m[32m+                .striped(true)
+[0m[32m+                .show(ui, |ui| {
+[0m[32m+                    ui.label(RichText::new("Name").strong());
+[0m[32m+                    ui.label(RichText::new("Status").strong());
+[0m[32m+                    ui.label(RichText::new("Start type").strong());
+[0m[32m+                    ui.label(RichText::new("PID").strong());
+[0m                     ui.end_row();
+[31m-                }
+[0m[31m-            });
+[0m[32m+                    for s in &self.services {
+[0m[32m+                        ui.label(&s.display_name);
+[0m[32m+                        let state = s.state.map(|x| x.label()).unwrap_or("—");
+[0m[32m+                        let color = match s.state {
+[0m[32m+                            Some(ServiceState::Running) => Color32::from_rgb(120, 220, 120),
+[0m[32m+                            Some(ServiceState::Stopped) => Color32::from_rgb(220, 120, 120),
+[0m[32m+                            _ => Color32::GRAY,
+[0m[32m+                        };
+[0m[32m+                        ui.label(RichText::new(state).color(color));
+[0m[32m+                        ui.label(s.start_type.map(|x| x.label()).unwrap_or("—"));
+[0m[32m+                        ui.label(if s.pid == 0 {
+[0m[32m+                            String::new()
+[0m[32m+                        } else {
+[0m[32m+                            s.pid.to_string()
+[0m[32m+                        });
+[0m[32m+                        ui.end_row();
+[0m[32m+                    }
+[0m[32m+                });
+[0m         });
+     }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:756:
+                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+                 .show(ctx, |ui| {
+                     ui.label(format!("Terminate {name} (PID {pid})?"));
+[31m-                    ui.label(RichText::new("Unsaved data in this app will be lost.").small().weak());
+[0m[32m+                    ui.label(
+[0m[32m+                        RichText::new("Unsaved data in this app will be lost.")
+[0m[32m+                            .small()
+[0m[32m+                            .weak(),
+[0m[32m+                    );
+[0m                     ui.add_space(8.0);
+                     ui.horizontal(|ui| {
+                         if ui.button("End task").clicked() {
 exit=False
