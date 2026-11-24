@@ -1,134 +1,136 @@
+    Updating crates.io index
+     Locking 97 packages to highest compatible versions
  Downloading crates ...
-  Downloaded matchers v0.2.0
-  Downloaded lazy_static v1.5.1
-  Downloaded clap_lex v1.1.2
-  Downloaded clang-sys v1.9.1
-  Downloaded strsim v0.11.1
-  Downloaded heck v0.5.0
-  Downloaded windows-interface v0.59.3
-  Downloaded windows-result v0.4.1
-  Downloaded cfg-if v1.0.5
-  Downloaded cargo-platform v0.3.3
-  Downloaded scratch v1.0.9
-  Downloaded windows-collections v0.3.2
-  Downloaded find-msvc-tools v0.1.15
-  Downloaded rustc-hash v2.1.3
-  Downloaded windows-threading v0.2.1
-  Downloaded windows-numerics v0.3.1
-  Downloaded wdk-alloc v0.4.2
-  Downloaded windows-implement v0.60.2
-  Downloaded windows-strings v0.5.1
-  Downloaded wdk-panic v0.5.0
-  Downloaded rustversion v1.0.23
-  Downloaded nu-ansi-term v0.50.3
-  Downloaded pin-project-lite v0.2.18
-  Downloaded thiserror-impl v2.0.21
-  Downloaded cargo_metadata v0.23.1
-  Downloaded glob v0.3.4
-  Downloaded paste v1.0.15
-  Downloaded thread_local v1.1.10
-  Downloaded camino v1.2.6
-  Downloaded thiserror v2.0.21
+  Downloaded bitflags v2.13.2
   Downloaded either v1.19.0
-  Downloaded wdk-macros v0.5.2
-  Downloaded clap-cargo v0.19.1
-  Downloaded libloading v0.8.9
-  Downloaded tracing-log v0.2.0
+  Downloaded camino v1.2.6
+  Downloaded cargo_metadata v0.23.1
+  Downloaded clap v4.6.10
+  Downloaded clap_builder v4.6.10
   Downloaded anyhow v1.0.105
+  Downloaded clang-sys v1.9.1
+  Downloaded cexpr v0.6.0
+  Downloaded bindgen v0.73.2
+  Downloaded cargo-platform v0.3.3
+  Downloaded cc v1.11.3
+  Downloaded cfg-if v1.0.5
+  Downloaded clap-cargo v0.19.1
+  Downloaded find-msvc-tools v0.1.15
+  Downloaded minimal-lexical v0.2.1
+  Downloaded heck v0.5.0
+  Downloaded prettyplease v0.3.0
+  Downloaded libloading v0.8.9
+  Downloaded nom v7.1.3
+  Downloaded smallvec v1.16.6
+  Downloaded clap_derive v4.6.9
+  Downloaded glob v0.3.4
+  Downloaded nu-ansi-term v0.50.3
+  Downloaded clap_lex v1.1.2
+  Downloaded once_cell v1.21.4
+  Downloaded itertools v0.15.0
+  Downloaded matchers v0.2.0
+  Downloaded tracing-attributes v0.1.31
+  Downloaded rustc-hash v2.1.3
+  Downloaded semver v1.0.28
   Downloaded shlex v2.0.1
   Downloaded wdk v0.5.0
-  Downloaded tracing-attributes v0.1.31
-  Downloaded cexpr v0.6.0
-  Downloaded clap_derive v4.6.9
-  Downloaded once_cell v1.21.4
-  Downloaded smallvec v1.16.6
+  Downloaded wdk-macros v0.5.2
   Downloaded windows-future v0.3.2
-  Downloaded fs4 v1.1.0
-  Downloaded semver v1.0.28
-  Downloaded bitflags v2.13.2
-  Downloaded wdk-sys v0.5.2
-  Downloaded windows-core v0.62.2
-  Downloaded sharded-slab v0.1.7
-  Downloaded clap v4.6.10
   Downloaded tracing-core v0.1.36
-  Downloaded wdk-build v0.6.0
-  Downloaded prettyplease v0.3.0
-  Downloaded minimal-lexical v0.2.1
-  Downloaded cc v1.11.3
-  Downloaded nom v7.1.3
-  Downloaded itertools v0.15.0
-  Downloaded clap_builder v4.6.10
-  Downloaded tracing-subscriber v0.3.23
-  Downloaded bindgen v0.73.2
-  Downloaded tracing v0.1.44
+  Downloaded windows-core v0.62.2
+  Downloaded windows-strings v0.5.1
+  Downloaded rustversion v1.0.23
+  Downloaded wdk-alloc v0.4.2
+  Downloaded wdk-panic v0.5.0
   Downloaded libc v0.2.191
+  Downloaded windows-threading v0.2.1
+  Downloaded sharded-slab v0.1.7
+  Downloaded windows-result v0.4.1
+  Downloaded thread_local v1.1.10
+  Downloaded scratch v1.0.9
+  Downloaded windows-interface v0.59.3
+  Downloaded windows-numerics v0.3.1
+  Downloaded paste v1.0.15
+  Downloaded tracing-log v0.2.0
+  Downloaded windows-collections v0.3.2
+  Downloaded wdk-build v0.6.0
+  Downloaded lazy_static v1.5.1
+  Downloaded pin-project-lite v0.2.18
+  Downloaded thiserror-impl v2.0.21
+  Downloaded wdk-sys v0.5.2
+  Downloaded tracing v0.1.44
+  Downloaded strsim v0.11.1
+  Downloaded tracing-subscriber v0.3.23
+  Downloaded fs4 v1.1.0
+  Downloaded windows-implement v0.60.2
+  Downloaded thiserror v2.0.21
   Downloaded windows v0.62.2
    Compiling proc-macro2 v1.0.107
-   Compiling quote v1.0.47
    Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
    Compiling windows-link v0.2.1
    Compiling memchr v2.8.3
    Compiling windows-sys v0.61.2
-   Compiling syn v3.0.10
    Compiling syn v2.0.119
+   Compiling syn v3.0.10
    Compiling serde_core v1.0.229
    Compiling windows-implement v0.60.2
    Compiling windows-interface v0.59.3
    Compiling aho-corasick v1.1.5
-   Compiling windows-strings v0.5.1
    Compiling windows-result v0.4.1
+   Compiling windows-strings v0.5.1
+   Compiling utf8parse v0.2.2
    Compiling once_cell_polyfill v1.70.2
    Compiling regex-syntax v0.8.12
-   Compiling utf8parse v0.2.2
-   Compiling anstyle v1.0.14
    Compiling zmij v1.0.23
    Compiling glob v0.3.4
-   Compiling clang-sys v1.9.1
-   Compiling regex-automata v0.4.19
+   Compiling anstyle v1.0.14
    Compiling anstyle-wincon v3.0.11
+   Compiling regex-automata v0.4.19
+   Compiling clang-sys v1.9.1
    Compiling anstyle-parse v1.0.0
    Compiling windows-core v0.62.2
    Compiling anstyle-query v1.1.5
-   Compiling serde v1.0.229
+   Compiling prettyplease v0.3.0
+   Compiling once_cell v1.21.4
    Compiling serde_json v1.0.154
    Compiling colorchoice v1.0.5
-   Compiling prettyplease v0.3.0
-   Compiling rustversion v1.0.23
-   Compiling libc v0.2.191
-   Compiling once_cell v1.21.4
    Compiling is_terminal_polyfill v1.70.2
+   Compiling serde v1.0.229
+   Compiling libc v0.2.191
+   Compiling rustversion v1.0.23
    Compiling anstream v1.0.0
    Compiling tracing-core v0.1.36
    Compiling serde_derive v1.0.229
-   Compiling thiserror v2.0.21
-   Compiling cfg-if v1.0.5
-   Compiling strsim v0.11.1
-   Compiling itoa v1.0.19
    Compiling heck v0.5.0
+   Compiling camino v1.2.6
+   Compiling strsim v0.11.1
    Compiling log v0.4.35
+   Compiling thiserror v2.0.21
    Compiling clap_lex v1.1.2
    Compiling minimal-lexical v0.2.1
-   Compiling camino v1.2.6
+   Compiling itoa v1.0.19
+   Compiling cfg-if v1.0.5
    Compiling nom v7.1.3
    Compiling clap_builder v4.6.10
    Compiling clap_derive v4.6.9
-   Compiling tracing-attributes v0.1.31
    Compiling thiserror-impl v2.0.21
-   Compiling windows-threading v0.2.1
+   Compiling tracing-attributes v0.1.31
    Compiling libloading v0.8.9
+   Compiling windows-threading v0.2.1
    Compiling shlex v2.0.1
-   Compiling paste v1.0.15
-   Compiling pin-project-lite v0.2.18
    Compiling bindgen v0.73.2
+   Compiling pin-project-lite v0.2.18
    Compiling anyhow v1.0.105
+   Compiling paste v1.0.15
    Compiling tracing v0.1.44
    Compiling windows-future v0.3.2
    Compiling wdk-build v0.6.0
    Compiling clap v4.6.10
    Compiling cexpr v0.6.0
    Compiling regex v1.13.2
-   Compiling windows-collections v0.3.2
    Compiling windows-numerics v0.3.1
+   Compiling windows-collections v0.3.2
    Compiling cargo-platform v0.3.3
    Compiling semver v1.0.28
    Compiling rustc-hash v2.1.3
@@ -138,8 +140,8 @@
    Compiling clap-cargo v0.19.1
    Compiling lazy_static v1.5.1
    Compiling sharded-slab v0.1.7
-   Compiling tracing-log v0.2.0
    Compiling thread_local v1.1.10
+   Compiling tracing-log v0.2.0
    Compiling matchers v0.2.0
    Compiling nu-ansi-term v0.50.3
    Compiling smallvec v1.16.6
@@ -153,30 +155,9 @@
    Compiling wdk v0.5.0
    Compiling fs4 v1.1.0
    Compiling wdk-macros v0.5.2
-   Compiling wdk-alloc v0.4.2
    Compiling wdk-panic v0.5.0
+   Compiling wdk-alloc v0.4.2
    Compiling winrust-kernel v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-kernel)
    Compiling winrust-kernel-abi v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-warning: constant `CLASS_PERFORMANCE` is never used
-  --> crates\winrust-kernel\src\sysinfo.rs:42:7
-   |
-42 | const CLASS_PERFORMANCE: u32 = 2;
-   |       ^^^^^^^^^^^^^^^^^
-   |
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: unused return value of `PsSetCreateProcessNotifyRoutineEx` that must be used
-   --> crates\winrust-kernel\src\guard.rs:182:9
-    |
-182 |         PsSetCreateProcessNotifyRoutineEx(Some(notify), 1);
-    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    |
-    = note: `#[warn(unused_must_use)]` (part of `#[warn(unused)]`) on by default
-help: use `let _ = ...` to ignore the resulting value
-    |
-182 |         let _ = PsSetCreateProcessNotifyRoutineEx(Some(notify), 1);
-    |         +++++++
-
-warning: `winrust-kernel` (lib) generated 2 warnings
-    Finished `release` profile [optimized] target(s) in 3m 26s
+    Finished `release` profile [optimized] target(s) in 2m 45s
 exit=0
