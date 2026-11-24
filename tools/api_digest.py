@@ -22,6 +22,8 @@ CRATES = {
     "eframe": "0.29.1",
     "egui": "0.29.1",
     "egui_extras": "0.29.1",
+    "epaint": "0.29.1",
+    "emath": "0.29.1",
 }
 
 OUT_DIR = os.path.join("docs", "ci")
@@ -227,7 +229,6 @@ def main() -> None:
     try:
         eg = dirs["egui"]
         for rel, label in [
-            ("src/text/fonts.rs", "egui::text::fonts"),
             ("src/data/icon_data.rs", "egui::data::icon_data"),
             ("src/data/output.rs", "egui::output"),
             ("src/response.rs", "egui::response"),
@@ -315,6 +316,21 @@ def main() -> None:
                             break
     except Exception:
         out.append("!! egui dump failed:\n" + traceback.format_exc())
+
+    try:
+        ep = dirs["epaint"]
+        for rel, label in [
+            ("src/text/fonts.rs", "epaint::text::fonts"),
+            ("src/text/font_definitions.rs", "epaint::text::font_definitions"),
+            ("src/image.rs", "epaint::image"),
+        ]:
+            path = os.path.join(ep, rel)
+            if not os.path.isfile(path):
+                out.append(f"\n##### !! missing epaint {rel}")
+                continue
+            dump_items(read(path), out, f"{label} ({rel})")
+    except Exception:
+        out.append("!! epaint dump failed:\n" + traceback.format_exc())
 
     try:
         ef2 = dirs["eframe"]
