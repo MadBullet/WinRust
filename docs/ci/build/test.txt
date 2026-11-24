@@ -6,16 +6,16 @@
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
-  Downloaded log v0.4.35
   Downloaded proc-macro2 v1.0.107
-  Downloaded quote v1.0.47
-  Downloaded serde_derive v1.0.229
-  Downloaded thiserror v1.0.69
-  Downloaded serde v1.0.229
-  Downloaded serde_core v1.0.229
   Downloaded windows-targets v0.52.6
-  Downloaded unicode-ident v1.0.27
+  Downloaded thiserror v1.0.69
   Downloaded thiserror-impl v1.0.69
+  Downloaded quote v1.0.47
+  Downloaded unicode-ident v1.0.27
+  Downloaded serde_derive v1.0.229
+  Downloaded log v0.4.35
+  Downloaded serde_core v1.0.229
+  Downloaded serde v1.0.229
   Downloaded syn v2.0.119
   Downloaded syn v3.0.10
   Downloaded windows_x86_64_msvc v0.52.6
@@ -25,44 +25,73 @@
    Compiling unicode-ident v1.0.27
    Compiling windows_x86_64_msvc v0.52.6
    Compiling serde_core v1.0.229
-   Compiling serde v1.0.229
    Compiling thiserror v1.0.69
+   Compiling serde v1.0.229
    Compiling syn v2.0.119
    Compiling syn v3.0.10
-   Compiling serde_derive v1.0.229
    Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.229
    Compiling windows-targets v0.52.6
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-warning: unused import: `RegCloseKey`
- --> crates\winrust-core\src\registry.rs:9:5
-  |
-9 |     RegCloseKey, RegCreateKeyExW, RegDeleteKeyExW, RegDeleteValueW, RegEnumKeyExW, RegEnumValueW,
-  |     ^^^^^^^^^^^
-  |
-  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+error[E0784]: union expressions should have exactly one field
+   --> crates\winrust-core\src\net.rs:241:20
+    |
+241 |         Anonymous: windows_sys::Win32::NetworkManagement::IpHelper::MIB_TCPROW_LH_0 {
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-warning: `winrust-core` (lib test) generated 1 warning (1 duplicate)
-warning: `winrust-core` (lib) generated 1 warning (run `cargo fix --lib -p winrust-core` to apply 1 suggestion)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.52s
-     Running unittests src\lib.rs (target\debug\build\winrust-core/49e2eb2be4a195d3\out\winrust_core-49e2eb2be4a195d3.exe)
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\shell.rs:310:58
+    |
+310 |     if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\"), &mut fixed_ptr, &mut fixed_len) } != 0
+    |                 --------------                           ^^^^^^^ expected `*const u16`, found `Vec<u16>`
+    |                 |
+    |                 arguments to this function are incorrect
+    |
+    = note: expected raw pointer `*const u16`
+                    found struct `Vec<u16>`
+note: function defined here
+   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\Storage\FileSystem\mod.rs:447:50
+    |
+447 | windows_targets::link!("version.dll" "system" fn VerQueryValueW(pblock : *const core::ffi::c_void, lpsubblock : windows_sys::core::...
+    |                                                  ^^^^^^^^^^^^^^
 
-running 7 tests
-test disk::tests::civil_dates ... ok
-test disk::tests::extensions ... ok
-test disk::tests::local_time_roundtrip ... ok
-test disk::tests::size_formatting ... ok
-test wide::tests::roundtrip_ascii ... ok
-test wide::tests::roundtrip_cyrillic ... ok
-test wide::tests::stops_at_nul ... ok
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\shell.rs:322:58
+    |
+322 |     if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\VarFileInfo\\Translation"), &mut trans_ptr, &mut trans_len) } != 0
+    |                 --------------                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `*const u16`, found `Vec<u16>`
+    |                 |
+    |                 arguments to this function are incorrect
+    |
+    = note: expected raw pointer `*const u16`
+                    found struct `Vec<u16>`
+note: function defined here
+   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\Storage\FileSystem\mod.rs:447:50
+    |
+447 | windows_targets::link!("version.dll" "system" fn VerQueryValueW(pblock : *const core::ffi::c_void, lpsubblock : windows_sys::core::...
+    |                                                  ^^^^^^^^^^^^^^
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\shell.rs:336:66
+    |
+336 |             if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w(&sub), &mut p, &mut len) } != 0 && len > 0 {
+    |                         --------------                           ^^^^^^^ expected `*const u16`, found `Vec<u16>`
+    |                         |
+    |                         arguments to this function are incorrect
+    |
+    = note: expected raw pointer `*const u16`
+                    found struct `Vec<u16>`
+note: function defined here
+   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\Storage\FileSystem\mod.rs:447:50
+    |
+447 | windows_targets::link!("version.dll" "system" fn VerQueryValueW(pblock : *const core::ffi::c_void, lpsubblock : windows_sys::core::...
+    |                                                  ^^^^^^^^^^^^^^
 
-   Doc-tests winrust_core
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-exit=True
+Some errors have detailed explanations: E0308, E0784.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `winrust-core` (lib) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `winrust-core` (lib test) due to 4 previous errors
+exit=False

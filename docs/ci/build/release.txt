@@ -2,37 +2,37 @@
    Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
    Compiling cfg-if v1.0.5
-   Compiling stable_deref_trait v1.2.1
    Compiling log v0.4.35
    Compiling syn v3.0.10
+   Compiling stable_deref_trait v1.2.1
    Compiling windows-link v0.2.1
-   Compiling simd-adler32 v0.3.10
    Compiling smallvec v1.16.6
+   Compiling simd-adler32 v0.3.10
    Compiling adler2 v2.0.1
    Compiling crc32fast v1.5.6
    Compiling writeable v0.6.4
-   Compiling utf_types v1.0.0
    Compiling litemap v0.8.3
+   Compiling utf_types v1.0.0
    Compiling utf8_iter v1.1.0
    Compiling synstructure v0.14.0
    Compiling miniz_oxide v0.9.1
    Compiling zerofrom-derive v0.1.8
    Compiling yoke-derive v0.8.4
    Compiling zerofrom v0.1.8
-   Compiling bytemuck_derive v1.12.1
-   Compiling yoke v0.8.4
    Compiling zerovec-derive v0.11.7
-   Compiling bytemuck v1.25.2
-   Compiling displaydoc v0.2.7
+   Compiling yoke v0.8.4
+   Compiling bytemuck_derive v1.12.1
    Compiling zerovec v0.11.9
+   Compiling displaydoc v0.2.7
+   Compiling bytemuck v1.25.2
    Compiling potential_utf v0.1.6
+   Compiling khronos_api v3.1.0
    Compiling icu_normalizer_data v2.4.0
    Compiling tinystr v0.8.5
    Compiling icu_locale_core v2.4.0
    Compiling zerotrie v0.2.5
-   Compiling khronos_api v3.1.0
-   Compiling windows_x86_64_msvc v0.52.6
    Compiling icu_properties_data v2.4.0
+   Compiling windows_x86_64_msvc v0.52.6
    Compiling once_cell v1.21.4
    Compiling icu_provider v2.4.0
    Compiling icu_collections v2.4.0
@@ -40,38 +40,38 @@
    Compiling cfg_aliases v0.2.2
    Compiling autocfg v1.5.1
    Compiling xml-rs v0.8.29
+   Compiling windows-targets v0.52.6
    Compiling icu_properties v2.4.0
    Compiling gl_generator v0.14.0
-   Compiling windows-targets v0.52.6
    Compiling icu_normalizer v2.4.0
-   Compiling find-msvc-tools v0.1.15
-   Compiling version_check v0.9.5
    Compiling zerocopy v0.8.64
-   Compiling parking_lot_core v0.9.12
+   Compiling version_check v0.9.5
    Compiling shlex v2.0.1
-   Compiling cc v1.11.3
+   Compiling find-msvc-tools v0.1.15
+   Compiling parking_lot_core v0.9.12
    Compiling ahash v0.8.13
+   Compiling cc v1.11.3
    Compiling idna_adapter v1.2.2
-   Compiling scopeguard v1.2.0
-   Compiling ttf-parser v0.25.1
-   Compiling bitflags v2.13.2
    Compiling percent-encoding v2.3.2
-   Compiling form_urlencoded v1.2.3
-   Compiling owned_ttf_parser v0.25.1
+   Compiling scopeguard v1.2.0
+   Compiling bitflags v2.13.2
+   Compiling ttf-parser v0.25.1
    Compiling ring v0.17.14
    Compiling lock_api v0.4.14
+   Compiling form_urlencoded v1.2.3
    Compiling idna v1.1.0
+   Compiling owned_ttf_parser v0.25.1
    Compiling emath v0.29.1
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
    Compiling windows-sys v0.61.2
-   Compiling serde_core v1.0.229
+   Compiling arrayvec v0.7.8
    Compiling zeroize v1.9.2
    Compiling float-cmp v0.9.0
-   Compiling arrayvec v0.7.8
+   Compiling serde_core v1.0.229
    Compiling ab_glyph_rasterizer v0.1.10
-   Compiling strict-num v0.1.1
    Compiling ab_glyph v0.2.32
+   Compiling strict-num v0.1.1
    Compiling rustls-pki-types v1.16.0
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
@@ -80,50 +80,50 @@
    Compiling num-traits v0.2.19
    Compiling syn v2.0.119
    Compiling arrayref v0.3.9
-   Compiling epaint_default_fonts v0.29.1
    Compiling nohash-hasher v0.2.0
    Compiling memchr v2.8.3
+   Compiling epaint_default_fonts v0.29.1
    Compiling epaint v0.29.1
    Compiling tiny-skia-path v0.11.4
    Compiling kurbo v0.9.5
-   Compiling glutin_egl_sys v0.7.1
    Compiling glutin_wgl_sys v0.6.1
+   Compiling glutin_egl_sys v0.7.1
    Compiling winit v0.30.13
    Compiling getrandom v0.2.17
-   Compiling serde v1.0.229
    Compiling raw-window-handle v0.6.2
-   Compiling untrusted v0.9.0
    Compiling tracing-core v0.1.36
    Compiling siphasher v0.3.11
    Compiling siphasher v1.0.4
-   Compiling pin-project-lite v0.2.18
    Compiling unicase v2.10.0
-   Compiling phf_shared v0.11.3
+   Compiling serde v1.0.229
+   Compiling untrusted v0.9.0
+   Compiling pin-project-lite v0.2.18
    Compiling tracing v0.1.44
+   Compiling phf_shared v0.11.3
    Compiling svgtypes v0.13.0
    Compiling egui v0.29.1
    Compiling aho-corasick v1.1.5
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
    Compiling serde_derive v1.0.229
-   Compiling litrs v1.0.1
    Compiling dpi v0.1.2
-   Compiling regex-syntax v0.8.12
-   Compiling rctree v0.5.0
    Compiling smol_str v0.2.2
+   Compiling rustls v0.23.46
+   Compiling weezl v0.1.12
    Compiling pxfm v0.1.30
    Compiling unicode-segmentation v1.13.3
-   Compiling rustls v0.23.46
-   Compiling color_quant v1.1.0
-   Compiling error-code v3.4.0
+   Compiling litrs v1.0.1
+   Compiling rctree v0.5.0
    Compiling cursor-icon v1.2.0
-   Compiling weezl v0.1.12
+   Compiling error-code v3.4.0
+   Compiling color_quant v1.1.0
+   Compiling regex-syntax v0.8.12
    Compiling gif v0.14.2
-   Compiling clipboard-win v5.4.3
-   Compiling moxcms v0.8.1
    Compiling regex-automata v0.4.19
+   Compiling clipboard-win v5.4.3
    Compiling usvg-tree v0.37.0
    Compiling document-features v0.2.12
+   Compiling moxcms v0.8.1
    Compiling rustls-webpki v0.103.17
    Compiling phf v0.11.3
    Compiling webpki-roots v1.0.12
@@ -132,20 +132,20 @@
    Compiling libloading v0.8.9
    Compiling simplecss v0.2.2
    Compiling bitflags v1.3.2
-   Compiling imagesize v0.12.0
-   Compiling winapi v0.3.9
-   Compiling data-url v0.3.2
-   Compiling anstyle v1.0.14
    Compiling thiserror v1.0.69
-   Compiling utf8parse v0.2.2
+   Compiling winapi v0.3.9
    Compiling subtle v2.6.1
-   Compiling once_cell_polyfill v1.70.2
    Compiling byteorder-lite v0.1.0
    Compiling roxmltree v0.19.0
-   Compiling image v0.25.10
-   Compiling usvg-parser v0.37.0
+   Compiling imagesize v0.12.0
+   Compiling utf8parse v0.2.2
+   Compiling data-url v0.3.2
+   Compiling anstyle v1.0.14
+   Compiling once_cell_polyfill v1.70.2
    Compiling anstyle-wincon v3.0.11
+   Compiling usvg-parser v0.37.0
    Compiling anstyle-parse v1.0.0
+   Compiling image v0.25.10
    Compiling png v0.17.16
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
@@ -154,172 +154,89 @@
    Compiling thiserror-impl v1.0.69
    Compiling webbrowser v1.2.7
    Compiling anstyle-query v1.1.5
-   Compiling base64 v0.22.1
-   Compiling jiff-core v1.0.2
+   Compiling colorchoice v1.0.5
+   Compiling base64 v0.21.7
+   Compiling glow v0.14.2
    Compiling is_terminal_polyfill v1.70.2
-   Compiling pico-args v0.5.0
+   Compiling base64 v0.22.1
    Compiling web-time v1.1.0
    Compiling xmlwriter v0.1.0
-   Compiling base64 v0.21.7
-   Compiling colorchoice v1.0.5
-   Compiling glow v0.14.2
-   Compiling anstream v1.0.0
-   Compiling usvg v0.37.0
+   Compiling pico-args v0.5.0
+   Compiling jiff-core v1.0.2
    Compiling egui_glow v0.29.1
    Compiling jiff v1.0.3
+   Compiling usvg v0.37.0
    Compiling egui-winit v0.29.1
    Compiling ureq v2.12.1
+   Compiling anstream v1.0.0
    Compiling env_filter v2.1.0
    Compiling tiny-skia v0.11.4
    Compiling enum-map-derive v0.17.0
    Compiling windows-sys v0.59.0
    Compiling rgb v0.8.53
-   Compiling static_assertions v1.1.0
    Compiling mime v0.3.18
+   Compiling static_assertions v1.1.0
    Compiling eframe v0.29.1
    Compiling resvg v0.37.0
-   Compiling enum-map v2.7.3
-   Compiling env_logger v0.11.12
-   Compiling ehttp v0.5.0
    Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-   Compiling egui_extras v0.29.1
-warning: unused import: `RegCloseKey`
- --> crates\winrust-core\src\registry.rs:9:5
-  |
-9 |     RegCloseKey, RegCreateKeyExW, RegDeleteKeyExW, RegDeleteValueW, RegEnumKeyExW, RegEnumValueW,
-  |     ^^^^^^^^^^^
-  |
-  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-core` (lib) generated 1 warning (run `cargo fix --lib -p winrust-core` to apply 1 suggestion)
-   Compiling zmij v1.0.23
-   Compiling serde_json v1.0.154
-   Compiling itoa v1.0.19
-   Compiling winrust-services v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-services)
-warning: field `action_busy` is never read
-  --> crates\winrust-services\src\app.rs:25:5
-   |
-16 | pub struct ServicesApp {
-   |            ----------- field in this struct
-...
-25 |     action_busy: bool,
-   |     ^^^^^^^^^^^
-   |
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: field `description` is never read
-  --> crates\winrust-services\src\app.rs:33:5
-   |
-28 | struct PropsDialog {
-   |        ----------- field in this struct
-...
-33 |     description: String,
-   |     ^^^^^^^^^^^
-
-   Compiling winrust-explorer v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
-warning: method `next_header` is never used
-  --> crates\winrust-explorer\src\app.rs:79:8
-   |
-70 | impl SortKeySerde {
-   | ----------------- method in this implementation
-...
-79 |     fn next_header(self) -> (SortKeySerde, bool) {
-   |        ^^^^^^^^^^^
-   |
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-services` (bin "winrust-services") generated 2 warnings
-   Compiling winrust-taskmgr v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
-warning: unused import: `Sender`
-  --> crates\winrust-taskmgr\src\app.rs:18:42
-   |
-18 | use std::sync::mpsc::{channel, Receiver, Sender};
-   |                                          ^^^^^^
-   |
-   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
-
-warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-   --> crates\winrust-taskmgr\src\app.rs:587:35
+   Compiling enum-map v2.7.3
+error[E0784]: union expressions should have exactly one field
+   --> crates\winrust-core\src\net.rs:241:20
     |
-587 |                 egui::Stroke::new(1.0, Color32::from_rgb(40, 40, 52)),
-    |                                   ^^^ help: explicitly specify the type as `f32`: `1.0_f32`
-    |
-    = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
-    = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
-    = note: `#[warn(float_literal_f32_fallback)]` (part of `#[warn(future_incompatible)]`) on by default
+241 |         Anonymous: windows_sys::Win32::NetworkManagement::IpHelper::MIB_TCPROW_LH_0 {
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-warning: falling back to `f32` as the trait bound `f32: From<f64>` is not satisfied
-   --> crates\winrust-taskmgr\src\app.rs:600:35
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\shell.rs:310:58
     |
-600 |                 egui::Stroke::new(1.5, Color32::from_rgb(120, 200, 255)),
-    |                                   ^^^ help: explicitly specify the type as `f32`: `1.5_f32`
+310 |     if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\"), &mut fixed_ptr, &mut fixed_len) } != 0
+    |                 --------------                           ^^^^^^^ expected `*const u16`, found `Vec<u16>`
+    |                 |
+    |                 arguments to this function are incorrect
     |
-    = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
-    = note: for more information, see issue #154024 <https://github.com/rust-lang/rust/issues/154024>
+    = note: expected raw pointer `*const u16`
+                    found struct `Vec<u16>`
+note: function defined here
+   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\Storage\FileSystem\mod.rs:447:50
+    |
+447 | windows_targets::link!("version.dll" "system" fn VerQueryValueW(pblock : *const core::ffi::c_void, lpsubblock : windows_sys::core::...
+    |                                                  ^^^^^^^^^^^^^^
 
-warning: field `cpu` is never read
-  --> crates\winrust-taskmgr\src\app.rs:69:5
-   |
-65 | struct Snapshot {
-   |        -------- field in this struct
-...
-69 |     cpu: CpuSample,
-   |     ^^^
-   |
-   = note: `Snapshot` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: variants `Disk` and `Network` are never constructed
-   --> crates\winrust-taskmgr\src\app.rs:175:5
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\shell.rs:322:58
     |
-171 | enum SortBy {
-    |      ------ variants in this enum
-...
-175 |     Disk,
-    |     ^^^^
-176 |     Network,
-    |     ^^^^^^^
+322 |     if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w("\\VarFileInfo\\Translation"), &mut trans_ptr, &mut trans_len) } != 0
+    |                 --------------                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `*const u16`, found `Vec<u16>`
+    |                 |
+    |                 arguments to this function are incorrect
     |
-    = note: `SortBy` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
-
-warning: field `priority_open` is never read
-   --> crates\winrust-taskmgr\src\app.rs:203:5
+    = note: expected raw pointer `*const u16`
+                    found struct `Vec<u16>`
+note: function defined here
+   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\Storage\FileSystem\mod.rs:447:50
     |
-180 | pub struct TaskManagerApp {
-    |            -------------- field in this struct
-...
-203 |     priority_open: Option<u32>,
-    |     ^^^^^^^^^^^^^
+447 | windows_targets::link!("version.dll" "system" fn VerQueryValueW(pblock : *const core::ffi::c_void, lpsubblock : windows_sys::core::...
+    |                                                  ^^^^^^^^^^^^^^
 
-warning: fields `enabled` and `published` are never read
-   --> crates\winrust-taskmgr\src\app.rs:211:5
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\shell.rs:336:66
     |
-207 | struct StartupItem {
-    |        ----------- fields in this struct
-...
-211 |     enabled: bool,
-    |     ^^^^^^^
-212 |     published: String,
-    |     ^^^^^^^^^
+336 |             if unsafe { VerQueryValueW(buf.as_ptr() as *const _, w(&sub), &mut p, &mut len) } != 0 && len > 0 {
+    |                         --------------                           ^^^^^^^ expected `*const u16`, found `Vec<u16>`
+    |                         |
+    |                         arguments to this function are incorrect
     |
-    = note: `StartupItem` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+    = note: expected raw pointer `*const u16`
+                    found struct `Vec<u16>`
+note: function defined here
+   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\Storage\FileSystem\mod.rs:447:50
+    |
+447 | windows_targets::link!("version.dll" "system" fn VerQueryValueW(pblock : *const core::ffi::c_void, lpsubblock : windows_sys::core::...
+    |                                                  ^^^^^^^^^^^^^^
 
-warning: `winrust-explorer` (bin "winrust-explorer") generated 1 warning
-   Compiling winrust-sysctl v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
-warning: field `enabled` is never read
-  --> crates\winrust-sysctl\src\app.rs:81:5
-   |
-77 | struct StartupRow {
-   |        ---------- field in this struct
-...
-81 |     enabled: bool,
-   |     ^^^^^^^
-   |
-   = note: `StartupRow` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-taskmgr` (bin "winrust-taskmgr") generated 7 warnings (run `cargo fix --bin "winrust-taskmgr" -p winrust-taskmgr` to apply 3 suggestions)
-   Compiling winrust-launcher v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
-warning: `winrust-sysctl` (bin "winrust-sysctl") generated 1 warning
-    Finished `release` profile [optimized] target(s) in 6m 09s
-exit=True
+   Compiling env_logger v0.11.12
+Some errors have detailed explanations: E0308, E0784.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `winrust-core` (lib) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+exit=False
