@@ -37,6 +37,8 @@ enum Component {
     TaskManager,
     Services,
     SystemControl,
+    /// The KMDF driver console; installed as a kernel service, not a file swap.
+    KernelDriver,
 }
 
 impl Component {
@@ -46,6 +48,7 @@ impl Component {
             Component::TaskManager => "taskmgr",
             Component::Services => "services",
             Component::SystemControl => "sysctl",
+            Component::KernelDriver => "kernel",
         }
     }
     fn exe(self) -> &'static str {
@@ -54,6 +57,7 @@ impl Component {
             Component::TaskManager => "winrust-taskmgr.exe",
             Component::Services => "winrust-services.exe",
             Component::SystemControl => "winrust-sysctl.exe",
+            Component::KernelDriver => "winrust-driver.exe",
         }
     }
     fn pkg(self) -> &'static str {
@@ -62,6 +66,7 @@ impl Component {
             Component::TaskManager => "winrust-taskmgr",
             Component::Services => "winrust-services",
             Component::SystemControl => "winrust-sysctl",
+            Component::KernelDriver => "winrust-kernel-control",
         }
     }
     /// The Windows executable this component stands in for.
@@ -71,6 +76,7 @@ impl Component {
             Component::TaskManager => "Taskmgr.exe",
             Component::Services => "services.msc",
             Component::SystemControl => "control.exe",
+            Component::KernelDriver => "WinRustKernel.sys",
         }
     }
     fn title(self) -> &'static str {
@@ -79,6 +85,7 @@ impl Component {
             Component::TaskManager => "Task Manager",
             Component::Services => "Services",
             Component::SystemControl => "System Control",
+            Component::KernelDriver => "Kernel Driver",
         }
     }
     fn glyph(self) -> &'static str {
@@ -87,6 +94,7 @@ impl Component {
             Component::TaskManager => "📊",
             Component::Services => "⚙",
             Component::SystemControl => "🛠",
+            Component::KernelDriver => "🧩",
         }
     }
     fn description(self) -> &'static str {
@@ -110,6 +118,12 @@ impl Component {
                 "OS and hardware overview, environment variables with WM_SETTINGCHANGE, \
                  startup entries, power plans, kernel drivers, support report."
             }
+            Component::KernelDriver => {
+                "KMDF driver for what user mode cannot see: every process including \
+                 protected ones, loaded drivers with base addresses, aggregate \
+                 kernel counters, and a process-creation block list. Installed as a \
+                 kernel service; the driver is never file-swapped."
+            }
         }
     }
     /// `None` for components that have no single system binary to replace.
@@ -119,6 +133,7 @@ impl Component {
             Component::TaskManager => Some("Taskmgr.exe"),
             Component::Services => None,
             Component::SystemControl => None,
+            Component::KernelDriver => None,
         }
     }
     /// Integration levels offered for this component.
@@ -208,6 +223,10 @@ struct LauncherApp {
     backups: Vec<restore::BackupSession>,
     backup_scan_at: Instant,
     show_backups: bool,
+    /// Driver service registered?  Probed through the SCM.
+    kernel_installed: bool,
+    /// Last `winrust-driver status` line, if the driver answered.
+    kernel_status: Option<String>,
 }
 
 struct LogLine {
@@ -292,6 +311,8 @@ impl LauncherApp {
             backups: restore::list_sessions(),
             backup_scan_at: Instant::now(),
             show_backups: false,
+            kernel_installed: kernel_service_installed(),
+            kernel_status: None,
         }
     }
 
@@ -637,6 +658,67 @@ impl LauncherApp {
             .collect()
     }
 
+    /// Re-probe the driver service and, if reachable, its version line.
+    fn refresh_kernel_driver(&mut self) {
+        self.kernel_installed = kernel_service_installed();
+        self.kernel_status = run_driver_console("status").map(|out| {
+            out.lines()
+                .take(4)
+                .collect::<Vec<_>>()
+                .join(" | ")
+        });
+        self.log(
+            LogKind::Info,
+            format!(
+                "kernel driver: {}",
+                if self.kernel_installed {
+                    "service registered"
+                } else {
+                    "not installed"
+                }
+            ),
+        );
+    }
+
+    /// Stage + register + start the driver through its console, so the launcher
+    /// and `winrust-driver install` cannot diverge.
+    fn install_kernel_driver(&mut self) {
+        let image = driver_image_path();
+        let Some(image) = image else {
+            let msg = "WinRustKernel.sys not found next to the launcher";
+            self.log(LogKind::Error, msg);
+            self.status = msg.into();
+            return;
+        };
+        match run_driver_console_with(&["install", &image.display().to_string()]) {
+            Some(out) => {
+                for line in out.lines() {
+                    self.log(LogKind::Ok, format!("driver: {line}"));
+                }
+                self.status = "Kernel driver installed".into();
+            }
+            None => {
+                let msg = "winrust-driver.exe not found - build crates/winrust-kernel/control";
+                self.log(LogKind::Error, msg);
+                self.status = msg.into();
+            }
+        }
+        self.refresh_kernel_driver();
+    }
+
+    fn remove_kernel_driver(&mut self) {
+        match run_driver_console_with(&["remove"]) {
+            Some(out) => {
+                for line in out.lines() {
+                    self.log(LogKind::Ok, format!("driver: {line}"));
+                }
+                self.status = "Kernel driver removed".into();
+            }
+            None => self.log(LogKind::Error, "winrust-driver.exe not found"),
+        }
+        self.refresh_kernel_driver();
+    }
+
     fn block_with_explorer(&mut self) {
         let path = match self
             .components
@@ -671,6 +753,47 @@ impl LauncherApp {
 // ---------------------------------------------------------------------------
 // Discovery helpers
 // ---------------------------------------------------------------------------
+
+/// Is `WinRustKernel` registered with the SCM?
+fn kernel_service_installed() -> bool {
+    ScManager::connect()
+        .ok()
+        .and_then(|scm| scm.enumerate().ok())
+        .map(|list| list.iter().any(|s| s.name.eq_ignore_ascii_case("WinRustKernel")))
+        .unwrap_or(false)
+}
+
+/// `WinRustKernel.sys` next to the launcher (or in the install folder).
+fn driver_image_path() -> Option<PathBuf> {
+    let dirs = [
+        std::env::current_exe().ok().and_then(|p| p.parent().map(Path::to_path_buf)),
+        Some(install::install_dir()),
+    ];
+    for dir in dirs.into_iter().flatten() {
+        let candidate = dir.join("WinRustKernel.sys");
+        if candidate.is_file() {
+            return Some(candidate);
+        }
+    }
+    None
+}
+
+/// Run `winrust-driver <args>` and capture its stdout.
+fn run_driver_console_with(args: &[&str]) -> Option<String> {
+    let console = find_component("winrust-driver.exe")?;
+    let output = std::process::Command::new(console).args(args).output().ok()?;
+    let text = String::from_utf8_lossy(&output.stdout).to_string();
+    if output.status.success() {
+        Some(text)
+    } else {
+        let err = String::from_utf8_lossy(&output.stderr);
+        Some(format!("{text}{err}").trim().to_string())
+    }
+}
+
+fn run_driver_console(arg: &str) -> Option<String> {
+    run_driver_console_with(&[arg])
+}
 
 fn find_component(exe: &str) -> Option<PathBuf> {
     let dirs = [
@@ -1051,6 +1174,48 @@ impl LauncherApp {
             if ui.button("Start WinRust Explorer as shell").clicked() {
                 self.block_with_explorer();
             }
+            ui.separator();
+
+            // ---- Kernel driver -------------------------------------------
+            ui.heading("Kernel driver");
+            ui.label(
+                RichText::new(
+                    "Installs WinRustKernel.sys as a demand-start kernel service. The driver \
+                     adds what user mode cannot see: every process including protected ones, \
+                     loaded drivers with base addresses, and a RAM-only process block list. \
+                     `winrust-driver remove` unloads and unregisters it.",
+                )
+                .small(),
+            );
+            ui.horizontal(|ui| {
+                let status = if self.kernel_installed {
+                    RichText::new("registered").small().color(Color32::from_rgb(120, 220, 120))
+                } else {
+                    RichText::new("not installed").small().weak()
+                };
+                ui.label(status);
+            });
+            if let Some(info) = &self.kernel_status {
+                ui.label(RichText::new(info.as_str()).small().weak());
+            }
+            ui.horizontal(|ui| {
+                if ui
+                    .add_enabled(self.user.elevated, egui::Button::new("Install driver"))
+                    .on_hover_text("Needs administrator rights and WinRustKernel.sys next to this launcher")
+                    .clicked()
+                {
+                    self.install_kernel_driver();
+                }
+                if ui
+                    .add_enabled(self.user.elevated && self.kernel_installed, egui::Button::new("Remove"))
+                    .clicked()
+                {
+                    self.remove_kernel_driver();
+                }
+                if ui.button("Refresh").clicked() {
+                    self.refresh_kernel_driver();
+                }
+            });
             ui.separator();
 
             // ---- Log -----------------------------------------------------
