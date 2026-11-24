@@ -323,7 +323,7 @@ impl eframe::App for LauncherApp {
                             });
                         });
                     });
-                    if ui
+                    if cols[0]
                         .add(egui::Button::new(RichText::new("Details").small()).frame(false))
                         .clicked()
                     {
