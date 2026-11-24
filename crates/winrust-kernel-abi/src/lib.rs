@@ -73,7 +73,7 @@ impl Query {
 /// `#[repr(C)]` with only integer fields, so kernel and user mode agree byte
 /// for byte.  First field doubles as the record count marker in the response.
 #[repr(C)]
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug)]
 pub struct ProcessRecord {
     pub pid: u32,
     pub parent_pid: u32,
@@ -96,9 +96,32 @@ impl ProcessRecord {
     pub const NAME_CHARS: usize = 64;
 }
 
+// `[u16; 64]` and `[u16; 128]` are too long for the std `Default` impls
+// (arrays only implement `Default` up to 32 elements), so the all-zero record
+// is spelled out here.  `[u16; N]` is POD, so zeroing is a valid value.
+impl Default for ProcessRecord {
+    fn default() -> Self {
+        Self {
+            pid: 0,
+            parent_pid: 0,
+            threads: 0,
+            handles: 0,
+            session_id: 0,
+            base_priority: 0,
+            create_time: 0,
+            user_time: 0,
+            kernel_time: 0,
+            working_set: 0,
+            virtual_size: 0,
+            pagefile_usage: 0,
+            name: [0; Self::NAME_CHARS],
+        }
+    }
+}
+
 /// Fixed-size record describing one loaded kernel module.
 #[repr(C)]
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug)]
 pub struct ModuleRecord {
     pub base_address: u64,
     pub image_size: u32,
@@ -109,6 +132,17 @@ pub struct ModuleRecord {
 
 impl ModuleRecord {
     pub const NAME_CHARS: usize = 128;
+}
+
+impl Default for ModuleRecord {
+    fn default() -> Self {
+        Self {
+            base_address: 0,
+            image_size: 0,
+            flags: 0,
+            name: [0; Self::NAME_CHARS],
+        }
+    }
 }
 
 /// How many records fit in one response.

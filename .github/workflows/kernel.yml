@@ -28,17 +28,66 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: info
-        shell: bash
-        run: |
-          rustc -V
-          cargo -V
-          echo "--- WDK ---"
-          ls "/c/Program Files (x86)/Windows Kits/10/Include" || true
-          ls "/c/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/km/wdm.h" || true
-
       - name: rustfmt + clippy
         run: rustup component add clippy rustfmt
+
+      - name: LLVM (bindgen's libclang)
+        shell: pwsh
+        run: |
+          # wdk-sys generates its bindings with bindgen, which needs libclang.
+          # The runner image already ships LLVM; only verify it is on PATH.
+          $clang = Get-ChildItem "C:\Program Files\LLVM\bin\libclang.dll" -ErrorAction SilentlyContinue
+          if (-not $clang) {
+            Write-Host "installing LLVM via winget"
+            winget install --id LLVM.LLVM --version 18.1.8 --silent --accept-package-agreements --accept-source-agreements
+          }
+          if (Test-Path "C:\Program Files\LLVM\bin") {
+            "C:\Program Files\LLVM\bin" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+          }
+          Write-Host "LIBCLANG_PATH=$env:LIBCLANG_PATH"
+
+      # The runner image's installed WDK is missing the `km/crt` headers that
+      # KMDF needs, so the driver build uses the official NuGet WDK packages
+      # (the same route microsoft/windows-drivers-rs uses in its own CI) and
+      # points WDKContentRoot/WDKBinRoot at them.
+      - name: WDK from NuGet
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $sdkVersion = "10.0.26100"
+          $root = "C:\packages"
+          New-Item -ItemType Directory -Force $root | Out-Null
+
+          # Resolve the newest QFE that exists on NuGet: the flat-container index
+          # lists every published version.
+          $index = Invoke-RestMethod "https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/index.json"
+          $candidates = @($index.versions | Where-Object { $_ -like "$sdkVersion.*" })
+          if ($candidates.Count -eq 0) { throw "no WDK $sdkVersion package on NuGet" }
+          $version = ($candidates | Sort-Object { [version]$_ } | Select-Object -Last 1)
+          Write-Host "WDK version: $version"
+
+          nuget install Microsoft.Windows.WDK.x64 -Version $version -OutputDirectory $root
+          if ($LASTEXITCODE -ne 0) { throw "WDK x64 install failed" }
+          nuget install Microsoft.Windows.SDK.CPP -Version $version -OutputDirectory $root
+          if ($LASTEXITCODE -ne 0) { throw "SDK install failed" }
+
+          $dirs = Get-ChildItem $root -Directory
+          $wdk = ($dirs | Where-Object { $_.Name -like "Microsoft.Windows.WDK.x64.*" } | Select-Object -First 1).FullName
+          $sdk = ($dirs | Where-Object { $_.Name -like "Microsoft.Windows.SDK.CPP.$version*" } | Select-Object -First 1).FullName
+          if (-not $sdk) {
+            $sdk = ($dirs | Where-Object { $_.Name -like "Microsoft.Windows.SDK.CPP.*" } | Select-Object -First 1).FullName
+          }
+          Write-Host "WDK: $wdk"
+          Write-Host "SDK: $sdk"
+
+          "WDKContentRoot=$wdk\c"                    | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "WDKBinRoot=$wdk\c\bin\$sdkVersion.0"   | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "WDKToolRoot=$wdk\c\tools\$sdkVersion.0" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "WindowsSdkBinPath=$sdk\c\bin"           | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "Version_Number=$sdkVersion.0"             | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+
+          Write-Host "--- km/crt check ---"
+          Get-ChildItem "$wdk\c\Include\$sdkVersion.0\km\crt" -ErrorAction SilentlyContinue | Select-Object -First 3 | ForEach-Object { $_.Name }
 
       - name: cargo fmt --check (kernel crates)
         continue-on-error: true
