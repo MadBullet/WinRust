@@ -194,6 +194,14 @@ pub struct ExplorerApp {
     creating_folder: bool,
     new_folder_buffer: String,
     delete_confirm: Vec<PathBuf>,
+    /// Files staged by Ctrl+C / Ctrl+X, waiting for Ctrl+V in another folder.
+    clipboard: Option<FileClipboard>,
+}
+
+/// A pending copy or move of Explorer-style file selections.
+struct FileClipboard {
+    paths: Vec<PathBuf>,
+    cut: bool,
 }
 
 /// Cached egui texture for one icon key.
@@ -246,6 +254,7 @@ impl ExplorerApp {
             creating_folder: false,
             new_folder_buffer: String::new(),
             delete_confirm: Vec::new(),
+            clipboard: None,
         };
         app.start_load(app.active);
         app
@@ -576,6 +585,23 @@ impl ExplorerApp {
                     self.current_mut().show_hidden = hidden;
                     self.remember_prefs();
                     self.refresh();
+                }
+                let has_sel = self.current().selected.is_some();
+                let has_clip = self.clipboard.is_some();
+                if ui.add_enabled(has_sel, egui::Button::new("Copy")).on_hover_text("Ctrl+C").clicked() {
+                    if let Some(sel) = self.current().selected.clone() {
+                        self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: false });
+                        self.status = format!("Copied: {}", sel.display());
+                    }
+                }
+                if ui.add_enabled(has_sel, egui::Button::new("Cut")).on_hover_text("Ctrl+X").clicked() {
+                    if let Some(sel) = self.current().selected.clone() {
+                        self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: true });
+                        self.status = format!("Cut: {}", sel.display());
+                    }
+                }
+                if ui.add_enabled(has_clip, egui::Button::new("Paste")).on_hover_text("Ctrl+V").clicked() {
+                    self.paste_clipboard();
                 }
                 if ui.button("New folder").on_hover_text("Ctrl+Shift+N").clicked() {
                     self.creating_folder = true;
@@ -1028,7 +1054,21 @@ impl ExplorerApp {
             let p = self.current().path.display().to_string();
             self.current_mut().address_edit = Some(p);
         }
+        let (ctrl_x, ctrl_v) = ctx.input(|i| {
+            (
+                i.modifiers.ctrl && i.key_pressed(egui::Key::X),
+                i.modifiers.ctrl && i.key_pressed(egui::Key::V),
+            )
+        });
         if let Some(sel) = self.current().selected.clone() {
+            if ctrl_c {
+                self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: false });
+                self.status = format!("Copied: {}", sel.display());
+            }
+            if ctrl_x {
+                self.clipboard = Some(FileClipboard { paths: vec![sel.clone()], cut: true });
+                self.status = format!("Cut: {}", sel.display());
+            }
             if f2 {
                 self.rename_buffer = file_name_of(&sel);
                 self.rename_target = Some(sel.clone());
@@ -1036,10 +1076,52 @@ impl ExplorerApp {
             if del {
                 self.delete_confirm = vec![sel.clone()];
             }
-            if ctrl_c {
-                self.status = format!("Selected: {}", sel.display());
+        }
+        if ctrl_v {
+            self.paste_clipboard();
+        }
+    }
+
+    /// Ctrl+V — copy or move the staged entries into the current folder.
+    /// Existing names get an Explorer-style `name (2).ext` suffix instead of
+    /// being silently overwritten.
+    fn paste_clipboard(&mut self) {
+        let Some(clip) = self.clipboard.take() else {
+            self.status = "Clipboard is empty".into();
+            return;
+        };
+        let dest_dir = self.current().path.clone();
+        let mut done = 0usize;
+        let mut errors: Vec<String> = Vec::new();
+        for src in &clip.paths {
+            let Some(name) = src.file_name() else { continue };
+            let mut dest = dest_dir.join(name);
+            if dest.exists() {
+                dest = disk::unique_destination(&dest);
+            }
+            let result = if clip.cut {
+                disk::move_path(src, &dest, false)
+            } else {
+                disk::copy_tree(src, &dest, true).map(|_| ())
+            };
+            match result {
+                Ok(()) => done += 1,
+                Err(e) => errors.push(format!("{}: {e}", src.display())),
             }
         }
+        let verb = if clip.cut { "Moved" } else { "Copied" };
+        self.status = if errors.is_empty() {
+            format!("{verb} {done} item(s) to {}", dest_dir.display())
+        } else {
+            format!("{verb} {done}; {} failed — {}", errors.len(), errors.join("; "))
+        };
+        // A cut only clears the clipboard when everything moved.
+        if clip.cut && errors.is_empty() {
+            self.clipboard = None;
+        } else if clip.cut {
+            self.clipboard = Some(clip);
+        }
+        self.refresh();
     }
 
     fn tab_bar(&mut self, ui: &mut egui::Ui) {

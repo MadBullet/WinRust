@@ -326,6 +326,60 @@ pub fn move_path(from: impl AsRef<Path>, to: impl AsRef<Path>, replace: bool) ->
     check("MoveFileExW", unsafe { MoveFileExW(f.as_ptr(), t.as_ptr(), flags) })
 }
 
+/// Copy a file or a whole directory tree, like Explorer's Ctrl+C / Ctrl+V.
+///
+/// * Files are copied with `CopyFileW` (preserves attributes/timestamps).
+/// * Directories are recreated and every child is copied recursively.
+/// * `overwrite = false` fails instead of silently replacing an existing file.
+///
+/// Returns the number of filesystem entries copied.
+pub fn copy_tree(from: impl AsRef<Path>, to: impl AsRef<Path>, overwrite: bool) -> Result<u64> {
+    let from = from.as_ref();
+    let to = to.as_ref();
+    if from.is_dir() {
+        create_dir_all(to)?;
+        let mut copied = 1u64;
+        let entries = std::fs::read_dir(from).map_err(|e| WinError::Other(e.to_string()))?;
+        for e in entries.flatten() {
+            let name = e.file_name();
+            copied += copy_tree(e.path(), to.join(name), overwrite)?;
+        }
+        Ok(copied)
+    } else {
+        let f = to_wide(from);
+        let t = to_wide(to);
+        let fail_if_exists = if overwrite { 0 } else { 1 };
+        check(
+            "CopyFileW",
+            unsafe { windows_sys::Win32::Storage::FileSystem::CopyFileW(f.as_ptr(), t.as_ptr(), fail_if_exists) },
+        )?;
+        Ok(1)
+    }
+}
+
+/// Generate a non-clashing destination name (`report (2).txt`), the way Explorer
+/// resolves "a file with that name already exists" when copying.
+pub fn unique_destination(path: impl AsRef<Path>) -> std::path::PathBuf {
+    let path = path.as_ref();
+    if !path.exists() {
+        return path.to_path_buf();
+    }
+    let stem = path.file_stem().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
+    let ext = path.extension().map(|s| s.to_string_lossy().to_string());
+    let parent = path.parent().map(|p| p.to_path_buf()).unwrap_or_default();
+    for n in 2..10_000 {
+        let candidate_name = match &ext {
+            Some(ext) => format!("{stem} ({n}).{ext}"),
+            None => format!("{stem} ({n})"),
+        };
+        let candidate = parent.join(candidate_name);
+        if !candidate.exists() {
+            return candidate;
+        }
+    }
+    path.to_path_buf()
+}
+
 pub fn attributes(path: impl AsRef<Path>) -> Result<u32> {
     let w = to_wide(path.as_ref());
     let a = unsafe { GetFileAttributesW(w.as_ptr()) };
