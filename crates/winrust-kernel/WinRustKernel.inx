@@ -1,0 +1,72 @@
+;===========================================================================
+; WinRustKernel.INF - install package for the WinRust KMDF driver
+;
+; The driver is a software device (%WinRust.DeviceDesc%), so it has no
+; hardware ID: Windows creates the device node from the INF itself.  Install
+; with:
+;
+;   pnputil /add-driver WinRustKernel.inf /install
+;
+; or just run `winrust-driver install`, which registers the same service
+; through the SCM API and needs no INF at all.  The INF exists for machine
+; images where drivers are deployed through PnPUtil/DISM.
+;===========================================================================
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System
+ClassGuid   = {4D36E97D-E325-11CE-BFC1-08002BE10318}   ; System devices
+Provider    = %ProviderString%
+DriverVer   = 11/24/2026,1.0.0.0
+CatalogFile = WinRustKernel.cat
+PnpLockDown = 1
+
+[DestinationDirs]
+DefaultDestDir = 12                                    ; %SystemRoot%\System32\drivers
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+WinRustKernel.sys = 1,,
+
+; ====================== Driver install section ======================
+[Manufacturer]
+%StdMfg% = Standard,NTamd64.10.0...22000
+
+[Standard.NTamd64.10.0...22000]
+%WinRust.DeviceDesc% = WinRust_Device, WinRustKernel
+
+[WinRust_Device.NTamd64]
+Include = wdfcore.inf
+Needs   = WdfCore.ndis.install, WdfCore.install
+KmdfService = WinRustKernel, WinRust_KMDF_Inst
+
+[WinRust_Device.NTamd64.HW]
+AddReg = WinRust_HW_AddReg
+
+[WinRust_HW_AddReg]
+HKR,,,0,%ClassName%
+
+[WinRust_KMDF_Inst]
+KmdfLibraryVersion = 1.33
+
+[WinRust_Device.NTamd64.Services]
+AddService = WinRustKernel, %SPSVCINST_ASSOCSERVICE%, WinRust_Service_Inst
+
+[WinRust_Service_Inst]
+DisplayName    = %WinRust.SvcDesc%
+ServiceType    = 1                                     ; SERVICE_KERNEL_DRIVER
+StartType      = 3                                     ; SERVICE_DEMAND_START
+ErrorControl   = 1                                     ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\WinRustKernel.sys
+
+; ============================== Strings ==============================
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ProviderString         = "WinRust"
+StdMfg                 = "(Standard system devices)"
+DiskId1                = "WinRust kernel driver installation disk"
+WinRust.DeviceDesc     = "WinRust kernel diagnostics driver"
+WinRust.SvcDesc        = "WinRust kernel driver"
+ClassName              = "System devices"

@@ -8,8 +8,11 @@ use crate::error::{check, Result, WinError};
 use crate::handle::Handle;
 use crate::wide::str_to_wide;
 use serde::{Deserialize, Serialize};
+use std::path::Path;
+use windows_sys::Win32::Foundation::DELETE;
 use windows_sys::Win32::System::Services::{
-    ChangeServiceConfig2W, ChangeServiceConfigW, ControlService, EnumDependentServicesW,
+    ChangeServiceConfig2W, ChangeServiceConfigW, ControlService, CreateServiceW, DeleteService,
+    EnumDependentServicesW,
     EnumServicesStatusExW, OpenSCManagerW, OpenServiceW, QueryServiceConfig2W, QueryServiceConfigW,
     QueryServiceStatusEx, StartServiceW, ENUM_SERVICE_STATUSW, ENUM_SERVICE_TYPE,
     QUERY_SERVICE_CONFIGW, SC_ENUM_PROCESS_INFO, SC_HANDLE, SC_MANAGER_CONNECT,
@@ -17,7 +20,8 @@ use windows_sys::Win32::System::Services::{
     SERVICE_ACCEPT_STOP, SERVICE_CHANGE_CONFIG, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
     SERVICE_CONFIG_DESCRIPTION, SERVICE_CONTINUE_PENDING, SERVICE_CONTROL_CONTINUE,
     SERVICE_CONTROL_PAUSE, SERVICE_CONTROL_STOP, SERVICE_DELAYED_AUTO_START_INFO,
-    SERVICE_DEMAND_START, SERVICE_DESCRIPTIONW, SERVICE_DISABLED, SERVICE_DRIVER,
+    SERVICE_ALL_ACCESS, SERVICE_DEMAND_START, SERVICE_DESCRIPTIONW, SERVICE_DISABLED,
+    SERVICE_DRIVER, SERVICE_ERROR_NORMAL, SERVICE_KERNEL_DRIVER,
     SERVICE_ENUMERATE_DEPENDENTS, SERVICE_NO_CHANGE, SERVICE_PAUSED, SERVICE_PAUSE_CONTINUE,
     SERVICE_PAUSE_PENDING, SERVICE_QUERY_CONFIG, SERVICE_QUERY_STATUS, SERVICE_RUNNING,
     SERVICE_START, SERVICE_START_PENDING, SERVICE_STATE_ALL, SERVICE_STATUS,
@@ -675,5 +679,50 @@ impl ScManager {
     pub fn set_start_type(&self, name: &str, start: StartType) -> Result<()> {
         let svc = self.open_service(name, SERVICE_CHANGE_CONFIG | SERVICE_QUERY_CONFIG)?;
         svc.set_start_type(start, None)
+    }
+
+    /// Register a new kernel-mode driver service pointing at `image`.
+    ///
+    /// `SERVICE_KERNEL_DRIVER` + `SERVICE_DEMAND_START` + `SERVICE_ERROR_NORMAL`
+    /// is exactly what `sc create type= kernel start= demand` does, so the
+    /// driver appears in services.msc like any other driver.  `image` is
+    /// quoted, because `Program Files` contains a space and SCM splits the
+    /// binary path on it otherwise.
+    pub fn create_kernel_service(&self, name: &str, display: &str, image: &Path) -> Result<()> {
+        let wname = str_to_wide(name);
+        let wdisplay = str_to_wide(display);
+        let wimage = str_to_wide(format!("\"{}\"", image.display()));
+        let handle = unsafe {
+            CreateServiceW(
+                self.h.raw() as SC_HANDLE,
+                wname.as_ptr(),
+                wdisplay.as_ptr(),
+                SERVICE_ALL_ACCESS,
+                SERVICE_KERNEL_DRIVER,
+                SERVICE_DEMAND_START,
+                SERVICE_ERROR_NORMAL,
+                wimage.as_ptr(),
+                std::ptr::null(),
+                std::ptr::null_mut(),
+                std::ptr::null(),
+                std::ptr::null(),
+                std::ptr::null(),
+            )
+        };
+        match Handle::new(handle) {
+            Some(_) => Ok(()),
+            None => Err(WinError::from_last_error("CreateServiceW (elevation required)")),
+        }
+    }
+
+    /// Delete a service (or driver) by name.
+    pub fn delete(&self, name: &str) -> Result<()> {
+        let svc = self.open_service(name, DELETE | SERVICE_QUERY_STATUS)?;
+        let ok = unsafe { DeleteService(svc.h.raw() as SC_HANDLE) };
+        if ok != 0 {
+            Ok(())
+        } else {
+            Err(WinError::from_last_error("DeleteService"))
+        }
     }
 }

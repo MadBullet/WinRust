@@ -11,6 +11,7 @@ members = [
     # The KMDF driver needs the WDK and is built by .github/workflows/kernel.yml
     # instead of the plain `cargo build --workspace` (which has no WDK).
     "crates/winrust-kernel",
+    "crates/winrust-kernel/control",
 ]
 
 [workspace.package]
