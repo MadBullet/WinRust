@@ -684,7 +684,7 @@ impl ExplorerApp {
         let sort_key = self.current().sort_key;
         let sort_asc = self.current().sort_asc;
 
-        let mut table = TableBuilder::new(ui)
+        let table = TableBuilder::new(ui)
             .striped(true)
             .resizable(true)
             .cell_layout(egui::Layout::left_to_right(egui::Align::Center))

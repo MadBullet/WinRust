@@ -349,46 +349,53 @@ impl SysCtlApp {
         if let Some((i, value)) = edit {
             self.env_edit = Some((i, value));
         }
-        if let Some((i, mut value)) = self.env_edit.clone() {
-            egui::Window::new(format!("Edit {}", self.env[i].name))
+        if let Some((index, value)) = self.env_edit.take() {
+            let mut draft = value;
+            let var_name = self.env[index].name.clone();
+            let scope = self.env[index].scope;
+            let mut action: Option<&'static str> = None;
+            egui::Window::new(format!("Edit {var_name}"))
                 .collapsible(false)
                 .resizable(true)
                 .default_width(700.0)
                 .show(ui.ctx(), |ui| {
-                    ui.add(egui::TextEdit::multiline(&mut value).desired_rows(6).desired_width(660.0));
+                    ui.add(egui::TextEdit::multiline(&mut draft).desired_rows(6).desired_width(660.0));
                     ui.horizontal(|ui| {
                         if ui.button("Save").clicked() {
-                            let name = self.env[i].name.clone();
-                            let scope = self.env[i].scope;
-                            let result = if scope == "User" {
-                                registry::set_user_env(&name, &value)
-                            } else {
-                                match registry::open_for_write(Root::LocalMachine, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment") {
-                                    Ok(key) => key.set_string(&name, &value),
-                                    Err(e) => Err(e),
-                                }
-                            };
-                            match result {
-                                Ok(()) => {
-                                    self.status = format!("{scope} {name} updated");
-                                    system::broadcast_settings_change();
-                                    if scope == "User" {
-                                        std::env::set_var(&name, &value);
-                                    }
-                                    self.reload_env();
-                                }
-                                Err(e) => self.status = format!("Save failed: {e}"),
-                            }
-                            self.env_edit = None;
+                            action = Some("save");
                         }
                         if ui.button("Cancel").clicked() {
-                            self.env_edit = None;
+                            action = Some("cancel");
                         }
                     });
                 });
-            if let Some((_, v)) = self.env_edit.clone() {
-                if let Some((i, val)) = self.env_edit {
-                    let _ = (i, val);
+            match action {
+                Some("save") => {
+                    let result = if scope == "User" {
+                        registry::set_user_env(&var_name, &draft)
+                    } else {
+                        let path = r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment";
+                        match registry::open_for_write(Root::LocalMachine, path) {
+                            Ok(key) => key.set_string(&var_name, &draft),
+                            Err(e) => Err(e),
+                        }
+                    };
+                    match result {
+                        Ok(()) => {
+                            self.status = format!("{scope} {var_name} updated");
+                            system::broadcast_settings_change();
+                            if scope == "User" {
+                                std::env::set_var(&var_name, &draft);
+                            }
+                            self.reload_env();
+                        }
+                        Err(e) => self.status = format!("Save failed: {e}"),
+                    }
+                }
+                Some("cancel") => {}
+                _ => {
+                    // Window still open: put the draft back so the next frame shows it.
+                    self.env_edit = Some((index, draft));
                 }
             }
         }
@@ -510,7 +517,7 @@ impl SysCtlApp {
             .iter()
             .filter(|d| needle.is_empty() || d.display.to_lowercase().contains(&needle) || d.name.to_lowercase().contains(&needle))
             .collect();
-        let mut table = TableBuilder::new(ui)
+        let table = TableBuilder::new(ui)
             .striped(true)
             .resizable(true)
             .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
@@ -518,7 +525,7 @@ impl SysCtlApp {
             .column(Column::initial(220.0).at_least(100.0).clip(true))
             .column(Column::initial(110.0).at_least(80.0).clip(true))
             .column(Column::remainder().at_least(100.0).clip(true));
-        table = table.header(22.0, |mut header| {
+        let table = table.header(22.0, |mut header| {
             for t in ["Display name", "Service name", "State", "Start type"] {
                 header.col(|ui| {
                     ui.label(RichText::new(t).strong());
