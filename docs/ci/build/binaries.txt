@@ -1,1 +1,2 @@
-1.6G	target
+-rwxr-xr-x 2 runneradmin 197121 4080128 Nov 24 12:08 target/release/winrust-services.exe
+1.7G	target
