@@ -1,26 +1,23 @@
-warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
-package:   D:\a\WinRust\WinRust\crates\winrust-kernel\Cargo.toml
-workspace: D:\a\WinRust\WinRust\Cargo.toml
     Updating crates.io index
-     Locking 390 packages to highest compatible versions
+     Locking 341 packages to highest compatible versions
       Adding eframe v0.29.1 (available: v0.37.0)
       Adding egui v0.29.1 (available: v0.37.0)
       Adding egui_extras v0.29.1 (available: v0.37.0)
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
-  Downloaded itoa v1.0.19
-  Downloaded unicode-ident v1.0.27
-  Downloaded memchr v2.8.3
-  Downloaded zmij v1.0.23
-  Downloaded thiserror v1.0.69
   Downloaded log v0.4.35
-  Downloaded serde_derive v1.0.229
-  Downloaded thiserror-impl v1.0.69
-  Downloaded windows-targets v0.52.6
-  Downloaded proc-macro2 v1.0.107
   Downloaded quote v1.0.47
+  Downloaded itoa v1.0.19
+  Downloaded windows-targets v0.52.6
+  Downloaded thiserror v1.0.69
+  Downloaded thiserror-impl v1.0.69
+  Downloaded zmij v1.0.23
+  Downloaded unicode-ident v1.0.27
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_derive v1.0.229
   Downloaded serde_core v1.0.229
+  Downloaded memchr v2.8.3
   Downloaded serde v1.0.229
   Downloaded serde_json v1.0.154
   Downloaded syn v3.0.10
@@ -30,23 +27,23 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
    Compiling proc-macro2 v1.0.107
    Compiling quote v1.0.47
    Compiling unicode-ident v1.0.27
-   Compiling windows_x86_64_msvc v0.52.6
    Compiling serde_core v1.0.229
+   Compiling windows_x86_64_msvc v0.52.6
    Compiling zmij v1.0.23
    Compiling syn v2.0.119
    Compiling syn v3.0.10
+   Compiling serde v1.0.229
    Compiling serde_json v1.0.154
    Compiling thiserror v1.0.69
-   Compiling serde v1.0.229
-   Compiling serde_derive v1.0.229
-   Compiling thiserror-impl v1.0.69
    Compiling windows-targets v0.52.6
-   Compiling memchr v2.8.3
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.229
    Compiling itoa v1.0.19
+   Compiling memchr v2.8.3
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.3.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 08s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 42.38s
      Running unittests src\lib.rs (target\debug\build\winrust-core/3419f2d8408084de\out\winrust_core-3419f2d8408084de.exe)
 
 running 7 tests
