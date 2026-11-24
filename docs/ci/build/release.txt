@@ -2,38 +2,38 @@
    Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
    Compiling cfg-if v1.0.5
-   Compiling stable_deref_trait v1.2.1
    Compiling log v0.4.35
    Compiling syn v3.0.10
+   Compiling stable_deref_trait v1.2.1
    Compiling windows-link v0.2.1
-   Compiling smallvec v1.16.6
    Compiling simd-adler32 v0.3.10
-   Compiling crc32fast v1.5.5
+   Compiling smallvec v1.16.6
+   Compiling crc32fast v1.5.6
    Compiling adler2 v2.0.1
-   Compiling litemap v0.8.3
-   Compiling utf_types v1.0.0
    Compiling writeable v0.6.4
+   Compiling utf_types v1.0.0
+   Compiling litemap v0.8.3
    Compiling utf8_iter v1.1.0
    Compiling synstructure v0.14.0
    Compiling miniz_oxide v0.9.1
    Compiling zerofrom-derive v0.1.8
    Compiling yoke-derive v0.8.4
    Compiling zerofrom v0.1.8
-   Compiling zerovec-derive v0.11.7
-   Compiling yoke v0.8.4
    Compiling bytemuck_derive v1.12.1
-   Compiling zerovec v0.11.9
+   Compiling yoke v0.8.4
+   Compiling zerovec-derive v0.11.7
    Compiling bytemuck v1.25.2
    Compiling displaydoc v0.2.7
+   Compiling zerovec v0.11.9
    Compiling potential_utf v0.1.6
-   Compiling once_cell v1.21.4
-   Compiling windows_x86_64_msvc v0.52.6
-   Compiling khronos_api v3.1.0
    Compiling tinystr v0.8.5
-   Compiling icu_locale_core v2.4.0
    Compiling zerotrie v0.2.5
+   Compiling icu_locale_core v2.4.0
    Compiling icu_normalizer_data v2.4.0
+   Compiling khronos_api v3.1.0
+   Compiling windows_x86_64_msvc v0.52.6
    Compiling icu_properties_data v2.4.0
+   Compiling once_cell v1.21.4
    Compiling icu_provider v2.4.0
    Compiling icu_collections v2.4.0
    Compiling flate2 v1.1.11
@@ -42,36 +42,36 @@
    Compiling xml-rs v0.8.29
    Compiling icu_properties v2.4.0
    Compiling gl_generator v0.14.0
-   Compiling icu_normalizer v2.4.0
    Compiling windows-targets v0.52.6
-   Compiling shlex v2.0.1
-   Compiling version_check v0.9.5
-   Compiling parking_lot_core v0.9.12
+   Compiling icu_normalizer v2.4.0
    Compiling find-msvc-tools v0.1.15
+   Compiling parking_lot_core v0.9.12
+   Compiling version_check v0.9.5
    Compiling zerocopy v0.8.64
+   Compiling shlex v2.0.1
    Compiling cc v1.11.3
    Compiling ahash v0.8.13
    Compiling idna_adapter v1.2.2
-   Compiling percent-encoding v2.3.2
+   Compiling ttf-parser v0.25.1
    Compiling scopeguard v1.2.0
    Compiling bitflags v2.13.2
-   Compiling ttf-parser v0.25.1
-   Compiling ring v0.17.14
-   Compiling lock_api v0.4.14
+   Compiling percent-encoding v2.3.2
    Compiling form_urlencoded v1.2.3
-   Compiling idna v1.1.0
    Compiling owned_ttf_parser v0.25.1
+   Compiling lock_api v0.4.14
+   Compiling ring v0.17.14
+   Compiling idna v1.1.0
    Compiling emath v0.29.1
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
    Compiling windows-sys v0.61.2
-   Compiling ab_glyph_rasterizer v0.1.10
+   Compiling zeroize v1.9.2
    Compiling float-cmp v0.9.0
    Compiling arrayvec v0.7.8
-   Compiling zeroize v1.9.2
-   Compiling rustls-pki-types v1.16.0
-   Compiling strict-num v0.1.1
+   Compiling ab_glyph_rasterizer v0.1.10
    Compiling ab_glyph v0.2.32
+   Compiling strict-num v0.1.1
+   Compiling rustls-pki-types v1.16.0
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
    Compiling url v2.5.9
@@ -79,9 +79,9 @@
    Compiling num-traits v0.2.19
    Compiling syn v2.0.119
    Compiling epaint_default_fonts v0.29.1
-   Compiling serde_core v1.0.229
    Compiling nohash-hasher v0.2.0
    Compiling arrayref v0.3.9
+   Compiling serde_core v1.0.229
    Compiling tiny-skia-path v0.11.4
    Compiling epaint v0.29.1
    Compiling kurbo v0.9.5
@@ -91,39 +91,39 @@
    Compiling getrandom v0.2.17
    Compiling pin-project-lite v0.2.18
    Compiling untrusted v0.9.0
-   Compiling siphasher v1.0.4
-   Compiling unicase v2.10.0
-   Compiling tracing-core v0.1.36
-   Compiling memchr v2.8.3
    Compiling serde v1.0.229
    Compiling raw-window-handle v0.6.2
+   Compiling tracing-core v0.1.36
+   Compiling memchr v2.8.3
+   Compiling siphasher v1.0.4
+   Compiling unicase v2.10.0
    Compiling siphasher v0.3.11
-   Compiling aho-corasick v1.1.5
-   Compiling svgtypes v0.13.0
-   Compiling tracing v0.1.44
    Compiling phf_shared v0.11.3
+   Compiling svgtypes v0.13.0
+   Compiling aho-corasick v1.1.5
+   Compiling tracing v0.1.44
    Compiling egui v0.29.1
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
    Compiling serde_derive v1.0.229
+   Compiling error-code v3.4.0
+   Compiling rustls v0.23.46
    Compiling dpi v0.1.2
    Compiling weezl v0.1.12
+   Compiling pxfm v0.1.30
    Compiling regex-syntax v0.8.12
-   Compiling rustls v0.23.46
-   Compiling error-code v3.4.0
-   Compiling color_quant v1.1.0
+   Compiling litrs v1.0.1
    Compiling smol_str v0.2.2
    Compiling rctree v0.5.0
-   Compiling pxfm v0.1.30
    Compiling cursor-icon v1.2.0
+   Compiling color_quant v1.1.0
    Compiling unicode-segmentation v1.13.3
-   Compiling litrs v1.0.1
-   Compiling document-features v0.2.12
-   Compiling moxcms v0.8.1
-   Compiling usvg-tree v0.37.0
    Compiling gif v0.14.2
-   Compiling clipboard-win v5.4.3
+   Compiling usvg-tree v0.37.0
+   Compiling document-features v0.2.12
    Compiling regex-automata v0.4.19
+   Compiling moxcms v0.8.1
+   Compiling clipboard-win v5.4.3
    Compiling rustls-webpki v0.103.17
    Compiling phf v0.11.3
    Compiling webpki-roots v1.0.12
@@ -131,141 +131,67 @@
    Compiling glutin-winit v0.5.0
    Compiling libloading v0.8.9
    Compiling simplecss v0.2.2
+   Compiling thiserror v1.0.69
    Compiling utf8parse v0.2.2
    Compiling anstyle v1.0.14
-   Compiling thiserror v1.0.69
-   Compiling roxmltree v0.19.0
-   Compiling once_cell_polyfill v1.70.2
-   Compiling subtle v2.6.1
-   Compiling imagesize v0.12.0
-   Compiling bitflags v1.3.2
    Compiling winapi v0.3.9
-   Compiling data-url v0.3.2
+   Compiling imagesize v0.12.0
    Compiling byteorder-lite v0.1.0
-   Compiling usvg-parser v0.37.0
-   Compiling image v0.25.10
-   Compiling png v0.17.16
+   Compiling bitflags v1.3.2
+   Compiling subtle v2.6.1
+   Compiling data-url v0.3.2
+   Compiling once_cell_polyfill v1.70.2
+   Compiling roxmltree v0.19.0
    Compiling anstyle-wincon v3.0.11
+   Compiling usvg-parser v0.37.0
+   Compiling png v0.17.16
+   Compiling image v0.25.10
    Compiling anstyle-parse v1.0.0
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
-   Compiling regex v1.13.2
    Compiling arboard v3.7.0
+   Compiling regex v1.13.2
    Compiling thiserror-impl v1.0.69
    Compiling webbrowser v1.2.7
    Compiling anstyle-query v1.1.5
-   Compiling base64 v0.22.1
-   Compiling pico-args v0.5.0
    Compiling base64 v0.21.7
-   Compiling jiff-core v1.0.1
-   Compiling colorchoice v1.0.5
-   Compiling is_terminal_polyfill v1.70.2
-   Compiling xmlwriter v0.1.0
    Compiling web-time v1.1.0
+   Compiling jiff-core v1.0.1
+   Compiling xmlwriter v0.1.0
    Compiling glow v0.14.2
-   Compiling egui-winit v0.29.1
-   Compiling egui_glow v0.29.1
-   Compiling jiff v1.0.2
-   Compiling usvg v0.37.0
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling pico-args v0.5.0
+   Compiling base64 v0.22.1
+   Compiling colorchoice v1.0.5
    Compiling anstream v1.0.0
    Compiling ureq v2.12.1
+   Compiling usvg v0.37.0
+   Compiling egui_glow v0.29.1
+   Compiling jiff v1.0.2
+   Compiling egui-winit v0.29.1
    Compiling env_filter v2.1.0
    Compiling tiny-skia v0.11.4
    Compiling enum-map-derive v0.17.0
    Compiling windows-sys v0.59.0
    Compiling rgb v0.8.53
-   Compiling mime v0.3.18
    Compiling static_assertions v1.1.0
+   Compiling mime v0.3.18
    Compiling eframe v0.29.1
    Compiling resvg v0.37.0
-   Compiling enum-map v2.7.3
-   Compiling env_logger v0.11.12
    Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-error[E0252]: the name `SERVICE_PAUSE_PENDING` is defined multiple times
-  --> crates\winrust-core\src\service.rs:24:28
-   |
-22 |     SERVICE_NO_CHANGE, SERVICE_PAUSED, SERVICE_PAUSE_PENDING, SERVICE_QUERY_CONFIG,
-   |                                        --------------------- previous import of the value `SERVICE_PAUSE_PENDING` here
-23 |     SERVICE_QUERY_STATUS, SERVICE_RUNNING, SERVICE_START, SERVICE_STATE_ALL, SERVICE_STATUS,
-24 |     SERVICE_START_PENDING, SERVICE_PAUSE_PENDING, SERVICE_CONTINUE,
-   |                            ^^^^^^^^^^^^^^^^^^^^^--
-   |                            |
-   |                            `SERVICE_PAUSE_PENDING` reimported here
-   |                            help: remove unnecessary import
-   |
-   = note: `SERVICE_PAUSE_PENDING` must be defined only once in the value namespace of this module
+error[E0432]: unresolved import `windows_sys::Win32::System::SystemInformation::FileTimeToSystemTime`
+   --> crates\winrust-core\src\disk.rs:173:9
+    |
+173 |     use windows_sys::Win32::System::SystemInformation::FileTimeToSystemTime;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^--------------------
+    |                                                        |
+    |                                                        no `FileTimeToSystemTime` in `Win32::System::SystemInformation`
 
-error[E0432]: unresolved import `windows_sys::Win32::Storage::FileSystem::FileTimeToSystemTime`
-   --> crates\winrust-core\src\disk.rs:172:76
+error[E0425]: cannot find value `SYNCHRONIZE` in module `windows_sys::Win32::Foundation`
+   --> crates\winrust-core\src\process.rs:308:60
     |
-172 |     use windows_sys::Win32::Storage::FileSystem::{FileTimeToLocalFileTime, FileTimeToSystemTime};
-    |                                                                            ^^^^^^^^^^^^^^^^^^^^ no `FileTimeToSystemTime` in `Win32::Storage::FileSystem`
-
-error[E0433]: cannot find `Input` in `UI`
-   --> crates\winrust-core\src\system.rs:337:33
-    |
-337 |     use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
-    |                                 ^^^^^ could not find `Input` in `UI`
-    |
-note: found an item that was configured out
-   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\UI\mod.rs:10:9
-    |
-  9 | #[cfg(feature = "Win32_UI_Input")]
-    |       -------------------------- the item is gated behind the `Win32_UI_Input` feature
- 10 | pub mod Input;
-    |         ^^^^^
-
-error[E0432]: unresolved import `windows_sys::Win32::System::Services::SERVICE_CONTINUE`
-  --> crates\winrust-core\src\service.rs:24:51
-   |
-24 |     SERVICE_START_PENDING, SERVICE_PAUSE_PENDING, SERVICE_CONTINUE,
-   |                                                   ^^^^^^^^^^^^^^^^ no `SERVICE_CONTINUE` in `Win32::System::Services`
-   |
-help: a similar name exists in the module
-   |
-24 -     SERVICE_START_PENDING, SERVICE_PAUSE_PENDING, SERVICE_CONTINUE,
-24 +     SERVICE_START_PENDING, SERVICE_PAUSE_PENDING, SERVICE_CONFIG,
-   |
-
-error[E0433]: cannot find `Com` in `System`
-   --> crates\winrust-core\src\shell.rs:102:41
-    |
-102 |             windows_sys::Win32::System::Com::CoTaskMemFree(psz as *const c_void);
-    |                                         ^^^ could not find `Com` in `System`
-    |
-note: found an item that was configured out
-   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\System\mod.rs:12:9
-    |
- 11 | #[cfg(feature = "Win32_System_Com")]
-    |       ---------------------------- the item is gated behind the `Win32_System_Com` feature
- 12 | pub mod Com;
-    |         ^^^
-
-error[E0433]: cannot find `Authorization` in `Security`
-   --> crates\winrust-core\src\user.rs:135:57
-    |
-135 |         let ok = unsafe { windows_sys::Win32::Security::Authorization::ConvertSidToStringSidW(sid.as_ptr(), &mut out) };
-    |                                                         ^^^^^^^^^^^^^ could not find `Authorization` in `Security`
-    |
-note: found an item that was configured out
-   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\Security\mod.rs:6:9
-    |
-  5 | #[cfg(feature = "Win32_Security_Authorization")]
-    |       ---------------------------------------- the item is gated behind the `Win32_Security_Authorization` feature
-  6 | pub mod Authorization;
-    |         ^^^^^^^^^^^^^
-
-error[E0425]: cannot find value `PROCESS_VM_READ` in this scope
-   --> crates\winrust-core\src\process.rs:204:41
-    |
-204 |             PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE | PROCESS_SET_INFORMATION,
-    |                                         ^^^^^^^^^^^^^^^ not found in this scope
-
-error[E0425]: cannot find value `SYNCHRONIZE` in module `windows_sys::Win32::System::Threading`
-   --> crates\winrust-core\src\process.rs:307:67
-    |
-307 |     let h = open_with(pid, windows_sys::Win32::System::Threading::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
-    |                                                                   ^^^^^^^^^^^ not found in `windows_sys::Win32::System::Threading`
+308 |     let h = open_with(pid, windows_sys::Win32::Foundation::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
+    |                                                            ^^^^^^^^^^^ not found in `windows_sys::Win32::Foundation`
 
 warning: unused import: `to_wide`
   --> crates\winrust-core\src\process.rs:10:36
@@ -293,7 +219,7 @@ warning: unused import: `windows_sys::Win32::Foundation::ERROR_SUCCESS`
 11 | use windows_sys::Win32::Foundation::ERROR_SUCCESS;
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-warning: unused imports: `CloseServiceHandle`, `SERVICE_ACTIVE`, and `SERVICE_PAUSE_PENDING`
+warning: unused imports: `CloseServiceHandle` and `SERVICE_ACTIVE`
   --> crates\winrust-core\src\service.rs:13:27
    |
 13 |     ChangeServiceConfigW, CloseServiceHandle, ControlService, EnumDependentServicesW,
@@ -301,131 +227,12 @@ warning: unused imports: `CloseServiceHandle`, `SERVICE_ACTIVE`, and `SERVICE_PA
 ...
 18 |     SERVICE_ACCEPT_STOP, SERVICE_ACTIVE, SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
    |                          ^^^^^^^^^^^^^^
-...
-24 |     SERVICE_START_PENDING, SERVICE_PAUSE_PENDING, SERVICE_CONTINUE,
-   |                            ^^^^^^^^^^^^^^^^^^^^^
 
-   Compiling ehttp v0.5.0
-error[E0277]: the trait bound `Protocol: Default` is not satisfied
-  --> crates\winrust-core\src\net.rs:36:5
-   |
-34 | #[derive(Debug, Clone, Default, Serialize, Deserialize)]
-   |                        ------- in this derive macro expansion
-35 | pub struct Connection {
-36 |     pub protocol: Protocol,
-   |     ^^^^^^^^^^^^^^^^^^^^^^ the trait `Default` is not implemented for `Protocol`
-   |
-help: consider annotating `Protocol` with `#[derive(Default)]`
-   |
-16 + #[derive(Default)]
-17 | pub enum Protocol {
-   |
-
-error[E0277]: `*mut c_void` doesn't implement `std::fmt::Display`
-   --> crates\winrust-core\src\shell.rs:138:93
-    |
-138 |     if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute failed ({rc})"))) }
-    |                                                                                             ^^^^ `*mut c_void` cannot be formatted with the default formatter
-    |
-    = help: the trait `std::fmt::Display` is not implemented for `*mut c_void`
-    = note: in format strings you may be able to use `{:?}` (or `{:#?}` for pretty-print) instead
-
-error[E0277]: `*mut c_void` doesn't implement `std::fmt::Display`
-   --> crates\winrust-core\src\shell.rs:155:101
-    |
-155 |     if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute({verb}) failed ({rc})"))) }
-    |                                                                                                     ^^^^ `*mut c_void` cannot be formatted with the default formatter
-    |
-    = help: the trait `std::fmt::Display` is not implemented for `*mut c_void`
-    = note: in format strings you may be able to use `{:?}` (or `{:#?}` for pretty-print) instead
-
-error[E0609]: no field `lpVerbW` on type `SHELLEXECUTEINFOW`
-   --> crates\winrust-core\src\shell.rs:166:10
-    |
-166 |     info.lpVerbW = verb.as_ptr();
-    |          ^^^^^^^ unknown field
-    |
-help: a field with a similar name exists
-    |
-166 -     info.lpVerbW = verb.as_ptr();
-166 +     info.lpVerb = verb.as_ptr();
-    |
-
-error[E0609]: no field `lpFileW` on type `SHELLEXECUTEINFOW`
-   --> crates\winrust-core\src\shell.rs:167:10
-    |
-167 |     info.lpFileW = file.as_ptr();
-    |          ^^^^^^^ unknown field
-    |
-help: a field with a similar name exists
-    |
-167 -     info.lpFileW = file.as_ptr();
-167 +     info.lpFile = file.as_ptr();
-    |
-
-error[E0609]: no field `lpFileW` on type `SHELLEXECUTEINFOW`
-   --> crates\winrust-core\src\shell.rs:181:10
-    |
-181 |     info.lpFileW = file.as_ptr();
-    |          ^^^^^^^ unknown field
-    |
-help: a field with a similar name exists
-    |
-181 -     info.lpFileW = file.as_ptr();
-181 +     info.lpFile = file.as_ptr();
-    |
-
-error[E0609]: no field `lpParametersW` on type `SHELLEXECUTEINFOW`
-   --> crates\winrust-core\src\shell.rs:182:10
-    |
-182 |     info.lpParametersW = params.as_ptr();
-    |          ^^^^^^^^^^^^^ unknown field
-    |
-help: a field with a similar name exists
-    |
-182 -     info.lpParametersW = params.as_ptr();
-182 +     info.lpParameters = params.as_ptr();
-    |
-
-error[E0609]: no field `lpDirectoryW` on type `SHELLEXECUTEINFOW`
-   --> crates\winrust-core\src\shell.rs:184:14
-    |
-184 |         info.lpDirectoryW = d.as_ptr();
-    |              ^^^^^^^^^^^^ unknown field
-    |
-help: a field with a similar name exists
-    |
-184 -         info.lpDirectoryW = d.as_ptr();
-184 +         info.lpDirectory = d.as_ptr();
-    |
-
-error[E0425]: cannot find function, tuple struct or tuple variant `SHGetFileInfoW` in this scope
-   --> crates\winrust-core\src\shell.rs:255:9
-    |
-255 |         SHGetFileInfoW(
-    |         ^^^^^^^^^^^^^^ not found in this scope
-
-error[E0277]: `*mut c_void` doesn't implement `std::fmt::Display`
-   --> crates\winrust-core\src\shell.rs:304:87
-    |
-304 |     if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("launch failed ({rc})"))) }
-    |                                                                                       ^^^^ `*mut c_void` cannot be formatted with the default formatter
-    |
-    = help: the trait `std::fmt::Display` is not implemented for `*mut c_void`
-    = note: in format strings you may be able to use `{:?}` (or `{:#?}` for pretty-print) instead
-
-   Compiling egui_extras v0.29.1
-error[E0133]: access to union field is unsafe and requires unsafe function or block
-   --> crates\winrust-core\src\system.rs:110:22
-    |
-110 |     let arch = match si.Anonymous.Anonymous.wProcessorArchitecture {
-    |                      ^^^^^^^^^^^^^^^^^^^^^^ access to union field
-    |
-    = note: the field may not be properly initialized: using uninitialized data will cause undefined behavior
-
-Some errors have detailed explanations: E0133, E0252, E0277, E0425, E0432, E0433, E0609.
-For more information about an error, try `rustc --explain E0133`.
+   Compiling enum-map v2.7.3
+   Compiling env_logger v0.11.12
+Some errors have detailed explanations: E0425, E0432.
+For more information about an error, try `rustc --explain E0425`.
 warning: `winrust-core` (lib) generated 5 warnings
-error: could not compile `winrust-core` (lib) due to 19 previous errors; 5 warnings emitted
+error: could not compile `winrust-core` (lib) due to 2 previous errors; 5 warnings emitted
 warning: build failed, waiting for other jobs to finish...
 exit=False
