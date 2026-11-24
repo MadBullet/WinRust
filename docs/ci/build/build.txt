@@ -2,233 +2,233 @@ warning: profiles for the non root package will be ignored, specify profiles at 
 package:   D:\a\WinRust\WinRust\crates\winrust-kernel\Cargo.toml
 workspace: D:\a\WinRust\WinRust\Cargo.toml
  Downloading crates ...
-  Downloaded adler2 v2.0.1
-  Downloaded cargo-platform v0.3.3
-  Downloaded windows-strings v0.5.1
-  Downloaded clap-cargo v0.19.1
-  Downloaded clap_lex v1.1.2
-  Downloaded color_quant v1.1.0
-  Downloaded colorchoice v1.0.5
-  Downloaded cursor-icon v1.2.0
-  Downloaded siphasher v0.3.11
-  Downloaded windows-future v0.3.2
-  Downloaded xmlwriter v0.1.0
-  Downloaded zeroize v1.9.2
-  Downloaded arrayref v0.3.9
-  Downloaded byteorder-lite v0.1.0
-  Downloaded document-features v0.2.12
-  Downloaded dpi v0.1.2
-  Downloaded litrs v1.1.0
-  Downloaded shlex v2.0.1
-  Downloaded ecolor v0.29.1
-  Downloaded ehttp v0.5.0
-  Downloaded float-cmp v0.9.0
-  Downloaded glutin_egl_sys v0.7.1
-  Downloaded windows-implement v0.60.2
   Downloaded anstyle-query v1.1.5
-  Downloaded cfg_aliases v0.2.2
-  Downloaded windows-result v0.4.1
+  Downloaded env_filter v2.1.0
+  Downloaded ab_glyph v0.2.32
+  Downloaded clang-sys v1.9.1
+  Downloaded icu_provider v2.4.0
+  Downloaded ecolor v0.29.1
+  Downloaded ahash v0.8.13
   Downloaded anstyle-wincon v3.0.11
   Downloaded ab_glyph_rasterizer v0.1.10
-  Downloaded enum-map-derive v0.17.0
-  Downloaded env_filter v2.1.0
-  Downloaded error-code v3.4.0
-  Downloaded form_urlencoded v1.2.3
-  Downloaded xml-rs v0.8.29
-  Downloaded glutin-winit v0.5.0
-  Downloaded heck v0.5.0
-  Downloaded imagesize v0.12.0
-  Downloaded is_terminal_polyfill v1.70.2
-  Downloaded cfg-if v1.0.5
-  Downloaded bitflags v1.3.2
-  Downloaded bytemuck_derive v1.12.1
-  Downloaded clipboard-win v5.4.3
-  Downloaded data-url v0.3.2
-  Downloaded either v1.19.0
-  Downloaded enum-map v2.7.3
-  Downloaded env_logger v0.11.12
-  Downloaded glob v0.3.4
-  Downloaded glutin_wgl_sys v0.6.1
-  Downloaded idna_adapter v1.2.2
-  Downloaded jobserver v0.1.35
-  Downloaded lazy_static v1.5.1
-  Downloaded libloading v0.8.9
-  Downloaded ab_glyph v0.2.32
+  Downloaded aho-corasick v1.1.5
+  Downloaded dpi v0.1.2
+  Downloaded adler2 v2.0.1
   Downloaded anstream v1.0.0
-  Downloaded anstyle v1.0.14
-  Downloaded anstyle-parse v1.0.0
-  Downloaded anyhow v1.0.105
-  Downloaded arrayvec v0.7.8
-  Downloaded autocfg v1.5.1
-  Downloaded bitflags v2.13.2
-  Downloaded camino v1.2.6
-  Downloaded cargo_metadata v0.23.1
-  Downloaded cexpr v0.6.0
-  Downloaded clap_derive v4.6.9
-  Downloaded crc32fast v1.5.6
-  Downloaded displaydoc v0.2.7
-  Downloaded egui-winit v0.29.1
-  Downloaded egui_extras v0.29.1
   Downloaded egui_glow v0.29.1
-  Downloaded emath v0.29.1
-  Downloaded fdeflate v0.3.7
-  Downloaded find-msvc-tools v0.1.15
-  Downloaded fs4 v1.1.0
-  Downloaded getrandom v0.2.17
-  Downloaded getrandom v0.4.3
-  Downloaded gif v0.14.2
-  Downloaded gl_generator v0.14.0
-  Downloaded icu_provider v2.4.0
-  Downloaded litemap v0.8.3
-  Downloaded windows-numerics v0.3.1
-  Downloaded winit v0.30.13
-  Downloaded ahash v0.8.13
-  Downloaded arboard v3.7.0
-  Downloaded base64 v0.22.1
-  Downloaded bytemuck v1.25.2
-  Downloaded clang-sys v1.9.1
-  Downloaded clap v4.6.9
-  Downloaded icu_locale_core v2.4.0
-  Downloaded icu_normalizer_data v2.4.0
-  Downloaded minimal-lexical v0.2.1
-  Downloaded phf_generator v0.11.3
-  Downloaded phf_shared v0.11.3
-  Downloaded scopeguard v1.2.0
-  Downloaded strict-num v0.1.1
-  Downloaded tracing-log v0.2.0
-  Downloaded wdk-alloc v0.4.2
-  Downloaded wdk-build v0.6.0
-  Downloaded windows-interface v0.59.3
-  Downloaded windows-threading v0.2.1
-  Downloaded yoke v0.8.4
-  Downloaded base64 v0.21.7
+  Downloaded windows-result v0.4.1
+  Downloaded zerovec-derive v0.11.7
+  Downloaded egui-winit v0.29.1
+  Downloaded phf v0.11.3
+  Downloaded thread_local v1.1.10
+  Downloaded anstyle v1.0.14
   Downloaded eframe v0.29.1
-  Downloaded epaint v0.29.1
-  Downloaded flate2 v1.1.11
-  Downloaded glutin v0.32.3
-  Downloaded icu_collections v2.4.0
-  Downloaded kurbo v0.9.5
-  Downloaded mime v0.3.18
-  Downloaded miniz_oxide v0.8.9
-  Downloaded nohash-hasher v0.2.0
-  Downloaded num-traits v0.2.19
-  Downloaded percent-encoding v2.3.2
-  Downloaded phf_macros v0.11.3
-  Downloaded png v0.18.1
-  Downloaded regex v1.13.2
-  Downloaded rgb v0.8.53
-  Downloaded smallvec v1.16.6
-  Downloaded tracing-core v0.1.36
+  Downloaded egui v0.29.1
+  Downloaded regex-syntax v0.8.12
+  Downloaded windows-strings v0.5.1
+  Downloaded winit v0.30.13
+  Downloaded egui_extras v0.29.1
+  Downloaded wdk-sys v0.5.2
+  Downloaded zerotrie v0.2.5
+  Downloaded anstyle-parse v1.0.0
+  Downloaded windows-future v0.3.2
   Downloaded windows-link v0.2.1
-  Downloaded cc v1.11.3
-  Downloaded glow v0.14.2
-  Downloaded icu_properties v2.4.0
-  Downloaded idna v1.1.0
-  Downloaded itertools v0.15.0
+  Downloaded yoke-derive v0.8.4
+  Downloaded zerovec v0.11.9
+  Downloaded windows-numerics v0.3.1
+  Downloaded zerofrom v0.1.8
+  Downloaded windows-interface v0.59.3
+  Downloaded either v1.19.0
+  Downloaded flate2 v1.1.11
+  Downloaded zerofrom-derive v0.1.8
+  Downloaded xml-rs v0.8.29
+  Downloaded lock_api v0.4.14
+  Downloaded jobserver v0.1.35
+  Downloaded bitflags v2.13.2
+  Downloaded gl_generator v0.14.0
+  Downloaded ehttp v0.5.0
+  Downloaded kurbo v0.9.5
+  Downloaded cargo_metadata v0.23.1
+  Downloaded is_terminal_polyfill v1.70.2
+  Downloaded icu_collections v2.4.0
+  Downloaded parking_lot_core v0.9.12
+  Downloaded icu_properties_data v2.4.0
+  Downloaded mime v0.3.18
+  Downloaded percent-encoding v2.3.2
+  Downloaded once_cell v1.21.4
+  Downloaded raw-window-handle v0.6.2
+  Downloaded rctree v0.5.0
   Downloaded jiff-core v1.0.2
+  Downloaded zlib-rs v0.6.9
+  Downloaded arrayref v0.3.9
+  Downloaded bytemuck v1.25.2
+  Downloaded clap_derive v4.6.9
+  Downloaded data-url v0.3.2
+  Downloaded float-cmp v0.9.0
+  Downloaded litrs v1.1.0
+  Downloaded minimal-lexical v0.2.1
+  Downloaded form_urlencoded v1.2.3
+  Downloaded tiny-skia v0.11.4
+  Downloaded heck v0.5.0
+  Downloaded itertools v0.15.0
+  Downloaded litemap v0.8.3
+  Downloaded cargo-platform v0.3.3
+  Downloaded cc v1.11.3
+  Downloaded cfg-if v1.0.5
+  Downloaded clap_lex v1.1.2
+  Downloaded enum-map-derive v0.17.0
+  Downloaded mime_guess2 v2.3.1
+  Downloaded colorchoice v1.0.5
+  Downloaded document-features v0.2.12
+  Downloaded glutin v0.32.3
+  Downloaded glutin_egl_sys v0.7.1
+  Downloaded cursor-icon v1.2.0
+  Downloaded lazy_static v1.5.1
+  Downloaded cfg_aliases v0.2.2
+  Downloaded regex-automata v0.4.19
+  Downloaded stable_deref_trait v1.2.1
+  Downloaded color_quant v1.1.0
+  Downloaded idna_adapter v1.2.2
+  Downloaded tracing-log v0.2.0
+  Downloaded phf_shared v0.11.3
+  Downloaded subtle v2.6.1
+  Downloaded windows-implement v0.60.2
   Downloaded matchers v0.2.0
   Downloaded memoffset v0.9.1
-  Downloaded mime_guess2 v2.3.1
-  Downloaded paste v1.0.15
-  Downloaded pin-project-lite v0.2.18
-  Downloaded smol_str v0.2.2
-  Downloaded windows-core v0.62.2
-  Downloaded writeable v0.6.4
-  Downloaded zerocopy v0.8.65
-  Downloaded aho-corasick v1.1.5
-  Downloaded clap_builder v4.6.7
-  Downloaded icu_properties_data v2.4.0
-  Downloaded miniz_oxide v0.9.1
-  Downloaded moxcms v0.8.1
   Downloaded nom v7.1.3
-  Downloaded once_cell v1.21.4
-  Downloaded subtle v2.6.1
-  Downloaded synstructure v0.14.0
-  Downloaded thiserror v2.0.21
-  Downloaded bindgen v0.73.2
-  Downloaded once_cell_polyfill v1.70.2
-  Downloaded potential_utf v0.1.6
-  Downloaded siphasher v1.0.4
-  Downloaded webpki-roots v0.26.11
-  Downloaded windows-collections v0.3.2
-  Downloaded zerofrom-derive v0.1.8
-  Downloaded image v0.25.10
-  Downloaded semver v1.0.28
-  Downloaded egui v0.29.1
-  Downloaded rand v0.8.8
-  Downloaded rand_core v0.6.4
-  Downloaded zerovec-derive v0.11.7
-  Downloaded lock_api v0.4.14
-  Downloaded raw-window-handle v0.6.2
-  Downloaded thread_local v1.1.10
-  Downloaded tiny-skia-path v0.11.4
-  Downloaded usvg v0.37.0
-  Downloaded usvg-parser v0.37.0
-  Downloaded usvg-tree v0.37.0
-  Downloaded utf8_iter v1.1.0
-  Downloaded yoke-derive v0.8.4
-  Downloaded zerotrie v0.2.5
-  Downloaded icu_normalizer v2.4.0
   Downloaded owned_ttf_parser v0.25.1
-  Downloaded parking_lot v0.12.5
-  Downloaded png v0.17.16
-  Downloaded rustc-hash v2.1.3
-  Downloaded rustls-webpki v0.103.17
-  Downloaded simplecss v0.2.2
-  Downloaded stable_deref_trait v1.2.1
-  Downloaded thiserror-impl v2.0.21
-  Downloaded tiny-skia v0.11.4
-  Downloaded zerofrom v0.1.8
-  Downloaded khronos_api v3.1.0
-  Downloaded nu-ansi-term v0.50.3
-  Downloaded pxfm v0.1.30
-  Downloaded rustls v0.23.46
-  Downloaded simd-adler32 v0.3.10
-  Downloaded tracing-attributes v0.1.31
-  Downloaded webpki-roots v1.0.12
-  Downloaded windows-sys v0.52.0
-  Downloaded epaint_default_fonts v0.29.1
-  Downloaded jiff v1.0.3
-  Downloaded libc v0.2.191
-  Downloaded pico-args v0.5.0
-  Downloaded strsim v0.11.1
+  Downloaded siphasher v1.0.4
+  Downloaded glob v0.3.4
+  Downloaded synstructure v0.14.0
+  Downloaded writeable v0.6.4
+  Downloaded error-code v3.4.0
+  Downloaded imagesize v0.12.0
+  Downloaded windows-threading v0.2.1
   Downloaded scratch v1.0.9
-  Downloaded tracing-subscriber v0.3.23
+  Downloaded simd-adler32 v0.3.10
+  Downloaded simplecss v0.2.2
+  Downloaded usvg-tree v0.37.0
+  Downloaded enum-map v2.7.3
+  Downloaded glutin_wgl_sys v0.6.1
   Downloaded unicase v2.10.0
-  Downloaded unicode-segmentation v1.13.3
+  Downloaded byteorder-lite v0.1.0
   Downloaded untrusted v0.9.0
-  Downloaded utf8parse v0.2.2
-  Downloaded utf_types v1.0.0
-  Downloaded version_check v0.9.5
-  Downloaded wdk-macros v0.5.2
-  Downloaded ttf-parser v0.25.1
-  Downloaded wdk-sys v0.5.2
-  Downloaded web-time v1.1.0
-  Downloaded wdk v0.5.0
-  Downloaded webbrowser v1.2.7
+  Downloaded webpki-roots v0.26.11
+  Downloaded bytemuck_derive v1.12.1
+  Downloaded clipboard-win v5.4.3
+  Downloaded emath v0.29.1
+  Downloaded find-msvc-tools v0.1.15
   Downloaded weezl v0.1.12
-  Downloaded roxmltree v0.19.0
-  Downloaded resvg v0.37.0
-  Downloaded rustversion v1.0.23
+  Downloaded env_logger v0.11.12
+  Downloaded icu_properties v2.4.0
+  Downloaded cexpr v0.6.0
+  Downloaded fdeflate v0.3.7
+  Downloaded web-time v1.1.0
+  Downloaded bitflags v1.3.2
+  Downloaded fs4 v1.1.0
+  Downloaded libloading v0.8.9
+  Downloaded usvg v0.37.0
+  Downloaded base64 v0.22.1
+  Downloaded getrandom v0.4.3
+  Downloaded anyhow v1.0.105
+  Downloaded crc32fast v1.5.6
+  Downloaded icu_locale_core v2.4.0
+  Downloaded camino v1.2.6
+  Downloaded webbrowser v1.2.7
+  Downloaded wdk-build v0.6.0
+  Downloaded base64 v0.21.7
+  Downloaded clap-cargo v0.19.1
+  Downloaded icu_normalizer_data v2.4.0
+  Downloaded epaint v0.29.1
+  Downloaded usvg-parser v0.37.0
+  Downloaded paste v1.0.15
+  Downloaded smallvec v1.16.6
   Downloaded static_assertions v1.1.0
-  Downloaded zerovec v0.11.9
-  Downloaded parking_lot_core v0.9.12
-  Downloaded phf v0.11.3
-  Downloaded prettyplease v0.3.0
+  Downloaded thiserror-impl v2.0.21
+  Downloaded zeroize v1.9.2
+  Downloaded arboard v3.7.0
+  Downloaded glutin-winit v0.5.0
+  Downloaded ureq v2.12.1
+  Downloaded clap v4.6.9
+  Downloaded displaydoc v0.2.7
+  Downloaded getrandom v0.2.17
+  Downloaded pico-args v0.5.0
+  Downloaded siphasher v0.3.11
+  Downloaded strsim v0.11.1
+  Downloaded webpki-roots v1.0.12
+  Downloaded xmlwriter v0.1.0
+  Downloaded clap_builder v4.6.7
+  Downloaded nohash-hasher v0.2.0
+  Downloaded once_cell_polyfill v1.70.2
+  Downloaded pin-project-lite v0.2.18
+  Downloaded potential_utf v0.1.6
+  Downloaded rustversion v1.0.23
+  Downloaded idna v1.1.0
+  Downloaded url v2.5.9
+  Downloaded utf8parse v0.2.2
+  Downloaded bindgen v0.73.2
+  Downloaded phf_generator v0.11.3
+  Downloaded rustc-hash v2.1.3
+  Downloaded wdk-alloc v0.4.2
+  Downloaded autocfg v1.5.1
+  Downloaded image v0.25.10
+  Downloaded strict-num v0.1.1
+  Downloaded version_check v0.9.5
+  Downloaded windows-collections v0.3.2
+  Downloaded phf_macros v0.11.3
+  Downloaded scopeguard v1.2.0
   Downloaded tinystr v0.8.5
-  Downloaded zlib-rs v0.6.9
-  Downloaded rctree v0.5.0
-  Downloaded winapi v0.3.9
+  Downloaded nu-ansi-term v0.50.3
+  Downloaded rgb v0.8.53
+  Downloaded rustls-pki-types v1.16.0
+  Downloaded shlex v2.0.1
+  Downloaded smol_str v0.2.2
+  Downloaded utf8_iter v1.1.0
+  Downloaded utf_types v1.0.0
+  Downloaded wdk v0.5.0
+  Downloaded windows-core v0.62.2
+  Downloaded yoke v0.8.4
+  Downloaded icu_normalizer v2.4.0
+  Downloaded parking_lot v0.12.5
+  Downloaded rand_core v0.6.4
+  Downloaded thiserror v2.0.21
+  Downloaded num-traits v0.2.19
+  Downloaded semver v1.0.28
+  Downloaded tiny-skia-path v0.11.4
+  Downloaded tracing-attributes v0.1.31
+  Downloaded roxmltree v0.19.0
   Downloaded sharded-slab v0.1.7
   Downloaded svgtypes v0.13.0
-  Downloaded rustls-pki-types v1.16.0
-  Downloaded url v2.5.9
-  Downloaded regex-syntax v0.8.12
-  Downloaded ureq v2.12.1
+  Downloaded tracing-core v0.1.36
+  Downloaded gif v0.14.2
+  Downloaded miniz_oxide v0.9.1
+  Downloaded prettyplease v0.3.0
+  Downloaded rustls-webpki v0.103.17
+  Downloaded wdk-macros v0.5.2
+  Downloaded arrayvec v0.7.8
+  Downloaded miniz_oxide v0.8.9
+  Downloaded png v0.18.1
+  Downloaded rand v0.8.8
+  Downloaded resvg v0.37.0
+  Downloaded winapi v0.3.9
+  Downloaded png v0.17.16
+  Downloaded glow v0.14.2
+  Downloaded regex v1.13.2
+  Downloaded epaint_default_fonts v0.29.1
+  Downloaded libc v0.2.191
+  Downloaded moxcms v0.8.1
+  Downloaded ttf-parser v0.25.1
+  Downloaded zerocopy v0.8.65
+  Downloaded rustls v0.23.46
+  Downloaded unicode-segmentation v1.13.3
   Downloaded tracing v0.1.44
-  Downloaded regex-automata v0.4.19
+  Downloaded pxfm v0.1.30
+  Downloaded khronos_api v3.1.0
   Downloaded ring v0.17.14
   Downloaded windows-sys v0.61.2
+  Downloaded jiff v1.0.3
+  Downloaded tracing-subscriber v0.3.23
+  Downloaded windows-sys v0.52.0
   Downloaded windows v0.62.2
    Compiling windows-link v0.2.1
    Compiling syn v3.0.10
@@ -239,32 +239,32 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
    Compiling aho-corasick v1.1.5
    Compiling shlex v2.0.1
    Compiling synstructure v0.14.0
-   Compiling bitflags v2.13.2
    Compiling once_cell_polyfill v1.70.2
+   Compiling bitflags v2.13.2
    Compiling anstyle v1.0.14
    Compiling serde_derive v1.0.229
    Compiling utf8parse v0.2.2
    Compiling anstyle-parse v1.0.0
    Compiling zerofrom-derive v0.1.8
-   Compiling colorchoice v1.0.5
-   Compiling pin-project-lite v0.2.18
    Compiling is_terminal_polyfill v1.70.2
+   Compiling pin-project-lite v0.2.18
+   Compiling colorchoice v1.0.5
    Compiling zerofrom v0.1.8
    Compiling yoke-derive v0.8.4
    Compiling stable_deref_trait v1.2.1
-   Compiling libloading v0.8.9
    Compiling windows-sys v0.61.2
    Compiling yoke v0.8.4
+   Compiling libloading v0.8.9
    Compiling find-msvc-tools v0.1.15
+   Compiling bytemuck_derive v1.12.1
    Compiling cc v1.11.3
    Compiling zerovec-derive v0.11.7
-   Compiling bytemuck_derive v1.12.1
    Compiling serde_core v1.0.229
    Compiling zerovec v0.11.9
-   Compiling displaydoc v0.2.7
    Compiling bytemuck v1.25.2
-   Compiling simd-adler32 v0.3.10
+   Compiling displaydoc v0.2.7
    Compiling smallvec v1.16.6
+   Compiling simd-adler32 v0.3.10
    Compiling crc32fast v1.5.6
    Compiling adler2 v2.0.1
    Compiling tinystr v0.8.5
@@ -272,82 +272,82 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
    Compiling windows-interface v0.59.3
    Compiling windows-strings v0.5.1
    Compiling windows-result v0.4.1
-   Compiling glob v0.3.4
+   Compiling utf_types v1.0.0
    Compiling regex-syntax v0.8.12
    Compiling writeable v0.6.4
+   Compiling glob v0.3.4
    Compiling litemap v0.8.3
-   Compiling utf_types v1.0.0
-   Compiling utf8_iter v1.1.0
    Compiling icu_locale_core v2.4.0
    Compiling regex-automata v0.4.19
    Compiling clang-sys v1.9.1
    Compiling windows-core v0.62.2
+   Compiling utf8_iter v1.1.0
    Compiling miniz_oxide v0.9.1
    Compiling zerotrie v0.2.5
    Compiling potential_utf v0.1.6
    Compiling anstyle-query v1.1.5
    Compiling anstyle-wincon v3.0.11
-   Compiling icu_properties_data v2.4.0
-   Compiling icu_normalizer_data v2.4.0
-   Compiling serde_json v1.0.154
-   Compiling prettyplease v0.3.0
-   Compiling khronos_api v3.1.0
-   Compiling libc v0.2.191
    Compiling rustversion v1.0.23
+   Compiling icu_properties_data v2.4.0
+   Compiling libc v0.2.191
+   Compiling serde_json v1.0.154
+   Compiling khronos_api v3.1.0
+   Compiling icu_normalizer_data v2.4.0
+   Compiling prettyplease v0.3.0
    Compiling anstream v1.0.0
    Compiling icu_collections v2.4.0
    Compiling icu_provider v2.4.0
    Compiling flate2 v1.1.11
    Compiling tracing-core v0.1.36
-   Compiling clap_lex v1.1.2
    Compiling minimal-lexical v0.2.1
-   Compiling cfg_aliases v0.2.2
-   Compiling heck v0.5.0
    Compiling strsim v0.11.1
-   Compiling autocfg v1.5.1
    Compiling camino v1.2.6
+   Compiling autocfg v1.5.1
+   Compiling cfg_aliases v0.2.2
+   Compiling clap_lex v1.1.2
    Compiling thiserror v2.0.21
-   Compiling clap_builder v4.6.7
+   Compiling heck v0.5.0
    Compiling clap_derive v4.6.9
+   Compiling clap_builder v4.6.7
    Compiling nom v7.1.3
    Compiling serde v1.0.229
    Compiling thiserror-impl v2.0.21
    Compiling tracing-attributes v0.1.31
    Compiling windows-threading v0.2.1
-   Compiling anyhow v1.0.105
-   Compiling bindgen v0.73.2
    Compiling paste v1.0.15
+   Compiling anyhow v1.0.105
    Compiling xml-rs v0.8.29
+   Compiling bindgen v0.73.2
+   Compiling gl_generator v0.14.0
    Compiling tracing v0.1.44
    Compiling windows-future v0.3.2
-   Compiling gl_generator v0.14.0
-   Compiling wdk-build v0.6.0
-   Compiling cexpr v0.6.0
    Compiling icu_normalizer v2.4.0
+   Compiling wdk-build v0.6.0
    Compiling icu_properties v2.4.0
+   Compiling cexpr v0.6.0
    Compiling clap v4.6.9
    Compiling regex v1.13.2
    Compiling windows-numerics v0.3.1
    Compiling windows-collections v0.3.2
    Compiling cargo-platform v0.3.3
    Compiling semver v1.0.28
-   Compiling version_check v0.9.5
+   Compiling zerocopy v0.8.65
    Compiling parking_lot_core v0.9.12
    Compiling rustc-hash v2.1.3
-   Compiling zerocopy v0.8.65
+   Compiling version_check v0.9.5
    Compiling ahash v0.8.13
    Compiling cargo_metadata v0.23.1
    Compiling windows v0.62.2
    Compiling clap-cargo v0.19.1
    Compiling idna_adapter v1.2.2
-   Compiling scopeguard v1.2.0
-   Compiling lazy_static v1.5.1
    Compiling percent-encoding v2.3.2
+   Compiling lazy_static v1.5.1
+   Compiling scopeguard v1.2.0
    Compiling ttf-parser v0.25.1
-   Compiling form_urlencoded v1.2.3
+   Compiling lock_api v0.4.14
    Compiling owned_ttf_parser v0.25.1
    Compiling sharded-slab v0.1.7
-   Compiling lock_api v0.4.14
+   Compiling form_urlencoded v1.2.3
    Compiling idna v1.1.0
    Compiling tracing-log v0.2.0
    Compiling matchers v0.2.0
@@ -357,558 +357,560 @@ workspace: D:\a\WinRust\WinRust\Cargo.toml
    Compiling ring v0.17.14
    Compiling nu-ansi-term v0.50.3
    Compiling thread_local v1.1.10
-   Compiling zeroize v1.9.2
-   Compiling ab_glyph_rasterizer v0.1.10
    Compiling float-cmp v0.9.0
    Compiling arrayvec v0.7.8
-   Compiling strict-num v0.1.1
-   Compiling ab_glyph v0.2.32
+   Compiling zeroize v1.9.2
+   Compiling ab_glyph_rasterizer v0.1.10
    Compiling rustls-pki-types v1.16.0
+   Compiling ab_glyph v0.2.32
    Compiling tracing-subscriber v0.3.23
+   Compiling strict-num v0.1.1
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
    Compiling url v2.5.9
    Compiling windows-sys v0.52.0
    Compiling num-traits v0.2.19
-   Compiling arrayref v0.3.9
-   Compiling epaint_default_fonts v0.29.1
    Compiling nohash-hasher v0.2.0
-   Compiling epaint v0.29.1
+   Compiling epaint_default_fonts v0.29.1
+   Compiling arrayref v0.3.9
    Compiling tiny-skia-path v0.11.4
+   Compiling epaint v0.29.1
    Compiling kurbo v0.9.5
-   Compiling glutin_wgl_sys v0.6.1
    Compiling glutin_egl_sys v0.7.1
+   Compiling glutin_wgl_sys v0.6.1
    Compiling winit v0.30.13
    Compiling getrandom v0.2.17
+   Compiling siphasher v1.0.4
+   Compiling unicase v2.10.0
+   Compiling siphasher v0.3.11
    Compiling raw-window-handle v0.6.2
    Compiling untrusted v0.9.0
-   Compiling siphasher v1.0.4
-   Compiling siphasher v0.3.11
-   Compiling unicase v2.10.0
-   Compiling phf_shared v0.11.3
    Compiling svgtypes v0.13.0
+   Compiling phf_shared v0.11.3
    Compiling egui v0.29.1
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
+   Compiling cursor-icon v1.2.0
    Compiling litrs v1.1.0
-   Compiling smol_str v0.2.2
-   Compiling error-code v3.4.0
-   Compiling rustls v0.23.46
    Compiling dpi v0.1.2
    Compiling color_quant v1.1.0
    Compiling unicode-segmentation v1.13.3
    Compiling rctree v0.5.0
-   Compiling cursor-icon v1.2.0
-   Compiling weezl v0.1.12
    Compiling pxfm v0.1.30
-   Compiling moxcms v0.8.1
-   Compiling gif v0.14.2
-   Compiling usvg-tree v0.37.0
+   Compiling rustls v0.23.46
+   Compiling weezl v0.1.12
+   Compiling smol_str v0.2.2
+   Compiling error-code v3.4.0
    Compiling clipboard-win v5.4.3
+   Compiling gif v0.14.2
+   Compiling moxcms v0.8.1
+   Compiling usvg-tree v0.37.0
    Compiling document-features v0.2.12
-   Compiling rustls-webpki v0.103.17
    Compiling phf v0.11.3
+   Compiling rustls-webpki v0.103.17
    Compiling wdk-sys v0.5.2
    Compiling webpki-roots v1.0.12
    Compiling png v0.18.1
    Compiling glutin-winit v0.5.0
    Compiling thiserror-impl v1.0.69
    Compiling simplecss v0.2.2
-   Compiling jiff-core v1.0.2
    Compiling roxmltree v0.19.0
-   Compiling winapi v0.3.9
+   Compiling bitflags v1.3.2
+   Compiling data-url v0.3.2
+   Compiling jiff-core v1.0.2
    Compiling imagesize v0.12.0
    Compiling subtle v2.6.1
-   Compiling data-url v0.3.2
-   Compiling bitflags v1.3.2
+   Compiling winapi v0.3.9
    Compiling byteorder-lite v0.1.0
    Compiling image v0.25.10
+   Compiling jiff v1.0.3
    Compiling usvg-parser v0.37.0
    Compiling png v0.17.16
-   Compiling jiff v1.0.3
    Compiling thiserror v1.0.69
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
    Compiling env_filter v2.1.0
    Compiling arboard v3.7.0
    Compiling webbrowser v1.2.7
-   Compiling pico-args v0.5.0
-   Compiling xmlwriter v0.1.0
-   Compiling scratch v1.0.9
    Compiling base64 v0.21.7
-   Compiling glow v0.14.2
    Compiling base64 v0.22.1
+   Compiling xmlwriter v0.1.0
+   Compiling pico-args v0.5.0
+   Compiling glow v0.14.2
+   Compiling scratch v1.0.9
    Compiling web-time v1.1.0
    Compiling egui-winit v0.29.1
+   Compiling egui_glow v0.29.1
+   Compiling usvg v0.37.0
    Compiling ureq v2.12.1
 error: failed to run custom build command for `wdk-sys v0.5.2`
 
 Caused by:
   process didn't exit successfully: `D:\a\WinRust\WinRust\target\debug\build\wdk-sys/c6a43aff3e181788\out\build_script_build` (exit code: 1)
   --- stdout
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\core-foundation-0.9.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ehttp-0.5.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-user-notifications-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-alloc-0.4.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\dispatch-0.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\gif-0.14.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\mime-0.3.18\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smallvec-1.16.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_properties-2.4.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smithay-client-toolkit-0.19.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\portable-atomic-util-0.2.8\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\base64-0.21.7\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\getrandom-0.4.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\itoa-1.0.19\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ring-0.17.14\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smithay-clipboard-0.7.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-subscriber-0.3.23\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_i686_msvc-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\android-properties-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ab_glyph_rasterizer-0.1.10\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin_glx_sys-0.6.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\phf_generator-0.11.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\usvg-0.37.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\unicode-segmentation-1.13.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_normalizer_data-2.4.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-macro-support-0.2.130\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\epaint_default_fonts-0.29.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerotrie-0.2.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\raw-window-handle-0.6.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-symbols-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\x11rb-protocol-0.13.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\x11-dl-2.21.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\data-url-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\once_cell-1.21.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\resvg-0.37.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cfg-if-1.0.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\num-traits-0.2.19\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerofrom-derive-0.1.8\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\adler2-2.0.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\toml_datetime-1.1.3+spec-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xcursor-0.3.11\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\form_urlencoded-1.2.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\litrs-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-core\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tiny-skia-0.11.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pkg-config-0.3.34\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\calloop-wayland-source-0.3.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_provider-2.4.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\portable-atomic-1.15.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xkbcommon-dl-0.4.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\linux-raw-sys-0.12.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\nom-7.1.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-impl-1.0.69\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libredox-0.1.25\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rctree-0.5.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ureq-2.12.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\webpki-roots-0.26.11\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui_extras-0.29.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\gethostname-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\prettyplease-0.3.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\fs4-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\syn-2.0.119\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin-0.32.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\regex-1.13.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\combine-4.6.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\web-time-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_x86_64_gnullvm-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_x86_64_gnu-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-uniform-type-identifiers-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-targets-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\arrayvec-0.7.8\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\enum-map-derive-0.17.0\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-launcher\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\x11rb-0.13.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-ui-kit-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\toml_edit-0.25.20+spec-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anyhow-1.0.105\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\downcast-rs-1.2.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\find-msvc-tools-0.1.15\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin_wgl_sys-0.6.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\usvg-tree-0.37.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\redox_syscall-0.4.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-client-0.31.15\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\khronos_api-3.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-graphics-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\synstructure-0.14.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\document-features-0.2.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\num_enum-0.7.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bindgen-0.73.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasi-0.11.1+wasi-snapshot-preview1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\dpi-0.1.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\equivalent-1.0.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-0.2.130\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerofrom-0.1.8\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cargo_metadata-0.23.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clang-sys-1.9.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\plain-0.2.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\webpki-roots-1.0.12\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstream-1.0.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-shared-0.2.130\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\android-activity-0.6.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap_derive-4.6.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-futures-0.4.80\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-0.32.13\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\lazy_static-1.5.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\lock_api-0.4.14\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\orbclient-0.3.55\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-core-0.1.36\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\miniz_oxide-0.8.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-image-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-0.62.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jiff-static-1.0.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\memoffset-0.9.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\quick-xml-0.41.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustc-hash-2.1.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-misc-0.3.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-csd-frame-0.3.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\proc-macro-crate-3.5.0\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-taskmgr\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\eframe-0.29.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-encode-4.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\potential_utf-0.1.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.61.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-macros-0.22.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winnow-1.0.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\idna_adapter-1.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-sys-0.3.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simplecss-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\yoke-derive-0.8.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerocopy-derive-0.8.65\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-numerics-0.3.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\byteorder-lite-0.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tiny-skia-path-0.11.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\displaydoc-0.2.7\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cexpr-0.6.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\foreign-types-macros-0.2.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_locale_core-2.4.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-link-presentation-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rand-0.8.8\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-backend-0.3.17\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap-4.6.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-sys-0.31.11\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-macros-0.5.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-implement-0.60.2\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-explorer\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\png-0.18.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\concurrent-queue-2.5.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-log-0.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\quote-1.0.47\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ndk-sys-0.6.0+11769913\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bytes-1.12.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\strict-num-0.1.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustls-pki-types-1.16.0\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\env_logger-0.11.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\errno-0.3.15\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\imagesize-0.12.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\scratch-1.0.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-attributes-0.1.31\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\parking_lot_core-0.9.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-data-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\static_assertions-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tokio-1.54.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf_types-1.0.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-strings-0.5.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winapi-util-0.1.11\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ecolor-0.29.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\nohash-hasher-0.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pxfm-0.1.30\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winapi-0.3.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-impl-2.0.21\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\image-0.25.10\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jiff-core-1.0.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_x86_64_msvc-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\memchr-2.8.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glob-0.3.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\futures-util-0.3.34\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\scopeguard-1.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smithay-client-toolkit-0.20.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.52.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\futures-core-0.3.34\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\litemap-0.8.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\regex-syntax-0.8.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\env_filter-2.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\linux-raw-sys-0.4.15\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\r-efi-6.0.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\hashbrown-0.17.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\is_terminal_polyfill-1.70.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-0.6.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sharded-slab-0.1.7\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\redox_syscall-0.5.18\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-1.0.14\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\mime_guess2-2.3.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\float-cmp-0.9.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\valuable-0.1.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bytemuck_derive-1.12.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\core-graphics-types-0.1.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ndk-0.9.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_json-1.0.154\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-result-0.4.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zeroize-1.9.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\polling-3.11.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\version_check-0.9.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\dlib-0.5.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-sys-0.4.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_collections-2.4.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\base64-0.22.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aho-corasick-1.1.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-location-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\png-0.17.16\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\colorchoice-1.0.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-sys-macros-0.4.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\itertools-0.15.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\proc-macro2-1.0.107\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\redox_syscall-0.9.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchers-0.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-cloud-kit-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\indexmap-2.14.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-build-0.6.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bytemuck-1.25.2\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-kernel\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clipboard-win-5.4.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\color_quant-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustls-0.23.46\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\memmap2-0.9.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\siphasher-0.3.11\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8_iter-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_core-1.0.229\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_properties_data-2.4.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ndk-context-0.1.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\walkdir-2.5.1\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-kernel\control\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-sysctl\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\core-foundation-sys-0.8.7\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui_glow-0.29.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-io-surface-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pin-project-lite-0.2.18\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\shlex-2.0.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\kurbo-0.9.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\roxmltree-0.19.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\subtle-2.6.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-macro-0.2.130\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xkeysym-0.2.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-contacts-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_aarch64_gnullvm-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glow-0.14.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\dispatch2-0.3.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-query-1.1.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-foundation-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\minimal-lexical-0.2.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-metal-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\strsim-0.11.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\url-2.5.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\getrandom-0.2.17\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\regex-automata-0.4.19\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\paste-1.0.15\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-collections-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerovec-0.11.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_derive-1.0.229\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap_lex-1.1.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\heck-0.5.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.13.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustls-webpki-0.103.17\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\weezl-0.1.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jiff-1.0.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\moxcms-0.8.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-0.5.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustc_version-0.4.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\web-sys-0.3.107\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winapi-x86_64-pc-windows-gnu-0.4.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\untrusted-0.9.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_i686_gnu-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-app-kit-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-winit-0.29.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-foundation-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\percent-encoding-2.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap_builder-4.6.7\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-foundation-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin_egl_sys-0.7.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cargo-platform-0.3.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\same-file-1.0.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\unicase-2.10.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_i686_gnullvm-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zmij-1.0.23\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\js-sys-0.3.107\Cargo.toml
-  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-kernel-abi\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustix-1.1.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\autocfg-1.5.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\core-graphics-0.23.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crossbeam-utils-0.8.23\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-1.0.69\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\futures-task-0.3.34\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\slotmap-1.1.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd_cesu8-1.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\calloop-0.14.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\phf_macros-0.11.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xml-rs-0.8.29\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-experimental-20250721.0.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\fdeflate-0.3.7\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\nu-ansi-term-0.50.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\owned_ttf_parser-0.25.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-plasma-0.3.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\webbrowser-1.2.7\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zlib-rs-0.6.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cc-1.11.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pin-project-1.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\arboard-3.7.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\either-1.19.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jobserver-0.1.35\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\usvg-parser-0.37.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\flate2-1.1.11\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rgb-0.8.53\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cargo_metadata-0.23.1\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\foreign-types-shared-0.3.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\unicode-ident-1.0.27\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-interface-0.59.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerocopy-0.8.65\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\epaint-0.29.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-app-kit-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-cursor-0.31.14\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-wlr-0.3.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ahash-0.8.13\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\as-raw-xcb-connection-1.0.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libc-0.2.191\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-0.1.44\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.11\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\phf_shared-0.11.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\block2-0.5.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap-cargo-0.19.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-quartz-core-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simdutf8-0.1.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cursor-icon-1.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\miniz_oxide-0.9.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\calloop-wayland-source-0.4.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\once_cell_polyfill-1.70.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\scoped-tls-1.0.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\enum-map-2.7.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smol_str-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thread_local-1.1.10\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pin-project-internal-1.2.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cgl-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bumpalo-3.20.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\stable_deref_trait-1.2.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\error-code-3.4.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustix-0.38.44\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\slab-0.4.12\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\phf-0.11.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\semver-1.0.28\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winapi-i686-pc-windows-gnu-0.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winapi-util-0.1.11\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\untrusted-0.9.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\memchr-2.8.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cargo-platform-0.3.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cfg-if-1.0.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anyhow-1.0.105\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pkg-config-0.3.34\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_core-1.0.229\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\arrayvec-0.7.8\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\memoffset-0.9.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jiff-core-1.0.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\syn-2.0.119\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\toml_edit-0.25.20+spec-1.1.0\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-threading-0.2.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cfg_aliases-0.2.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\yoke-0.8.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\num_enum_derive-0.7.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winit-0.30.13\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-0.5.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-link-0.2.1\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerovec-derive-0.11.7\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\idna-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-scanner-0.31.11\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustversion-1.0.23\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\syn-3.0.10\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\toml_parser-1.1.6+spec-1.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ab_glyph-0.2.32\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_aarch64_msvc-0.52.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\gl_generator-0.14.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\hermit-abi-0.5.3\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-future-0.3.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xmlwriter-0.1.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pico-args-0.5.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-0.22.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\camino-1.2.6\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rand_core-0.6.4\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-parse-1.0.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\svgtypes-0.13.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\arrayref-0.3.9\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc-sys-0.3.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\parking_lot-0.12.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd-adler32-0.3.10\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tinystr-0.8.5\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\siphasher-1.0.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\core-foundation-0.9.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crc32fast-1.5.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\synstructure-0.14.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\colorchoice-1.0.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\r-efi-6.0.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\resvg-0.37.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\phf_shared-0.11.3\Cargo.toml
   cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-services\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\downcast-rs-1.2.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\getrandom-0.4.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\strsim-0.11.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\scoped-tls-1.0.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\epaint-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-parse-1.0.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-0.22.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\litemap-0.8.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\camino-1.2.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustc_version-0.4.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8_iter-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\subtle-2.6.1\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-1.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\redox_syscall-0.5.18\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\calloop-wayland-source-0.4.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\shlex-2.0.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\weezl-0.1.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\yoke-0.8.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\usvg-parser-0.37.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-cloud-kit-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libredox-0.1.25\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-1.0.14\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cexpr-0.6.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\enum-map-2.7.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\float-cmp-0.9.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\parking_lot-0.12.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\toml_parser-1.1.6+spec-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\roxmltree-0.19.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simplecss-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-targets-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerocopy-derive-0.8.65\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pin-project-internal-1.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\enum-map-derive-0.17.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\kurbo-0.9.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-0.6.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clang-sys-1.9.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\find-msvc-tools-0.1.15\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_normalizer-2.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_normalizer_data-2.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasi-0.11.1+wasi-snapshot-preview1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-0.5.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ab_glyph_rasterizer-0.1.10\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\x11rb-0.13.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerofrom-0.1.8\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ahash-0.8.13\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin_wgl_sys-0.6.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustix-1.1.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\adler2-2.0.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winapi-x86_64-pc-windows-gnu-0.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\redox_syscall-0.4.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\redox_syscall-0.9.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerovec-0.11.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\image-0.25.10\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_locale_core-2.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\dispatch2-0.3.1\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\calloop-0.13.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-quartz-core-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\same-file-1.0.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\svgtypes-0.13.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-build-0.6.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin-0.32.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-implement-0.60.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_x86_64_gnullvm-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xkbcommon-dl-0.4.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\core-foundation-sys-0.8.7\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\data-url-0.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pxfm-0.1.30\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-sys-0.31.11\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-interface-0.59.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ab_glyph-0.2.32\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\num_enum-0.7.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-symbols-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rand-0.8.8\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-core-0.1.36\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-0.2.130\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-alloc-0.4.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jiff-1.0.3\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-sysctl\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zlib-rs-0.6.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\epaint_default_fonts-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_properties-2.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-macros-0.22.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\paste-1.0.15\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\calloop-0.14.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jobserver-0.1.35\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\memmap2-0.9.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\raw-window-handle-0.6.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libc-0.2.191\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-macro-support-0.2.130\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-sys-0.3.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\libloading-0.8.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\byteorder-lite-0.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-macros-0.5.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\siphasher-1.0.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\webpki-roots-0.26.11\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-core-0.62.2\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\foreign-types-0.5.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\log-0.4.35\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin-winit-0.5.0\Cargo.toml
-  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\atomic-waker-1.1.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.52.0\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-taskmgr\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tinystr-0.8.5\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\emath-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.61.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin_glx_sys-0.6.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\indexmap-2.14.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\phf_generator-0.11.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\heck-0.5.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\scratch-1.0.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\valuable-0.1.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-shared-0.2.130\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\url-2.5.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf_types-1.0.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-wlr-0.3.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui_extras-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\futures-task-0.3.34\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bytemuck-1.25.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\hashbrown-0.17.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\lock_api-0.4.14\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rctree-0.5.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\regex-syntax-0.8.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cursor-icon-1.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ndk-0.9.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustix-0.38.44\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\stable_deref_trait-1.2.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\dpi-0.1.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\strict-num-0.1.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-backend-0.3.17\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\prettyplease-0.3.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-scanner-0.31.11\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glob-0.3.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-query-1.1.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap-4.6.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap_builder-4.6.7\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-image-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-impl-2.0.21\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\png-0.18.1\Cargo.toml
   cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ttf-parser-0.25.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-link-0.2.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\fdeflate-0.3.7\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sharded-slab-0.1.7\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\regex-1.13.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd_cesu8-1.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\atomic-waker-1.1.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\itertools-0.15.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\num_enum_derive-0.7.6\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-core\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-kernel\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui_glow-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\x11-dl-2.21.0\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bytemuck_derive-1.12.1\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-launcher\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\fs4-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-user-notifications-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-0.1.44\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_x86_64_msvc-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xmlwriter-0.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zmij-1.0.23\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\crossbeam-utils-0.8.23\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchers-0.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jiff-static-1.0.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-location-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerovec-derive-0.11.7\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smithay-client-toolkit-0.20.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tiny-skia-0.11.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\nohash-hasher-0.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerocopy-0.8.65\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-ui-kit-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\arrayref-0.3.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\color_quant-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\phf-0.11.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rgb-0.8.53\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\litrs-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\unicode-segmentation-1.13.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-misc-0.3.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smallvec-1.16.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winnow-1.0.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-log-0.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-uniform-type-identifiers-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\polling-3.11.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\once_cell-1.21.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin_egl_sys-0.7.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cgl-0.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\mime-0.3.18\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\android-activity-0.6.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\num-traits-0.2.19\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thread_local-1.1.10\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\miniz_oxide-0.8.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-app-kit-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\foreign-types-macros-0.2.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\proc-macro2-1.0.107\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\document-features-0.2.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\futures-core-0.3.34\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bytes-1.12.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\portable-atomic-1.15.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pin-project-1.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\unicode-ident-1.0.27\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-csd-frame-0.3.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\block2-0.5.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerotrie-0.2.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\potential_utf-0.1.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_collections-2.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\owned_ttf_parser-0.25.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cc-1.11.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pico-args-0.5.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tiny-skia-path-0.11.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\web-time-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-data-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smithay-client-toolkit-0.19.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ecolor-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\calloop-wayland-source-0.3.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ring-0.17.14\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\gethostname-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\webpki-roots-1.0.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\regex-automata-0.4.19\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\android-properties-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-client-0.31.15\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winapi-i686-pc-windows-gnu-0.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zerofrom-derive-0.1.8\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\hermit-abi-0.5.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc-sys-0.3.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tokio-1.54.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_aarch64_gnullvm-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\orbclient-0.3.55\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\portable-atomic-util-0.2.8\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smithay-clipboard-0.7.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-encode-4.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xml-rs-0.8.29\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\usvg-0.37.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\quick-xml-0.41.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\arboard-3.7.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\displaydoc-0.2.7\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-foundation-0.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rand_core-0.6.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\combine-4.6.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\smol_str-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustls-webpki-0.103.17\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\lazy_static-1.5.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\version_check-0.9.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\nu-ansi-term-0.50.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_i686_msvc-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\parking_lot_core-0.9.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap_lex-1.1.2\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-kernel\control\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-contacts-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\js-sys-0.3.107\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\core-graphics-0.23.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\errno-0.3.15\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap_derive-4.6.9\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-sys-macros-0.4.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\png-0.17.16\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-strings-0.5.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glow-0.14.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-impl-1.0.69\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clipboard-win-5.4.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\percent-encoding-2.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\zeroize-1.9.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\minimal-lexical-0.2.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\proc-macro-crate-3.5.0\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-kernel-abi\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\nom-7.1.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ndk-sys-0.6.0+11769913\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winit-0.30.13\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\yoke-derive-0.8.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\env_filter-2.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\getrandom-0.2.17\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\moxcms-0.8.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-foundation-0.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\foreign-types-0.5.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\plain-0.2.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\gif-0.14.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ureq-2.12.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustc-hash-2.1.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-experimental-20250721.0.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-foundation-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\glutin-winit-0.5.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simd-adler32-0.3.10\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bindgen-0.73.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-metal-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\pin-project-lite-0.2.18\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\idna_adapter-1.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\clap-cargo-0.19.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\form_urlencoded-1.2.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\semver-1.0.28\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_aarch64_msvc-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustversion-1.0.23\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\eframe-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\dlib-0.5.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\cfg_aliases-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\error-code-3.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.13.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\as-raw-xcb-connection-1.0.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\imagesize-0.12.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-0.5.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ehttp-0.5.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\equivalent-1.0.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\once_cell_polyfill-1.70.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\slotmap-1.1.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.11\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\gl_generator-0.14.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_properties_data-2.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-core-graphics-0.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\aho-corasick-1.1.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\phf_macros-0.11.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\idna-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\linux-raw-sys-0.12.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\itoa-1.0.19\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustls-pki-types-1.16.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\env_logger-0.11.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-1.0.69\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-macro-0.2.130\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\slab-0.4.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\web-sys-0.3.107\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xcursor-0.3.11\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-numerics-0.3.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\linux-raw-sys-0.4.15\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-future-0.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\core-graphics-types-0.1.3\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\futures-util-0.3.34\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\quote-1.0.47\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\concurrent-queue-2.5.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\base64-0.21.7\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\flate2-1.1.11\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\simdutf8-0.1.5\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\unicase-2.10.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\scopeguard-1.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\jni-sys-0.4.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\toml_datetime-1.1.3+spec-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\log-0.4.35\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-link-presentation-0.2.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\rustls-0.23.46\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\khronos_api-3.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_x86_64_gnu-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\miniz_oxide-0.9.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\x11rb-protocol-0.13.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-0.32.13\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\base64-0.22.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-winit-0.29.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\mime_guess2-2.3.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-io-surface-0.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-0.62.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_json-1.0.154\Cargo.toml
+  cargo:rerun-if-changed=D:\a\WinRust\WinRust\crates\winrust-explorer\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstream-1.0.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bumpalo-3.20.4\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\dispatch-0.2.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\is_terminal_polyfill-1.70.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-cursor-0.31.14\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wayland-protocols-plasma-0.3.12\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\usvg-tree-0.37.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\webbrowser-1.2.7\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_i686_gnu-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\autocfg-1.5.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\objc2-app-kit-0.3.2\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\static_assertions-1.1.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ndk-context-0.1.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\xkeysym-0.2.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows_i686_gnullvm-0.52.6\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-attributes-0.1.31\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tracing-subscriber-0.3.23\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\syn-3.0.10\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-result-0.4.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_derive-1.0.229\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\siphasher-0.3.11\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\either-1.19.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\icu_provider-2.4.0\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\walkdir-2.5.1\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wasm-bindgen-futures-0.4.80\Cargo.toml
+  cargo:rerun-if-changed=C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\winapi-0.3.9\Cargo.toml
   cargo:rerun-if-changed=D:\a\WinRust\WinRust\Cargo.toml
   cargo::rustc-check-cfg=cfg(driver_model__driver_type, values("WDM","KMDF","UMDF",))
   cargo::rustc-cfg=driver_model__driver_type="KMDF"
-    2026-11-24T21:00:18.816875Z  INFO build_script_build: close, time.busy: 679µs, time.idle: 7.70µs
+    2026-11-24T21:13:10.479133Z  INFO build_script_build: close, time.busy: 440µs, time.idle: 6.50µs
       at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:746
       in build_script_build::wdf_function_count.rs generation
 
-    2026-11-24T21:00:18.817345Z  INFO build_script_build: close, time.busy: 293µs, time.idle: 8.30µs
+    2026-11-24T21:13:10.479552Z  INFO build_script_build: close, time.busy: 217µs, time.idle: 5.50µs
       at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:749
       in build_script_build::call_unsafe_wdf_function_binding.rs generation
 
-    2026-11-24T21:00:18.817705Z  INFO build_script_build: close, time.busy: 253µs, time.idle: 8.40µs
+    2026-11-24T21:13:10.479798Z  INFO build_script_build: close, time.busy: 163µs, time.idle: 4.90µs
       at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:752
       in build_script_build::test_stubs.rs generation
 
-    2026-11-24T21:00:18.817968Z  INFO build_script_build: Generating bindings to WDK: constants.rs
-      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:226
-      in build_script_build::worker thread with generated_file_name: "constants.rs"
-      in build_script_build::bindgen generation
-
-    2026-11-24T21:00:18.818678Z  INFO build_script_build: Compiling wdf.c
-      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:683
-      in build_script_build::cc
-
-    2026-11-24T21:00:18.818571Z  INFO build_script_build: Generating bindings to WDK: wdf.rs
-      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:294
-      in build_script_build::worker thread with generated_file_name: "wdf.rs"
-      in build_script_build::bindgen generation
-
-    2026-11-24T21:00:18.822913Z  INFO build_script_build: close, time.busy: 4.24ms, time.idle: 9.10µs
-      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:682
-      in build_script_build::cc
-
-    2026-11-24T21:00:18.818392Z  INFO build_script_build: Generating bindings to WDK: ntddk.rs
-      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:268
-      in build_script_build::worker thread with generated_file_name: "base.rs"
-      in build_script_build::bindgen generation
-
-    2026-11-24T21:00:18.818200Z  INFO build_script_build: Generating bindings to WDK: types.rs
+    2026-11-24T21:13:10.490677Z  INFO build_script_build: Generating bindings to WDK: types.rs
       at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:245
       in build_script_build::worker thread with generated_file_name: "types.rs"
       in build_script_build::bindgen generation
 
-    2026-11-24T21:00:18.849280Z  INFO build_script_build: close, time.busy: 30.7ms, time.idle: 12.9µs
-      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:657
-      in build_script_build::worker thread with generated_file_name: "wdf.rs"
-      in build_script_build::bindgen generation
-
-    2026-11-24T21:00:18.849280Z  INFO build_script_build: close, time.busy: 31.3ms, time.idle: 15.2µs
-      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:657
-      in build_script_build::worker thread with generated_file_name: "constants.rs"
-      in build_script_build::bindgen generation
-
-    2026-11-24T21:00:18.849576Z  INFO build_script_build: close, time.busy: 31.2ms, time.idle: 10.6µs
-      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:657
+    2026-11-24T21:13:10.490858Z  INFO build_script_build: Generating bindings to WDK: ntddk.rs
+      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:268
       in build_script_build::worker thread with generated_file_name: "base.rs"
       in build_script_build::bindgen generation
 
-    2026-11-24T21:00:18.849656Z  INFO build_script_build: close, time.busy: 31.5ms, time.idle: 9.50µs
+    2026-11-24T21:13:10.493375Z  INFO build_script_build: Generating bindings to WDK: wdf.rs
+      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:294
+      in build_script_build::worker thread with generated_file_name: "wdf.rs"
+      in build_script_build::bindgen generation
+
+    2026-11-24T21:13:10.493673Z  INFO build_script_build: Compiling wdf.c
+      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:683
+      in build_script_build::cc
+
+    2026-11-24T21:13:10.507656Z  INFO build_script_build: close, time.busy: 14.0ms, time.idle: 11.8µs
+      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:682
+      in build_script_build::cc
+
+    2026-11-24T21:13:10.490677Z  INFO build_script_build: Generating bindings to WDK: constants.rs
+      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:226
+      in build_script_build::worker thread with generated_file_name: "constants.rs"
+      in build_script_build::bindgen generation
+
+    2026-11-24T21:13:10.593934Z  INFO build_script_build: close, time.busy: 103ms, time.idle: 21.1µs
       at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:657
       in build_script_build::worker thread with generated_file_name: "types.rs"
       in build_script_build::bindgen generation
 
-    2026-11-24T21:00:18.849732Z  INFO build_script_build: close, time.busy: 220µs, time.idle: 33.7ms
+    2026-11-24T21:13:10.594193Z  INFO build_script_build: close, time.busy: 104ms, time.idle: 12.3µs
+      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:657
+      in build_script_build::worker thread with generated_file_name: "constants.rs"
+      in build_script_build::bindgen generation
+
+    2026-11-24T21:13:10.594190Z  INFO build_script_build: close, time.busy: 101ms, time.idle: 10.8µs
+      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:657
+      in build_script_build::worker thread with generated_file_name: "wdf.rs"
+      in build_script_build::bindgen generation
+
+    2026-11-24T21:13:10.593959Z  INFO build_script_build: close, time.busy: 103ms, time.idle: 8.20µs
+      at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:657
+      in build_script_build::worker thread with generated_file_name: "base.rs"
+      in build_script_build::bindgen generation
+
+    2026-11-24T21:13:10.594390Z  INFO build_script_build: close, time.busy: 225µs, time.idle: 116ms
       at C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wdk-sys-0.5.2\build.rs:648
       in build_script_build::bindgen generation
 
