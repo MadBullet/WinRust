@@ -137,6 +137,16 @@ def main() -> None:
             listing.append(f"{name}: {rel}/ -> dirs={sorted(subdirs)[:8]} files={sorted(files)[:8]}")
     with open("docs/ci/layout.txt", "w", encoding="utf-8") as fh:
         fh.write("\n".join(listing))
+    allrs = []
+    for name, d in dirs.items():
+        if not d:
+            continue
+        for root, subdirs, files in os.walk(d):
+            for fn in files:
+                if fn.endswith(".rs"):
+                    allrs.append(os.path.join(root, fn)[len(d):].lstrip(os.sep))
+    with open("docs/ci/rs-files.txt", "w", encoding="utf-8") as fh:
+        fh.write("\n".join(sorted(allrs)))
 
     # ---------------- windows-sys ----------------
     out: list[str] = []
