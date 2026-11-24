@@ -12,8 +12,9 @@ use serde::{Deserialize, Serialize};
 const AF_INET: u32 = 2;
 const AF_INET6: u32 = 23;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum Protocol {
+    #[default]
     Tcp,
     Tcp6,
     Udp,

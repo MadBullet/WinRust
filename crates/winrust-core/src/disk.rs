@@ -169,7 +169,8 @@ impl DirEntry {
 /// Format seconds-since-epoch as local `YYYY-MM-DD HH:MM`.
 pub fn format_local(unix_secs: u64) -> String {
     use windows_sys::Win32::Foundation::FILETIME;
-    use windows_sys::Win32::Storage::FileSystem::{FileTimeToLocalFileTime, FileTimeToSystemTime};
+    use windows_sys::Win32::Storage::FileSystem::FileTimeToLocalFileTime;
+    use windows_sys::Win32::System::SystemInformation::FileTimeToSystemTime;
     let ft_in = FILETIME {
         dwLowDateTime: ((unix_secs + 11_644_473_600) % (1 << 32)) as u32,
         dwHighDateTime: (((unix_secs + 11_644_473_600) >> 32) & 0xFFFF_FFFF) as u32,

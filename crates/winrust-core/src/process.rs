@@ -22,6 +22,7 @@ use windows_sys::Win32::System::Threading::{
     ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS,
     PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SUSPEND_RESUME, PROCESS_TERMINATE,
     PROCESS_SET_INFORMATION, PROCESS_QUERY_INFORMATION, PROCESS_NAME_WIN32, THREAD_SUSPEND_RESUME,
+    PROCESS_VM_READ,
 };
 
 /// One row of the Task Manager process list, as far as Task Manager shows it.
@@ -304,7 +305,7 @@ pub fn basename(path: &str) -> &str {
 
 /// Wait until a process exits.  Returns the exit code.
 pub fn wait_for_exit(pid: u32, timeout_ms: u32) -> Result<u32> {
-    let h = open_with(pid, windows_sys::Win32::System::Threading::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
+    let h = open_with(pid, windows_sys::Win32::Foundation::SYNCHRONIZE | PROCESS_QUERY_LIMITED_INFORMATION)?;
     let r = unsafe { windows_sys::Win32::System::Threading::WaitForSingleObject(h.raw(), timeout_ms) };
     if r != windows_sys::Win32::Foundation::WAIT_OBJECT_0 {
         return Err(WinError::Other(format!("wait timed out or failed: {r}")));

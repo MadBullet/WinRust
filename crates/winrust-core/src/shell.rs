@@ -8,8 +8,8 @@ use std::ffi::c_void;
 use std::path::Path;
 use windows_sys::Win32::Foundation::HWND;
 use windows_sys::Win32::UI::Shell::{
-    SHFileOperationW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW, SHFILEINFOW,
-    SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
+    SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
+    SHFILEINFOW, SHFILEOPSTRUCTW, SHELLEXECUTEINFOW, FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION,
     FOF_NOERRORUI, FOF_WANTNUKEWARNING, SEE_MASK_INVOKEIDLIST, SEE_MASK_NOCLOSEPROCESS,
     SEE_MASK_NOASYNC, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_SMALLICON, SHGFI_TYPENAME,
     SHGFI_USEFILEATTRIBUTES,
@@ -135,7 +135,7 @@ pub fn open(path: impl AsRef<Path>) -> Result<()> {
         )
     };
     // ShellExecuteW returns a value > 32 on success.
-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute failed ({rc})"))) }
+    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute failed ({} )", rc as isize))) }
 }
 
 /// Open with an explicit verb: "edit", "runas" (UAC elevation), "properties".
@@ -152,7 +152,7 @@ pub fn open_verb(path: impl AsRef<Path>, verb: &str) -> Result<()> {
             SW_SHOWNORMAL,
         )
     };
-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute({verb}) failed ({rc})"))) }
+    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("ShellExecute({verb}) failed ({})", rc as isize))) }
 }
 
 /// Show the shell's "Properties" dialog for a path.
@@ -163,8 +163,8 @@ pub fn show_properties(path: impl AsRef<Path>) -> Result<()> {
     info.nShow = SW_SHOWNORMAL;
     let verb = str_to_wide("properties");
     let file = to_wide(path.as_ref());
-    info.lpVerbW = verb.as_ptr();
-    info.lpFileW = file.as_ptr();
+    info.lpVerb = verb.as_ptr();
+    info.lpFile = file.as_ptr();
     check("ShellExecuteExW", unsafe { ShellExecuteExW(&mut info) })
 }
 
@@ -178,10 +178,10 @@ pub fn execute(path: impl AsRef<Path>, args: &str, working_dir: Option<&Path>) -
     let file = to_wide(path.as_ref());
     let params = str_to_wide(args);
     let dir = working_dir.map(to_wide);
-    info.lpFileW = file.as_ptr();
-    info.lpParametersW = params.as_ptr();
+    info.lpFile = file.as_ptr();
+    info.lpParameters = params.as_ptr();
     if let Some(d) = &dir {
-        info.lpDirectoryW = d.as_ptr();
+        info.lpDirectory = d.as_ptr();
     }
     info.nShow = SW_SHOWNORMAL;
     check("ShellExecuteExW", unsafe { ShellExecuteExW(&mut info) })?;
@@ -301,7 +301,7 @@ pub fn launch(command: &str, args: &str) -> Result<()> {
             SW_SHOWNORMAL,
         )
     };
-    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("launch failed ({rc})"))) }
+    if rc as isize > 32 { Ok(()) } else { Err(WinError::Other(format!("launch failed ({})", rc as isize))) }
 }
 
 /// The desktop window handle (used to parent modal dialogs).

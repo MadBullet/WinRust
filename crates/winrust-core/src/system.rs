@@ -107,7 +107,7 @@ pub struct CpuInfo {
 pub fn cpu_info() -> CpuInfo {
     let mut si: SYSTEM_INFO = unsafe { std::mem::zeroed() };
     unsafe { GetNativeSystemInfo(&mut si) };
-    let arch = match si.Anonymous.Anonymous.wProcessorArchitecture {
+    let arch = match unsafe { si.Anonymous.Anonymous.wProcessorArchitecture } {
         0 => "x86",
         5 => "ARM",
         6 => "Itanium",
