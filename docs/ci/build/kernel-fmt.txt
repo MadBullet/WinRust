@@ -1,2 +1,12 @@
-exit=0
-exit=0
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-kernel\control\src\main.rs:176:
+     let driver = Driver::connect().map_err(|e| e.to_string())?;
+     let mut rows = driver.processes().map_err(|e| e.to_string())?;
+     rows.sort_by_key(|row| std::cmp::Reverse(row.working_set));
+[31m-    println!("{:>6}  {:>6}  {:>4}  {:>5}  {:>10}  {:>8}  NAME", "PID", "PPID", "THR", "HND", "WORKING", "CPU");
+[0m[32m+    println!(
+[0m[32m+        "{:>6}  {:>6}  {:>4}  {:>5}  {:>10}  {:>8}  NAME",
+[0m[32m+        "PID", "PPID", "THR", "HND", "WORKING", "CPU"
+[0m[32m+    );
+[0m     for row in rows.iter().take(limit) {
+         println!(
+             "{:>6}  {:>6}  {:>4}  {:>5}  {:>10}  {:>8}  {}",

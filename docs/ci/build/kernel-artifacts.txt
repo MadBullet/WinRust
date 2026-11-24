@@ -1,2 +1,2 @@
--rwxr-xr-x 2 runneradmin 197121   38912 Nov 24 21:57 crates/winrust-kernel/target/x86_64-pc-windows-msvc/release/winrust_kernel.dll
--rwxr-xr-x 2 runneradmin 197121 1047552 Nov 24 21:55 target/release/winrust-driver.exe
+-rwxr-xr-x 2 runneradmin 197121   38912 Nov 24 22:11 crates/winrust-kernel/target/x86_64-pc-windows-msvc/release/winrust_kernel.dll
+-rwxr-xr-x 2 runneradmin 197121 1047552 Nov 24 22:08 target/release/winrust-driver.exe
