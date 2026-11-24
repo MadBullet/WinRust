@@ -24,7 +24,7 @@ env:
   # Kernel code cannot unwind and has no C runtime to link against:
   # wdk-build refuses to build without the static CRT
   # (`StaticCrtNotEnabled`), and Microsoft's own driver CI sets exactly this.
-  RUSTFLAGS: "-C target-feature=+crt-static -C panic=abort"
+  RUSTFLAGS: "-C target-feature=+crt-static"
 
 jobs:
   kmdf:
@@ -95,9 +95,13 @@ jobs:
 
       - name: cargo fmt --check (kernel crates)
         continue-on-error: true
+        shell: bash
         run: |
-          cargo fmt -p winrust-kernel -p winrust-kernel-abi -p winrust-kernel-control --check > fmt.txt 2>&1
+          # `winrust-kernel` is a separate workspace, so it is formatted on its
+          # own; the ABI crate and the client belong to the root workspace.
+          cargo fmt -p winrust-kernel-abi -p winrust-kernel-control --check > fmt.txt 2>&1
           echo "exit=$?" >> fmt.txt
+          ( cd crates/winrust-kernel && cargo fmt --check >> ../../fmt.txt 2>&1; echo "exit=$?" >> ../../fmt.txt )
 
       - name: build the user-mode client
         continue-on-error: true
@@ -112,9 +116,13 @@ jobs:
         run: |
           $ErrorActionPreference = "Continue"
           # `--target` is required: RUSTFLAGS-based `crt-static` is ignored for
-          # the host triple unless a target is named explicitly.
-          cargo build -p winrust-kernel --release --target x86_64-pc-windows-msvc *>&1 | Tee-Object -FilePath driver.txt
-          "exit=$LASTEXITCODE" | Out-File -Append -Encoding utf8 driver.txt
+          # the host triple unless a target is named explicitly.  The driver is
+          # its own workspace, so the build runs from its directory and writes
+          # its artifacts under crates/winrust-kernel/target.
+          Push-Location crates/winrust-kernel
+          cargo build --release --target x86_64-pc-windows-msvc *>&1 | Tee-Object -FilePath ../../driver.txt
+          "exit=$LASTEXITCODE" | Out-File -Append -Encoding utf8 ../../driver.txt
+          Pop-Location
 
       - name: collect diagnostics
         if: always()
@@ -126,7 +134,8 @@ jobs:
               head -c 200000 "$f.txt" > "docs/ci/build/kernel-$f.txt" || true
             fi
           done
-          ls -la target/x86_64-pc-windows-msvc/release/*.dll target/release/winrust-driver.exe 2>/dev/null \
+          ls -la crates/winrust-kernel/target/x86_64-pc-windows-msvc/release/*.dll \
+            target/release/winrust-driver.exe 2>/dev/null \
             > docs/ci/build/kernel-artifacts.txt || true
 
       - name: commit diagnostics
@@ -155,8 +164,8 @@ jobs:
         with:
           name: winrust-kernel
           path: |
-            target/x86_64-pc-windows-msvc/release/winrust_kernel.dll
-            target/x86_64-pc-windows-msvc/release/winrust-kernel.dll
+            crates/winrust-kernel/target/x86_64-pc-windows-msvc/release/winrust_kernel.dll
+            crates/winrust-kernel/target/x86_64-pc-windows-msvc/release/winrust-kernel.dll
             target/release/winrust-driver.exe
             crates/winrust-kernel/WinRustKernel.inx
           if-no-files-found: ignore

@@ -8,11 +8,14 @@ members = [
     "crates/winrust-sysctl",
     "crates/winrust-launcher",
     "crates/winrust-kernel-abi",
-    # The KMDF driver needs the WDK and is built by .github/workflows/kernel.yml
-    # instead of the plain `cargo build --workspace` (which has no WDK).
-    "crates/winrust-kernel",
     "crates/winrust-kernel/control",
 ]
+# `crates/winrust-kernel` (the KMDF driver) is deliberately *not* a member.
+# Cargo resolves and builds every member's build dependencies even with
+# `--exclude`, and `wdk-sys` needs the WDK - which the plain workspace jobs do
+# not have.  It is its own workspace, built by .github/workflows/kernel.yml.
+# This is the same layout Microsoft uses for Windows-rust-driver-samples.
+exclude = ["crates/winrust-kernel"]
 
 [workspace.package]
 version = "0.3.0"

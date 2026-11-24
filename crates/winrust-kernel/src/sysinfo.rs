@@ -38,7 +38,10 @@ const CLASS_PROCESS: u32 = 5;
 const CLASS_MODULE: u32 = 11;
 /// `SystemBasicInformation`.
 const CLASS_BASIC: u32 = 0;
-/// `SystemPerformanceInformation`.
+/// `SystemPerformanceInformation`.  Declared for completeness/documentation;
+/// the aggregate counters are summed from the process table instead, because
+/// that avoids depending on the fixed layout of `SYSTEM_PERFORMANCE_INFORMATION`.
+#[allow(dead_code)]
 const CLASS_PERFORMANCE: u32 = 2;
 
 /// First guess for every query; covers realistic process/module tables.

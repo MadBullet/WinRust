@@ -1,9 +1,12 @@
+# Standalone workspace: see the note in the repository root Cargo.toml.
+[workspace]
+
 [package]
 name = "winrust-kernel"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-repository.workspace = true
+version = "0.3.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/MadBullet/WinRust"
 publish = false
 description = "WinRust kernel-mode driver (KMDF): system telemetry, driver inventory, process trust enforcement"
 
@@ -18,7 +21,7 @@ kmdf-version-major = 1
 target-kmdf-version-minor = 33
 
 [dependencies]
-winrust-kernel-abi.workspace = true
+winrust-kernel-abi = { path = "../winrust-kernel-abi" }
 wdk = "0.5"
 wdk-sys = "0.5"
 wdk-alloc = "0.4"
@@ -27,7 +30,12 @@ wdk-panic = "0.5"
 [build-dependencies]
 wdk-build = "0.6"
 
-# NOTE: `panic = "abort"` cannot be set here - Cargo ignores profiles in
-# non-root packages.  The driver is built with
-# `-C panic=abort` from .github/workflows/kernel.yml, and the workspace
-# `[profile.release]` block is inherited for everything else.
+# Kernel mode forbids unwinding: a panic has nowhere to return to, and the
+# kernel has no C runtime to unwind with.
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+opt-level = "z"
+lto = "thin"

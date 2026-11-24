@@ -178,8 +178,9 @@ pub fn disable() {
     if !REGISTERED.swap(false, Ordering::AcqRel) {
         return;
     }
-    unsafe {
-        PsSetCreateProcessNotifyRoutineEx(Some(notify), 1);
-    }
+    // The status is the kernel's answer to "was it registered"; by the time we
+    // get here the driver is unloading either way, so there is nothing to do
+    // with a failure except not pretend it succeeded.
+    let _ = unsafe { PsSetCreateProcessNotifyRoutineEx(Some(notify), 1) };
     blocked_mut(Vec::clear);
 }
