@@ -2546,7 +2546,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1723:
 [0m[31m-                                    ui.painter().rect_stroke(
 [0m[31m-                                        resp.rect.expand(1.0),
 [0m[31m-                                        2.0,
-[0m[31m-                                        egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+[0m[31m-                                        egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
 [0m[32m+        egui::ScrollArea::both()
 [0m[32m+            .id_salt("listview")
 [0m[32m+            .auto_shrink([false, false])
@@ -2598,7 +2598,10 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1723:
 [0m[32m+                                        ui.painter().rect_stroke(
 [0m[32m+                                            resp.rect.expand(1.0),
 [0m[32m+                                            2.0,
-[0m[32m+                                            egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+[0m[32m+                                            egui::Stroke::new(
+[0m[32m+                                                1.5_f32,
+[0m[32m+                                                Color32::from_rgb(0, 150, 255),
+[0m[32m+                                            ),
 [0m[32m+                                        );
 [0m[32m+                                    }
 [0m[32m+                                    if resp.drag_stopped()
@@ -2711,7 +2714,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1801:
 [0m[31m-                                    ui.painter().rect_stroke(
 [0m[31m-                                        resp.rect.expand(1.0),
 [0m[31m-                                        2.0,
-[0m[31m-                                        egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+[0m[31m-                                        egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
 [0m[31m-                                    );
 [0m[31m-                                }
 [0m[31m-                                if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
@@ -2743,7 +2746,10 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1801:
 [0m[32m+                                        ui.painter().rect_stroke(
 [0m[32m+                                            resp.rect.expand(1.0),
 [0m[32m+                                            2.0,
-[0m[32m+                                            egui::Stroke::new(1.5, Color32::from_rgb(0, 150, 255)),
+[0m[32m+                                            egui::Stroke::new(
+[0m[32m+                                                1.5_f32,
+[0m[32m+                                                Color32::from_rgb(0, 150, 255),
+[0m[32m+                                            ),
 [0m[32m+                                        );
 [0m[32m+                                    }
 [0m[32m+                                    if resp.drag_stopped()
@@ -3832,10 +3838,4 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:141:
 [0m[32m+                "HKLM Run",
 [0m[32m+            ),
 [0m         ] {
-             for (name, ty, data) in registry::enum_values(path, root) {
-                 if ty == 1 || ty == 2 {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-sysctl\src\app.rs:150:
-                         .chunks_exact(2)
-                         .map(|c| u16::from_le_bytes([c[0], c[1]]))
-                         .collect();
-[31m-                    let cmd = String::from_utf16_lossy(&units).tr
+             for (name, ty, data) in regi
