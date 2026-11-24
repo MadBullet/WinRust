@@ -21,8 +21,6 @@ TY  pub type EventLoopBuilderHook = Box<dyn FnOnce(&mut EventLoopBuilder<UserEve
 TY  pub type WindowBuilderHook = Box<dyn FnOnce(egui::ViewportBuilder) -> egui::ViewportBuilder>;
 TY  pub type AppCreator<'app> = Box<dyn 'app + FnOnce(&CreationContext<'_>) -> Result<Box<dyn 'app + App>, DynError>>;
 
-##### !! missing src/text/fonts.rs
-
 ##### !! missing src/data/icon_data.rs
 
 ##### egui::output (src/data/output.rs)
@@ -314,6 +312,82 @@ FN  pub fn frame(mut self, frame: Frame)
 FN  pub fn group(style: &Style)
 
 ##### egui::src/containers/collapsing_header.rs (selected)
+
+##### epaint::text::fonts (src/text/fonts.rs)
+FN  pub fn from_static(font: &'static [u8])
+FN  pub fn from_owned(font: Vec<u8>)
+FN  pub fn tweak(self, tweak: FontTweak)
+FN  pub fn empty()
+FN  pub fn builtin_font_names()
+FN  pub fn builtin_font_names()
+FN  pub fn new( pixels_per_point: f32, max_texture_side: usize, definitions: FontDefinitions, )
+FN  pub fn begin_pass(&self, pixels_per_point: f32, max_texture_side: usize)
+FN  pub fn font_image_delta(&self)
+FN  pub fn lock(&self)
+FN  pub fn pixels_per_point(&self)
+FN  pub fn max_texture_side(&self)
+FN  pub fn texture_atlas(&self)
+FN  pub fn image(&self)
+FN  pub fn font_image_size(&self)
+FN  pub fn glyph_width(&self, font_id: &FontId, c: char)
+FN  pub fn has_glyph(&self, font_id: &FontId, c: char)
+FN  pub fn has_glyphs(&self, font_id: &FontId, s: &str)
+FN  pub fn row_height(&self, font_id: &FontId)
+FN  pub fn families(&self)
+FN  pub fn layout_job(&self, job: LayoutJob)
+FN  pub fn num_galleys_in_cache(&self)
+FN  pub fn font_atlas_fill_ratio(&self)
+FN  pub fn layout( &self, text: String, font_id: FontId, color: crate::Color32, wrap_width: f32, )
+FN  pub fn layout_no_wrap( &self, text: String, font_id: FontId, color: crate::Color32, )
+FN  pub fn layout_delayed_color( &self, text: String, font_id: FontId, wrap_width: f32, )
+FN  pub fn new( pixels_per_point: f32, max_texture_side: usize, definitions: FontDefinitions, )
+FN  pub fn pixels_per_point(&self)
+FN  pub fn definitions(&self)
+FN  pub fn font(&mut self, font_id: &FontId)
+FN  pub fn has_glyph(&mut self, font_id: &FontId, c: char)
+FN  pub fn has_glyphs(&mut self, font_id: &FontId, s: &str)
+FN  pub fn num_galleys_in_cache(&self)
+FN  pub fn flush_cache(&mut self)
+FN  pub fn new( atlas: Arc<Mutex<TextureAtlas>>, pixels_per_point: f32, font_data: &BTreeMap<String, FontData>, )
+FN  pub fn font_impl(&mut self, scale_in_points: f32, font_name: &str)
+ST  { pub size: f32, pub family: FontFamily, }
+ST  { pub font: std::borrow::Cow<'static, [u8]>, pub index: u32, pub tweak: FontTweak, }
+ST  { pub scale: f32, pub y_offset_factor: f32, pub y_offset: f32, pub baseline_offset_factor: f32, }
+ST  { pub font_data: BTreeMap<String, FontData>, pub families: BTreeMap<FontFamily, Vec<String>>, }
+ST  pub struct Fonts(Arc<Mutex<FontsAndCache>>);
+ST  { pub fonts: FontsImpl, galley_cache: GalleyCache, }
+ST  { pixels_per_point: f32, max_texture_side: usize, definitions: FontDefinitions, atlas: Arc<Mutex<TextureAtlas>>, font_impl_cache: FontImplCache, sized_family: ahash::HashMap<(OrderedFloat<f32>, FontFamily), Font>, }
+
+##### !! missing epaint src/text/font_definitions.rs
+
+##### epaint::image (src/image.rs)
+FN  pub fn size(&self)
+FN  pub fn width(&self)
+FN  pub fn height(&self)
+FN  pub fn bytes_per_pixel(&self)
+FN  pub fn new(size: [usize; 2], color: Color32)
+FN  pub fn from_rgba_unmultiplied(size: [usize; 2], rgba: &[u8])
+FN  pub fn from_rgba_premultiplied(size: [usize; 2], rgba: &[u8])
+FN  pub fn from_gray(size: [usize; 2], gray: &[u8])
+FN  pub fn from_gray_iter(size: [usize; 2], gray_iter: impl Iterator<Item = u8>)
+FN  pub fn as_raw(&self)
+FN  pub fn as_raw_mut(&mut self)
+FN  pub fn region(&self, region: &emath::Rect, pixels_per_point: Option<f32>)
+FN  pub fn from_rgb(size: [usize; 2], rgb: &[u8])
+FN  pub fn example()
+FN  pub fn width(&self)
+FN  pub fn height(&self)
+FN  pub fn new(size: [usize; 2])
+FN  pub fn width(&self)
+FN  pub fn height(&self)
+FN  pub fn srgba_pixels(&self, gamma: Option<f32>)
+FN  pub fn region(&self, [x, y]: [usize; 2], [w, h]: [usize; 2])
+FN  pub fn full(image: impl Into<ImageData>, options: TextureOptions)
+FN  pub fn partial(pos: [usize; 2], image: impl Into<ImageData>, options: TextureOptions)
+FN  pub fn is_whole(&self)
+ST  { pub size: [usize; 2], pub pixels: Vec<Color32>, }
+ST  { pub size: [usize; 2], pub pixels: Vec<f32>, }
+ST  { pub image: ImageData, pub options: TextureOptions, pub pos: Option<[usize; 2]>, }
 
 ##### eframe::icon_data
 FN  pub fn from_png_bytes(png_bytes: &[u8])
