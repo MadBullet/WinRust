@@ -302,7 +302,6 @@ struct JobUpdate {
     done: usize,
     errors: Vec<String>,
     finished: bool,
-    refresh_tab: usize,
 }
 
 /// A pending copy or move of Explorer-style file selections.
@@ -588,7 +587,7 @@ impl ExplorerApp {
         // One shell call returns both the pixels and the localized type name,
         // which is reused for every file with the same extension.
         let info = shell::file_info_sized(&entry.path, px);
-        if self.type_names.get(&key).is_none() && !info.type_name.is_empty() {
+        if !self.type_names.contains_key(&key) && !info.type_name.is_empty() {
             let type_key = if entry.is_dir {
                 "dir".to_string()
             } else {
@@ -628,7 +627,7 @@ fn style(ctx: &egui::Context) {
     visuals.extreme_bg_color = Color32::from_rgb(24, 24, 24);
     visuals.faint_bg_color = Color32::from_rgb(38, 38, 38);
     visuals.selection.bg_fill = Color32::from_rgb(0, 95, 184);
-    visuals.selection.stroke = egui::Stroke::new(1.0, Color32::from_rgb(120, 190, 255));
+    visuals.selection.stroke = egui::Stroke::new(1.0_f32, Color32::from_rgb(120, 190, 255));
     ctx.set_visuals(visuals);
 }
 
@@ -895,19 +894,9 @@ impl ExplorerApp {
                     Ok(()) => done += 1,
                     Err(e) => errors.push(format!("{}: {e}", file_name_of(&src))),
                 }
-                let _ = tx.send(JobUpdate {
-                    done,
-                    errors: errors.clone(),
-                    finished: false,
-                    refresh_tab: tab,
-                });
+                let _ = tx.send(JobUpdate { done, errors: errors.clone(), finished: false });
             }
-            let _ = tx.send(JobUpdate {
-                done,
-                errors,
-                finished: true,
-                refresh_tab: tab,
-            });
+            let _ = tx.send(JobUpdate { done, errors, finished: true });
         });
     }
 
@@ -2462,7 +2451,9 @@ impl ExplorerApp {
                     ui.add(egui::ProgressBar::new(fraction).show_percentage().desired_width(320.0));
                     ui.label(format!("{done} / {total}"));
                     if ui.button("Cancel").clicked() {
-                        // The worker observes this flag between items.
+                        if let Some(job) = &self.job {
+                            job.cancel.store(true, Ordering::Relaxed);
+                        }
                     }
                 });
         }
@@ -2490,7 +2481,65 @@ impl eframe::App for ExplorerApp {
             .default_width(sidebar_width)
             .width_range(180.0..=380.0)
             .show(ctx, |ui| self.sidebar(ui, ctx));
-        egui::CentralPanel::default().show(ctx, |ui| self.file_area(ui, ctx));
+        egui::CentralPanel::default().show(ctx, |ui| {
+            let bg = ui.interact(
+                ui.available_rect_before_wrap(),
+                egui::Id::new("explorer_background"),
+                egui::Sense::click(),
+            );
+            let mut cmds: Vec<Command> = Vec::new();
+            bg.context_menu(|ui| {
+                if ui.button("Paste").clicked() {
+                    cmds.push(Command::Paste);
+                    ui.close_menu();
+                }
+                if ui.button("New folder").clicked() {
+                    self.creating_folder = true;
+                    self.new_folder_buffer = "New folder".into();
+                    ui.close_menu();
+                }
+                ui.separator();
+                if ui.button("View: Details").clicked() {
+                    self.current_mut().view = ViewMode::Details;
+                    self.remember_prefs();
+                    ui.close_menu();
+                }
+                if ui.button("Sort by name").clicked() {
+                    self.set_sort(SortKeySerde::Name);
+                    ui.close_menu();
+                }
+                ui.separator();
+                if ui.button("Select all").clicked() {
+                    cmds.push(Command::SelectAll);
+                    ui.close_menu();
+                }
+                if ui.button("Invert selection").clicked() {
+                    cmds.push(Command::InvertSelection);
+                    ui.close_menu();
+                }
+                if ui.button("Refresh").clicked() {
+                    cmds.push(Command::Refresh);
+                    ui.close_menu();
+                }
+                ui.separator();
+                if ui.button("Send to Desktop").clicked() {
+                    cmds.push(Command::SendToDesktop);
+                    ui.close_menu();
+                }
+            });
+            if bg.clicked() {
+                self.current_mut().selection.clear();
+                self.current_mut().anchor = None;
+            }
+            for c in cmds {
+                if matches!(c, Command::SendToDesktop) {
+                    self.run_selection(c);
+                } else {
+                    self.run(PathBuf::new(), c);
+                }
+            }
+            self.file_area(ui, ctx);
+        });
 
         self.modals(ctx);
     }

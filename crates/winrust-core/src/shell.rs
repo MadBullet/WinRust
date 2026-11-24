@@ -308,15 +308,14 @@ pub fn file_info_sized(path: impl AsRef<Path>, icon_size: u32) -> ShellItemInfo 
     }
     let icon_rgba = if icon_size > 0 {
         if icon_size <= 32 {
-            let rgba = if info.hIcon.is_null() {
+            if info.hIcon.is_null() {
                 None
             } else {
                 let px = if icon_size <= 16 { 16 } else { 32 };
-                let r = unsafe { crate::icon::hicon_to_rgba(info.hIcon, px, px) };
+                let rgba = unsafe { crate::icon::hicon_to_rgba(info.hIcon, px, px) };
                 unsafe { windows_sys::Win32::UI::WindowsAndMessaging::DestroyIcon(info.hIcon) };
-                r
-            };
-            rgba
+                rgba
+            }
         } else {
             // System image list: 0 = small, 1 = large, 2 = extra large (48),
             // 4 = jumbo (256).  We take 48 for tiles and 256 for thumbnails.
