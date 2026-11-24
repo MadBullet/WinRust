@@ -148,10 +148,12 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:13:
 [0m 
  /// Convert an icon into tightly packed RGBA8 pixels (row-major, top-down).
  ///
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:17:
- /// Returns `None` if GDI refuses to render the icon (extremely rare).
-[31m-pub fn hicon_to_rgba(hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON, w: u32, h: u32) -> Option<Vec<u8>> {
-[0m[32m+pub fn hicon_to_rgba(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:18:
+ ///
+ /// # Safety
+ /// `hicon` must be a valid icon handle that stays alive for the call.
+[31m-pub unsafe fn hicon_to_rgba(hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON, w: u32, h: u32) -> Option<Vec<u8>> {
+[0m[32m+pub unsafe fn hicon_to_rgba(
 [0m[32m+    hicon: windows_sys::Win32::UI::WindowsAndMessaging::HICON,
 [0m[32m+    w: u32,
 [0m[32m+    h: u32,
@@ -159,7 +161,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:17:
 [0m     if hicon.is_null() || w == 0 || h == 0 {
          return None;
      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:46:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:49:
          };
  
          let mut bits: *mut std::ffi::c_void = std::ptr::null_mut();
@@ -175,7 +177,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:46:
 [0m         if dib.is_null() || bits.is_null() {
              DeleteDC(mem);
              ReleaseDC(std::ptr::null_mut() as HWND, screen);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:59:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\icon.rs:62:
          std::ptr::write_bytes(bits as *mut u8, 0, (w * h * 4) as usize);
  
          // Draw the icon (DI_NORMAL blends color+mask with alpha).
@@ -407,7 +409,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\net.rs:190:
 [0m                 pid: r.dwOwningPid,
              });
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:14:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:13:
  use windows_sys::Win32::System::Diagnostics::ToolHelp::{
      CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W, TH32CS_SNAPPROCESS,
  };
@@ -432,7 +434,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:14:
 [0m };
  
  /// One row of the Task Manager process list, as far as Task Manager shows it.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:138:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:137:
          ok = unsafe { Process32NextW(snap.raw(), &mut entry) };
      }
  
@@ -446,7 +448,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:138:
 [0m     Ok(out)
  }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:150:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:149:
          info.access = AccessLevel::Limited;
          let mut buf = [0u16; MAX_PATH as usize];
          let mut len = buf.len() as u32;
@@ -457,7 +459,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:150:
 [0m         if ok != 0 {
              info.exe_path = crate::wide::from_wide(&buf, len as usize);
              info.access = AccessLevel::Full;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:160:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:159:
          let mut exit = unsafe { std::mem::zeroed::<FILETIME>() };
          let mut kernel = unsafe { std::mem::zeroed::<FILETIME>() };
          let mut user = unsafe { std::mem::zeroed::<FILETIME>() };
@@ -468,7 +470,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:160:
 [0m             info.created_100ns = filetime_to_u64(&creation);
              info.cpu_time_100ns = filetime_to_u64(&kernel) + filetime_to_u64(&user);
          }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:202:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:201:
  fn open_full(pid: u32) -> Option<Handle> {
      let h = unsafe {
          OpenProcess(
@@ -480,7 +482,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:202:
 [0m             0,
              pid,
          )
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:217:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:216:
  /// Terminate a process (Task Manager's "End task").
  pub fn terminate(pid: u32) -> Result<()> {
      let h = open_with(pid, PROCESS_TERMINATE)?;
@@ -491,7 +493,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:217:
 [0m }
  
  /// Change a process priority class.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:224:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:223:
  pub fn set_priority(pid: u32, priority: Priority) -> Result<()> {
      let h = open_with(pid, PROCESS_SET_INFORMATION)?;
 [31m-    check("SetPriorityClass", unsafe { SetPriorityClass(h.raw(), priority.flag()) })
@@ -501,7 +503,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:224:
 [0m }
  
  /// Suspend every thread of a process (a WinRust extension over Task Manager).
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:230:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:229:
  pub fn suspend(pid: u32) -> Result<usize> {
      let h = open_with(pid, PROCESS_SUSPEND_RESUME)?;
 [31m-    let n = unsafe { windows_sys::Win32::System::Diagnostics::ToolHelp::CreateToolhelp32Snapshot(4 /* TH32CS_SNAPTHREAD */, 0) };
@@ -532,7 +534,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:230:
 [0m     while ok != 0 {
          if te.th32OwnerProcessID == pid {
              let th = unsafe { OpenThread(THREAD_SUSPEND_RESUME, 0, te.th32ThreadID) };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:246:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:245:
                  count += 1;
              }
          }
@@ -543,7 +545,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:246:
 [0m     }
      let _ = h;
      Ok(count)
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:255:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:254:
  /// Resume every thread of a process.
  pub fn resume(pid: u32) -> Result<usize> {
      let h = open_with(pid, PROCESS_SUSPEND_RESUME)?;
@@ -572,7 +574,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:255:
 [0m     while ok != 0 {
          if te.th32OwnerProcessID == pid {
              let th = unsafe { OpenThread(THREAD_SUSPEND_RESUME, 0, te.th32ThreadID) };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:272:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:271:
                  count += 1;
              }
          }
@@ -583,7 +585,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:272:
 [0m     }
      let _ = h;
      Ok(count)
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:282:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:281:
  pub fn set_affinity(pid: u32, mask: usize) -> Result<()> {
      let h = open_with(pid, PROCESS_SET_INFORMATION)?;
      let cores = crate::system::cpu_count();
@@ -600,7 +602,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:282:
 [0m }
  
  /// Current affinity mask of a process.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:291:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:290:
      let h = open_with(pid, PROCESS_QUERY_INFORMATION)?;
      let mut proc_mask = 0usize;
      let mut sys_mask = 0usize;
@@ -618,7 +620,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:291:
 [0m     Ok((proc_mask, sys_mask))
  }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:305:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:304:
  
  /// Wait until a process exits.  Returns the exit code.
  pub fn wait_for_exit(pid: u32, timeout_ms: u32) -> Result<u32> {
@@ -634,7 +636,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:305:
 [0m     if r != windows_sys::Win32::Foundation::WAIT_OBJECT_0 {
          return Err(WinError::Other(format!("wait timed out or failed: {r}")));
      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:313:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:312:
      let mut code = 0u32;
 [31m-    check("GetExitCodeProcess", unsafe { GetExitCodeProcess(h.raw(), &mut code) })?;
 [0m[32m+    check("GetExitCodeProcess", unsafe {
@@ -642,17 +644,6 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:313:
 [0m[32m+    })?;
 [0m     Ok(code)
  }
- 
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\process.rs:318:
- /// Utility: convert a raw pointer that is non-null into `Option`.
- pub(crate) fn nonnull(p: *mut c_void) -> Option<*mut c_void> {
-[31m-    if p.is_null() { None } else { Some(p) }
-[0m[32m+    if p.is_null() {
-[0m[32m+        None
-[0m[32m+    } else {
-[0m[32m+        Some(p)
-[0m[32m+    }
-[0m }
  
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:37:
          let wpath = str_to_wide(path);
@@ -760,9 +751,8 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\registry.rs:249:
 [0m[32m+    }
 [0m }
  
- /// Close a raw key (helper for callers that opened one directly).
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:9:
- use crate::wide::{from_wide, str_to_wide};
+ use crate::wide::str_to_wide;
  use serde::{Deserialize, Serialize};
  use windows_sys::Win32::System::Services::{
 [31m-    ChangeServiceConfigW, ControlService, EnumDependentServicesW,
@@ -855,20 +845,10 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:178:
 [0m             None => Err(WinError::from_last_error("OpenServiceW")),
          }
      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:191:
-         if let Ok(drivers) = self.enumerate_filtered(SERVICE_DRIVER, true) {
-             out.extend(drivers);
-         }
-[31m-        out.sort_by(|a, b| a.display_name.to_lowercase().cmp(&b.display_name.to_lowercase()));
-[0m[32m+        out.sort_by(|a, b| {
-[0m[32m+            a.display_name
-[0m[32m+                .to_lowercase()
-[0m[32m+                .cmp(&b.display_name.to_lowercase())
-[0m[32m+        });
-[0m         Ok(out)
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:195:
+         Ok(out)
      }
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\service.rs:198:
 [31m-    fn enumerate_filtered(&self, service_type: ENUM_SERVICE_TYPE, is_driver: bool) -> Result<Vec<ServiceEntry>> {
 [0m[32m+    fn enumerate_filtered(
 [0m[32m+        &self,

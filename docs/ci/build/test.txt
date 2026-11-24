@@ -7,65 +7,45 @@
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
   Downloaded log v0.4.35
-  Downloaded windows-targets v0.52.6
-  Downloaded serde v1.0.229
-  Downloaded thiserror v1.0.69
-  Downloaded quote v1.0.47
-  Downloaded thiserror-impl v1.0.69
-  Downloaded unicode-ident v1.0.27
-  Downloaded serde_derive v1.0.229
   Downloaded proc-macro2 v1.0.107
+  Downloaded quote v1.0.47
+  Downloaded serde_derive v1.0.229
+  Downloaded thiserror v1.0.69
+  Downloaded serde v1.0.229
   Downloaded serde_core v1.0.229
-  Downloaded syn v3.0.10
+  Downloaded windows-targets v0.52.6
+  Downloaded unicode-ident v1.0.27
+  Downloaded thiserror-impl v1.0.69
   Downloaded syn v2.0.119
+  Downloaded syn v3.0.10
   Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
    Compiling windows_x86_64_msvc v0.52.6
    Compiling serde_core v1.0.229
-   Compiling thiserror v1.0.69
    Compiling serde v1.0.229
-   Compiling windows-targets v0.52.6
+   Compiling thiserror v1.0.69
    Compiling syn v2.0.119
    Compiling syn v3.0.10
-   Compiling thiserror-impl v1.0.69
-   Compiling windows-sys v0.59.0
    Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v1.0.69
+   Compiling windows-targets v0.52.6
+   Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.1.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-warning: unused import: `to_wide`
-  --> crates\winrust-core\src\process.rs:10:36
-   |
-10 | use crate::wide::{from_wide_fixed, to_wide};
-   |                                    ^^^^^^^
-   |
-   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
-
-warning: unused import: `HANDLE`
-  --> crates\winrust-core\src\process.rs:13:48
-   |
-13 | use windows_sys::Win32::Foundation::{FILETIME, HANDLE, MAX_PATH};
-   |                                                ^^^^^^
-
-warning: unused import: `from_wide`
- --> crates\winrust-core\src\service.rs:9:19
+warning: unused import: `RegCloseKey`
+ --> crates\winrust-core\src\registry.rs:9:5
   |
-9 | use crate::wide::{from_wide, str_to_wide};
-  |                   ^^^^^^^^^
+9 |     RegCloseKey, RegCreateKeyExW, RegDeleteKeyExW, RegDeleteValueW, RegEnumKeyExW, RegEnumValueW,
+  |     ^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
 
-warning: function `nonnull` is never used
-   --> crates\winrust-core\src\process.rs:319:15
-    |
-319 | pub(crate) fn nonnull(p: *mut c_void) -> Option<*mut c_void> {
-    |               ^^^^^^^
-    |
-    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-core` (lib test) generated 4 warnings (4 duplicates)
-warning: `winrust-core` (lib) generated 4 warnings (run `cargo fix --lib -p winrust-core` to apply 3 suggestions)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 36.35s
+warning: `winrust-core` (lib test) generated 1 warning (1 duplicate)
+warning: `winrust-core` (lib) generated 1 warning (run `cargo fix --lib -p winrust-core` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.52s
      Running unittests src\lib.rs (target\debug\build\winrust-core/49e2eb2be4a195d3\out\winrust_core-49e2eb2be4a195d3.exe)
 
 running 7 tests
