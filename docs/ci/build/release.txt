@@ -3,17 +3,17 @@
    Compiling quote v1.0.47
    Compiling cfg-if v1.0.5
    Compiling log v0.4.35
-   Compiling stable_deref_trait v1.2.1
-   Compiling windows-link v0.2.1
    Compiling syn v3.0.10
+   Compiling windows-link v0.2.1
+   Compiling stable_deref_trait v1.2.1
    Compiling smallvec v1.16.6
    Compiling simd-adler32 v0.3.10
    Compiling windows_x86_64_msvc v0.52.6
-   Compiling adler2 v2.0.1
    Compiling crc32fast v1.5.6
-   Compiling utf_types v1.0.0
+   Compiling adler2 v2.0.1
    Compiling writeable v0.6.4
    Compiling litemap v0.8.3
+   Compiling utf_types v1.0.0
    Compiling once_cell v1.21.4
    Compiling synstructure v0.14.0
    Compiling utf8_iter v1.1.0
@@ -31,131 +31,150 @@
    Compiling tinystr v0.8.5
    Compiling potential_utf v0.1.6
    Compiling icu_locale_core v2.4.0
-   Compiling icu_normalizer_data v2.4.0
    Compiling khronos_api v3.1.0
+   Compiling icu_normalizer_data v2.4.0
    Compiling icu_properties_data v2.4.0
-   Compiling icu_provider v2.4.0
    Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
    Compiling flate2 v1.1.11
    Compiling windows-targets v0.52.6
    Compiling cfg_aliases v0.2.2
    Compiling autocfg v1.5.1
-   Compiling parking_lot_core v0.9.12
-   Compiling version_check v0.9.5
    Compiling xml-rs v0.8.29
+   Compiling version_check v0.9.5
    Compiling zerocopy v0.8.65
+   Compiling parking_lot_core v0.9.12
    Compiling gl_generator v0.14.0
    Compiling ahash v0.8.13
    Compiling icu_properties v2.4.0
    Compiling icu_normalizer v2.4.0
    Compiling scopeguard v1.2.0
-   Compiling shlex v2.0.1
-   Compiling serde_core v1.0.229
-   Compiling find-msvc-tools v0.1.15
    Compiling memchr v2.8.3
    Compiling ttf-parser v0.25.1
-   Compiling cc v1.11.3
-   Compiling owned_ttf_parser v0.25.1
+   Compiling serde_core v1.0.229
    Compiling idna_adapter v1.2.2
    Compiling lock_api v0.4.14
+   Compiling owned_ttf_parser v0.25.1
    Compiling emath v0.29.1
    Compiling windows-sys v0.61.2
    Compiling syn v2.0.119
-   Compiling percent-encoding v2.3.2
-   Compiling bitflags v2.13.2
    Compiling ab_glyph_rasterizer v0.1.10
-   Compiling ab_glyph v0.2.32
+   Compiling percent-encoding v2.3.2
+   Compiling find-msvc-tools v0.1.15
+   Compiling bitflags v2.13.2
+   Compiling shlex v2.0.1
+   Compiling cc v1.11.3
    Compiling form_urlencoded v1.2.3
+   Compiling ab_glyph v0.2.32
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
    Compiling idna v1.1.0
-   Compiling ring v0.17.14
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
-   Compiling zeroize v1.9.2
    Compiling serde v1.0.229
-   Compiling nohash-hasher v0.2.0
-   Compiling float-cmp v0.9.0
-   Compiling arrayvec v0.7.8
    Compiling epaint_default_fonts v0.29.1
+   Compiling nohash-hasher v0.2.0
    Compiling epaint v0.29.1
-   Compiling strict-num v0.1.1
-   Compiling rustls-pki-types v1.16.0
    Compiling url v2.5.9
+   Compiling ring v0.17.14
    Compiling num-traits v0.2.19
    Compiling windows-sys v0.52.0
    Compiling serde_derive v1.0.229
    Compiling raw-window-handle v0.6.2
    Compiling zmij v1.0.23
-   Compiling arrayref v0.3.9
-   Compiling tiny-skia-path v0.11.4
+   Compiling float-cmp v0.9.0
+   Compiling zeroize v1.9.2
+   Compiling arrayvec v0.7.8
+   Compiling rustls-pki-types v1.16.0
+   Compiling strict-num v0.1.1
    Compiling egui v0.29.1
-   Compiling kurbo v0.9.5
    Compiling aho-corasick v1.1.5
-   Compiling glutin_egl_sys v0.7.1
    Compiling glutin_wgl_sys v0.6.1
+   Compiling glutin_egl_sys v0.7.1
    Compiling winit v0.30.13
-   Compiling getrandom v0.2.17
-   Compiling pin-project-lite v0.2.18
-   Compiling siphasher v1.0.4
    Compiling tracing-core v0.1.36
-   Compiling unicase v2.10.0
-   Compiling untrusted v0.9.0
-   Compiling thiserror v1.0.69
+   Compiling arrayref v0.3.9
    Compiling regex-syntax v0.8.12
    Compiling serde_json v1.0.154
-   Compiling siphasher v0.3.11
-   Compiling regex-automata v0.4.19
-   Compiling svgtypes v0.13.0
-   Compiling phf_shared v0.11.3
+   Compiling thiserror v1.0.69
+   Compiling pin-project-lite v0.2.18
    Compiling tracing v0.1.44
+   Compiling regex-automata v0.4.19
+   Compiling tiny-skia-path v0.11.4
+   Compiling kurbo v0.9.5
    Compiling thiserror-impl v1.0.69
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
-   Compiling color_quant v1.1.0
-   Compiling litrs v1.1.0
-   Compiling rctree v0.5.0
-   Compiling unicode-segmentation v1.13.3
-   Compiling itoa v1.0.19
-   Compiling pxfm v0.1.30
-   Compiling utf8parse v0.2.2
-   Compiling weezl v0.1.12
-   Compiling rustls v0.23.46
-   Compiling anstyle v1.0.14
-   Compiling dpi v0.1.2
+   Compiling getrandom v0.2.17
+   Compiling unicase v2.10.0
    Compiling error-code v3.4.0
-   Compiling smol_str v0.2.2
-   Compiling once_cell_polyfill v1.70.2
    Compiling cursor-icon v1.2.0
-   Compiling moxcms v0.8.1
-   Compiling anstyle-wincon v3.0.11
-   Compiling clipboard-win v5.4.3
+   Compiling siphasher v0.3.11
+   Compiling itoa v1.0.19
+   Compiling anstyle v1.0.14
+   Compiling once_cell_polyfill v1.70.2
+   Compiling color_quant v1.1.0
+   Compiling utf8parse v0.2.2
+   Compiling smol_str v0.2.2
+   Compiling unicode-segmentation v1.13.3
+   Compiling pxfm v0.1.30
+   Compiling dpi v0.1.2
+   Compiling litrs v1.1.0
+   Compiling untrusted v0.9.0
+   Compiling weezl v0.1.12
+   Compiling siphasher v1.0.4
+   Compiling phf_shared v0.11.3
    Compiling gif v0.14.2
-   Compiling anstyle-parse v1.0.0
+   Compiling moxcms v0.8.1
    Compiling document-features v0.2.12
-   Compiling usvg-tree v0.37.0
-   Compiling phf v0.11.3
-   Compiling rustls-webpki v0.103.17
+   Compiling anstyle-parse v1.0.0
+   Compiling anstyle-wincon v3.0.11
+   Compiling svgtypes v0.13.0
+   Compiling clipboard-win v5.4.3
    Compiling regex v1.13.2
-   Compiling webpki-roots v1.0.12
    Compiling png v0.18.1
    Compiling anstyle-query v1.1.5
    Compiling glutin-winit v0.5.0
    Compiling windows-sys v0.59.0
    Compiling libloading v0.8.9
-   Compiling simplecss v0.2.2
-   Compiling winapi v0.3.9
-   Compiling byteorder-lite v0.1.0
-   Compiling subtle v2.6.1
-   Compiling colorchoice v1.0.5
-   Compiling bitflags v1.3.2
    Compiling is_terminal_polyfill v1.70.2
-   Compiling data-url v0.3.2
-   Compiling roxmltree v0.19.0
-   Compiling imagesize v0.12.0
    Compiling jiff-core v1.0.2
-   Compiling jiff v1.0.3
+   Compiling rctree v0.5.0
+   Compiling byteorder-lite v0.1.0
+   Compiling colorchoice v1.0.5
+   Compiling rustls v0.23.46
+   Compiling winapi v0.3.9
+   Compiling anstream v1.0.0
+   Compiling image v0.25.10
    Compiling winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
+error: expected one of `.`, `;`, `?`, or an operator, found `<eof>`
+  --> crates\winrust-core\src\i18n\table\launcher.rs:89:1
+   |
+89 | ]
+   | ^ expected one of `.`, `;`, `?`, or an operator
+
+error[E0432]: unresolved imports `windows_sys::Win32::UI::WindowsAndMessaging::BOOL`, `windows_sys::Win32::UI::WindowsAndMessaging::HWND`, `windows_sys::Win32::UI::WindowsAndMessaging::LPARAM`
+  --> crates\winrust-core\src\shell.rs:17:51
+   |
+17 | use windows_sys::Win32::UI::WindowsAndMessaging::{BOOL, EnumWindows, HWND, LPARAM, SW_SHOWNORMAL};
+   |                                                   ^^^^               ^^^^  ^^^^^^ no `LPARAM` in `Win32::UI::WindowsAndMessaging`
+   |                                                   |                  |
+   |                                                   |                  no `HWND` in `Win32::UI::WindowsAndMessaging`
+   |                                                   no `BOOL` in `Win32::UI::WindowsAndMessaging`
+
+error[E0521]: borrowed data escapes outside of function
+   --> crates\winrust-core\src\disk.rs:415:20
+    |
+414 |     fn trimmed(v: f64, unit: &str, decimals: usize) -> String {
+    |                        ----  - let's call the lifetime of this reference `'1`
+    |                        |
+    |                        `unit` is only valid in the function body
+415 |         let unit = crate::i18n::ts(unit);
+    |                    ^^^^^^^^^^^^^^^^^^^^^
+    |                    |
+    |                    `unit` escapes the function body here
+    |                    argument requires that `'1` must outlive `'static`
+
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:89:32
    |
@@ -176,80 +195,9 @@ warning: unnecessary `unsafe` block
 93 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-warning: field `last` is never read
-  --> crates\winrust-core\src\gpu.rs:25:9
-   |
-21 |     pub struct GpuQuery {
-   |                -------- field in this struct
-...
-25 |         last: HashMap<String, f64>,
-   |         ^^^^
-   |
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-core` (lib) generated 3 warnings
-   Compiling usvg-parser v0.37.0
-   Compiling anstream v1.0.0
-   Compiling png v0.17.16
-   Compiling image v0.25.10
-   Compiling webpki-roots v0.26.11
-   Compiling env_filter v2.1.0
-   Compiling mime_guess2 v2.3.1
-   Compiling arboard v3.7.0
-   Compiling webbrowser v1.2.7
-   Compiling base64 v0.22.1
-   Compiling pico-args v0.5.0
-   Compiling base64 v0.21.7
-   Compiling web-time v1.1.0
-   Compiling glow v0.14.2
-   Compiling xmlwriter v0.1.0
-   Compiling usvg v0.37.0
-   Compiling egui-winit v0.29.1
-   Compiling egui_glow v0.29.1
-   Compiling ureq v2.12.1
-   Compiling env_logger v0.11.12
-   Compiling tiny-skia v0.11.4
-   Compiling enum-map-derive v0.17.0
-   Compiling rgb v0.8.53
-   Compiling static_assertions v1.1.0
-   Compiling mime v0.3.18
-   Compiling resvg v0.37.0
-   Compiling eframe v0.29.1
-   Compiling enum-map v2.7.3
-   Compiling ehttp v0.5.0
-   Compiling winrust-ui v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-ui)
-error[E0603]: struct import `Appearance` is private
-  --> crates\winrust-ui\src\lib.rs:11:16
-   |
-11 | pub use theme::Appearance;
-   |                ^^^^^^^^^^ private struct import
-   |
-note: the struct import `Appearance` is defined here...
-  --> crates\winrust-ui\src\theme.rs:10:5
-   |
-10 | use winrust_core::i18n::Appearance;
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-note: ...and refers to the struct `Appearance` which is defined here
-  --> crates\winrust-core\src\i18n\mod.rs:13:9
-   |
-13 | pub use settings::Appearance;
-   |         ^^^^^^^^^^^^^^^^^^^^ you could import this directly
-help: import `Appearance` directly
-   |
-11 - pub use theme::Appearance;
-11 + pub use winrust_core::i18n::Appearance;
-   |
-
-warning: unused variable: `a`
-  --> crates\winrust-ui\src\theme.rs:39:35
-   |
-39 | pub fn apply(ctx: &egui::Context, a: &Appearance) {
-   |                                   ^ help: if this is intentional, prefix it with an underscore: `_a`
-   |
-   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
-
-For more information about this error, try `rustc --explain E0603`.
-warning: `winrust-ui` (lib) generated 1 warning
-error: could not compile `winrust-ui` (lib) due to 1 previous error; 1 warning emitted
+Some errors have detailed explanations: E0432, E0521.
+For more information about an error, try `rustc --explain E0432`.
+warning: `winrust-core` (lib) generated 2 warnings
+error: could not compile `winrust-core` (lib) due to 3 previous errors; 2 warnings emitted
 warning: build failed, waiting for other jobs to finish...
 exit=False

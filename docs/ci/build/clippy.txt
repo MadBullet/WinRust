@@ -10,31 +10,31 @@
     Checking windows_x86_64_msvc v0.52.6
     Checking simd-adler32 v0.3.10
     Checking windows-targets v0.52.6
-    Checking once_cell v1.21.4
     Checking adler2 v2.0.1
+    Checking once_cell v1.21.4
     Checking tinystr v0.8.5
     Checking utf_types v1.0.0
     Checking writeable v0.6.4
     Checking litemap v0.8.3
     Checking utf8_iter v1.1.0
-    Checking icu_locale_core v2.4.0
-    Checking miniz_oxide v0.9.1
     Checking crc32fast v1.5.6
+    Checking icu_locale_core v2.4.0
     Checking potential_utf v0.1.6
+    Checking miniz_oxide v0.9.1
     Checking zerotrie v0.2.5
     Checking memchr v2.8.3
     Checking icu_provider v2.4.0
-    Checking icu_collections v2.4.0
     Checking flate2 v1.1.11
-    Checking serde_core v1.0.229
-    Checking icu_properties_data v2.4.0
+    Checking icu_collections v2.4.0
     Checking icu_normalizer_data v2.4.0
-    Checking scopeguard v1.2.0
+    Checking icu_properties_data v2.4.0
+    Checking serde_core v1.0.229
     Checking ttf-parser v0.25.1
+    Checking scopeguard v1.2.0
     Checking lock_api v0.4.14
     Checking owned_ttf_parser v0.25.1
-    Checking icu_normalizer v2.4.0
     Checking icu_properties v2.4.0
+    Checking icu_normalizer v2.4.0
     Checking zerocopy v0.8.65
     Checking parking_lot_core v0.9.12
     Checking emath v0.29.1
@@ -46,18 +46,18 @@
     Checking ecolor v0.29.1
     Checking parking_lot v0.12.5
     Checking idna_adapter v1.2.2
-    Checking bitflags v2.13.2
+    Checking percent-encoding v2.3.2
     Checking nohash-hasher v0.2.0
     Checking epaint_default_fonts v0.29.1
-    Checking percent-encoding v2.3.2
+    Checking bitflags v2.13.2
     Checking epaint v0.29.1
     Checking form_urlencoded v1.2.3
     Checking idna v1.1.0
     Checking zmij v1.0.23
     Checking miniz_oxide v0.8.9
     Checking fdeflate v0.3.7
-    Checking raw-window-handle v0.6.2
     Checking itoa v1.0.19
+    Checking raw-window-handle v0.6.2
     Checking serde_json v1.0.154
     Checking egui v0.29.1
     Checking thiserror v1.0.69
@@ -65,27 +65,56 @@
     Checking aho-corasick v1.1.5
     Checking windows-sys v0.52.0
     Checking windows-sys v0.59.0
-    Checking zeroize v1.9.2
-    Checking float-cmp v0.9.0
-    Checking arrayvec v0.7.8
     Checking regex-syntax v0.8.12
     Checking regex-automata v0.4.19
-    Checking strict-num v0.1.1
-    Checking rustls-pki-types v1.16.0
     Checking tracing-core v0.1.36
-    Checking utf8parse v0.2.2
-    Checking once_cell_polyfill v1.70.2
     Checking pin-project-lite v0.2.18
+    Checking once_cell_polyfill v1.70.2
+    Checking utf8parse v0.2.2
     Checking anstyle v1.0.14
-    Checking arrayref v0.3.9
-    Checking tiny-skia-path v0.11.4
-    Checking winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
     Checking anstyle-wincon v3.0.11
-    Checking tracing v0.1.44
     Checking anstyle-parse v1.0.0
+    Checking tracing v0.1.44
     Checking num-traits v0.2.19
     Checking regex v1.13.2
-    Checking kurbo v0.9.5
+    Checking winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
+    Checking anstyle-query v1.1.5
+    Checking float-cmp v0.9.0
+    Checking colorchoice v1.0.5
+    Checking cursor-icon v1.2.0
+    Checking dpi v0.1.2
+error: expected one of `.`, `;`, `?`, or an operator, found `<eof>`
+  --> crates\winrust-core\src\i18n\table\launcher.rs:89:1
+   |
+89 | ]
+   | ^ expected one of `.`, `;`, `?`, or an operator
+
+    Checking unicode-segmentation v1.13.3
+error[E0432]: unresolved imports `windows_sys::Win32::UI::WindowsAndMessaging::BOOL`, `windows_sys::Win32::UI::WindowsAndMessaging::HWND`, `windows_sys::Win32::UI::WindowsAndMessaging::LPARAM`
+  --> crates\winrust-core\src\shell.rs:17:51
+   |
+17 | use windows_sys::Win32::UI::WindowsAndMessaging::{BOOL, EnumWindows, HWND, LPARAM, SW_SHOWNORMAL};
+   |                                                   ^^^^               ^^^^  ^^^^^^ no `LPARAM` in `Win32::UI::WindowsAndMessaging`
+   |                                                   |                  |
+   |                                                   |                  no `HWND` in `Win32::UI::WindowsAndMessaging`
+   |                                                   no `BOOL` in `Win32::UI::WindowsAndMessaging`
+
+    Checking arrayvec v0.7.8
+    Checking error-code v3.4.0
+    Checking weezl v0.1.12
+error[E0521]: borrowed data escapes outside of function
+   --> crates\winrust-core\src\disk.rs:415:20
+    |
+414 |     fn trimmed(v: f64, unit: &str, decimals: usize) -> String {
+    |                        ----  - let's call the lifetime of this reference `'1`
+    |                        |
+    |                        `unit` is only valid in the function body
+415 |         let unit = crate::i18n::ts(unit);
+    |                    ^^^^^^^^^^^^^^^^^^^^^
+    |                    |
+    |                    `unit` escapes the function body here
+    |                    argument requires that `'1` must outlive `'static`
+
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:89:32
    |
@@ -106,119 +135,12 @@ warning: unnecessary `unsafe` block
 93 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-    Checking anstyle-query v1.1.5
-    Checking getrandom v0.2.17
-warning: field `last` is never read
-  --> crates\winrust-core\src\gpu.rs:25:9
-   |
-21 |     pub struct GpuQuery {
-   |                -------- field in this struct
-...
-25 |         last: HashMap<String, f64>,
-   |         ^^^^
-   |
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-    Checking siphasher v0.3.11
-    Checking smol_str v0.2.2
-    Checking untrusted v0.9.0
-    Checking jiff-core v1.0.2
-warning: `winrust-core` (lib) generated 3 warnings
-    Checking error-code v3.4.0
-    Checking unicode-segmentation v1.13.3
-   Compiling unicase v2.10.0
-    Checking dpi v0.1.2
-    Checking pxfm v0.1.30
-    Checking weezl v0.1.12
-    Checking color_quant v1.1.0
+    Checking zeroize v1.9.2
     Checking is_terminal_polyfill v1.70.2
-    Checking colorchoice v1.0.5
-    Checking cursor-icon v1.2.0
-   Compiling phf_shared v0.11.3
-    Checking winit v0.30.13
-    Checking anstream v1.0.0
-    Checking moxcms v0.8.1
-    Checking gif v0.14.2
-    Checking jiff v1.0.3
-    Checking clipboard-win v5.4.3
-    Checking ring v0.17.14
-    Checking svgtypes v0.13.0
-    Checking env_filter v2.1.0
-    Checking glutin_egl_sys v0.7.1
-    Checking glutin_wgl_sys v0.6.1
-    Checking png v0.18.1
-    Checking libloading v0.8.9
-    Checking rctree v0.5.0
-    Checking byteorder-lite v0.1.0
-    Checking usvg-tree v0.37.0
-    Checking image v0.25.10
-    Checking glutin v0.32.3
-    Checking rustls-webpki v0.103.17
-    Checking env_logger v0.11.12
-    Checking memoffset v0.9.1
-    Checking arboard v3.7.0
-   Compiling phf v0.11.3
-    Checking webpki-roots v1.0.12
-    Checking webbrowser v1.2.7
-    Checking simplecss v0.2.2
-    Checking imagesize v0.12.0
-    Checking web-time v1.1.0
-    Checking subtle v2.6.1
-    Checking bitflags v1.3.2
-    Checking data-url v0.3.2
-    Checking roxmltree v0.19.0
-    Checking glow v0.14.2
-    Checking usvg-parser v0.37.0
-    Checking rustls v0.23.46
-    Checking egui_glow v0.29.1
-    Checking png v0.17.16
-    Checking egui-winit v0.29.1
-    Checking webpki-roots v0.26.11
-   Compiling mime_guess2 v2.3.1
-    Checking glutin-winit v0.5.0
-    Checking winapi v0.3.9
-    Checking base64 v0.21.7
-    Checking xmlwriter v0.1.0
-    Checking base64 v0.22.1
-    Checking pico-args v0.5.0
-    Checking static_assertions v1.1.0
-    Checking usvg v0.37.0
-    Checking eframe v0.29.1
-    Checking ureq v2.12.1
-    Checking tiny-skia v0.11.4
-    Checking winrust-ui v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-ui)
-error[E0603]: struct import `Appearance` is private
-  --> crates\winrust-ui\src\lib.rs:11:16
-   |
-11 | pub use theme::Appearance;
-   |                ^^^^^^^^^^ private struct import
-   |
-note: the struct import `Appearance` is defined here...
-  --> crates\winrust-ui\src\theme.rs:10:5
-   |
-10 | use winrust_core::i18n::Appearance;
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-note: ...and refers to the struct `Appearance` which is defined here
-  --> crates\winrust-core\src\i18n\mod.rs:13:9
-   |
-13 | pub use settings::Appearance;
-   |         ^^^^^^^^^^^^^^^^^^^^ you could import this directly
-help: import `Appearance` directly
-   |
-11 - pub use theme::Appearance;
-11 + pub use winrust_core::i18n::Appearance;
-   |
-
-warning: unused variable: `a`
-  --> crates\winrust-ui\src\theme.rs:39:35
-   |
-39 | pub fn apply(ctx: &egui::Context, a: &Appearance) {
-   |                                   ^ help: if this is intentional, prefix it with an underscore: `_a`
-   |
-   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
-
-For more information about this error, try `rustc --explain E0603`.
-warning: `winrust-ui` (lib) generated 1 warning
-error: could not compile `winrust-ui` (lib) due to 1 previous error; 1 warning emitted
+Some errors have detailed explanations: E0432, E0521.
+For more information about an error, try `rustc --explain E0432`.
+    Checking jiff-core v1.0.2
+warning: `winrust-core` (lib) generated 2 warnings
+error: could not compile `winrust-core` (lib) due to 3 previous errors; 2 warnings emitted
 warning: build failed, waiting for other jobs to finish...
 exit=False

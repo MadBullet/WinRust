@@ -1,224 +1,239 @@
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\lang.rs:59:
- /// The stored language, falling back to English.
- pub fn load() -> Lang {
-     registry::read_user_string(KEY, "Lang")
-[31m-        .as_deref().and_then(Lang::parse)
-[0m[32m+        .as_deref()
-[0m[32m+        .and_then(Lang::parse)
-[0m         .unwrap_or_default()
+error: expected one of `.`, `;`, `?`, or an operator, found `<eof>`
+  --> \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\launcher.rs:89:1
+   |
+89 | ]
+   | ^ expected one of `.`, `;`, `?`, or an operator
+
+Error writing files: failed to resolve mod `launcher`: cannot parse \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\launcher.rs
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\desktop.rs:44:
+     let Some(path) = positions_path() else {
+         return;
+     };
+[31m-    let map: std::collections::HashMap<&str, (usize, usize)> = icons
+[0m[31m-        .iter()
+[0m[31m-        .map(|i| (i.name.as_str(), i.cell))
+[0m[31m-        .collect();
+[0m[32m+    let map: std::collections::HashMap<&str, (usize, usize)> =
+[0m[32m+        icons.iter().map(|i| (i.name.as_str(), i.cell)).collect();
+[0m     if let Ok(text) = serde_json::to_string_pretty(&map) {
+         let _ = std::fs::write(path, text);
+     }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\desktop.rs:127:
+         let screen = ctx.screen_rect();
+         let area = egui::Rect::from_min_max(
+             screen.left_top() + egui::vec2(8.0, 8.0),
+[31m-            egui::pos2(screen.right() - 8.0, screen.bottom() - crate::taskbar::HEIGHT - 4.0),
+[0m[32m+            egui::pos2(
+[0m[32m+                screen.right() - 8.0,
+[0m[32m+                screen.bottom() - crate::taskbar::HEIGHT - 4.0,
+[0m[32m+            ),
+[0m         );
+ 
+         let mut open: Option<PathBuf> = None;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\desktop.rs:137:
+ 
+         let icons = self.icons.clone();
+         let selected_idx = self.selected;
+[31m-        let (pointer, drag_stopped) = ctx.input(|i| {
+[0m[31m-            (i.pointer.latest_pos(), i.pointer.any_released())
+[0m[31m-        });
+[0m[32m+        let (pointer, drag_stopped) =
+[0m[32m+            ctx.input(|i| (i.pointer.latest_pos(), i.pointer.any_released()));
+[0m 
+         for (idx, icon) in icons.iter().enumerate() {
+             let pos = area.left_top()
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\start.rs:23:
+         KnownFolder::RoamingAppData
+             .path()
+             .map(|p| p.join("Microsoft\\Windows\\Start Menu\\Programs")),
+[31m-        std::env::var_os("ProgramData").map(|p| {
+[0m[31m-            PathBuf::from(p).join("Microsoft\\Windows\\Start Menu\\Programs")
+[0m[31m-        }),
+[0m[32m+        std::env::var_os("ProgramData")
+[0m[32m+            .map(|p| PathBuf::from(p).join("Microsoft\\Windows\\Start Menu\\Programs")),
+[0m     ];
+     for root in roots.into_iter().flatten() {
+         walk(&root, &mut out, 0);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\start.rs:34:
+     out.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
+     // WinRust's own programs first, so a freshly installed suite is usable
+     // without hunting through the Start Menu tree.
+[31m-    let mut ours: Vec<AppEntry> = ["winrust-explorer.exe", "winrust-taskmgr.exe", "winrust-services.exe", "winrust-sysctl.exe"]
+[0m[31m-        .iter()
+[0m[31m-        .filter_map(|exe| {
+[0m[31m-            winrust_core::install::find_binary(exe).map(|path| AppEntry {
+[0m[31m-                name: exe.trim_end_matches(".exe").to_string(),
+[0m[31m-                path,
+[0m[31m-            })
+[0m[32m+    let mut ours: Vec<AppEntry> = [
+[0m[32m+        "winrust-explorer.exe",
+[0m[32m+        "winrust-taskmgr.exe",
+[0m[32m+        "winrust-services.exe",
+[0m[32m+        "winrust-sysctl.exe",
+[0m[32m+    ]
+[0m[32m+    .iter()
+[0m[32m+    .filter_map(|exe| {
+[0m[32m+        winrust_core::install::find_binary(exe).map(|path| AppEntry {
+[0m[32m+            name: exe.trim_end_matches(".exe").to_string(),
+[0m[32m+            path,
+[0m         })
+[31m-        .collect();
+[0m[32m+    })
+[0m[32m+    .collect();
+[0m     ours.extend(out);
+     ours
  }
- 
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:189:
-     fn metric_heat(&self, m: Metric) -> f32 {
-         match m {
-             Metric::Cpu => self.cpu_percent,
-[31m-            Metric::Memory => (self.info.private_bytes as f64 / (512.0 * 1024.0 * 1024.0)) as f32 * 100.0,
-[0m[32m+            Metric::Memory => {
-[0m[32m+                (self.info.private_bytes as f64 / (512.0 * 1024.0 * 1024.0)) as f32 * 100.0
-[0m[32m+            }
-[0m             Metric::Disk => (self.disk_bps / (1024.0 * 1024.0)) as f32 * 100.0,
-             Metric::Network => (self.net_bps / (1024.0 * 1024.0)) as f32 * 100.0,
-             Metric::Gpu => self.gpu_percent,
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:779:
-             (
-                 Metric::Disk,
-                 rate(self.snapshot.rows.iter().map(|r| r.disk_bps).sum::<f64>()),
-[31m-                self.snapshot
-[0m[31m-                    .rows
-[0m[31m-                    .iter()
-[0m[31m-                    .map(|r| r.disk_bps)
-[0m[31m-                    .sum::<f64>() as f32
-[0m[32m+                self.snapshot.rows.iter().map(|r| r.disk_bps).sum::<f64>() as f32
-[0m                     / (1024.0 * 1024.0),
-             ),
-             (
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:853:
- 
-     fn metric_chip(&self, ui: &mut egui::Ui, metric: Metric, value: &str, heat: f32) {
-         let t = (heat / 100.0).clamp(0.0, 1.0);
-[31m-        let color = Color32::from_rgb(
-[0m[31m-            (120.0 + 130.0 * t) as u8,
-[0m[31m-            (220.0 - 130.0 * t) as u8,
-[0m[31m-            120,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:51:
+             egui::Order::Foreground,
+             egui::Id::new("taskbar_bg"),
+         ));
+[31m-        painter.rect_filled(
+[0m[31m-            bar,
+[0m[31m-            0.0,
+[0m[31m-            Color32::from_rgba_unmultiplied(16, 20, 28, 235),
 [0m[31m-        );
-[0m[32m+        let color = Color32::from_rgb((120.0 + 130.0 * t) as u8, (220.0 - 130.0 * t) as u8, 120);
-[0m         let resp = ui.allocate_ui_with_layout(
-             egui::vec2(ui.available_width(), 34.0),
-             egui::Layout::left_to_right(egui::Align::Center),
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:902:
-                     .width(96.0)
-                     .show_ui(ui, |ui| {
-                         for l in Lang::ALL {
-[31m-                            if ui
-[0m[31m-                                .selectable_label(lang == l, l.native_name())
-[0m[31m-                                .clicked()
-[0m[32m+                            if ui.selectable_label(lang == l, l.native_name()).clicked()
-[0m                                 && lang != l
-                             {
-                                 lang = l;
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:973:
-             {
-                 if let Some(row) = &selected {
-                     match process::suspend(row.info.pid) {
-[31m-                        Ok(n) => {
-[0m[31m-                            self.status = tf!("Suspended {} threads of {}", n, &row.info.name)
-[0m[31m-                        }
-[0m[32m+                        Ok(n) => self.status = tf!("Suspended {} threads of {}", n, &row.info.name),
-[0m                         Err(e) => self.status = tf!("Suspend failed: {}", e),
-                     }
+[0m[32m+        painter.rect_filled(bar, 0.0, Color32::from_rgba_unmultiplied(16, 20, 28, 235));
+[0m         painter.line_segment(
+             [bar.left_top(), bar.right_top()],
+             egui::Stroke::new(1.0_f32, Color32::from_rgb(44, 52, 66)),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1159:
                  }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1108:
-                     if ui
-                         .add(
-                             egui::Button::new(
-[31m-                                RichText::new(format!("{title}{arrow}"))
-[0m[31m-                                    .strong()
-[0m[31m-                                    .size(11.0),
-[0m[32m+                                RichText::new(format!("{title}{arrow}")).strong().size(11.0),
-[0m                             )
-                             .frame(false),
-                         )
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1163:
-                             let _ = process::resume(r.info.pid);
-                             ui.close_menu();
-                         }
-[31m-                        if !r.info.exe_path.is_empty() && ui.button(ts("Open file location")).clicked()
-[0m[32m+                        if !r.info.exe_path.is_empty()
-[0m[32m+                            && ui.button(ts("Open file location")).clicked()
-[0m                         {
-                             let _ = shell::open(std::path::Path::new(&r.info.exe_path));
-                             ui.close_menu();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1174:
-                         }
-                         ui.separator();
-                         for p in process::ALL_PRIORITIES {
-[31m-                            if ui.button(format!("{}: {}", t("Priority"), p.label())).clicked() {
-[0m[32m+                            if ui
-[0m[32m+                                .button(format!("{}: {}", t("Priority"), p.label()))
-[0m[32m+                                .clicked()
-[0m[32m+                            {
-[0m                                 new_priority = Some((r.info.pid, p));
-                                 ui.close_menu();
-                             }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1275:
-         cols[1].heading(ts("GPU"));
-         self.graph(&mut cols[1], &gpu_hist, 100.0, ts("GPU"));
-         if self.snapshot.gpu.by_adapter.is_empty() {
-[31m-            cols[1].label(RichText::new(ts("No GPU counters available")).weak().small());
-[0m[32m+            cols[1].label(
-[0m[32m+                RichText::new(ts("No GPU counters available"))
-[0m[32m+                    .weak()
-[0m[32m+                    .small(),
-[0m[32m+            );
-[0m         } else {
-             for (adapter, pct) in &self.snapshot.gpu.by_adapter {
-                 let name = self
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1325:
-         let step = rect.width() / (n - 1) as f32;
-         let mut points = Vec::with_capacity(n);
-         for (i, v) in data.iter().enumerate() {
-[31m-            let norm = if max <= 0.0 { 0.0 } else { (v / max).clamp(0.0, 1.0) };
-[0m[32m+            let norm = if max <= 0.0 {
-[0m[32m+                0.0
-[0m[32m+            } else {
-[0m[32m+                (v / max).clamp(0.0, 1.0)
-[0m[32m+            };
-[0m             let y = rect.bottom() - norm * rect.height();
-             points.push(egui::pos2(rect.left() + i as f32 * step, y));
-         }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1447:
-                         status_note = Some(format!(
-                             "{} — {}",
-                             name,
-[31m-                            if enable { ts("Enabled") } else { ts("Disabled") }
-[0m[32m+                            if enable {
-[0m[32m+                                ts("Enabled")
-[0m[32m+                            } else {
-[0m[32m+                                ts("Disabled")
-[0m[32m+                            }
-[0m                         ));
-                         self.startup = StartupItem::scan();
+                 ui.separator();
+             }
+[31m-            if ui.button("+").on_hover_text(t("New tab (Ctrl+T)")).clicked() {
+[0m[32m+            if ui
+[0m[32m+                .button("+")
+[0m[32m+                .on_hover_text(t("New tab (Ctrl+T)"))
+[0m[32m+                .clicked()
+[0m[32m+            {
+[0m                 let p = self.current().path.clone();
+                 self.tabs.push(Tab::new(p));
+                 activate = Some(self.tabs.len() - 1);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1314:
+                     ui.close_menu();
+                 }
+                 if ui.button(format!("📄 {}", t("Text document"))).clicked() {
+[31m-                    let target =
+[0m[31m-                        disk::unique_destination(self.current().path.join(t("New Text Document.txt")));
+[0m[32m+                    let target = disk::unique_destination(
+[0m[32m+                        self.current().path.join(t("New Text Document.txt")),
+[0m[32m+                    );
+[0m                     match std::fs::write(&target, b"") {
+                         Ok(()) => {
+                             self.status = tf!("Created {}", file_name_of(&target));
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:1325:
                      }
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1475:
-                 ui.label(format!("{}\\{}", self.user.domain, self.user.account));
-                 ui.label(ts("Console (current)"));
-                 ui.label(self.user.integrity);
-[31m-                ui.label(if self.user.elevated { ts("Yes") } else { ts("No") });
-[0m[32m+                ui.label(if self.user.elevated {
-[0m[32m+                    ts("Yes")
-[0m[32m+                } else {
-[0m[32m+                    ts("No")
-[0m[32m+                });
-[0m                 ui.end_row();
-             });
-         ui.add_space(10.0);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1558:
-                     .small(),
-             );
-             if !self.user.elevated {
-[31m-                ui.label(RichText::new(ts("(read-only without elevation)")).small().weak());
-[0m[32m+                ui.label(
-[0m[32m+                    RichText::new(ts("(read-only without elevation)"))
-[0m[32m+                        .small()
-[0m[32m+                        .weak(),
-[0m[32m+                );
-[0m             }
-         });
-         ui.separator();
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1581:
-                             _ => Color32::GRAY,
-                         };
-                         ui.label(RichText::new(state).color(color));
-[31m-                        ui.label(s.start_type.map(|x| x.label()).unwrap_or_else(|| "—".into()));
-[0m[32m+                        ui.label(
-[0m[32m+                            s.start_type
-[0m[32m+                                .map(|x| x.label())
-[0m[32m+                                .unwrap_or_else(|| "—".into()),
-[0m[32m+                        );
-[0m                         ui.label(if s.pid == 0 {
-                             String::new()
-                         } else {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1612:
+                     ui.close_menu();
+                 }
+[31m-                if ui.button(format!("🗜 {}", t("Compressed (zipped) folder"))).clicked() {
+[0m[32m+                if ui
+[0m[32m+                    .button(format!("🗜 {}", t("Compressed (zipped) folder")))
+[0m[32m+                    .clicked()
+[0m[32m+                {
+[0m                     self.status = t("Use right-click → Send to → Compressed folder");
+                     ui.close_menu();
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2859:
+             ghost.label.clone()
+         };
+         let size = egui::vec2(190.0, 26.0) * scale;
+[31m-        let rect = egui::Rect::from_min_size(
+[0m[31m-            ghost.pos + egui::vec2(14.0, 12.0),
+[0m[31m-            size,
+[0m[31m-        );
+[0m[32m+        let rect = egui::Rect::from_min_size(ghost.pos + egui::vec2(14.0, 12.0), size);
+[0m         let painter = ctx.layer_painter(egui::LayerId::new(
+             egui::Order::Tooltip,
+             egui::Id::new("drag_ghost"),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:2936:
+         for chunk in self.drives.clone().chunks(per_row) {
+             ui.horizontal(|ui| {
+                 for drive in chunk {
+[31m-                    let (rect, resp) = ui.allocate_exact_size(
+[0m[31m-                        egui::vec2(260.0, 74.0),
+[0m[31m-                        egui::Sense::click(),
+[0m[31m-                    );
+[0m[32m+                    let (rect, resp) =
+[0m[32m+                        ui.allocate_exact_size(egui::vec2(260.0, 74.0), egui::Sense::click());
+[0m                     let hovered = resp.hovered();
+                     let painter = ui.painter();
+                     painter.rect_filled(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app.rs:3096:
+                         painter.rect_stroke(
+                             rect.expand(1.0),
+                             4.0,
+[31m-                            egui::Stroke::new(
+[0m[31m-                                1.5_f32,
+[0m[31m-                                Color32::from_rgb(96, 176, 255),
+[0m[31m-                            ),
+[0m[32m+                            egui::Stroke::new(1.5_f32, Color32::from_rgb(96, 176, 255)),
+[0m                         );
+                         if resp.drag_stopped() {
+                             self.drop_target = Some(path.clone());
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\main.rs:13:
+     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("warn")).init();
+     let appearance = winrust_core::i18n::settings::load();
+     let ru = winrust_core::i18n::lang::load() == winrust_core::i18n::Lang::Ru;
+[31m-    let title = if ru { "Проводник WinRust" } else { "WinRust Explorer" };
+[0m[32m+    let title = if ru {
+[0m[32m+        "Проводник WinRust"
+[0m[32m+    } else {
+[0m[32m+        "WinRust Explorer"
+[0m[32m+    };
+[0m     let options = eframe::NativeOptions {
+         viewport: egui::ViewportBuilder::default()
+             .with_inner_size([1280.0, 800.0])
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:21:
+ use std::time::{Duration, Instant};
+ use winrust_core::i18n::{self, Lang};
+ use winrust_core::install::{self, Integration, TargetSpec};
+[31m-use winrust_core::{t, tf, ts};
+[0m use winrust_core::process;
+ use winrust_core::restore;
+ use winrust_core::service::{ScManager, ServiceState};
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:28:
+ use winrust_core::shell;
+ use winrust_core::system;
+ use winrust_core::user;
+[32m+use winrust_core::{t, tf, ts};
+[0m 
+ // ---------------------------------------------------------------------------
+ // Component catalogue
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:590:
+                     Some(binary) => match install::set_shell(Some(&binary)) {
+                         Ok(()) => {
+                             installed += 1;
+[31m-                            let _ = install::record_state(c.id(), Integration::Shell, Some(&binary));
+[0m[32m+                            let _ =
+[0m[32m+                                install::record_state(c.id(), Integration::Shell, Some(&binary));
+[0m                             self.log(
+                                 LogKind::Ok,
+                                 format!(
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:681:
+                         st.integration = Integration::Portable;
+                     }
+                     let _ = install::clear_state(c.id());
+[31m-                    let msg = ts("Winlogon Shell override removed — sign-in returns to explorer.exe");
+[0m[32m+                    let msg =
+[0m[32m+                        ts("Winlogon Shell override removed — sign-in returns to explorer.exe");
+[0m                     self.log(LogKind::Ok, msg);
+                     self.status = msg.to_string();
+                 }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:1466:
+             .changed();
+         ui.add_enabled_ui(self.appearance.transparent, |ui| {
              changed |= ui
-                 .add(egui::Slider::new(&mut self.appearance.opacity, 30..=100).text(ts("Opacity")))
-                 .changed();
+[31m-                .add(
+[0m[31m-                    egui::Slider::new(&mut self.appearance.opacity, 30..=100)
+[0m[31m-                        .text(t("Opacity")),
+[0m[31m-                )
+[0m[32m+                .add(egui::Slider::new(&mut self.appearance.opacity, 30..=100).text(t("Opacity")))
+[0m                 .changed();
 [31m-            changed |= ui
-[0m[31m-                .checkbox(&mut self.appearance.blur, ts("Blur"))
+[0m[31m-                .checkbox(&mut self.appearance.blur, t("Blur"))
 [0m[31m-                .changed();
-[0m[32m+            changed |= ui.checkbox(&mut self.appearance.blur, ts("Blur")).changed();
+[0m[32m+            changed |= ui.checkbox(&mut self.appearance.blur, t("Blur")).changed();
 [0m             ui.add_enabled_ui(self.appearance.blur, |ui| {
                  changed |= ui
                      .add(
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app.rs:1758:
-     } else if bps < 1024.0 * 1024.0 * 1024.0 {
-         format!("{:.1} {}{unit_b}", bps / (1024.0 * 1024.0), ts("M"))
-     } else {
-[31m-        format!("{:.2} {}{unit_b}", bps / (1024.0 * 1024.0 * 1024.0), ts("G"))
-[0m[32m+        format!(
-[0m[32m+            "{:.2} {}{unit_b}",
-[0m[32m+            bps / (1024.0 * 1024.0 * 1024.0),
-[0m[32m+            ts("G")
-[0m[32m+        )
-[0m     }
- }
- 
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\main.rs:10:
-         viewport: egui::ViewportBuilder::default()
-             .with_inner_size([1180.0, 740.0])
-             .with_min_inner_size([860.0, 480.0])
-[31m-            .with_title(if winrust_core::i18n::lang::load() == winrust_core::i18n::Lang::Ru {
-[0m[31m-                "Диспетчер задач WinRust"
-[0m[31m-            } else {
-[0m[31m-                "WinRust Task Manager"
-[0m[31m-            })
-[0m[32m+            .with_title(
-[0m[32m+                if winrust_core::i18n::lang::load() == winrust_core::i18n::Lang::Ru {
-[0m[32m+                    "Диспетчер задач WinRust"
-[0m[32m+                } else {
-[0m[32m+                    "WinRust Task Manager"
-[0m[32m+                },
-[0m[32m+            )
-[0m             // Transparency has to be requested when the window is created;
-             // the switch in Settings then only changes the alpha (see theme.rs).
-             .with_transparent(appearance.transparent),
 exit=False
