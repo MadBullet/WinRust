@@ -31,35 +31,35 @@
     Checking icu_normalizer_data v2.4.0
     Checking ttf-parser v0.25.1
     Checking scopeguard v1.2.0
-    Checking owned_ttf_parser v0.25.1
     Checking lock_api v0.4.14
+    Checking owned_ttf_parser v0.25.1
     Checking icu_normalizer v2.4.0
     Checking icu_properties v2.4.0
-    Checking parking_lot_core v0.9.12
     Checking zerocopy v0.8.65
+    Checking parking_lot_core v0.9.12
     Checking emath v0.29.1
     Checking windows-sys v0.61.2
     Checking ab_glyph_rasterizer v0.1.10
     Checking ab_glyph v0.2.32
     Checking serde v1.0.229
-    Checking ecolor v0.29.1
     Checking ahash v0.8.13
-    Checking idna_adapter v1.2.2
+    Checking ecolor v0.29.1
     Checking parking_lot v0.12.5
+    Checking idna_adapter v1.2.2
     Checking percent-encoding v2.3.2
     Checking nohash-hasher v0.2.0
-    Checking epaint_default_fonts v0.29.1
     Checking bitflags v2.13.2
+    Checking epaint_default_fonts v0.29.1
     Checking epaint v0.29.1
     Checking form_urlencoded v1.2.3
     Checking idna v1.1.0
     Checking zmij v1.0.23
     Checking miniz_oxide v0.8.9
     Checking fdeflate v0.3.7
-    Checking raw-window-handle v0.6.2
     Checking itoa v1.0.19
-    Checking egui v0.29.1
+    Checking raw-window-handle v0.6.2
     Checking serde_json v1.0.154
+    Checking egui v0.29.1
     Checking thiserror v1.0.69
     Checking url v2.5.9
     Checking aho-corasick v1.1.5
@@ -67,21 +67,103 @@
     Checking windows-sys v0.52.0
     Checking regex-syntax v0.8.12
     Checking regex-automata v0.4.19
-    Checking once_cell_polyfill v1.70.2
-    Checking pin-project-lite v0.2.18
     Checking anstyle v1.0.14
-    Checking tracing-core v0.1.36
     Checking utf8parse v0.2.2
-    Checking anstyle-parse v1.0.0
-    Checking tracing v0.1.44
+    Checking tracing-core v0.1.36
+    Checking pin-project-lite v0.2.18
+    Checking once_cell_polyfill v1.70.2
     Checking anstyle-wincon v3.0.11
+    Checking tracing v0.1.44
+    Checking anstyle-parse v1.0.0
     Checking num-traits v0.2.19
     Checking winrust-core v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-core)
+error[E0428]: the name `from_wide_ptr` is defined multiple times
+  --> crates\winrust-core\src\wide.rs:89:1
+   |
+48 | pub unsafe fn from_wide_ptr(ptr: *const u16) -> String {
+   | ------------------------------------------------------ previous definition of the value `from_wide_ptr` here
+...
+89 | pub unsafe fn from_wide_ptr(p: *const u16) -> String {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `from_wide_ptr` redefined here
+   |
+   = note: `from_wide_ptr` must be defined only once in the value namespace of this module
+
     Checking regex v1.13.2
+error[E0308]: mismatched types
+  --> crates\winrust-core\src\audio.rs:64:5
+   |
+63 |   pub fn master_volume() -> Option<u8> {
+   |                             ---------- expected `std::option::Option<u8>` because of return type
+64 | /     with_endpoint(|volume| unsafe {
+65 | |         // Slot 7 is GetMasterVolumeLevelScalar(f32*).
+66 | |         let vtbl = *(volume as *const *const usize);
+67 | |         let get: unsafe extern "system" fn(*mut usize, *mut f32) -> i32 =
+...  |
+73 | |         Some((level * 100.0).round().clamp(0.0, 100.0) as u8)
+74 | |     })
+   | |______^ expected `Option<u8>`, found `Option<Option<u8>>`
+   |
+   = note: expected enum `Option<u8>`
+              found enum `Option<std::option::Option<u8>>`
+help: use the `?` operator to extract the `std::option::Option<std::option::Option<u8>>` value, propagating an `Option::None` value to the caller
+   |
+74 |     })?
+   |       +
+
+error[E0308]: mismatched types
+  --> crates\winrust-core\src\audio.rs:79:5
+   |
+78 |   pub fn set_master_volume(percent: u8) -> Option<()> {
+   |                                            ---------- expected `std::option::Option<()>` because of return type
+79 | /     with_endpoint(|volume| unsafe {
+80 | |         // Slot 8 is SetMasterVolumeLevelScalar(float, LPCGUID).
+81 | |         let vtbl = *(volume as *const *const usize);
+82 | |         let set: unsafe extern "system" fn(*mut usize, f32, *const windows_sys::core::GUID) -> i32 =
+...  |
+90 | |     })
+   | |______^ expected `Option<()>`, found `Option<Option<()>>`
+   |
+   = note: expected enum `Option<()>`
+              found enum `Option<std::option::Option<()>>`
+help: use the `?` operator to extract the `std::option::Option<std::option::Option<()>>` value, propagating an `Option::None` value to the caller
+   |
+90 |     })?
+   |       +
+
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\audio.rs:111:5
+    |
+110 |   pub fn set_muted(muted: bool) -> Option<()> {
+    |                                    ---------- expected `std::option::Option<()>` because of return type
+111 | /     with_endpoint(|volume| unsafe {
+112 | |         // Slot 10 is SetMute(BOOL, LPCGUID).
+113 | |         let vtbl = *(volume as *const *const usize);
+114 | |         let set: unsafe extern "system" fn(*mut usize, i32, *const windows_sys::core::GUID) -> i32 =
+...   |
+121 | |     })
+    | |______^ expected `Option<()>`, found `Option<Option<()>>`
+    |
+    = note: expected enum `Option<()>`
+               found enum `Option<std::option::Option<()>>`
+help: use the `?` operator to extract the `std::option::Option<std::option::Option<()>>` value, propagating an `Option::None` value to the caller
+    |
+121 |     })?
+    |       +
+
+error[E0605]: non-primitive cast: `audio::ComObject` as `*const *const usize`
+   --> crates\winrust-core\src\audio.rs:129:21
+    |
+129 |         let vtbl = *(device as *const *const usize);
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ an `as` expression can only be used to convert between primitive types or to coerce to a specific trait object
+
+error[E0605]: non-primitive cast: `audio::ComObject` as `*mut usize`
+   --> crates\winrust-core\src\audio.rs:135:17
+    |
+135 |         if open(device as *mut usize, STGM_READ, &mut store) < 0 || store.is_null() {
+    |                 ^^^^^^^^^^^^^^^^^^^^ an `as` expression can only be used to convert between primitive types or to coerce to a specific trait object
+
     Checking anstyle-query v1.1.5
     Checking unicode-segmentation v1.13.3
-    Checking dpi v0.1.2
-    Checking zeroize v1.9.2
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32
    |
@@ -102,159 +184,12 @@ warning: unnecessary `unsafe` block
 87 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-    Checking color_quant v1.1.0
-    Checking arrayvec v0.7.8
-    Checking cursor-icon v1.2.0
-    Checking jiff-core v1.0.2
-warning: `winrust-core` (lib) generated 2 warnings
-    Checking weezl v0.1.12
-    Checking error-code v3.4.0
-    Checking smol_str v0.2.2
     Checking float-cmp v0.9.0
-    Checking colorchoice v1.0.5
-    Checking is_terminal_polyfill v1.70.2
-    Checking pxfm v0.1.30
-    Checking anstream v1.0.0
-    Checking strict-num v0.1.1
-    Checking winit v0.30.13
-    Checking clipboard-win v5.4.3
-    Checking jiff v1.0.3
-    Checking moxcms v0.8.1
-    Checking gif v0.14.2
-    Checking rustls-pki-types v1.16.0
-    Checking env_filter v2.1.0
-    Checking glutin_egl_sys v0.7.1
-    Checking glutin_wgl_sys v0.6.1
-    Checking png v0.18.1
-    Checking libloading v0.8.9
-    Checking byteorder-lite v0.1.0
-    Checking arrayref v0.3.9
-    Checking tiny-skia-path v0.11.4
-    Checking image v0.25.10
-    Checking glutin v0.32.3
-    Checking env_logger v0.11.12
-    Checking memoffset v0.9.1
-    Checking arboard v3.7.0
-    Checking kurbo v0.9.5
-    Checking webbrowser v1.2.7
-    Checking getrandom v0.2.17
-    Checking untrusted v0.9.0
-    Checking siphasher v0.3.11
-    Checking web-time v1.1.0
-   Compiling unicase v2.10.0
-    Checking glow v0.14.2
-   Compiling phf_shared v0.11.3
-    Checking svgtypes v0.13.0
-    Checking egui-winit v0.29.1
-    Checking ring v0.17.14
-    Checking egui_glow v0.29.1
-    Checking glutin-winit v0.5.0
-    Checking winapi v0.3.9
-    Checking rctree v0.5.0
-    Checking static_assertions v1.1.0
-    Checking usvg-tree v0.37.0
-    Checking rustls-webpki v0.103.17
-   Compiling phf v0.11.3
-    Checking webpki-roots v1.0.12
-    Checking winrust-ui v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-ui)
-    Checking eframe v0.29.1
-    Checking simplecss v0.2.2
-    Checking roxmltree v0.19.0
-    Checking subtle v2.6.1
-    Checking data-url v0.3.2
-    Checking imagesize v0.12.0
-    Checking bitflags v1.3.2
-    Checking png v0.17.16
-    Checking usvg-parser v0.37.0
-    Checking rustls v0.23.46
-    Checking webpki-roots v0.26.11
-   Compiling mime_guess2 v2.3.1
-    Checking base64 v0.21.7
-    Checking pico-args v0.5.0
-    Checking base64 v0.22.1
-    Checking xmlwriter v0.1.0
-    Checking usvg v0.37.0
-    Checking tiny-skia v0.11.4
-    Checking rgb v0.8.53
-    Checking mime v0.3.18
-    Checking ureq v2.12.1
-    Checking resvg v0.37.0
-    Checking ehttp v0.5.0
-    Checking enum-map v2.7.3
-    Checking winrust-kernel-abi v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-    Checking winrust-kernel-control v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-    Checking egui_extras v0.29.1
-    Checking winrust-desktop v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-desktop)
-    Checking winrust-taskmgr v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
-warning: method `flush_desktop_settings` is never used
-   --> crates\winrust-desktop\src\main.rs:279:19
-    |
- 82 | impl DesktopApp {
-    | --------------- method in this implementation
-...
-279 |     pub(crate) fn flush_desktop_settings(&mut self) {
-    |                   ^^^^^^^^^^^^^^^^^^^^^^
-    |
-    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-desktop` (bin "winrust-desktop" test) generated 1 warning
-    Checking winrust-services v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-services)
-warning: unnecessary map of the identity function
-   --> crates\winrust-taskmgr\src\app.rs:326:34
-    |
-326 |                           .cloned()
-    |  __________________________________^
-327 | |                         .map(|(pct, eng)| (pct, eng))
-    | |_____________________________________________________^ help: remove the call to `map`
-    |
-    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#map_identity
-    = note: `#[warn(clippy::map_identity)]` on by default
-
-warning: useless conversion to the same type: `&str`
-    --> crates\winrust-taskmgr\src\app.rs:1895:82
-     |
-1895 |                         let state = s.state.map(|x| x.label()).unwrap_or_else(|| "—".into());
-     |                                                                                  ^^^^^^^^^^ help: consider removing `.into()`: `"—"`
-     |
-     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
-     = note: `#[warn(clippy::useless_conversion)]` on by default
-
-warning: useless conversion to the same type: `&str`
-    --> crates\winrust-taskmgr\src\app.rs:1905:52
-     |
-1905 | ...                   .unwrap_or_else(|| "—".into()),
-     |                                          ^^^^^^^^^^ help: consider removing `.into()`: `"—"`
-     |
-     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
-
-warning: `winrust-taskmgr` (bin "winrust-taskmgr") generated 3 warnings (run `cargo clippy --fix --bin "winrust-taskmgr" -p winrust-taskmgr -- ` to apply 3 suggestions)
-    Checking winrust-sysctl v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
-    Checking winrust-explorer v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
-    Checking winrust-launcher v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
-warning: `winrust-taskmgr` (bin "winrust-taskmgr" test) generated 3 warnings (3 duplicates)
-warning: `winrust-desktop` (bin "winrust-desktop") generated 1 warning (1 duplicate)
-warning: equality checks against false can be replaced by a negation
-   --> crates\winrust-core\src\i18n\settings.rs:170:17
-    |
-170 |         assert!(a.blur_active() == false);
-    |                 ^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `!a.blur_active()`
-    |
-    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#bool_comparison
-    = note: `#[warn(clippy::bool_comparison)]` on by default
-
-warning: items after a test module
-  --> crates\winrust-core\src\wide.rs:44:1
-   |
-44 | mod tests {
-   | ^^^^^^^^^
-...
-73 | pub unsafe fn from_wide_ptr(p: *const u16) -> String {
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#items_after_test_module
-   = note: `#[warn(clippy::items_after_test_module)]` on by default
-   = help: move the items to before the test module was defined
-
-warning: `winrust-core` (lib test) generated 4 warnings (2 duplicates) (run `cargo clippy --fix --lib -p winrust-core --tests -- ` to apply 2 suggestions)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 48.28s
-exit=True
+    Checking smol_str v0.2.2
+    Checking jiff-core v1.0.2
+Some errors have detailed explanations: E0308, E0428, E0605.
+For more information about an error, try `rustc --explain E0308`.
+warning: `winrust-core` (lib) generated 2 warnings
+error: could not compile `winrust-core` (lib) due to 6 previous errors; 2 warnings emitted
+warning: build failed, waiting for other jobs to finish...
+exit=False
