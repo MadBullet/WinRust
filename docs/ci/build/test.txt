@@ -7,19 +7,19 @@
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
   Downloaded itoa v1.0.19
-  Downloaded serde v1.0.229
   Downloaded windows-targets v0.52.6
   Downloaded quote v1.0.47
-  Downloaded thiserror v1.0.69
-  Downloaded zmij v1.0.23
   Downloaded thiserror-impl v1.0.69
+  Downloaded zmij v1.0.23
   Downloaded log v0.4.35
-  Downloaded unicode-ident v1.0.27
-  Downloaded serde_derive v1.0.229
+  Downloaded thiserror v1.0.69
   Downloaded proc-macro2 v1.0.107
+  Downloaded serde_derive v1.0.229
+  Downloaded unicode-ident v1.0.27
   Downloaded serde_core v1.0.229
-  Downloaded memchr v2.8.3
   Downloaded serde_json v1.0.154
+  Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
   Downloaded syn v3.0.10
   Downloaded syn v2.0.119
   Downloaded windows_x86_64_msvc v0.52.6
@@ -32,14 +32,14 @@
    Compiling zmij v1.0.23
    Compiling syn v2.0.119
    Compiling syn v3.0.10
-   Compiling serde_json v1.0.154
    Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.154
    Compiling serde v1.0.229
    Compiling windows-targets v0.52.6
    Compiling thiserror-impl v1.0.69
    Compiling serde_derive v1.0.229
-   Compiling memchr v2.8.3
    Compiling itoa v1.0.19
+   Compiling memchr v2.8.3
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
@@ -76,7 +76,7 @@ warning: field `last` is never read
 
 warning: `winrust-core` (lib test) generated 3 warnings (3 duplicates)
 warning: `winrust-core` (lib) generated 3 warnings
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 49.01s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.08s
      Running unittests src\lib.rs (target\debug\build\winrust-core/90f128f4169a94b1\out\winrust_core-90f128f4169a94b1.exe)
 
 running 21 tests
@@ -97,12 +97,12 @@ test i18n::tests::english_is_identity ... ok
 test i18n::tests::fill_replaces_in_order ... ok
 test i18n::tests::every_translation_has_the_same_placeholders ... ok
 test i18n::tests::no_duplicate_source_strings ... ok
-test i18n::tests::russian_translates_known_and_keeps_unknown ... ok
 test wide::tests::roundtrip_ascii ... ok
+test i18n::tests::russian_translates_known_and_keeps_unknown ... ok
 test wide::tests::roundtrip_cyrillic ... ok
 test wide::tests::stops_at_nul ... ok
 
-test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
    Doc-tests winrust_core
 
