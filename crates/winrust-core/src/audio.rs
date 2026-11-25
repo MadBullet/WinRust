@@ -68,7 +68,7 @@ impl Drop for ComObject {
 
 /// The master volume of the default playback device, 0..=100.
 pub fn master_volume() -> Option<u8> {
-    with_endpoint(|volume| unsafe {
+    with_endpoint(|volume: &ComObject| unsafe {
         // Slot 7 is GetMasterVolumeLevelScalar(f32*).
         let vtbl = *volume.0;
         let get: unsafe extern "system" fn(*mut usize, *mut f32) -> i32 =
@@ -79,6 +79,7 @@ pub fn master_volume() -> Option<u8> {
         }
         Some((level * 100.0).round().clamp(0.0, 100.0) as u8)
     })
+    .flatten()
 }
 
 /// Set the master volume, 0..=100.
@@ -95,6 +96,7 @@ pub fn set_master_volume(percent: u8) -> Option<()> {
             Some(())
         }
     })
+    .flatten()
 }
 
 /// Whether the default playback device is muted.
@@ -126,6 +128,7 @@ pub fn set_muted(muted: bool) -> Option<()> {
             Some(())
         }
     })
+    .flatten()
 }
 
 /// Friendly name of the default playback device (`Realtek Digital Output ...`).
@@ -238,7 +241,7 @@ fn with_device() -> Option<ComObject> {
 }
 
 /// Activate `IAudioEndpointVolume` on the default endpoint and run `f`.
-fn with_endpoint<T>(f: impl FnOnce(*mut usize) -> T) -> Option<T> {
+fn with_endpoint<T>(f: impl FnOnce(&ComObject) -> T) -> Option<T> {
     let _com = ComGuard::new();
     let device = with_device()?;
     unsafe {
@@ -264,7 +267,7 @@ fn with_endpoint<T>(f: impl FnOnce(*mut usize) -> T) -> Option<T> {
             return None;
         }
         let volume = ComObject(volume as *mut *const usize);
-        Some(f(volume.ptr()))
+        Some(f(&volume))
     }
 }
 
