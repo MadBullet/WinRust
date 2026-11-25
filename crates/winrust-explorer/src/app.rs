@@ -3154,7 +3154,7 @@ impl ExplorerApp {
                         nav = Some(PathBuf::from(&drive.root));
                     }
                     if resp.clicked() {
-                        self.status = tf!("{} selected", name);
+                        self.status = tf!("{} selected", &name);
                     }
                     resp.context_menu(|ui| {
                         if ui.button(t("Open")).clicked() {
