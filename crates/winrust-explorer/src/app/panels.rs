@@ -1,0 +1,478 @@
+//! The chrome around the file area: the tab strip, the command bar and the
+//! navigation pane.
+
+use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::shell;
+use winrust_core::shell::KnownFolder;
+use winrust_core::t;
+use winrust_core::tf;
+use winrust_core::ts;
+use egui::Color32;
+use egui::RichText;
+use eframe::egui;
+use std::path::Path;
+use std::path::PathBuf;
+use super::commands::Command;
+use super::state::{truncate_middle, ExplorerApp, FileClipboard};
+use super::tabs::{Tab, file_name_of};
+use super::viewmode::{SortKeySerde, ViewMode};
+
+impl ExplorerApp {
+    /// Explorer's tab strip (Win11 style) with a "+" button.
+    pub(super) fn tab_bar(&mut self, ui: &mut egui::Ui) {
+        ui.horizontal(|ui| {
+            let mut activate: Option<usize> = None;
+            let mut close: Option<usize> = None;
+            for (idx, tab) in self.tabs.iter().enumerate() {
+                let selected = idx == self.active;
+                let title = truncate_middle(&tab.title(), 26);
+                let resp = ui.selectable_label(selected, format!("  {title}  "));
+                if resp.clicked() {
+                    activate = Some(idx);
+                }
+                if resp.middle_clicked() {
+                    close = Some(idx);
+                }
+                resp.on_hover_text(tab.path.display().to_string());
+                if tab.loading {
+                    ui.spinner();
+                }
+                // Close button on the active tab.
+                if selected && self.tabs.len() > 1 && ui.small_button("×").clicked() {
+                    close = Some(idx);
+                }
+                ui.separator();
+            }
+            if ui
+                .button("+")
+                .on_hover_text(t("New tab (Ctrl+T)"))
+                .clicked()
+            {
+                let p = self.current().path.clone();
+                self.tabs.push(Tab::new(p));
+                activate = Some(self.tabs.len() - 1);
+            }
+            if let Some(idx) = activate {
+                self.active = idx;
+                self.remember_prefs();
+                self.start_load(self.active);
+            }
+            if let Some(idx) = close {
+                if self.tabs.len() > 1 {
+                    self.tabs.remove(idx);
+                    self.active = self.active.min(self.tabs.len() - 1);
+                    self.start_load(self.active);
+                }
+            }
+        });
+    }
+
+    /// Command bar: back/forward/up/refresh, breadcrumb address bar, search,
+    /// then the file commands Explorer puts in its ribbon.
+    pub(super) fn command_bar(&mut self, ui: &mut egui::Ui) {
+        // Row 1: navigation + address + search
+        ui.horizontal(|ui| {
+            if ui
+                .add_enabled(
+                    self.current().can_back(),
+                    egui::Button::new(RichText::new("◀").size(14.0)),
+                )
+                .on_hover_text(t("Back (Alt+←)"))
+                .clicked()
+            {
+                self.go_back();
+            }
+            if ui
+                .add_enabled(
+                    self.current().can_forward(),
+                    egui::Button::new(RichText::new("▶").size(14.0)),
+                )
+                .on_hover_text(t("Forward (Alt+→)"))
+                .clicked()
+            {
+                self.go_forward();
+            }
+            if ui.button("▲").on_hover_text(t("Up (Alt+↑)")).clicked() {
+                self.go_up();
+            }
+            if ui.button("⟳").on_hover_text(t("Refresh (F5)")).clicked() {
+                self.refresh();
+            }
+
+            let editing = self.current().address_edit.is_some();
+            let search_w = 190.0;
+            let addr_w = (ui.available_width() - search_w - 12.0).max(200.0);
+            if editing {
+                let mut buf = self.current().address_edit.clone().unwrap_or_default();
+                let response = ui.add_sized(
+                    [addr_w, 24.0],
+                    egui::TextEdit::singleline(&mut buf)
+                        .hint_text(t("Type a path or URL and press Enter")),
+                );
+                self.current_mut().address_edit = Some(buf.clone());
+                if response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                    self.current_mut().address_edit = None;
+                    let p = PathBuf::from(buf.trim());
+                    if p.exists() {
+                        self.navigate(p);
+                    } else {
+                        self.status = tf!("Path not found: {}", p.display());
+                    }
+                }
+                if ui.input(|i| i.key_pressed(egui::Key::Escape)) {
+                    self.current_mut().address_edit = None;
+                }
+            } else {
+                let mut target: Option<PathBuf> = None;
+                let mut start_edit = false;
+                egui::ScrollArea::horizontal()
+                    .id_salt("breadcrumb")
+                    .max_width(addr_w)
+                    .show(ui, |ui| {
+                        ui.horizontal(|ui| {
+                            let path = self.current().path.clone();
+                            let mut acc = PathBuf::new();
+                            for (idx, comp) in path.components().enumerate() {
+                                acc.push(comp);
+                                let label = comp.as_os_str().to_string_lossy().to_string();
+                                let text = if label.is_empty() {
+                                    path.display().to_string()
+                                } else if idx == 0 {
+                                    label.trim_end_matches('\\').to_string()
+                                } else {
+                                    label
+                                };
+                                if ui
+                                    .add(
+                                        egui::Button::new(RichText::new(text).size(13.0))
+                                            .frame(false),
+                                    )
+                                    .clicked()
+                                {
+                                    target = Some(acc.clone());
+                                }
+                                if acc != path {
+                                    ui.label(RichText::new("›").weak());
+                                }
+                            }
+                            if ui
+                                .small_button("✎")
+                                .on_hover_text(t("Edit address (Ctrl+L)"))
+                                .clicked()
+                            {
+                                start_edit = true;
+                            }
+                        });
+                    });
+                if start_edit {
+                    let p = self.current().path.display().to_string();
+                    self.current_mut().address_edit = Some(p);
+                }
+                if let Some(p) = target {
+                    self.navigate(p);
+                }
+            }
+
+            // Search box
+            let mut needle = self.current().filter.clone();
+            let resp = ui.add_sized(
+                [search_w, 24.0],
+                egui::TextEdit::singleline(&mut needle)
+                    .hint_text(format!("🔍 {}", t("Search")))
+                    .margin(egui::vec2(6.0, 3.0)),
+            );
+            if resp.changed() {
+                self.start_search(needle.clone());
+            }
+            if needle.is_empty() && self.search_results.is_some() {
+                self.search_results = None;
+            }
+        });
+
+        ui.add_space(2.0);
+
+        // Row 2: the file commands
+        ui.horizontal(|ui| {
+            let entries = self.sorted_filtered();
+            let multiselection = self.current().selection.clone();
+            ui.menu_button(RichText::new("+ New").strong(), |ui| {
+                if ui.button(format!("📁 {}", t("Folder"))).clicked() {
+                    self.creating_folder = true;
+                    self.new_folder_buffer = t("New folder");
+                    ui.close_menu();
+                }
+                if ui.button(format!("📄 {}", t("Text document"))).clicked() {
+                    let target = disk::unique_destination(
+                        self.current().path.join(t("New Text Document.txt")),
+                    );
+                    match std::fs::write(&target, b"") {
+                        Ok(()) => {
+                            self.status = tf!("Created {}", file_name_of(&target));
+                            self.refresh();
+                        }
+                        Err(e) => self.status = tf!("Create failed: {}", e),
+                    }
+                    ui.close_menu();
+                }
+                if ui
+                    .button(format!("🗜 {}", t("Compressed (zipped) folder")))
+                    .clicked()
+                {
+                    self.status = t("Use right-click → Send to → Compressed folder");
+                    ui.close_menu();
+                }
+            });
+
+            ui.separator();
+
+            let has_sel = !multiselection.is_empty();
+            if ui
+                .add_enabled(has_sel, egui::Button::new(format!("✂ {}", t("Cut"))))
+                .on_hover_text("Ctrl+X")
+                .clicked()
+            {
+                self.clipboard = Some(FileClipboard {
+                    paths: multiselection.clone(),
+                    cut: true,
+                });
+                self.status = tf!("Cut {} item(s)", multiselection.len());
+            }
+            if ui
+                .add_enabled(has_sel, egui::Button::new(format!("⧉ {}", t("Copy"))))
+                .on_hover_text("Ctrl+C")
+                .clicked()
+            {
+                self.clipboard = Some(FileClipboard {
+                    paths: multiselection.clone(),
+                    cut: false,
+                });
+                self.status = tf!("Copied {} item(s)", multiselection.len());
+            }
+            let has_clip = self.clipboard.is_some();
+            if ui
+                .add_enabled(has_clip, egui::Button::new(format!("📋 {}", t("Paste"))))
+                .on_hover_text("Ctrl+V")
+                .clicked()
+            {
+                self.paste_clipboard();
+            }
+            if ui
+                .add_enabled(has_sel, egui::Button::new(format!("✎ {}", t("Rename"))))
+                .on_hover_text("F2")
+                .clicked()
+            {
+                if let Some(one) = multiselection.first() {
+                    self.rename_buffer = file_name_of(one);
+                    self.rename_target = Some(one.clone());
+                }
+            }
+            if ui
+                .add_enabled(has_sel, egui::Button::new(format!("🗑 {}", t("Delete"))))
+                .on_hover_text("Delete / Shift+Delete")
+                .clicked()
+            {
+                self.delete_confirm = multiselection.clone();
+                self.delete_permanent = false;
+            }
+            ui.separator();
+            if ui
+                .button(format!("⤴ {}", t("Share")))
+                .on_hover_text("Open sharing options")
+                .clicked()
+            {
+                if let Some(one) = multiselection.first() {
+                    let _ = shell::open_verb(one, "share");
+                } else {
+                    self.status = t("Sharing: select an item first");
+                }
+            }
+            ui.separator();
+
+            // View / sort / options
+            let mut view = self.current().view;
+            egui::ComboBox::from_id_salt("viewmode")
+                .selected_text(view.label())
+                .width(120.0)
+                .show_ui(ui, |ui| {
+                    for v in ViewMode::ALL {
+                        if ui.selectable_value(&mut view, v, v.label()).clicked() {
+                            self.current_mut().view = v;
+                            self.remember_prefs();
+                        }
+                    }
+                });
+
+            let mut sort_key = self.current().sort_key;
+            let sort_asc = self.current().sort_asc;
+            egui::ComboBox::from_id_salt("sortby")
+                .selected_text(format!("{}: {}", t("Sort"), sort_key.label()))
+                .width(170.0)
+                .show_ui(ui, |ui| {
+                    for k in SortKeySerde::ALL {
+                        if ui.selectable_value(&mut sort_key, k, k.label()).clicked() {
+                            self.current_mut().sort_key = k;
+                            self.current_mut().sort_asc = true;
+                            self.remember_prefs();
+                        }
+                    }
+                    ui.separator();
+                    if ui.selectable_label(sort_asc, t("Ascending")).clicked() {
+                        self.current_mut().sort_asc = true;
+                    }
+                    if ui.selectable_label(!sort_asc, t("Descending")).clicked() {
+                        self.current_mut().sort_asc = false;
+                    }
+                });
+
+            ui.menu_button(format!("⋯ {}", t("View")), |ui| {
+                let mut hidden = self.current().show_hidden;
+                if ui.checkbox(&mut hidden, t("Hidden items")).changed() {
+                    self.current_mut().show_hidden = hidden;
+                    self.remember_prefs();
+                    self.refresh();
+                }
+                let mut prev = self.preview_open;
+                if ui.checkbox(&mut prev, "Preview pane").changed() {
+                    self.preview_open = prev;
+                }
+                ui.separator();
+                if ui.button(t("Refresh (F5)")).clicked() {
+                    self.refresh();
+                    ui.close_menu();
+                }
+                if ui.button(t("Select all (Ctrl+A)")).clicked() {
+                    let paths: Vec<PathBuf> = entries.iter().map(|e| e.path.clone()).collect();
+                    self.current_mut().selection = paths;
+                    ui.close_menu();
+                }
+            });
+        });
+    }
+
+    /// Navigation pane: Quick access, This PC (drives) with usage bars, and the
+    /// sub-folders of the current directory (Explorer's tree, one level deep).
+    pub(super) fn sidebar(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        let mut nav: Option<PathBuf> = None;
+        let cur_path = self.current().path.clone();
+        // Snapshot what the pane needs so `self` is not borrowed inside the
+        // closure while it is also mutated by click handling.
+        let subfolders: Vec<(String, PathBuf)> = self
+            .current()
+            .entries
+            .iter()
+            .filter(|e| e.is_dir)
+            .take(60)
+            .map(|e| (e.name.clone(), e.path.clone()))
+            .collect();
+        let mut nav_selected = self.nav_selected;
+        let mut status_msg: Option<String> = None;
+        let drives = self.drives.clone();
+
+        egui::ScrollArea::vertical()
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                ui.add_space(4.0);
+                ui.label(RichText::new(t("QUICK ACCESS")).small().weak());
+                for folder in KnownFolder::sidebar() {
+                    let label = folder.label();
+                    let path = folder.path();
+                    let active = match &path {
+                        Some(p) => cur_path == *p,
+                        None => nav_selected == Some(*folder),
+                    };
+                    let text =
+                        RichText::new(format!("{}  {}", sidebar_glyph(*folder), label)).size(13.0);
+                    let text = if active { text.strong() } else { text };
+                    if ui.add(egui::Button::new(text).frame(active)).clicked() {
+                        nav_selected = Some(*folder);
+                        match path {
+                            Some(p) => nav = Some(p),
+                            None => status_msg = Some(tf!("{} is a virtual folder", label)),
+                        }
+                    }
+                }
+
+                ui.add_space(10.0);
+                ui.label(RichText::new(t("THIS PC")).small().weak());
+                for drive in &drives {
+                    let p = PathBuf::from(&drive.root);
+                    let name = if drive.label.is_empty() {
+                        format!(
+                            "{} ({})",
+                            drive.kind.map(|k| k.label()).unwrap_or(ts("Drive")),
+                            drive.root.trim_end_matches('\\')
+                        )
+                    } else {
+                        format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
+                    };
+                    let frac = if drive.total_bytes > 0 {
+                        drive.free_bytes as f32 / drive.total_bytes as f32
+                    } else {
+                        0.0
+                    };
+                    let active = cur_path.starts_with(&p);
+                    let text = RichText::new(format!("💽  {name}")).size(13.0);
+                    let text = if active { text.strong() } else { text };
+                    let resp = ui.add(egui::Button::new(text).frame(active));
+                    if resp.clicked() {
+                        nav = Some(p);
+                    }
+                    resp.on_hover_text(format!(
+                        "{} · free {} of {}",
+                        drive.fs_name,
+                        disk::format_size(drive.free_bytes),
+                        disk::format_size(drive.total_bytes)
+                    ));
+                    if drive.total_bytes > 0 {
+                        ui.add(
+                            egui::ProgressBar::new(1.0 - frac)
+                                .desired_width((ui.available_width() - 8.0).max(40.0))
+                                .desired_height(3.0)
+                                .fill(Color32::from_rgb(0, 120, 215)),
+                        );
+                    }
+                }
+
+                ui.add_space(10.0);
+                ui.label(RichText::new(t("FOLDERS IN THIS VIEW")).small().weak());
+                if subfolders.is_empty() {
+                    ui.label(RichText::new(t("   (no sub-folders)")).size(11.0).weak());
+                }
+                for (name, path) in &subfolders {
+                    if ui
+                        .add(
+                            egui::Button::new(RichText::new(format!("📁  {name}")).size(12.0))
+                                .frame(false),
+                        )
+                        .clicked()
+                    {
+                        nav = Some(path.clone());
+                    }
+                }
+            });
+        let _ = ctx;
+        self.nav_selected = nav_selected;
+        if let Some(msg) = status_msg {
+            self.status = msg;
+        }
+        if let Some(p) = nav {
+            self.navigate(p);
+        }
+    }
+}
+
+pub(super) fn sidebar_glyph(folder: KnownFolder) -> &'static str {
+    match folder {
+        KnownFolder::Profile => "🏠",
+        KnownFolder::Desktop => "🖥",
+        KnownFolder::Downloads => "⬇",
+        KnownFolder::Documents => "📄",
+        KnownFolder::Pictures => "🖼",
+        KnownFolder::Music => "🎵",
+        KnownFolder::Videos => "🎬",
+        KnownFolder::Computer => "💻",
+        KnownFolder::Network => "🌐",
+        KnownFolder::RecycleBin => "🗑",
+        _ => "📁",
+    }
+}
