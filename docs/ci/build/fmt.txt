@@ -1,15 +1,1 @@
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\tray.rs:200:
- // The flyouts
- // ---------------------------------------------------------------------------
- 
-[31m-fn flyout(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect, pal: winrust_ui::theme::Palette) {
-[0m[32m+fn flyout(
-[0m[32m+    app: &mut DesktopApp,
-[0m[32m+    ctx: &egui::Context,
-[0m[32m+    inner: egui::Rect,
-[0m[32m+    pal: winrust_ui::theme::Palette,
-[0m[32m+) {
-[0m     // Panels sit above the bar, right-aligned the way Windows places them.
-     let width = match app.tray_flyout {
-         Flyout::Calendar => 340.0,
-exit=False
+exit=True
