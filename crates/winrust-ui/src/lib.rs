@@ -8,4 +8,4 @@
 
 pub mod theme;
 
-pub use theme::Appearance;
+pub use winrust_core::i18n::Appearance;

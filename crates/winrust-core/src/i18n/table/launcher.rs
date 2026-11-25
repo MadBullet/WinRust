@@ -86,4 +86,4 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Launch", "Запустить"),
     ("Restore", "Восстановить"),
     ("Backups", "Резервные копии"),
-]
+];

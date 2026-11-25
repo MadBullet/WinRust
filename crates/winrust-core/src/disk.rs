@@ -411,7 +411,7 @@ pub fn item_kind(entry: &DirEntry) -> String {
 pub fn format_size(bytes: u64) -> String {
     const KB: f64 = 1024.0;
     let b = bytes as f64;
-    fn trimmed(v: f64, unit: &str, decimals: usize) -> String {
+    fn trimmed(v: f64, unit: &'static str, decimals: usize) -> String {
         let unit = crate::i18n::ts(unit);
         let s = format!("{v:.decimals$}");
         let s = if s.contains('.') {

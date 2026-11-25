@@ -14,7 +14,8 @@ use windows_sys::Win32::System::DataExchange::{
 };
 use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
 use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
-use windows_sys::Win32::UI::WindowsAndMessaging::{BOOL, EnumWindows, HWND, LPARAM, SW_SHOWNORMAL};
+use windows_sys::Win32::Foundation::{BOOL, HWND, LPARAM};
+use windows_sys::Win32::UI::WindowsAndMessaging::{EnumWindows, SW_SHOWNORMAL};
 use windows_sys::Win32::UI::Shell::{
     SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
     FOF_ALLOWUNDO, FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_WANTNUKEWARNING, FO_DELETE,
