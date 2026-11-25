@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use std::sync::mpsc::channel;
 use std::sync::mpsc::Receiver;
 use std::sync::mpsc::Sender;
-use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::disk::{self, DirEntry};
 use winrust_core::i18n::{self, Lang};
 use winrust_core::shell;
 use winrust_core::shell::KnownFolder;

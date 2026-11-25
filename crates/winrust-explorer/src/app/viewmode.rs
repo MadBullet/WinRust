@@ -3,7 +3,7 @@
 
 use std::collections::HashMap;
 use std::path::PathBuf;
-use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::disk::SortKey;
 use winrust_core::ts;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -23,7 +23,7 @@ impl ViewMode {
             ViewMode::Content => ts("Content"),
         }
     }
-    const ALL: [ViewMode; 4] = [
+    pub(super) const ALL: [ViewMode; 4] = [
         ViewMode::Details,
         ViewMode::List,
         ViewMode::Tiles,
@@ -61,7 +61,7 @@ impl SortKeySerde {
             SortKeySerde::Type => ts("Type"),
         }
     }
-    const ALL: [SortKeySerde; 5] = [
+    pub(super) const ALL: [SortKeySerde; 5] = [
         SortKeySerde::Name,
         SortKeySerde::Size,
         SortKeySerde::Modified,

@@ -84,7 +84,7 @@ mod win {
                     if name.is_empty() {
                         continue;
                     }
-                    let value = unsafe { item.FmtValue.Anonymous.doubleValue };
+                    let value = item.FmtValue.Anonymous.doubleValue;
                     if !value.is_finite() {
                         continue;
                     }

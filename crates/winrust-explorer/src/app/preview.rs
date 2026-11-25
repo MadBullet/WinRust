@@ -6,7 +6,7 @@ use super::viewmode::ViewMode;
 use eframe::egui;
 use egui::RichText;
 use std::path::Path;
-use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::disk;
 use winrust_core::shell;
 use winrust_core::t;
 

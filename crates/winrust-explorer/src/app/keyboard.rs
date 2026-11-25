@@ -2,16 +2,17 @@
 //! key does, what confirms a delete, and what happens on exit.
 
 use super::commands::Command;
-use super::state::ExplorerApp;
+use super::state::{DragGhost, ExplorerApp};
 use super::tabs::{file_name_of, new_file_in, Tab};
 use super::viewmode::{save_state, PersistedState, SortKeySerde, ViewMode};
 use eframe::egui;
 use egui::{Color32, RichText};
 use std::path::PathBuf;
 use std::sync::atomic::Ordering;
-use winrust_core::i18n::{self, Lang};
+use winrust_core::i18n;
 use winrust_core::shell;
 use winrust_core::t;
+use winrust_core::tf;
 use winrust_core::ts;
 
 // ---------------------------------------------------------------------------

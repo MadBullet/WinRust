@@ -111,9 +111,9 @@ fn friendly_type(ext: &str) -> String {
     if ext.eq_ignore_ascii_case("zip") {
         return ts("Compressed (zipped) Folder").to_string();
     }
-    let Ok(root) = Key::open(Root::LocalMachine, "SOFTWARE\\Classes") else {
+    if Key::open(Root::LocalMachine, "SOFTWARE\\Classes").is_err() {
         return ext.to_ascii_uppercase();
-    };
+    }
     // `.<ext>\(Default)` names the ProgID, whose own default value is the name.
     if let Ok(key) = Key::open(Root::LocalMachine, &format!("SOFTWARE\\Classes\\.{ext}")) {
         if let Some(progid) = key.string("") {

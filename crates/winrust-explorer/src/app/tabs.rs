@@ -5,8 +5,10 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
-use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::disk::DirEntry;
 use winrust_core::ts;
+
+use super::viewmode::{SortKeySerde, ViewMode};
 
 pub(super) struct Tab {
     pub(super) path: PathBuf,

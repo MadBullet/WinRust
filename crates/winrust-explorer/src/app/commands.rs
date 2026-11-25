@@ -5,12 +5,11 @@ use super::state::{ExplorerApp, FileClipboard, JobUpdate};
 use super::tabs::{file_name_of, FileJob, Tab};
 use eframe::egui;
 use std::collections::HashSet;
-use std::path::Path;
 use std::path::PathBuf;
 use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
-use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::disk;
 use winrust_core::shell;
 use winrust_core::shell::KnownFolder;
 

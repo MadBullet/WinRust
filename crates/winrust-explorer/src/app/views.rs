@@ -12,7 +12,7 @@ use egui_extras::Column;
 use egui_extras::TableBuilder;
 use std::path::Path;
 use std::path::PathBuf;
-use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::disk::{self, DirEntry};
 use winrust_core::shell::KnownFolder;
 use winrust_core::t;
 use winrust_core::tf;

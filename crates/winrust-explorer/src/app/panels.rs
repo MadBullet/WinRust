@@ -1,16 +1,14 @@
 //! The chrome around the file area: the tab strip, the command bar and the
 //! navigation pane.
 
-use super::commands::Command;
 use super::state::{truncate_middle, ExplorerApp, FileClipboard};
 use super::tabs::{file_name_of, Tab};
 use super::viewmode::{SortKeySerde, ViewMode};
 use eframe::egui;
 use egui::Color32;
 use egui::RichText;
-use std::path::Path;
 use std::path::PathBuf;
-use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::disk;
 use winrust_core::shell;
 use winrust_core::shell::KnownFolder;
 use winrust_core::t;
