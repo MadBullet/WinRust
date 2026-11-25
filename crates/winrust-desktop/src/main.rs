@@ -82,27 +82,15 @@ pub struct DesktopApp {
     pub(crate) sampled_at: Instant,
 
     // ---- Tray state -------------------------------------------------------
-    /// Which tray flyout is open, if any.  One at a time, like Windows.
-    pub(crate) tray_flyout: crate::tray::Flyout,
-    /// The overflow list (the chevron) is open.
-    pub(crate) tray_overflow: bool,
+    /// Everything the notification area owns.  Its fields are private; the
+    /// shell uses its verbs (`toggle`, `set_volume`, ...) - see `tray.rs`.
+    pub(crate) tray: crate::tray::TrayState,
     /// Icons of running applications, keyed by `pid` so they are loaded once.
     pub(crate) window_icons: std::collections::HashMap<u32, Option<egui::TextureHandle>>,
-    pub(crate) volume: Option<u8>,
-    pub(crate) muted: bool,
-    pub(crate) audio_device: String,
-    pub(crate) network: Option<winrust_core::net::AdapterInfo>,
-    pub(crate) ssid: Option<String>,
-    pub(crate) lang_tag: String,
     /// Desktop selection: several icons can be selected at once.
     pub(crate) selection: std::collections::BTreeSet<usize>,
     /// Rubber-band selection in progress: where the LMB went down.
     pub(crate) band_start: Option<egui::Pos2>,
-    /// Notifications shown in the notification centre.
-    pub(crate) notifications: Vec<crate::tray::Notification>,
-    pub(crate) notifications_read: usize,
-    pub(crate) tray_sampled_at: Instant,
-    pub(crate) network_at: Instant,
     /// Which application the user last activated from the taskbar.
     pub(crate) active_pid: Option<u32>,
     /// Delete pressed on the wallpaper: the paths waiting for confirmation and
@@ -159,21 +147,10 @@ impl DesktopApp {
             cpu_mem: (0.0, winrust_core::system::memory_status()),
             prev_cpu: winrust_core::system::cpu_sample(),
             sampled_at: Instant::now() - Duration::from_secs(5),
-            tray_flyout: crate::tray::Flyout::None,
-            tray_overflow: false,
+            tray: crate::tray::TrayState::default(),
             window_icons: std::collections::HashMap::new(),
-            volume: None,
-            muted: false,
-            audio_device: String::new(),
-            network: None,
-            ssid: None,
-            lang_tag: String::new(),
             selection: std::collections::BTreeSet::new(),
             band_start: None,
-            notifications: Vec::new(),
-            notifications_read: 0,
-            tray_sampled_at: Instant::now() - Duration::from_secs(5),
-            network_at: Instant::now() - Duration::from_secs(30),
             active_pid: None,
             delete_confirm: Vec::new(),
             delete_permanent: false,
@@ -205,21 +182,9 @@ impl DesktopApp {
             self.apps_at = Instant::now();
         }
         self.clock = crate::tray::clock_text();
-        // Tray readouts are cheap but not free: poll them on their own cadence.
-        if self.tray_sampled_at.elapsed() >= Duration::from_millis(1500) {
-            self.tray_sampled_at = Instant::now();
-            self.volume = winrust_core::audio::master_volume();
-            self.muted = winrust_core::audio::is_muted();
-            if self.audio_device.is_empty() {
-                self.audio_device = winrust_core::audio::device_name().unwrap_or_default();
-            }
-            self.network = winrust_core::net::primary_adapter();
-            self.lang_tag = winrust_core::system::keyboard_layout_tag();
-        }
-        if self.network_at.elapsed() >= Duration::from_secs(20) {
-            self.network_at = Instant::now();
-            self.ssid = winrust_core::net::wifi_ssid();
-        }
+        // The tray polls its own readouts on its own cadence.
+        let mut device = String::new();
+        self.tray.sample(&mut device);
         // One CPU sample per tick: the taskbar text is derived from a real
         // interval, not two reads a microsecond apart.
         if self.sampled_at.elapsed() >= Duration::from_millis(1000) {
@@ -467,6 +432,29 @@ impl DesktopApp {
         }
     }
 
+    /// Show the Start menu (the taskbar button, `Win`, `Win+X`).  Anything
+    /// already floating in the tray closes, because only one panel is open.
+    pub(crate) fn show_start(&mut self) {
+        winrust_core::shell::focus_window(self.hwnd);
+        self.start_open = true;
+        self.tray.close();
+    }
+
+    /// Show Start with the power-user list already expanded (`Win+X`).
+    pub(crate) fn show_start_power(&mut self) {
+        self.show_start();
+        self.start_power_menu = true;
+    }
+
+    /// The taskbar Start button: open, or close if it is already open.
+    pub(crate) fn toggle_start(&mut self) {
+        if self.start_open {
+            self.close_start();
+        } else {
+            self.show_start();
+        }
+    }
+
     pub(crate) fn close_start(&mut self) {
         self.start_open = false;
         self.start_search.clear();
@@ -497,8 +485,8 @@ impl eframe::App for DesktopApp {
         if self.lang_checked_at.elapsed() >= Duration::from_secs(1) {
             self.lang_checked_at = Instant::now();
             let stored_lang = i18n::lang::load();
-            if stored_lang != self.lang {
-                self.lang = stored_lang;
+            if stored_lang != self.tray.language() {
+                self.tray.note_layout(stored_lang.clone());
                 i18n::set_lang(stored_lang);
                 winrust_ui::theme::apply(ctx, &self.appearance);
             }
@@ -530,7 +518,7 @@ impl eframe::App for DesktopApp {
         self.start_anim = ease(self.start_anim, if self.start_open { 1.0 } else { 0.0 }, dt);
         self.flyout_anim = ease(
             self.flyout_anim,
-            if self.tray_flyout.is_open() { 1.0 } else { 0.0 },
+            if self.tray.flyout().is_open() { 1.0 } else { 0.0 },
             dt,
         );
 
@@ -542,13 +530,7 @@ impl eframe::App for DesktopApp {
         // detected here so holding the key does not flap the menu.
         let win_down = winrust_core::shell::win_key_down();
         if win_down && !self.win_key_was_down {
-            if self.start_open {
-                self.close_start();
-            } else {
-                winrust_core::shell::focus_window(self.hwnd);
-                self.start_open = true;
-                self.tray_flyout = crate::tray::Flyout::None;
-            }
+            self.toggle_start();
         }
         self.win_key_was_down = win_down;
 
@@ -568,7 +550,7 @@ impl eframe::App for DesktopApp {
         // the menu is open or a preview is pending, and at 2 Hz otherwise (the
         // clock only needs seconds).
         let hot = self.start_open
-            || self.tray_flyout.is_open()
+            || self.tray.flyout().is_open()
             || self.hover_pid.is_some()
             || !self.delete_confirm.is_empty();
         ctx.request_repaint_after(Duration::from_millis(if hot { 120 } else { 500 }));

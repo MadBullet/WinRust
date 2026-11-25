@@ -48,6 +48,160 @@ pub struct Notification {
     pub read: bool,
 }
 
+/// Everything the tray owns, in one place.
+///
+/// Before this type existed, the tray's state was eight loose `DesktopApp`
+/// fields (`volume`, `muted`, `lang_tag`, `notifications`, `tray_flyout`, ...)
+/// that `tray.rs` wrote directly from its drawing functions.  `DesktopApp` then
+/// had no field it kept to itself, so it could not guard any of them: any
+/// module could, and did, set `app.volume` behind the shell's back.
+///
+/// The fields are private on purpose.  The rest of the shell talks to the tray
+/// through the handful of verbs below - *open this flyout*, *close it*, *mute*,
+/// *set the volume*, *use this keyboard layout*, *post a notification* - and
+/// never reaches inside.
+#[derive(Debug, Default)]
+pub struct TrayState {
+    flyout: Flyout,
+    volume: Option<u8>,
+    muted: bool,
+    device: String,
+    network: Option<winrust_core::net::AdapterInfo>,
+    ssid: Option<String>,
+    lang: String,
+    notifications: Vec<Notification>,
+    /// Last sample of the audio device, so the volume poll matches it.
+    sampled_at: Option<std::time::Instant>,
+    network_at: Option<std::time::Instant>,
+}
+
+impl TrayState {
+    // ---- what the shell's draw code may read -----------------------------
+    pub fn flyout(&self) -> Flyout {
+        self.flyout
+    }
+    pub fn volume(&self) -> Option<u8> {
+        self.volume
+    }
+    pub fn is_muted(&self) -> bool {
+        self.muted
+    }
+    pub fn device(&self) -> &str {
+        &self.device
+    }
+    pub fn network(&self) -> Option<&winrust_core::net::AdapterInfo> {
+        self.network.as_ref()
+    }
+    pub fn ssid(&self) -> Option<&String> {
+        self.ssid.as_ref()
+    }
+    pub fn language(&self) -> &str {
+        &self.lang
+    }
+    pub fn notifications(&self) -> &[Notification] {
+        &self.notifications
+    }
+    pub fn unread(&self) -> usize {
+        self.notifications.iter().filter(|n| !n.read).count()
+    }
+
+    // ---- the verbs the rest of the shell uses ----------------------------
+    /// Open `which`, or close it when it is already open.  Opening a flyout
+    /// closes the Start menu, which is why this cannot live in `tray.rs`
+    /// alone.
+    pub fn toggle(&mut self, which: Flyout) -> bool {
+        self.flyout = if self.flyout == which {
+            Flyout::None
+        } else {
+            which
+        };
+        self.flyout.is_open()
+    }
+    pub fn close(&mut self) {
+        self.flyout = Flyout::None;
+    }
+    /// Open a specific flyout (the quick-action row does this).
+    pub fn open(&mut self, which: Flyout) {
+        self.flyout = which;
+    }
+    pub fn close_if_open(&mut self, which: Flyout) {
+        if self.flyout == which {
+            self.flyout = Flyout::None;
+        }
+    }
+
+    /// Mute or unmute, ignoring the request when there is no audio device.
+    pub fn set_muted(&mut self, muted: bool) -> bool {
+        if winrust_core::audio::set_muted(muted).is_some() {
+            self.muted = muted;
+            true
+        } else {
+            false
+        }
+    }
+    /// Set the volume, 0..=100; unmutes like the real slider does.
+    pub fn set_volume(&mut self, percent: u8) -> bool {
+        if winrust_core::audio::set_master_volume(percent).is_some() {
+            self.volume = Some(percent);
+            self.muted = false;
+            true
+        } else {
+            false
+        }
+    }
+    /// Switch the system keyboard layout and record the new tag.
+    pub fn set_language(&mut self, tag: &str) {
+        switch_layout(tag);
+        self.lang = tag.to_string();
+    }
+    /// The user changed the layout with the OS shortcut (`Alt+Shift`, the
+    /// language bar): record what the system now reports.  Polled from the
+    /// shell's tick, which is why it is a verb rather than a setter.
+    pub fn note_layout(&mut self, tag: String) {
+        if self.lang != tag {
+            self.lang = tag;
+        }
+    }
+    pub fn clear_notifications(&mut self) {
+        self.notifications.clear();
+    }
+    pub fn mark_read(&mut self) {
+        for n in &mut self.notifications {
+            n.read = true;
+        }
+    }
+    pub fn post(&mut self, note: Notification) {
+        self.notifications.insert(0, note);
+    }
+
+    /// One pass of the audio/network/layout poll, on the tray's own cadence.
+    pub fn sample(&mut self, audio_device_name: &mut String) {
+        let due = self
+            .sampled_at
+            .map(|t| t.elapsed().as_millis() >= 1500)
+            .unwrap_or(true);
+        if due {
+            self.sampled_at = Some(std::time::Instant::now());
+            self.volume = winrust_core::audio::master_volume();
+            self.muted = winrust_core::audio::is_muted();
+            if audio_device_name.is_empty() {
+                *audio_device_name = winrust_core::audio::device_name().unwrap_or_default();
+            }
+            self.device = audio_device_name.clone();
+            self.network = winrust_core::net::primary_adapter();
+            self.lang = winrust_core::system::keyboard_layout_tag();
+        }
+        let ssid_due = self
+            .network_at
+            .map(|t| t.elapsed().as_secs() >= 20)
+            .unwrap_or(true);
+        if ssid_due {
+            self.network_at = Some(std::time::Instant::now());
+            self.ssid = winrust_core::net::wifi_ssid();
+        }
+    }
+}
+
 /// `HH:MM`, plus the long date - the tray draws them on two lines.
 pub fn clock_text() -> String {
     winrust_core::system::local_time_text()
@@ -84,7 +238,7 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
 
     ui.scope(|ui| {
         // ---- Notification centre (bell) -----------------------------------
-        let unread = app.notifications.iter().filter(|n| !n.read).count();
+        let unread = app.tray.unread();
         let (bell_rect, bell_resp) =
             ui.allocate_exact_size(egui::vec2(28.0, 38.0), egui::Sense::click());
         draw_bell(ui.painter(), bell_rect, unread, text, pal.accent);
@@ -128,10 +282,10 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
         clock_resp.on_hover_text(t("Date and time"));
 
         // ---- Input language -------------------------------------------------
-        let lang = if app.lang_tag.is_empty() {
+        let lang = if app.tray.language().is_empty() {
             "---".to_string()
         } else {
-            app.lang_tag.clone()
+            app.tray.language().to_string()
         };
         let (lang_rect, lang_resp) =
             ui.allocate_exact_size(egui::vec2(34.0, 38.0), egui::Sense::click());
@@ -150,21 +304,27 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
         // ---- Volume ---------------------------------------------------------
         let (vol_rect, vol_resp) =
             ui.allocate_exact_size(egui::vec2(28.0, 38.0), egui::Sense::click());
-        draw_speaker(ui.painter(), vol_rect, app.muted, app.volume, text);
+        draw_speaker(
+            ui.painter(),
+            vol_rect,
+            app.tray.is_muted(),
+            app.tray.volume(),
+            text,
+        );
         if vol_resp.clicked() {
             toggle(app, Flyout::Volume);
         }
-        vol_resp.on_hover_text(match app.volume {
-            Some(v) if !app.muted => tf!("Volume {}%", v),
-            _ if app.muted => ts("Muted").to_string(),
+        vol_resp.on_hover_text(match app.tray.volume() {
+            Some(v) if !app.tray.is_muted() => tf!("Volume {}%", v),
+            _ if app.tray.is_muted() => ts("Muted").to_string(),
             _ => ts("Volume").to_string(),
         });
 
         // ---- Network --------------------------------------------------------
         let (net_rect, net_resp) =
             ui.allocate_exact_size(egui::vec2(28.0, 38.0), egui::Sense::click());
-        let connected = app.network.as_ref().map(|n| n.connected).unwrap_or(false);
-        let wireless = app.network.as_ref().map(|n| n.wireless).unwrap_or(false);
+        let connected = app.tray.network().map(|n| n.connected).unwrap_or(false);
+        let wireless = app.tray.network().map(|n| n.wireless).unwrap_or(false);
         draw_network(ui.painter(), net_rect, connected, wireless, text, weak);
         if net_resp.clicked() {
             toggle(app, Flyout::Network);
@@ -183,21 +343,16 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
 
     // ---- The open flyout ----------------------------------------------------
     // Drawn while closing too, so it fades instead of disappearing outright.
-    if app.tray_flyout.is_open() || app.flyout_anim > 0.01 {
+    if app.tray.flyout().is_open() || app.flyout_anim > 0.01 {
         flyout(app, ctx, inner, pal);
     }
 }
 
-/// Toggle a flyout, closing any other.
+/// Toggle a flyout, closing any other.  Opening one closes the Start menu,
+/// which is the only reason this needs the whole app rather than the tray.
 fn toggle(app: &mut DesktopApp, which: Flyout) {
-    app.tray_flyout = if app.tray_flyout == which {
-        Flyout::None
-    } else {
-        which
-    };
-    app.tray_overflow = app.tray_flyout == Flyout::Overflow;
-    if app.tray_flyout.is_open() {
-        app.start_open = false;
+    if app.tray.toggle(which) {
+        app.close_start();
     }
 }
 
@@ -214,7 +369,7 @@ fn split_clock(text: &str) -> (String, String) {
 }
 
 fn network_label(app: &DesktopApp) -> String {
-    match (&app.network, &app.ssid) {
+    match (app.tray.network(), app.tray.ssid()) {
         (Some(n), Some(s)) if n.connected => format!("{}\n{s}", n.name),
         (Some(n), _) if n.connected => n.name.clone(),
         _ => ts("No internet access").to_string(),
@@ -232,7 +387,7 @@ fn flyout(
     pal: winrust_ui::theme::Palette,
 ) {
     // Panels sit above the bar, right-aligned the way Windows places them.
-    let width = match app.tray_flyout {
+    let width = match app.tray.flyout() {
         Flyout::Calendar => 340.0,
         Flyout::Notifications => 360.0,
         Flyout::Network => 340.0,
@@ -242,7 +397,7 @@ fn flyout(
     // The panel is placed *above* the bar.  It used to be anchored at
     // `inner.top()`, i.e. directly on the taskbar strip, so the bar painted over
     // its lower part and the panel looked cut off.
-    let height_hint = match app.tray_flyout {
+    let height_hint = match app.tray.flyout() {
         Flyout::Calendar => 460.0,
         Flyout::Notifications => 470.0,
         Flyout::Network => 250.0,
@@ -276,7 +431,7 @@ fn flyout(
                 .inner_margin(egui::Margin::same(12.0))
                 .show(ui, |ui| {
                     ui.set_width(width - 24.0);
-                    match app.tray_flyout {
+                    match app.tray.flyout() {
                         Flyout::Network => network_panel(app, ui),
                         Flyout::Volume => volume_panel(app, ui),
                         Flyout::Language => language_panel(app, ui),
@@ -299,8 +454,7 @@ fn flyout(
                 )
                 .contains(p);
             if !inside {
-                app.tray_flyout = Flyout::None;
-                app.tray_overflow = false;
+                app.tray.close();
             }
         }
     }
@@ -318,14 +472,14 @@ fn network_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
                 .filter(|n| n.connected)
                 .map(|n| {
                     if n.wireless {
-                        app.ssid.clone().unwrap_or_else(|| n.name.clone())
+                        app.tray.ssid().cloned().unwrap_or_else(|| n.name.clone())
                     } else {
                         n.name.clone()
                     }
                 })
                 .unwrap_or_else(|| ts("Not connected").to_string());
             ui.label(RichText::new(name).size(14.0).strong());
-            let state = if app.network.as_ref().map(|n| n.connected).unwrap_or(false) {
+            let state = if app.tray.network().map(|n| n.connected).unwrap_or(false) {
                 ts("Connected").to_string()
             } else {
                 ts("No internet access").to_string()
@@ -334,7 +488,7 @@ fn network_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         });
     });
     ui.add_space(4.0);
-    if let Some(n) = app.network.clone() {
+    if let Some(n) = app.tray.network().cloned() {
         if !n.ipv4.is_empty() {
             ui.label(RichText::new(format!("IPv4: {}", n.ipv4)).small().weak());
         }
@@ -351,43 +505,40 @@ fn network_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         .clicked()
     {
         let _ = winrust_core::shell::launch("rundll32.exe", "shell32.dll,Control_RunDLL ncpa.cpl");
-        app.tray_flyout = Flyout::None;
+        app.tray.close();
     }
 }
 
 /// Volume: the slider from the reference screenshot, plus mute and the device.
 fn volume_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
-    let device = if app.audio_device.is_empty() {
+    let device = if app.tray.device().is_empty() {
         ts("Default playback device").to_string()
     } else {
-        app.audio_device.clone()
+        app.tray.device().to_string()
     };
     ui.label(RichText::new(device).size(12.5).strong());
     ui.add_space(6.0);
     ui.horizontal(|ui| {
         let mute = ui
             .add(
-                egui::Button::new(RichText::new(if app.muted { "🔇" } else { "🔊" }).size(16.0))
+                egui::Button::new(
+                    RichText::new(if app.tray.is_muted() { "🔇" } else { "🔊" }).size(16.0),
+                )
                     .frame(false),
             )
             .on_hover_text(t("Mute"));
         if mute.clicked() {
-            let target = !app.muted;
-            if winrust_core::audio::set_muted(target).is_some() {
-                app.muted = target;
-            }
+            let target = !app.tray.is_muted();
+            app.tray.set_muted(target);
         }
-        let mut value = app.volume.unwrap_or(0);
+        let mut value = app.tray.volume().unwrap_or(0);
         let slider = ui.add(
             egui::Slider::new(&mut value, 0..=100)
                 .show_value(true)
                 .text(""),
         );
         if slider.changed() {
-            if winrust_core::audio::set_master_volume(value).is_some() {
-                app.volume = Some(value);
-                app.muted = false;
-            }
+            app.tray.set_volume(value);
         }
         ui.label(RichText::new(format!("{}", value)).size(13.0));
     });
@@ -408,7 +559,7 @@ fn volume_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
 /// Input language: the list from the reference screenshot, with a switch that
 /// really changes the layout of the foreground window.
 fn language_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
-    let current = app.lang_tag.clone();
+    let current = app.tray.language().to_string();
     for (tag, key) in [("ENG", "English (United States)"), ("РУС", "Russian")] {
         let selected = current == tag;
         let label = format!("{tag}    {}\n         {}", ts(key), ts("Keyboard"));
@@ -420,9 +571,8 @@ fn language_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
             // `ActivateKeyboardLayout` would only change *this* process; the
             // user wants the system-wide switch, so post WM_INPUTLANGCHANGEREQUEST
             // to the foreground window.
-            switch_layout(tag);
-            app.lang_tag = tag.to_string();
-            app.tray_flyout = Flyout::None;
+            app.tray.set_language(tag);
+            app.tray.close();
         }
     }
     ui.separator();
@@ -431,7 +581,7 @@ fn language_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
             "rundll32.exe",
             "shell32.dll,Control_RunDLL input.dll,,{C07337D3-DB2C-4D0B-9A93-B722A28B467F}",
         );
-        app.tray_flyout = Flyout::None;
+        app.tray.close();
     }
 }
 
@@ -563,11 +713,10 @@ fn notifications_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         ui.label(RichText::new(t("Notifications")).strong());
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             if ui.button(t("Clear all")).clicked() {
-                app.notifications.clear();
-                app.notifications_read = 0;
+                app.tray.clear_notifications();
             }
             if ui.button(t("Manage")).clicked() {
-                app.tray_flyout = Flyout::None;
+                app.tray.close();
                 if let Some(p) = winrust_core::install::find_binary("WinRust.exe") {
                     let _ = winrust_core::shell::execute(&p, "", None);
                 }
@@ -575,7 +724,7 @@ fn notifications_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         });
     });
     ui.separator();
-    if app.notifications.is_empty() {
+    if app.tray.notifications().is_empty() {
         ui.add_space(24.0);
         ui.vertical_centered(|ui| {
             ui.label(RichText::new("🔔").size(28.0));
@@ -586,7 +735,8 @@ fn notifications_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         egui::ScrollArea::vertical()
             .max_height(320.0)
             .show(ui, |ui| {
-                for n in app.notifications.iter_mut() {
+                app.tray.mark_read();
+                for n in app.tray.notifications() {
                     let frame = egui::Frame::none()
                         .fill(ui.visuals().faint_bg_color)
                         .rounding(6.0)
@@ -628,7 +778,7 @@ fn notifications_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
                             let _ = winrust_core::shell::execute(&p, "", None);
                         }
                     }
-                    "Network" => app.tray_flyout = Flyout::Network,
+                    "Network" => app.tray.open(Flyout::Network),
                     _ => {
                         // Night light lives in the display settings the system owns.
                         let _ = winrust_core::shell::launch(
@@ -664,7 +814,7 @@ fn overflow_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
             if let Some(p) = winrust_core::install::find_binary(exe) {
                 let _ = winrust_core::shell::execute(&p, "", None);
             }
-            app.tray_flyout = Flyout::None;
+            app.tray.close();
         }
     }
 }

@@ -111,11 +111,7 @@ impl DesktopApp {
             // become foreground by itself, so without this the very next click
             // (and the `Win` key) went to whatever was in front.
             winrust_core::shell::focus_window(self.hwnd);
-            self.start_open = !self.start_open;
-            self.tray_flyout = tray::Flyout::None;
-            if !self.start_open {
-                self.start_search.clear();
-            }
+            self.toggle_start();
         }
         // Win+X: the power-user menu lives on a right click, as in Windows.
         start_resp.context_menu(|ui| {
@@ -352,8 +348,7 @@ fn power_menu() -> Vec<(&'static str, fn(&mut DesktopApp))> {
             }
         }),
         ("Power", |app: &mut DesktopApp| {
-            app.start_open = true;
-            app.start_power_menu = true;
+            app.show_start_power();
         }),
         ("Lock", |_app: &mut DesktopApp| {
             winrust_core::system::lock_workstation();
