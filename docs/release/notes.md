@@ -1,74 +1,66 @@
-Windows 10/11 system components rewritten in Rust. Release 0.6.0 is the
-appearance-and-shell release: three themes shared by every window, a blur effect
-that finally works, a desktop that behaves like Windows 11, and a Task Manager
-with a real Details tab.
+Windows 10/11 system components rewritten in Rust. Release 0.9.0 is the
+structural release: the whole codebase was run through
+[deslop-please](https://github.com/deterministic-machines/deslop-please) and
+every finding was fixed at the cause, not suppressed. Nothing looks different on
+screen - the point is that the next change is cheaper to make.
 
-## Themes: Dark, Light and AMOLED
+## The shell owns its state
 
-* Every program reads the same three palettes from
-  `HKCU\SOFTWARE\WinRust\Theme`: **Dark** (the classic WinRust scheme), **Light**
-  (Windows 11 grey) and **AMOLED** (the dark layout on pure black, for OLED
-  panels). The switch lives on the launcher's Appearance page.
-* Fixed: with transparency off, windows could come out light/white until the
-  switch was toggled twice. `Context::set_visuals` only wrote the style bucket of
-  the *active* theme, so a dark palette landed in the light bucket on a machine
-  whose Windows preference is Light. The theme preference is now pinned and both
-  buckets are written.
-* Windows 11 wins: rounded corners and the dark title bar follow the theme.
+* The tray's eight loose fields (`volume`, `muted`, `lang_tag`, `notifications`,
+  `tray_flyout`, `tray_overflow`, `notifications_read`, `start_open` all lived
+  on `DesktopApp`) are now `TrayState`, a type with private fields. Readers use
+  getters; writers use verbs - `toggle` / `open` / `close`, `set_volume`,
+  `set_muted`, `set_language`, `clear_notifications`, `mark_read` - and one
+  `sample()` runs the audio / network / layout poll on the tray's own cadence.
+* `DesktopApp` could not guard a single field of its own, because nothing was
+  its own. The invariants ("a tray flyout and the Start menu are never open
+  together", "the volume tooltip follows the device") were re-proved by hand at
+  every call site; now the type proves them.
+* The Start menu got the same treatment: `show_start`, `show_start_power`,
+  `toggle_start`, `close_start`.
+* `notifications_read`, a field that was only ever set to `0`, is gone.
 
-## Blur works
+## The dependency graph has no circles
 
-* Transparency and blur are now separate, exclusive DWM paths. Blur removes
-  `WS_EX_LAYERED` and asks DWM for an acrylic backdrop
-  (`DWMWA_SYSTEMBACKDROP_TYPE = DWMSBT_TRANSIENTWINDOW`), falling back to the
-  classic `DwmExtendFrameIntoClientArea` + `DwmEnableBlurBehindWindow` blur on
-  older builds. Blur off sets the backdrop to none and applies the opacity
-  slider through the layered window, which is why the two effects used to cancel
-  each other out.
+`system`, `shell` and `process` each used the others, so there was no order to
+read or link them in:
 
-## Explorer
+* session power (`lock_workstation`, `sign_out`, `restart`, `shutdown`) moved
+  from `system` to `shell`, where `launch` lives;
+* the top-level window list, their icons, focus and the `Win` key moved from
+  `shell` into `core::window` - the only part of `shell` that needed a process
+  image;
+* `process::set_affinity` reads the processor count for its "all cores" mask
+  itself instead of reaching up into `system`.
 
-* **Double-click opens a drive** in This PC. The tiles only reacted to single
-  clicks, so a double click re-opened the same folder and looked dead.
-* **Drag and drop** works between tiles, the details/list views and the sidebar
-  tree. The drag image is the item's real shell icon, drawn translucent under
-  the cursor, with a name card (mid-truncated, extension kept) and a count badge.
-* **Icon spacing** is configurable from the background context menu and saved per
-  folder, together with the tiles size (large / medium / small).
-* The background **context menu** is Explorer's: View, Sort by (with direction),
-  Refresh, Paste, New (folder, text document, bitmap, ZIP), Select all, Invert
-  selection, Send to desktop, Properties.
+## Files are split by concern
 
-## Task Manager
+| was | now |
+| --- | --- |
+| `explorer/app.rs` 3560 lines | `app.rs` 42 + `viewmode` `tabs` `state` `commands` `panels` `sidebar` `views` `preview` `keyboard` |
+| `taskmgr/app.rs` 2184 lines | `app.rs` 273 + `model` `ui` `startup` `format` `sort` `tabs` |
+| `core/src` 22 flat modules | `system/` `storage/` `shell/` `devices/` `i18n/` + `error` `handle` `icon` `wide` |
 
-* New **Details** tab: one line per process with name, PID, status, user name,
-  CPU, memory, disk, network, GPU, threads, handles, session, priority and the
-  full image path - and every one of those columns sorts on click.
-* Sorted every column of the Processes tab on its own value; Status and Priority
-  no longer reuse the PID key.
-* Processes are grouped under their parent application, with the `↳` marker for
-  helpers, and both group captions (**Apps (N)** / **Background processes (N)**)
-  collapse with their aggregate CPU and memory.
+No call site moved when the core was grouped: every old path is a `pub use` at
+the crate root, so `winrust_core::process::enumerate()` still compiles and now
+resolves to `winrust_core::system::process`.
 
-## Desktop shell
+## What the linter reports
 
-* Desktop icons use the **real icon of the shortcut target**, loaded from the
-  shell image list at the chosen size.
-* Wallpaper context menu: View (large/medium/small icons, align to grid, show
-  icons), Sort by (name, size, type, date modified, direction), Refresh, New
-  folder, Display settings, Personalize.
-* Dragging an icon paints a translucent ghost of its picture plus a short label
-  and outlines the target cell; positions are persisted.
-* The taskbar is centred like Windows 11: Start, pinned tools, one button per
-  open window with the running underline, and a tray with chevron, clock/date,
-  live CPU/RAM and the power button.
-* The Start menu follows the reference layout: **ПУСК** caption, a tile grid,
-  the account row (change account settings, lock, sign out, switch user),
-  Settings and a power menu (sleep, shut down, restart, lock).
+| rule | before | after |
+| --- | --- | --- |
+| `field-leak` | 8 fields on 1 type | 0 |
+| `tangle` | 1 circle (3 modules) | 0 |
+| `module-cycle` | 0 | 0 |
+| `long-file` (> 2000 lines) | 2 | 0 |
+| `wide-directory` (> 15 members) | 1 (22 members) | 0 |
+
+The before / after structure drawing is in `docs/architecture.svg`.
 
 ## Everything else
 
-* `ProcessInfo` now carries the owning account (resolved through the process
-  token, cached by SID) and the session id.
-* `disk::copy_path` for clipboard-style copies.
-* 455 localized strings, no duplicate keys.
+* Two warnings that had been in the tree for a while are gone: an unused
+  binding in `fileassoc.rs` and an unnecessary `unsafe` around a union field in
+  `gpu.rs`.
+* `cargo fmt --all` and `cargo clippy` are clean on every crate; the release,
+  clippy and test jobs are green on the tagged commit.
