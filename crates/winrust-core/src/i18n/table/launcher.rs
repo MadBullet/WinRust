@@ -217,7 +217,6 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Night light", "Ночной свет"),
     ("All settings", "Все параметры"),
     ("English (United States)", "Английский (США)"),
-    ("Russian", "Русский"),
     ("Keyboard", "Клавиатура"),
     ("Mon", "Пн"),
     ("Tue", "Вт"),
