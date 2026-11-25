@@ -1,11 +1,1 @@
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\storage\fileassoc.rs:14:
- //! The registry is 64-bit view (`KEY_WOW64_64KEY`), which is what Explorer
- //! uses for the shell namespace.
- 
-[31m-use crate::i18n::ts;
-[0m use super::registry::{Key, Root};
-[32m+use crate::i18n::ts;
-[0m 
- /// One entry of the "New" submenu.
- #[derive(Debug, Clone, PartialEq, Eq)]
-exit=False
+exit=True
