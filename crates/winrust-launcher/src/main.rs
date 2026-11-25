@@ -1020,7 +1020,7 @@ impl eframe::App for LauncherApp {
                         match i18n::lang::save(lang) {
                             Ok(()) => {
                                 let msg = tf!(
-                                    "Language set to {}. Restart the components to apply it everywhere.",
+                                    "Language set to {}. Every WinRust window follows within a second.",
                                     lang.native_name()
                                 );
                                 self.log(LogKind::Info, msg);

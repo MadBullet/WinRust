@@ -21,8 +21,8 @@ pub static ENTRIES: &[(&str, &str)] = &[
         "Лаунчер запускается на английском; выберите здесь русский — остальные компоненты переключатся тоже.",
     ),
     (
-        "Language set to {}. Restart the components to apply it everywhere.",
-        "Язык изменён на {}. Перезапустите компоненты, чтобы применить его везде.",
+        "Language set to {}. Every WinRust window follows within a second.",
+        "Язык изменён на {}. Все окна WinRust переключатся в течение секунды.",
     ),
     ("Language set to {}", "Язык изменён на {}"),
     ("About", "О программе"),
