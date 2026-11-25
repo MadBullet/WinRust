@@ -40,22 +40,6 @@ pub fn from_wide_len(buf: &[u16], len: usize) -> String {
     from_wide(buf, len)
 }
 
-/// Read a NUL-terminated wide string from a raw pointer (an OS `PWSTR`), with a
-/// hard cap so a corrupt length can never walk off the page.
-///
-/// # Safety
-/// `ptr` must be null or point to at least one valid `u16`.
-pub unsafe fn from_wide_ptr(ptr: *const u16) -> String {
-    if ptr.is_null() {
-        return String::new();
-    }
-    let mut len = 0usize;
-    while len < 4096 && *ptr.add(len) != 0 {
-        len += 1;
-    }
-    from_wide(std::slice::from_raw_parts(ptr, len), len)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

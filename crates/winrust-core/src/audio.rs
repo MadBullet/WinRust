@@ -42,6 +42,13 @@ const STGM_READ: u32 = 0;
 /// A COM object whose only responsibility is `Release` on drop.
 struct ComObject(*mut *const usize);
 
+impl ComObject {
+    /// The COM interface pointer as the vtable calls expect it.
+    fn ptr(&self) -> *mut usize {
+        self.0 as *mut usize
+    }
+}
+
 impl Drop for ComObject {
     fn drop(&mut self) {
         if !self.0.is_null() {
@@ -52,7 +59,7 @@ impl Drop for ComObject {
                     // 1 = AddRef).
                     let release: unsafe extern "system" fn(*mut usize) -> u32 =
                         std::mem::transmute(*vtbl.add(2));
-                    release(self.0 as *mut usize);
+                    release(self.ptr());
                 }
             }
         }
@@ -63,11 +70,11 @@ impl Drop for ComObject {
 pub fn master_volume() -> Option<u8> {
     with_endpoint(|volume| unsafe {
         // Slot 7 is GetMasterVolumeLevelScalar(f32*).
-        let vtbl = *(volume as *const *const usize);
+        let vtbl = *volume.0;
         let get: unsafe extern "system" fn(*mut usize, *mut f32) -> i32 =
             std::mem::transmute(*vtbl.add(7));
         let mut level = 0.0f32;
-        if get(volume as *mut usize, &mut level) < 0 {
+        if get(volume.ptr(), &mut level) < 0 {
             return None;
         }
         Some((level * 100.0).round().clamp(0.0, 100.0) as u8)
@@ -78,11 +85,11 @@ pub fn master_volume() -> Option<u8> {
 pub fn set_master_volume(percent: u8) -> Option<()> {
     with_endpoint(|volume| unsafe {
         // Slot 8 is SetMasterVolumeLevelScalar(float, LPCGUID).
-        let vtbl = *(volume as *const *const usize);
+        let vtbl = *volume.0;
         let set: unsafe extern "system" fn(*mut usize, f32, *const windows_sys::core::GUID) -> i32 =
             std::mem::transmute(*vtbl.add(8));
         let level = (percent.min(100) as f32) / 100.0;
-        if set(volume as *mut usize, level, std::ptr::null()) < 0 {
+        if set(volume.ptr(), level, std::ptr::null()) < 0 {
             None
         } else {
             Some(())
@@ -94,11 +101,11 @@ pub fn set_master_volume(percent: u8) -> Option<()> {
 pub fn is_muted() -> bool {
     with_endpoint(|volume| unsafe {
         // Slot 9 is GetMute(BOOL*).
-        let vtbl = *(volume as *const *const usize);
+        let vtbl = *volume.0;
         let get: unsafe extern "system" fn(*mut usize, *mut i32) -> i32 =
             std::mem::transmute(*vtbl.add(9));
         let mut muted = 0i32;
-        if get(volume as *mut usize, &mut muted) < 0 {
+        if get(volume.ptr(), &mut muted) < 0 {
             return false;
         }
         muted != 0
@@ -110,10 +117,10 @@ pub fn is_muted() -> bool {
 pub fn set_muted(muted: bool) -> Option<()> {
     with_endpoint(|volume| unsafe {
         // Slot 10 is SetMute(BOOL, LPCGUID).
-        let vtbl = *(volume as *const *const usize);
+        let vtbl = *volume.0;
         let set: unsafe extern "system" fn(*mut usize, i32, *const windows_sys::core::GUID) -> i32 =
             std::mem::transmute(*vtbl.add(10));
-        if set(volume as *mut usize, i32::from(muted), std::ptr::null()) < 0 {
+        if set(volume.ptr(), i32::from(muted), std::ptr::null()) < 0 {
             None
         } else {
             Some(())
@@ -126,17 +133,17 @@ pub fn device_name() -> Option<String> {
     let _com = ComGuard::new();
     let device = with_device()?;
     unsafe {
-        let vtbl = *(device as *const *const usize);
+        let vtbl = *device.0;
         // IUnknown(3) + IMMDevice: Activate(3), OpenPropertyStore(4),
         // GetId(5), GetState(6) -> OpenPropertyStore is slot 4.
         let open: unsafe extern "system" fn(*mut usize, u32, *mut *mut usize) -> i32 =
             std::mem::transmute(*vtbl.add(4));
         let mut store: *mut usize = std::ptr::null_mut();
-        if open(device as *mut usize, STGM_READ, &mut store) < 0 || store.is_null() {
+        if open(device.ptr(), STGM_READ, &mut store) < 0 || store.is_null() {
             return None;
         }
         let store = ComObject(store as *mut *const usize);
-        let store_vtbl = *(store.0 as *const *const usize);
+        let store_vtbl = *store.0;
         // IUnknown(3) + IPropertyStore::GetCount(3), GetAt(4), GetValue(5),
         // SetValue(6), Commit(7) -> GetValue is slot 5.
         let get_value: unsafe extern "system" fn(
@@ -155,7 +162,7 @@ pub fn device_name() -> Option<String> {
             pid: 14,
         };
         let mut value: PROPVARIANT = std::mem::zeroed();
-        if get_value(store.0 as *mut usize, &PKEY, &mut value) < 0 {
+        if get_value(store.ptr(), &PKEY, &mut value) < 0 {
             return None;
         }
         // VT_LPWSTR = 31, the string lives in the union's first field.
@@ -215,18 +222,13 @@ fn with_device() -> Option<ComObject> {
             return None;
         }
         let enumerator = ComObject(enumerator as *mut *const usize);
-        let vtbl = *(enumerator.0 as *const *const usize);
+        let vtbl = *enumerator.0;
         // IUnknown(3) + IMMDeviceEnumerator: EnumAudioEndpoints(3),
         // GetDefaultAudioEndpoint(4), GetDevice(5), Register(6), Unregister(7).
         let get_default: unsafe extern "system" fn(*mut usize, i32, i32, *mut *mut usize) -> i32 =
             std::mem::transmute(*vtbl.add(4));
         let mut device: *mut usize = std::ptr::null_mut();
-        if get_default(
-            enumerator.0 as *mut usize,
-            E_RENDER,
-            E_MULTIMEDIA,
-            &mut device,
-        ) < 0
+        if get_default(enumerator.ptr(), E_RENDER, E_MULTIMEDIA, &mut device) < 0
             || device.is_null()
         {
             return None;
@@ -240,7 +242,7 @@ fn with_endpoint<T>(f: impl FnOnce(*mut usize) -> T) -> Option<T> {
     let _com = ComGuard::new();
     let device = with_device()?;
     unsafe {
-        let vtbl = *(device.0 as *const *const usize);
+        let vtbl = *device.0;
         // IMMDevice::Activate is slot 3.
         let activate: unsafe extern "system" fn(
             *mut usize,
@@ -251,7 +253,7 @@ fn with_endpoint<T>(f: impl FnOnce(*mut usize) -> T) -> Option<T> {
         ) -> i32 = std::mem::transmute(*vtbl.add(3));
         let mut volume: *mut usize = std::ptr::null_mut();
         if activate(
-            device.0 as *mut usize,
+            device.ptr(),
             &IID_IAUDIO_ENDPOINT_VOLUME,
             CLSCTX_ALL,
             std::ptr::null(),
@@ -262,7 +264,7 @@ fn with_endpoint<T>(f: impl FnOnce(*mut usize) -> T) -> Option<T> {
             return None;
         }
         let volume = ComObject(volume as *mut *const usize);
-        Some(f(volume.0 as *mut usize))
+        Some(f(volume.ptr()))
     }
 }
 
