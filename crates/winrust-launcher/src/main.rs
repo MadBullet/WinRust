@@ -451,8 +451,9 @@ impl LauncherApp {
             return;
         }
         if !self.user.elevated {
-            let msg =
-                ts("Administrator rights are required to install. Relaunch WinRust as administrator.");
+            let msg = ts(
+                "Administrator rights are required to install. Relaunch WinRust as administrator.",
+            );
             self.status = msg.into();
             self.log(LogKind::Error, msg);
             return;
@@ -468,7 +469,10 @@ impl LauncherApp {
         let mut body = list.join("\n");
         body.push_str("\n\n");
         if self.make_restore_point {
-            body.push_str(&format!("✓ {}\n", ts("System Restore point will be created")));
+            body.push_str(&format!(
+                "✓ {}\n",
+                ts("System Restore point will be created")
+            ));
         }
         if self.make_file_backup {
             body.push_str(&format!("✓ {}\n", ts("Original files will be backed up")));
@@ -550,7 +554,11 @@ impl LauncherApp {
                 .filter_map(|t| t.system_path.clone())
                 .collect();
             if !paths.is_empty() {
-                match restore::backup_files(&paths, ts("WinRust selective install"), restore_sequence) {
+                match restore::backup_files(
+                    &paths,
+                    ts("WinRust selective install"),
+                    restore_sequence,
+                ) {
                     Ok(session) => {
                         self.log(
                             LogKind::Ok,
@@ -653,10 +661,7 @@ impl LauncherApp {
                 if integration != Integration::Portable {
                     let target = spec.system_path.as_deref();
                     if let Err(e) = install::record_state(c.id(), integration, target) {
-                        self.log(
-                            LogKind::Warn,
-                            tf!("{}: state not saved ({})", c.title(), e),
-                        );
+                        self.log(LogKind::Warn, tf!("{}: state not saved ({})", c.title(), e));
                     }
                 } else {
                     let _ = install::clear_state(c.id());
@@ -751,7 +756,10 @@ impl LauncherApp {
             let msg = report
                 .error
                 .unwrap_or_else(|| ts("unknown error").to_string());
-            self.log(LogKind::Error, tf!("{}: uninstall failed — {}", c.title(), msg));
+            self.log(
+                LogKind::Error,
+                tf!("{}: uninstall failed — {}", c.title(), msg),
+            );
             self.status = tf!("{}: uninstall failed", c.title());
         }
     }
@@ -1194,7 +1202,9 @@ impl LauncherApp {
                         // "has more than just Portable", not "has a target".
                         if component.levels().len() > 1 {
                             ui.horizontal(|ui| {
-                                ui.label(RichText::new(tf!("{}:", t("Integration"))).small().weak());
+                                ui.label(
+                                    RichText::new(tf!("{}:", t("Integration"))).small().weak(),
+                                );
                                 for &level in component.levels() {
                                     let enabled = !level.requires_admin() || elevated;
                                     let resp = ui.add_enabled(
