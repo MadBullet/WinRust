@@ -5,10 +5,11 @@
 use eframe::egui;
 use egui::{Color32, RichText};
 use egui_extras::{Column, TableBuilder};
+use std::collections::HashMap;
 use std::time::{Duration, Instant};
 use winrust_core::i18n::Lang;
 use winrust_core::net;
-use winrust_core::process::{self, AccessLevel, Priority};
+use winrust_core::process::{self, AccessLevel};
 use winrust_core::service::ServiceState;
 use winrust_core::shell;
 use winrust_core::{t, tf, ts};

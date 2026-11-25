@@ -36,12 +36,14 @@ pub use sort::{RowFilter, SortBy};
 pub use tabs::Tab;
 
 use eframe::egui;
+use egui::RichText;
 use std::time::{Duration, Instant};
 use winrust_core::i18n::{self, Appearance, Lang};
 use winrust_core::tf;
 
 use winrust_core::gpu;
-use winrust_core::net;
+use winrust_core::net::{self, Connection};
+use winrust_core::service::ScManager;
 use winrust_core::system;
 use winrust_core::user;
 

@@ -14,9 +14,11 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{channel, Receiver};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use winrust_core::gpu;
-use winrust_core::process::ProcessInfo;
-use winrust_core::system::{CpuSample, MemoryStatus};
+use winrust_core::gpu::{self, GpuQuery};
+use winrust_core::net;
+use winrust_core::process::{self, ProcessInfo};
+use winrust_core::shell;
+use winrust_core::system::{self, CpuSample, MemoryStatus};
 use winrust_core::ts;
 
 use super::format::{mb, rate};

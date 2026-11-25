@@ -7,6 +7,7 @@
 //! vanishing.
 
 use winrust_core::registry::{self, Root};
+use winrust_core::shell;
 
 use super::model::exe_from_command;
 

@@ -39,7 +39,7 @@ impl Tab {
             Tab::Settings => "☰",
         }
     }
-    const ALL: [Tab; 8] = [
+    pub(super) const ALL: [Tab; 8] = [
         Tab::Processes,
         Tab::Details,
         Tab::Performance,
