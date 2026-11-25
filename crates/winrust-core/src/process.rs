@@ -17,13 +17,14 @@ use windows_sys::Win32::System::ProcessStatus::{
     K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS_EX,
 };
 use windows_sys::Win32::System::Threading::{
-    ProcessIdToSessionId, GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
-    GetProcessTimes, OpenProcess, OpenThread, QueryFullProcessImageNameW, ResumeThread,
-    SetPriorityClass, SetProcessAffinityMask, SuspendThread, ABOVE_NORMAL_PRIORITY_CLASS,
-    BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, IDLE_PRIORITY_CLASS, IO_COUNTERS,
-    NORMAL_PRIORITY_CLASS, PROCESS_NAME_WIN32, PROCESS_QUERY_INFORMATION,
-    PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SET_INFORMATION, PROCESS_SUSPEND_RESUME,
-    PROCESS_TERMINATE, PROCESS_VM_READ, REALTIME_PRIORITY_CLASS, THREAD_SUSPEND_RESUME,
+    GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
+    GetProcessTimes, OpenProcess, OpenThread, ProcessIdToSessionId, QueryFullProcessImageNameW,
+    ResumeThread, SetPriorityClass, SetProcessAffinityMask, SuspendThread,
+    ABOVE_NORMAL_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS,
+    IDLE_PRIORITY_CLASS, IO_COUNTERS, NORMAL_PRIORITY_CLASS, PROCESS_NAME_WIN32,
+    PROCESS_QUERY_INFORMATION, PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SET_INFORMATION,
+    PROCESS_SUSPEND_RESUME, PROCESS_TERMINATE, PROCESS_VM_READ, REALTIME_PRIORITY_CLASS,
+    THREAD_SUSPEND_RESUME,
 };
 
 /// One row of the Task Manager process list, as far as Task Manager shows it.
@@ -210,7 +211,11 @@ fn enrich(info: &mut ProcessInfo) {
         info.user_name = process_user(pid);
         info.session_id = unsafe {
             let mut sid = 0u32;
-            if ProcessIdToSessionId(pid, &mut sid) != 0 { sid } else { 0 }
+            if ProcessIdToSessionId(pid, &mut sid) != 0 {
+                sid
+            } else {
+                0
+            }
         };
 
         let prio = unsafe { GetPriorityClass(h.raw()) };
@@ -239,8 +244,9 @@ fn enrich(info: &mut ProcessInfo) {
 /// call `LookupAccountSidW` 300 times a second.  Only a handful of distinct
 /// accounts exist on a normal machine.
 fn user_cache() -> &'static std::sync::Mutex<std::collections::HashMap<Vec<u8>, String>> {
-    static CACHE: std::sync::OnceLock<std::sync::Mutex<std::collections::HashMap<Vec<u8>, String>>> =
-        std::sync::OnceLock::new();
+    static CACHE: std::sync::OnceLock<
+        std::sync::Mutex<std::collections::HashMap<Vec<u8>, String>>,
+    > = std::sync::OnceLock::new();
     CACHE.get_or_init(|| std::sync::Mutex::new(std::collections::HashMap::new()))
 }
 

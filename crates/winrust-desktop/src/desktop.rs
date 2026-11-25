@@ -231,11 +231,9 @@ pub fn scan(order: SortOrder, descending: bool) -> Vec<DesktopIcon> {
 pub fn sort_icons(icons: &mut [DesktopIcon], order: SortOrder) {
     match order {
         SortOrder::Name => icons.sort_by_key(|i| i.name.to_lowercase()),
-        SortOrder::Size => icons.sort_by_key(|i| {
-            std::fs::metadata(&i.path)
-                .map(|m| m.len())
-                .unwrap_or(0)
-        }),
+        SortOrder::Size => {
+            icons.sort_by_key(|i| std::fs::metadata(&i.path).map(|m| m.len()).unwrap_or(0))
+        }
         SortOrder::Type => icons.sort_by_key(|i| {
             let ext = i
                 .path
@@ -384,7 +382,10 @@ impl DesktopApp {
             }
             ui.separator();
             if ui.button(t("Display settings")).clicked() {
-                let _ = winrust_core::shell::launch("rundll32.exe", "shell32.dll,Control_RunDLL desk.cpl");
+                let _ = winrust_core::shell::launch(
+                    "rundll32.exe",
+                    "shell32.dll,Control_RunDLL desk.cpl",
+                );
                 ui.close_menu();
             }
             if ui.button(t("Personalize")).clicked() {
@@ -412,7 +413,8 @@ impl DesktopApp {
         });
 
         for (idx, icon) in icons.iter().enumerate() {
-            let pos = area.left_top() + egui::vec2(icon.cell.0 as f32 * cell.x, icon.cell.1 as f32 * cell.y);
+            let pos = area.left_top()
+                + egui::vec2(icon.cell.0 as f32 * cell.x, icon.cell.1 as f32 * cell.y);
             let rect = egui::Rect::from_min_size(pos, egui::vec2(cell.x - 6.0, cell.y - 8.0));
             let resp = ui.interact(
                 rect,
@@ -430,12 +432,7 @@ impl DesktopApp {
                         200,
                     )
                 } else {
-                    Color32::from_rgba_unmultiplied(
-                        pal.hover.0,
-                        pal.hover.1,
-                        pal.hover.2,
-                        160,
-                    )
+                    Color32::from_rgba_unmultiplied(pal.hover.0, pal.hover.1, pal.hover.2, 160)
                 };
                 painter.rect_filled(rect, 4.0, fill);
             }
@@ -512,7 +509,10 @@ impl DesktopApp {
                             painter.image(
                                 id,
                                 ghost,
-                                egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+                                egui::Rect::from_min_max(
+                                    egui::pos2(0.0, 0.0),
+                                    egui::pos2(1.0, 1.0),
+                                ),
                                 Color32::from_white_alpha(140),
                             );
                         } else {
@@ -533,7 +533,12 @@ impl DesktopApp {
                         painter.rect_filled(
                             label_rect,
                             3.0,
-                            Color32::from_rgba_unmultiplied(pal.selection.0, pal.selection.1, pal.selection.2, 190),
+                            Color32::from_rgba_unmultiplied(
+                                pal.selection.0,
+                                pal.selection.1,
+                                pal.selection.2,
+                                190,
+                            ),
                         );
                         painter.text(
                             label_rect.center(),

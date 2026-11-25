@@ -2913,8 +2913,7 @@ impl ExplorerApp {
         // being dragged; the card below carries the name.
         let icon_side = 40.0 * scale.max(0.55);
         let icon_center = ghost.pos - egui::vec2(0.0, 22.0 * scale);
-        let icon_rect =
-            egui::Rect::from_center_size(icon_center, egui::vec2(icon_side, icon_side));
+        let icon_rect = egui::Rect::from_center_size(icon_center, egui::vec2(icon_side, icon_side));
         let tex = self
             .drag_paths
             .first()
@@ -2949,7 +2948,10 @@ impl ExplorerApp {
         painter.rect_stroke(
             rect,
             5.0,
-            egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2)),
+            egui::Stroke::new(
+                1.0_f32,
+                Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2),
+            ),
         );
         let label = if ghost.count > 1 {
             text.clone()
@@ -2969,7 +2971,11 @@ impl ExplorerApp {
                 rect.right_center() - egui::vec2(14.0, 0.0),
                 egui::vec2(22.0, 16.0),
             );
-            painter.rect_filled(badge, 8.0, Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2));
+            painter.rect_filled(
+                badge,
+                8.0,
+                Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2),
+            );
             painter.text(
                 badge.center(),
                 egui::Align2::CENTER_CENTER,

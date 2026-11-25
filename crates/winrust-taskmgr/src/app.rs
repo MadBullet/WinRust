@@ -996,9 +996,11 @@ impl TaskManagerApp {
             );
             ui.separator();
             ui.label(
-                RichText::new(ts("Click any column header to sort; click again to reverse"))
-                    .small()
-                    .weak(),
+                RichText::new(ts(
+                    "Click any column header to sort; click again to reverse",
+                ))
+                .small()
+                .weak(),
             );
         });
         ui.add_space(2.0);
@@ -1015,8 +1017,16 @@ impl TaskManagerApp {
             (ts("Disk").to_string(), SortBy::Disk, 90.0),
             (ts("Network").to_string(), SortBy::Network, 90.0),
             (ts("GPU").to_string(), SortBy::Gpu, 70.0),
-            (format!("{} ({})", ts("Threads"), "threads"), SortBy::Name, 70.0),
-            (format!("{} ({})", ts("Handles"), "handles"), SortBy::Name, 70.0),
+            (
+                format!("{} ({})", ts("Threads"), "threads"),
+                SortBy::Name,
+                70.0,
+            ),
+            (
+                format!("{} ({})", ts("Handles"), "handles"),
+                SortBy::Name,
+                70.0,
+            ),
             (format!("{} ({})", ts("Session"), "id"), SortBy::Name, 60.0),
             (ts("Priority").to_string(), SortBy::Priority, 100.0),
             (ts("Path").to_string(), SortBy::Path, 280.0),
@@ -1967,17 +1977,12 @@ fn group_header(ui: &mut egui::Ui, title: &str, rows: &[&Row], collapsed: &mut b
     ui.horizontal(|ui| {
         let arrow = if *collapsed { "▸" } else { "▾" };
         let caption = format!("{arrow} {title} ({})", rows.len());
-        let resp = ui.add(
-            egui::Button::new(RichText::new(caption).strong().size(12.5)).frame(false),
-        );
+        let resp =
+            ui.add(egui::Button::new(RichText::new(caption).strong().size(12.5)).frame(false));
         if resp.clicked() {
             *collapsed = !*collapsed;
         }
-        ui.label(
-            RichText::new(format!("CPU {:.1}%", cpu))
-                .small()
-                .weak(),
-        );
+        ui.label(RichText::new(format!("CPU {:.1}%", cpu)).small().weak());
         ui.label(RichText::new(mb(mem)).small().weak());
     });
 }

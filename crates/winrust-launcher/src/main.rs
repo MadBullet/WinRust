@@ -20,7 +20,7 @@ use egui::{Color32, RichText};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 use winrust_core::i18n::{self, Lang};
-use winrust_core::i18n::{t, ts, tf};
+use winrust_core::i18n::{t, tf, ts};
 use winrust_core::install::{self, Integration, TargetSpec};
 use winrust_core::process;
 use winrust_core::restore;

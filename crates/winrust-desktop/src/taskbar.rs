@@ -59,7 +59,10 @@ impl DesktopApp {
         painter.rect_filled(bar, 0.0, bar_fill);
         painter.line_segment(
             [bar.left_top(), bar.right_top()],
-            egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
+            egui::Stroke::new(
+                1.0_f32,
+                Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
+            ),
         );
 
         // ---- The centred icon run, the way Windows 11 shows it: Start, the
@@ -95,12 +98,10 @@ impl DesktopApp {
             egui::LayerId::new(egui::Order::Foreground, egui::Id::new("taskbar_layer")),
             egui::Id::new("taskbar"),
             egui::UiBuilder::new()
-                .max_rect(
-                    egui::Rect::from_min_size(
-                        egui::pos2(centre_x.max(inner.left()), inner.top()),
-                        egui::vec2(inner.right() - centre_x.max(inner.left()), inner.height()),
-                    ),
-                )
+                .max_rect(egui::Rect::from_min_size(
+                    egui::pos2(centre_x.max(inner.left()), inner.top()),
+                    egui::vec2(inner.right() - centre_x.max(inner.left()), inner.height()),
+                ))
                 .layout(egui::Layout::left_to_right(egui::Align::Center)),
         );
         ui.spacing_mut().item_spacing.x = gap;
@@ -156,7 +157,12 @@ impl DesktopApp {
                         if resp.clicked() {
                             winrust_core::shell::activate_window(w.pid);
                         }
-                        resp.on_hover_text(format!("{}\n{} · PID {}", w.title, t("Running"), w.pid));
+                        resp.on_hover_text(format!(
+                            "{}\n{} · PID {}",
+                            w.title,
+                            t("Running"),
+                            w.pid
+                        ));
                         // The signature Windows 11 underline under a live app.
                         if running {
                             let r = resp.rect;
@@ -164,11 +170,11 @@ impl DesktopApp {
                                 egui::pos2(r.center().x - 9.0, r.bottom() - 2.0),
                                 egui::vec2(18.0, 3.0),
                             );
-                            ui.painter().rect_filled(underline, 1.5, Color32::from_rgb(
-                                pal.accent.0,
-                                pal.accent.1,
-                                pal.accent.2,
-                            ));
+                            ui.painter().rect_filled(
+                                underline,
+                                1.5,
+                                Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2),
+                            );
                         }
                     }
                 }
@@ -182,12 +188,10 @@ impl DesktopApp {
             egui::LayerId::new(egui::Order::Foreground, egui::Id::new("tray_layer")),
             egui::Id::new("tray"),
             egui::UiBuilder::new()
-                .max_rect(
-                    egui::Rect::from_min_size(
-                        egui::pos2(inner.right() - right_width.min(inner.width()), inner.top()),
-                        egui::vec2(right_width.min(inner.width()), inner.height()),
-                    ),
-                )
+                .max_rect(egui::Rect::from_min_size(
+                    egui::pos2(inner.right() - right_width.min(inner.width()), inner.top()),
+                    egui::vec2(right_width.min(inner.width()), inner.height()),
+                ))
                 .layout(egui::Layout::right_to_left(egui::Align::Center)),
         );
         tray.spacing_mut().item_spacing.x = 8.0;

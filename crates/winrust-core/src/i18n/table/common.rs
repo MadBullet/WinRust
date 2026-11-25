@@ -155,6 +155,9 @@ pub static ENTRIES: &[(&str, &str)] = &[
         "{}: start type = {}, description saved",
         "{}: тип запуска = {}, описание сохранено",
     ),
-    ("Live CPU and memory use, sampled once a second", "Загрузка ЦП и памяти, замер раз в секунду"),
+    (
+        "Live CPU and memory use, sampled once a second",
+        "Загрузка ЦП и памяти, замер раз в секунду",
+    ),
     ("{} selected", "Выбрано: {}"),
 ];

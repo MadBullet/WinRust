@@ -241,10 +241,7 @@ impl DesktopApp {
             if rgba.len() < expected {
                 return None;
             }
-            let image = egui::ColorImage::from_rgba_unmultiplied(
-                [px, px],
-                &rgba[..expected],
-            );
+            let image = egui::ColorImage::from_rgba_unmultiplied([px, px], &rgba[..expected]);
             Some(ctx.load_texture(key.clone(), image, egui::TextureOptions::LINEAR))
         });
         let id = texture.as_ref().map(|t| t.id());

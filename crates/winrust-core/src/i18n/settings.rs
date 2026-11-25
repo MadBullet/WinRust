@@ -128,10 +128,7 @@ pub fn load() -> Appearance {
                 .u32("BlurAmount")
                 .map(|v| v as u8)
                 .unwrap_or(d.blur_amount),
-            theme: k
-                .u32("Theme")
-                .map(Theme::from_id)
-                .unwrap_or(d.theme),
+            theme: k.u32("Theme").map(Theme::from_id).unwrap_or(d.theme),
         })
         .unwrap_or(d)
         .sanitized()

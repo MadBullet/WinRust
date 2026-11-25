@@ -234,8 +234,9 @@ mod native {
     use windows_sys::Win32::Foundation::HWND;
     use windows_sys::Win32::Graphics::Dwm::{
         DwmEnableBlurBehindWindow, DwmExtendFrameIntoClientArea, DwmSetWindowAttribute,
-        DWMWA_SYSTEMBACKDROP_TYPE, DWMWA_USE_IMMERSIVE_DARK_MODE, DWMWA_WINDOW_CORNER_PREFERENCE,
-        DWMSBT_NONE, DWMSBT_TRANSIENTWINDOW, DWM_BB_ENABLE, DWM_BLURBEHIND,
+        DWMSBT_NONE, DWMSBT_TRANSIENTWINDOW, DWMWA_SYSTEMBACKDROP_TYPE,
+        DWMWA_USE_IMMERSIVE_DARK_MODE, DWMWA_WINDOW_CORNER_PREFERENCE, DWM_BB_ENABLE,
+        DWM_BLURBEHIND,
     };
     use windows_sys::Win32::UI::Controls::MARGINS;
     use windows_sys::Win32::UI::WindowsAndMessaging::{

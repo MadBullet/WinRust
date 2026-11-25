@@ -117,6 +117,9 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Bitmap image", "Точечный рисунок"),
     ("ZIP archive", "ZIP-архив"),
     ("Tiles", "Плитки"),
-    ("Applies to the icon views of this folder", "Действует на значки в этой папке"),
+    (
+        "Applies to the icon views of this folder",
+        "Действует на значки в этой папке",
+    ),
     ("New file", "Новый файл"),
 ];
