@@ -107,6 +107,13 @@ struct FolderPrefs {
     /// Icon-tile gap set through the background context menu.
     #[serde(default = "default_spacing")]
     spacing: f32,
+    /// Tiles-view picture size, see [`Tab::icon_px`].
+    #[serde(default = "default_icon_px")]
+    icon_px: u32,
+}
+
+fn default_icon_px() -> u32 {
+    48
 }
 
 fn default_spacing() -> f32 {
@@ -121,6 +128,7 @@ impl Default for FolderPrefs {
             sort_key: SortKeySerde::Name,
             sort_ascending: true,
             spacing: default_spacing(),
+            icon_px: default_icon_px(),
         }
     }
 }
@@ -185,6 +193,8 @@ struct Tab {
     /// Gap between icon tiles in the icon views, in points.  Explorer never
     /// exposed this, the request explicitly asks for it.
     spacing: f32,
+    /// Tiles view icon size: 48 (large), 32 (medium) or 24 (small).
+    icon_px: u32,
 }
 
 impl Tab {
@@ -207,6 +217,7 @@ impl Tab {
             request_id: 0,
             scroll_to_top: false,
             spacing: 12.0,
+            icon_px: 48,
         }
     }
 
@@ -391,6 +402,7 @@ impl ExplorerApp {
                         t.sort_key = pref.sort_key;
                         t.sort_asc = pref.sort_ascending;
                         t.spacing = pref.spacing;
+                        t.icon_px = pref.icon_px;
                     }
                     t
                 })
@@ -531,6 +543,7 @@ impl ExplorerApp {
                 tab.sort_key = p.sort_key;
                 tab.sort_asc = p.sort_ascending;
                 tab.spacing = p.spacing;
+                tab.icon_px = p.icon_px;
             }
         }
         self.search_results = None;
@@ -589,6 +602,7 @@ impl ExplorerApp {
                     sort_key: tab.sort_key,
                     sort_ascending: tab.sort_asc,
                     spacing: tab.spacing,
+                    icon_px: tab.icon_px,
                 },
             );
         }
@@ -1735,7 +1749,10 @@ impl ExplorerApp {
         match self.current().view {
             ViewMode::Details => self.details_view(ui, ctx, &entries),
             ViewMode::List => self.list_view(ui, ctx, &entries),
-            ViewMode::Tiles => self.tiles_view(ui, ctx, &entries, 72),
+            ViewMode::Tiles => {
+                let px = self.current().icon_px;
+                self.tiles_view(ui, ctx, &entries, px)
+            }
             ViewMode::Content => self.content_view(ui, ctx, &entries),
         }
     }
@@ -3277,8 +3294,25 @@ impl eframe::App for ExplorerApp {
                 // order Windows 11 uses.
                 ui.menu_button(t("View"), |ui| {
                     ui.set_min_width(220.0);
+                    // Icon sizes are their own axis in Explorer: they select the
+                    // tiles view *and* the picture size.
+                    for (px, label) in [
+                        (48u32, "Large icons"),
+                        (32u32, "Medium icons"),
+                        (24u32, "Small icons"),
+                    ] {
+                        let selected =
+                            self.current().view == ViewMode::Tiles && self.current().icon_px == px;
+                        if ui.selectable_label(selected, t(label)).clicked() {
+                            let tab = self.current_mut();
+                            tab.view = ViewMode::Tiles;
+                            tab.icon_px = px;
+                            self.remember_prefs();
+                            ui.close_menu();
+                        }
+                    }
+                    ui.separator();
                     for (view, label) in [
-                        (ViewMode::Tiles, "Large icons"),
                         (ViewMode::List, "List"),
                         (ViewMode::Details, "Details"),
                         (ViewMode::Content, "Content"),
