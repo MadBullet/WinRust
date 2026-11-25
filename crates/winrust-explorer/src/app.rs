@@ -766,7 +766,9 @@ fn truncate_middle(s: &str, max_chars: usize) -> String {
 // Commands (context menu / keyboard share these)
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+// Not `Copy`: `OpenWithProgram` carries a command line and a path, and every
+// use site either moves or matches by reference.
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum Command {
     Open,
     OpenNewTab,
@@ -912,7 +914,9 @@ impl ExplorerApp {
             self.status = "Nothing selected".into();
             return;
         }
-        match cmd {
+        // Matched by reference so the two arms that forward `cmd` can still use
+        // it; `Command` is no longer `Copy` (one variant owns a String).
+        match &cmd {
             Command::Paste => self.paste_clipboard(),
             Command::SelectAll => self.run(PathBuf::new(), cmd),
             Command::InvertSelection => self.run(PathBuf::new(), cmd),
@@ -940,8 +944,11 @@ impl ExplorerApp {
                 self.delete_permanent = true;
             }
             other => {
+                // `other` is a reference now, and each iteration needs an owned
+                // Command (one variant carries a String and a PathBuf).
+                let owned = other.clone();
                 for p in sel {
-                    self.run(p, other);
+                    self.run(p.clone(), owned.clone());
                 }
             }
         }
@@ -3523,7 +3530,9 @@ impl eframe::App for ExplorerApp {
                 self.current_mut().anchor = None;
             }
             for c in cmds {
-                if matches!(c, Command::SendToDesktop) {
+                // Match by reference: `Command` is not `Copy` any more, so
+                // `matches!(c, ...)` would move it before `run` gets it.
+                if matches!(&c, Command::SendToDesktop) {
                     self.run_selection(c);
                 } else {
                     self.run(PathBuf::new(), c);
