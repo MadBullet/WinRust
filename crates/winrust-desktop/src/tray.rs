@@ -13,7 +13,6 @@ use egui::{Color32, RichText};
 use winrust_core::i18n::ts;
 use winrust_core::{t, tf};
 
-use crate::taskbar::HEIGHT;
 use crate::DesktopApp;
 
 /// Width reserved on the right of the taskbar for the tray.
@@ -201,7 +200,7 @@ fn network_label(app: &DesktopApp) -> String {
 // The flyouts
 // ---------------------------------------------------------------------------
 
-fn flyout(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect, pal: winrust_ui::Palette) {
+fn flyout(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect, pal: winrust_ui::theme::Palette) {
     // Panels sit above the bar, right-aligned the way Windows places them.
     let width = match app.tray_flyout {
         Flyout::Calendar => 340.0,

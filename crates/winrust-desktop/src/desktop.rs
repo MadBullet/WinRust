@@ -689,13 +689,13 @@ impl DesktopApp {
                 }
             }
         }
+        let mods = ctx.input(|i| i.modifiers);
         if up {
             if let Some(start) = self.band_start.take() {
                 if let Some(p) = pointer {
                     let band = egui::Rect::from_two_pos(start, p);
                     if band.width() > 4.0 || band.height() > 4.0 {
                         // Everything the box touches becomes selected.
-                        let mods = ctx.input(|i| i.modifiers);
                         if !mods.ctrl && !mods.command {
                             self.selection.clear();
                         }
@@ -719,7 +719,6 @@ impl DesktopApp {
                 }
             }
         }
-        let mods = ctx.input(|i| i.modifiers);
         if bg.clicked() && self.band_start.is_none() {
             if !mods.ctrl && !mods.command {
                 self.selection.clear();
