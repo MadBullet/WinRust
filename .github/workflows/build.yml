@@ -99,5 +99,6 @@ jobs:
             target/release/winrust-taskmgr.exe
             target/release/winrust-services.exe
             target/release/winrust-sysctl.exe
+            target/release/winrust-desktop.exe
             target/release/WinRust.exe
           if-no-files-found: ignore

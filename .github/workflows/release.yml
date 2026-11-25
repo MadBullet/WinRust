@@ -64,6 +64,7 @@ jobs:
           cp target/release/winrust-taskmgr.exe dist/ || true
           cp target/release/winrust-services.exe dist/ || true
           cp target/release/winrust-sysctl.exe dist/ || true
+          cp target/release/winrust-desktop.exe dist/ || true
           cp target/release/winrust-driver.exe dist/ || true
           cp crates/winrust-kernel/target/x86_64-pc-windows-msvc/release/winrust_kernel.dll dist/WinRustKernel.sys || true
           cp crates/winrust-kernel/WinRustKernel.inx dist/WinRustKernel.inf || true
@@ -90,6 +91,7 @@ jobs:
             dist/winrust-taskmgr.exe \
             dist/winrust-services.exe \
             dist/winrust-sysctl.exe \
+            dist/winrust-desktop.exe \
             dist/winrust-driver.exe \
             dist/WinRustKernel.sys \
             WinRust-windows-x64.zip
