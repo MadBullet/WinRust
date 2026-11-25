@@ -10,27 +10,27 @@
     Checking windows_x86_64_msvc v0.52.6
     Checking simd-adler32 v0.3.10
     Checking windows-targets v0.52.6
-    Checking adler2 v2.0.1
     Checking once_cell v1.21.4
+    Checking adler2 v2.0.1
     Checking tinystr v0.8.5
-    Checking utf_types v1.0.0
-    Checking writeable v0.6.4
     Checking litemap v0.8.3
-    Checking utf8_iter v1.1.0
-    Checking crc32fast v1.5.6
+    Checking writeable v0.6.4
+    Checking utf_types v1.0.0
     Checking icu_locale_core v2.4.0
+    Checking utf8_iter v1.1.0
     Checking miniz_oxide v0.9.1
+    Checking crc32fast v1.5.6
     Checking potential_utf v0.1.6
     Checking zerotrie v0.2.5
     Checking memchr v2.8.3
     Checking icu_provider v2.4.0
     Checking icu_collections v2.4.0
     Checking flate2 v1.1.11
+    Checking serde_core v1.0.229
     Checking icu_properties_data v2.4.0
     Checking icu_normalizer_data v2.4.0
-    Checking serde_core v1.0.229
-    Checking ttf-parser v0.25.1
     Checking scopeguard v1.2.0
+    Checking ttf-parser v0.25.1
     Checking lock_api v0.4.14
     Checking owned_ttf_parser v0.25.1
     Checking icu_normalizer v2.4.0
@@ -46,10 +46,10 @@
     Checking ahash v0.8.13
     Checking idna_adapter v1.2.2
     Checking parking_lot v0.12.5
-    Checking bitflags v2.13.2
     Checking percent-encoding v2.3.2
-    Checking nohash-hasher v0.2.0
+    Checking bitflags v2.13.2
     Checking epaint_default_fonts v0.29.1
+    Checking nohash-hasher v0.2.0
     Checking form_urlencoded v1.2.3
     Checking epaint v0.29.1
     Checking idna v1.1.0
@@ -63,20 +63,23 @@
     Checking thiserror v1.0.69
     Checking url v2.5.9
     Checking aho-corasick v1.1.5
-    Checking windows-sys v0.59.0
     Checking windows-sys v0.52.0
+    Checking windows-sys v0.59.0
     Checking regex-syntax v0.8.12
     Checking regex-automata v0.4.19
-    Checking anstyle v1.0.14
     Checking utf8parse v0.2.2
-    Checking tracing-core v0.1.36
-    Checking pin-project-lite v0.2.18
     Checking once_cell_polyfill v1.70.2
-    Checking winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-    Checking anstyle-wincon v3.0.11
+    Checking tracing-core v0.1.36
+    Checking anstyle v1.0.14
+    Checking pin-project-lite v0.2.18
     Checking tracing v0.1.44
+    Checking anstyle-wincon v3.0.11
     Checking anstyle-parse v1.0.0
     Checking num-traits v0.2.19
+    Checking winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
+    Checking regex v1.13.2
+    Checking anstyle-query v1.1.5
+    Checking pxfm v0.1.30
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:89:32
    |
@@ -97,7 +100,6 @@ warning: unnecessary `unsafe` block
 93 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-    Checking regex v1.13.2
 warning: field `last` is never read
   --> crates\winrust-core\src\gpu.rs:25:9
    |
@@ -109,217 +111,101 @@ warning: field `last` is never read
    |
    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
 
-    Checking anstyle-query v1.1.5
-    Checking dpi v0.1.2
-    Checking colorchoice v1.0.5
-    Checking pxfm v0.1.30
 warning: `winrust-core` (lib) generated 3 warnings
-    Checking is_terminal_polyfill v1.70.2
-    Checking arrayvec v0.7.8
-    Checking color_quant v1.1.0
-    Checking unicode-segmentation v1.13.3
-    Checking jiff-core v1.0.2
-    Checking zeroize v1.9.2
-    Checking float-cmp v0.9.0
-    Checking cursor-icon v1.2.0
-    Checking error-code v3.4.0
-    Checking smol_str v0.2.2
     Checking weezl v0.1.12
-    Checking gif v0.14.2
-    Checking moxcms v0.8.1
-    Checking winit v0.30.13
-    Checking clipboard-win v5.4.3
-    Checking strict-num v0.1.1
+    Checking smol_str v0.2.2
+    Checking color_quant v1.1.0
+    Checking float-cmp v0.9.0
+    Checking unicode-segmentation v1.13.3
+    Checking arrayvec v0.7.8
+    Checking dpi v0.1.2
+    Checking is_terminal_polyfill v1.70.2
+    Checking error-code v3.4.0
+    Checking colorchoice v1.0.5
+    Checking jiff-core v1.0.2
+    Checking cursor-icon v1.2.0
+    Checking zeroize v1.9.2
     Checking rustls-pki-types v1.16.0
+    Checking winit v0.30.13
     Checking jiff v1.0.3
     Checking anstream v1.0.0
+    Checking clipboard-win v5.4.3
+    Checking moxcms v0.8.1
+    Checking strict-num v0.1.1
+    Checking gif v0.14.2
     Checking env_filter v2.1.0
     Checking glutin_wgl_sys v0.6.1
     Checking glutin_egl_sys v0.7.1
     Checking png v0.18.1
     Checking libloading v0.8.9
-    Checking byteorder-lite v0.1.0
     Checking arrayref v0.3.9
+    Checking byteorder-lite v0.1.0
     Checking tiny-skia-path v0.11.4
-    Checking env_logger v0.11.12
-    Checking image v0.25.10
     Checking glutin v0.32.3
+    Checking image v0.25.10
+    Checking env_logger v0.11.12
     Checking memoffset v0.9.1
     Checking arboard v3.7.0
     Checking kurbo v0.9.5
     Checking webbrowser v1.2.7
     Checking getrandom v0.2.17
+    Checking untrusted v0.9.0
+    Checking siphasher v0.3.11
     Checking glow v0.14.2
     Checking web-time v1.1.0
-    Checking siphasher v0.3.11
    Compiling unicase v2.10.0
-    Checking untrusted v0.9.0
    Compiling phf_shared v0.11.3
+    Checking egui-winit v0.29.1
+    Checking svgtypes v0.13.0
     Checking ring v0.17.14
     Checking egui_glow v0.29.1
-    Checking svgtypes v0.13.0
-    Checking egui-winit v0.29.1
     Checking glutin-winit v0.5.0
     Checking winapi v0.3.9
-    Checking static_assertions v1.1.0
     Checking rctree v0.5.0
+    Checking static_assertions v1.1.0
     Checking usvg-tree v0.37.0
     Checking rustls-webpki v0.103.17
+    Checking eframe v0.29.1
    Compiling phf v0.11.3
     Checking webpki-roots v1.0.12
     Checking winrust-ui v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-ui)
     Checking simplecss v0.2.2
-    Checking bitflags v1.3.2
-    Checking eframe v0.29.1
     Checking data-url v0.3.2
-    Checking subtle v2.6.1
     Checking roxmltree v0.19.0
+    Checking subtle v2.6.1
     Checking imagesize v0.12.0
-    Checking rustls v0.23.46
-    Checking usvg-parser v0.37.0
+    Checking bitflags v1.3.2
     Checking png v0.17.16
+    Checking usvg-parser v0.37.0
+    Checking rustls v0.23.46
     Checking webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
-    Checking xmlwriter v0.1.0
     Checking base64 v0.22.1
-    Checking pico-args v0.5.0
+    Checking xmlwriter v0.1.0
     Checking base64 v0.21.7
+    Checking pico-args v0.5.0
     Checking usvg v0.37.0
     Checking tiny-skia v0.11.4
-    Checking ureq v2.12.1
     Checking rgb v0.8.53
     Checking mime v0.3.18
+    Checking ureq v2.12.1
     Checking resvg v0.37.0
-    Checking enum-map v2.7.3
     Checking ehttp v0.5.0
+    Checking enum-map v2.7.3
     Checking winrust-kernel-abi v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-    Checking egui_extras v0.29.1
     Checking winrust-kernel-control v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-    Checking winrust-services v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-services)
-    Checking winrust-sysctl v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
-    Checking winrust-explorer v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
-warning: fields `lang` and `last_scroll_y` are never read
-   --> crates\winrust-explorer\src\app.rs:312:5
-    |
-263 | pub struct ExplorerApp {
-    |            ----------- fields in this struct
-...
-312 |     lang: Lang,
-    |     ^^^^
-313 |     /// Scroll offset of the details view, so a drag near the edge can pan.
-314 |     last_scroll_y: f32,
-    |     ^^^^^^^^^^^^^
-    |
-    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-explorer` (bin "winrust-explorer" test) generated 1 warning
-    Checking winrust-taskmgr v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
-warning: `winrust-explorer` (bin "winrust-explorer") generated 1 warning (1 duplicate)
-warning: unnecessary map of the identity function
-   --> crates\winrust-taskmgr\src\app.rs:322:34
-    |
-322 |                           .cloned()
-    |  __________________________________^
-323 | |                         .map(|(pct, eng)| (pct, eng))
-    | |_____________________________________________________^ help: remove the call to `map`
-    |
-    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#map_identity
-    = note: `#[warn(clippy::map_identity)]` on by default
-
-warning: useless conversion to the same type: `&str`
-    --> crates\winrust-taskmgr\src\app.rs:1602:82
-     |
-1602 |                         let state = s.state.map(|x| x.label()).unwrap_or_else(|| "—".into());
-     |                                                                                  ^^^^^^^^^^ help: consider removing `.into()`: `"—"`
-     |
-     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
-     = note: `#[warn(clippy::useless_conversion)]` on by default
-
-warning: useless conversion to the same type: `&str`
-    --> crates\winrust-taskmgr\src\app.rs:1612:52
-     |
-1612 | ...                   .unwrap_or_else(|| "—".into()),
-     |                                          ^^^^^^^^^^ help: consider removing `.into()`: `"—"`
-     |
-     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
-
-warning: `winrust-taskmgr` (bin "winrust-taskmgr" test) generated 3 warnings (run `cargo clippy --fix --bin "winrust-taskmgr" -p winrust-taskmgr --tests -- ` to apply 3 suggestions)
-warning: `winrust-taskmgr` (bin "winrust-taskmgr") generated 3 warnings (3 duplicates)
+    Checking egui_extras v0.29.1
     Checking winrust-desktop v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-desktop)
-warning: fields `lang` and `drop_cell` are never read
-  --> crates\winrust-desktop\src\main.rs:51:16
-   |
-36 | pub struct DesktopApp {
-   |            ---------- fields in this struct
-...
-51 |     pub(crate) lang: Lang,
-   |                ^^^^
-52 |     /// Grid cell the drag currently hovers, so the drop animation can snap.
-53 |     pub(crate) drop_cell: Option<(usize, usize)>,
-   |                ^^^^^^^^^
-   |
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: function `type_text` is never used
-   --> crates\winrust-desktop\src\desktop.rs:280:8
+    Checking winrust-services v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-services)
+error[E0599]: no method named `on_hover_text` found for struct `eframe::egui::TextEdit<'t>` in the current scope
+   --> crates\winrust-desktop\src\start.rs:112:34
     |
-280 | pub fn type_text(is_dir: bool, path: &std::path::Path) -> String {
-    |        ^^^^^^^^^
+110 | ...                   egui::TextEdit::singleline(&mut self.start_search)
+111 | ...                       .hint_text(format!("🔍 {}", t("Search apps")))
+112 | ...                       .on_hover_text(hint_text()),
+    |                            ^^^^^^^^^^^^^ method not found in `eframe::egui::TextEdit<'_>`
 
-warning: function `occupied_note` is never used
-   --> crates\winrust-desktop\src\desktop.rs:292:8
-    |
-292 | pub fn occupied_note(name: &str) -> String {
-    |        ^^^^^^^^^^^^^
-
-warning: function `hint_text` is never used
-   --> crates\winrust-desktop\src\start.rs:238:8
-    |
-238 | pub fn hint_text() -> &'static str {
-    |        ^^^^^^^^^
-
-warning: field `exe` is never read
-  --> crates\winrust-desktop\src\taskbar.rs:21:9
-   |
-18 | pub struct WindowEntry {
-   |            ----------- field in this struct
-...
-21 |     pub exe: PathBuf,
-   |         ^^^
-   |
-   = note: `WindowEntry` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
-
-warning: function `describe_running` is never used
-   --> crates\winrust-desktop\src\taskbar.rs:164:8
-    |
-164 | pub fn describe_running(list: &[WindowEntry]) -> String {
-    |        ^^^^^^^^^^^^^^^^
-
-warning: `winrust-desktop` (bin "winrust-desktop") generated 6 warnings
-    Checking winrust-launcher v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
-warning: `winrust-desktop` (bin "winrust-desktop" test) generated 6 warnings (6 duplicates)
-warning: equality checks against false can be replaced by a negation
-   --> crates\winrust-core\src\i18n\settings.rs:114:17
-    |
-114 |         assert!(a.blur_active() == false);
-    |                 ^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `!a.blur_active()`
-    |
-    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#bool_comparison
-    = note: `#[warn(clippy::bool_comparison)]` on by default
-
-warning: items after a test module
-  --> crates\winrust-core\src\wide.rs:44:1
-   |
-44 | mod tests {
-   | ^^^^^^^^^
-...
-73 | pub unsafe fn from_wide_ptr(p: *const u16) -> String {
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#items_after_test_module
-   = note: `#[warn(clippy::items_after_test_module)]` on by default
-   = help: move the items to before the test module was defined
-
-warning: `winrust-core` (lib test) generated 5 warnings (3 duplicates) (run `cargo clippy --fix --lib -p winrust-core --tests -- ` to apply 2 suggestions)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 47.25s
-exit=True
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `winrust-desktop` (bin "winrust-desktop" test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+exit=False
