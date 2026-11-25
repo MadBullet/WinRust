@@ -16,9 +16,10 @@ use windows_sys::Win32::System::Diagnostics::ToolHelp::{
 use windows_sys::Win32::System::ProcessStatus::{
     K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS_EX,
 };
+use windows_sys::Win32::System::RemoteDesktop::ProcessIdToSessionId;
 use windows_sys::Win32::System::Threading::{
     GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
-    GetProcessTimes, OpenProcess, OpenThread, ProcessIdToSessionId, QueryFullProcessImageNameW,
+    GetProcessTimes, OpenProcess, OpenThread, QueryFullProcessImageNameW,
     ResumeThread, SetPriorityClass, SetProcessAffinityMask, SuspendThread,
     ABOVE_NORMAL_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS,
     IDLE_PRIORITY_CLASS, IO_COUNTERS, NORMAL_PRIORITY_CLASS, PROCESS_NAME_WIN32,
