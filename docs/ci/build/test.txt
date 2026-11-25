@@ -7,47 +7,47 @@
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
   Downloaded zmij v1.0.23
-  Downloaded serde_core v1.0.229
-  Downloaded windows-targets v0.52.6
-  Downloaded unicode-ident v1.0.27
-  Downloaded quote v1.0.47
-  Downloaded serde_derive v1.0.229
-  Downloaded thiserror v1.0.69
+  Downloaded itoa v1.0.19
   Downloaded thiserror-impl v1.0.69
+  Downloaded proc-macro2 v1.0.107
+  Downloaded thiserror v1.0.69
   Downloaded log v0.4.35
-  Downloaded syn v2.0.119
+  Downloaded windows-targets v0.52.6
+  Downloaded quote v1.0.47
+  Downloaded unicode-ident v1.0.27
+  Downloaded serde_derive v1.0.229
+  Downloaded serde_core v1.0.229
   Downloaded memchr v2.8.3
+  Downloaded serde v1.0.229
   Downloaded serde_json v1.0.154
   Downloaded syn v3.0.10
+  Downloaded syn v2.0.119
   Downloaded windows_x86_64_msvc v0.52.6
-  Downloaded serde v1.0.229
   Downloaded windows-sys v0.59.0
-  Downloaded proc-macro2 v1.0.107
-  Downloaded itoa v1.0.19
    Compiling proc-macro2 v1.0.107
    Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
-   Compiling serde_core v1.0.229
    Compiling windows_x86_64_msvc v0.52.6
+   Compiling serde_core v1.0.229
    Compiling zmij v1.0.23
-   Compiling syn v3.0.10
    Compiling syn v2.0.119
-   Compiling serde_json v1.0.154
-   Compiling serde v1.0.229
+   Compiling syn v3.0.10
    Compiling thiserror v1.0.69
-   Compiling windows-targets v0.52.6
-   Compiling serde_derive v1.0.229
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.154
    Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.229
+   Compiling windows-targets v0.52.6
    Compiling itoa v1.0.19
    Compiling memchr v2.8.3
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.5.0 (D:\a\WinRust\WinRust\crates\winrust-core)
 error[E0432]: unresolved import `windows_sys::Win32::System::Threading::ProcessIdToSessionId`
-  --> crates\winrust-core\src\process.rs:20:5
+  --> crates\winrust-core\src\process.rs:21:47
    |
-20 |     ProcessIdToSessionId, GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
-   |     ^^^^^^^^^^^^^^^^^^^^ no `ProcessIdToSessionId` in `Win32::System::Threading`
+21 |     GetProcessTimes, OpenProcess, OpenThread, ProcessIdToSessionId, QueryFullProcessImageNameW,
+   |                                               ^^^^^^^^^^^^^^^^^^^^ no `ProcessIdToSessionId` in `Win32::System::Threading`
 
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32

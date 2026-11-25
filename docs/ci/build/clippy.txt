@@ -10,27 +10,27 @@
     Checking windows_x86_64_msvc v0.52.6
     Checking simd-adler32 v0.3.10
     Checking windows-targets v0.52.6
-    Checking once_cell v1.21.4
     Checking adler2 v2.0.1
+    Checking once_cell v1.21.4
     Checking tinystr v0.8.5
+    Checking utf_types v1.0.0
     Checking writeable v0.6.4
     Checking litemap v0.8.3
-    Checking utf_types v1.0.0
-    Checking icu_locale_core v2.4.0
     Checking utf8_iter v1.1.0
-    Checking miniz_oxide v0.9.1
+    Checking icu_locale_core v2.4.0
     Checking crc32fast v1.5.6
     Checking potential_utf v0.1.6
+    Checking miniz_oxide v0.9.1
     Checking zerotrie v0.2.5
     Checking memchr v2.8.3
     Checking icu_provider v2.4.0
-    Checking icu_collections v2.4.0
     Checking flate2 v1.1.11
+    Checking icu_collections v2.4.0
     Checking icu_properties_data v2.4.0
     Checking serde_core v1.0.229
     Checking icu_normalizer_data v2.4.0
-    Checking scopeguard v1.2.0
     Checking ttf-parser v0.25.1
+    Checking scopeguard v1.2.0
     Checking owned_ttf_parser v0.25.1
     Checking lock_api v0.4.14
     Checking icu_normalizer v2.4.0
@@ -46,10 +46,10 @@
     Checking ahash v0.8.13
     Checking idna_adapter v1.2.2
     Checking parking_lot v0.12.5
-    Checking bitflags v2.13.2
     Checking nohash-hasher v0.2.0
-    Checking epaint_default_fonts v0.29.1
     Checking percent-encoding v2.3.2
+    Checking epaint_default_fonts v0.29.1
+    Checking bitflags v2.13.2
     Checking epaint v0.29.1
     Checking form_urlencoded v1.2.3
     Checking idna v1.1.0
@@ -67,26 +67,34 @@
     Checking windows-sys v0.59.0
     Checking regex-syntax v0.8.12
     Checking regex-automata v0.4.19
-    Checking tracing-core v0.1.36
     Checking once_cell_polyfill v1.70.2
-    Checking pin-project-lite v0.2.18
-    Checking anstyle v1.0.14
     Checking utf8parse v0.2.2
-    Checking anstyle-parse v1.0.0
-    Checking anstyle-wincon v3.0.11
+    Checking anstyle v1.0.14
+    Checking pin-project-lite v0.2.18
+    Checking tracing-core v0.1.36
     Checking tracing v0.1.44
+    Checking anstyle-wincon v3.0.11
+    Checking anstyle-parse v1.0.0
     Checking num-traits v0.2.19
-    Checking winrust-core v0.5.0 (D:\a\WinRust\WinRust\crates\winrust-core)
     Checking regex v1.13.2
     Checking anstyle-query v1.1.5
-    Checking cursor-icon v1.2.0
-    Checking pxfm v0.1.30
+    Checking winrust-core v0.5.0 (D:\a\WinRust\WinRust\crates\winrust-core)
+    Checking jiff-core v1.0.2
+    Checking colorchoice v1.0.5
+    Checking smol_str v0.2.2
+    Checking color_quant v1.1.0
+    Checking unicode-segmentation v1.13.3
 error[E0432]: unresolved import `windows_sys::Win32::System::Threading::ProcessIdToSessionId`
-  --> crates\winrust-core\src\process.rs:20:5
+  --> crates\winrust-core\src\process.rs:21:47
    |
-20 |     ProcessIdToSessionId, GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
-   |     ^^^^^^^^^^^^^^^^^^^^ no `ProcessIdToSessionId` in `Win32::System::Threading`
+21 |     GetProcessTimes, OpenProcess, OpenThread, ProcessIdToSessionId, QueryFullProcessImageNameW,
+   |                                               ^^^^^^^^^^^^^^^^^^^^ no `ProcessIdToSessionId` in `Win32::System::Threading`
 
+    Checking zeroize v1.9.2
+    Checking cursor-icon v1.2.0
+    Checking is_terminal_polyfill v1.70.2
+    Checking dpi v0.1.2
+    Checking pxfm v0.1.30
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32
    |
