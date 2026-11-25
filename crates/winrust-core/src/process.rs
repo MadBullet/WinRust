@@ -98,6 +98,21 @@ impl Priority {
         }
     }
 
+    /// Sort rank: Idle (0) .. Realtime (5), Unknown last.  A plain `Ord` on the
+    /// enum would sort by declaration order, which would put Normal below
+    /// BelowNormal.
+    pub fn rank(self) -> u8 {
+        match self {
+            Priority::Idle => 0,
+            Priority::BelowNormal => 1,
+            Priority::Normal => 2,
+            Priority::AboveNormal => 3,
+            Priority::High => 4,
+            Priority::Realtime => 5,
+            Priority::Unknown => 6,
+        }
+    }
+
     pub fn flag(self) -> u32 {
         match self {
             Priority::Idle => IDLE_PRIORITY_CLASS,

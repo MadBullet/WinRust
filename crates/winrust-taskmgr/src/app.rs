@@ -1165,7 +1165,7 @@ impl TaskManagerApp {
                             if i == 0 {
                                 label = label.strong();
                             }
-                            ui.add(egui::Label::new(label).truncate(true))
+                            ui.add(egui::Label::new(label).truncate())
                                 .on_hover_text(text);
                         });
                     }
@@ -2077,7 +2077,7 @@ fn sort_rows(rows: &mut [Row], by: SortBy, desc: bool) {
                 .to_lowercase()
                 .cmp(&b.gpu_engine.to_lowercase()),
             SortBy::Status => status_rank(a).cmp(&status_rank(b)),
-            SortBy::Priority => a.info.priority.cmp(&b.info.priority),
+            SortBy::Priority => a.info.priority.rank().cmp(&b.info.priority.rank()),
             SortBy::Pid => a.info.pid.cmp(&b.info.pid),
             SortBy::UserName => a
                 .info
