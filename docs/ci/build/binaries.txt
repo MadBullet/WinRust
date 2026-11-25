@@ -1,1 +1,2 @@
-1.3G	target
+-rwxr-xr-x 2 runneradmin 197121 946688 Nov 25 03:26 target/release/winrust-driver.exe
+1.7G	target

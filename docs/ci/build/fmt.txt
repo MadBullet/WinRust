@@ -1,10 +1,100 @@
-error: expected one of `.`, `;`, `?`, or an operator, found `<eof>`
-  --> \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\launcher.rs:89:1
-   |
-89 | ]
-   | ^ expected one of `.`, `;`, `?`, or an operator
-
-Error writing files: failed to resolve mod `launcher`: cannot parse \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\launcher.rs
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\explorer.rs:8:
+     ("Up (Alt+↑)", "Вверх (Alt+↑)"),
+     ("Refresh (F5)", "Обновить (F5)"),
+     ("Edit address (Ctrl+L)", "Изменить адрес (Ctrl+L)"),
+[31m-    ("Type a path or URL and press Enter", "Введите путь или URL и нажмите Enter"),
+[0m[32m+    (
+[0m[32m+        "Type a path or URL and press Enter",
+[0m[32m+        "Введите путь или URL и нажмите Enter",
+[0m[32m+    ),
+[0m     ("Path not found: {}", "Путь не найден: {}"),
+     // Commands
+     ("Delete permanently", "Удалить безвозвратно"),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\explorer.rs:15:
+     ("Copy as path", "Копировать как путь"),
+     ("Share", "Поделиться"),
+     ("Open sharing options", "Открыть параметры общего доступа"),
+[31m-    ("Sharing: select an item first", "Общий доступ: сначала выберите элемент"),
+[0m[32m+    (
+[0m[32m+        "Sharing: select an item first",
+[0m[32m+        "Общий доступ: сначала выберите элемент",
+[0m[32m+    ),
+[0m     ("Folder", "Папка"),
+     ("Text document", "Текстовый документ"),
+     ("Compressed (zipped) folder", "Сжатая ZIP-папка"),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\explorer.rs:22:
+     ("New folder", "Новая папка"),
+     ("New Text Document.txt", "Новый текстовый документ.txt"),
+[31m-    ("Use right-click → Send to → Compressed folder",
+[0m[31m-     "Используйте правую кнопку → Отправить → Сжатая ZIP-папка"),
+[0m[32m+    (
+[0m[32m+        "Use right-click → Send to → Compressed folder",
+[0m[32m+        "Используйте правую кнопку → Отправить → Сжатая ZIP-папка",
+[0m[32m+    ),
+[0m     ("View", "Вид"),
+     ("View: Details", "Вид: таблица"),
+     ("Sort", "Сортировка"),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\explorer.rs:61:
+     ("Renamed to {}", "Переименовано в {}"),
+     ("Rename failed: {}", "Не удалось переименовать: {}"),
+     ("This folder is empty", "Эта папка пуста"),
+[31m-    ("No items match your search", "Нет элементов, соответствующих поиску"),
+[0m[32m+    (
+[0m[32m+        "No items match your search",
+[0m[32m+        "Нет элементов, соответствующих поиску",
+[0m[32m+    ),
+[0m     ("Select a file to preview", "Выберите файл для просмотра"),
+     ("{} items", "Элементов: {}"),
+     ("{} item(s)", "Элементов: {}"),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\explorer.rs:81:
+     ("Open failed: {}", "Не удалось открыть: {}"),
+     ("Edit failed: {}", "Не удалось изменить: {}"),
+     ("Open with failed: {}", "Не удалось открыть с помощью: {}"),
+[31m-    ("Run as admin failed: {}", "Не удалось запустить от имени администратора: {}"),
+[0m[32m+    (
+[0m[32m+        "Run as admin failed: {}",
+[0m[32m+        "Не удалось запустить от имени администратора: {}",
+[0m[32m+    ),
+[0m     ("Properties failed: {}", "Не удалось открыть свойства: {}"),
+     ("Path copied: {}", "Путь скопирован: {}"),
+     ("Copied: {}", "Скопировано: {}"),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\explorer.rs:88:
+     ("Cut: {}", "Вырезано: {}"),
+     ("Cannot open {}: {}", "Не удалось открыть {}: {}"),
+     ("Clipboard is empty", "Буфер обмена пуст"),
+[31m-    ("Cannot paste a folder into itself", "Нельзя вставить папку в саму себя"),
+[0m[32m+    (
+[0m[32m+        "Cannot paste a folder into itself",
+[0m[32m+        "Нельзя вставить папку в саму себя",
+[0m[32m+    ),
+[0m     ("Moving", "Перемещение"),
+     ("Copying", "Копирование"),
+     ("Cancelled", "Отменено"),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:6:
+ use serde::{Deserialize, Serialize};
+ use std::ffi::c_void;
+ use std::path::Path;
+[32m+use windows_sys::Win32::Foundation::{BOOL, HWND, LPARAM};
+[0m use windows_sys::Win32::Storage::FileSystem::{
+     GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO,
+ };
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:14:
+ };
+ use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
+ use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
+[31m-use windows_sys::Win32::Foundation::{BOOL, HWND, LPARAM};
+[0m[31m-use windows_sys::Win32::UI::WindowsAndMessaging::{EnumWindows, SW_SHOWNORMAL};
+[0m use windows_sys::Win32::UI::Shell::{
+     SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
+     FOF_ALLOWUNDO, FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_WANTNUKEWARNING, FO_DELETE,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\shell.rs:23:
+     SHFILEINFOW, SHFILEOPSTRUCTW, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_LARGEICON, SHGFI_SMALLICON,
+     SHGFI_SYSICONINDEX, SHGFI_TYPENAME, SHGFI_USEFILEATTRIBUTES,
+ };
+[32m+use windows_sys::Win32::UI::WindowsAndMessaging::{EnumWindows, SW_SHOWNORMAL};
+[0m 
+ /// Well-known folders exposed by the Explorer sidebar.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\desktop.rs:44:
      let Some(path) = positions_path() else {
          return;
