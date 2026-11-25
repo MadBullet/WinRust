@@ -36,12 +36,21 @@ pub fn bg_color(a: &Appearance) -> [f32; 4] {
 }
 
 /// Apply the shared dark visuals to an egui context.
+///
+/// When the user has turned transparency on, the fills keep their colour but
+/// gain the configured alpha, so the compositor underneath shows through.  With
+/// the switch off every fill is fully opaque and no window effect is used.
 pub fn apply(ctx: &egui::Context, a: &Appearance) {
+    let alpha = a.alpha();
+    // Opaque (255) unless transparency is on — one code path, no surprises.
+    let a_u8 = (alpha.clamp(0.0, 1.0) * 255.0).round() as u8;
     let mut visuals = egui::Visuals::dark();
     visuals.override_text_color = Some(egui::Color32::from_rgb(TEXT, TEXT, TEXT));
-    visuals.panel_fill = egui::Color32::from_rgb(BG, BG, BG + 4);
-    visuals.window_fill = egui::Color32::from_rgb(SURFACE, SURFACE, SURFACE + 4);
-    visuals.faint_bg_color = egui::Color32::from_rgb(SURFACE, SURFACE, SURFACE + 4);
+    visuals.panel_fill = egui::Color32::from_rgba_unmultiplied(BG, BG, BG + 4, a_u8);
+    visuals.window_fill =
+        egui::Color32::from_rgba_unmultiplied(SURFACE, SURFACE, SURFACE + 4, a_u8);
+    visuals.faint_bg_color =
+        egui::Color32::from_rgba_unmultiplied(SURFACE, SURFACE, SURFACE + 4, a_u8);
     visuals.extreme_bg_color = egui::Color32::from_rgb(18, 18, 22);
     visuals.widgets.noninteractive.bg_fill = egui::Color32::from_rgb(SURFACE, SURFACE, SURFACE + 2);
     visuals.widgets.inactive.bg_fill =
@@ -55,9 +64,6 @@ pub fn apply(ctx: &egui::Context, a: &Appearance) {
         egui::Color32::from_rgb(ACCENT.0, ACCENT.1, ACCENT.2),
     );
     ctx.set_visuals(visuals);
-    // Transparency: hand egui a translucent background so the DWM composition
-    // underneath is visible.  With it off the window paints opaque.
-    ctx.set_pixels_per_point(ctx.pixels_per_point());
 }
 
 /// Tell eframe whether the window must be transparent.  eframe has to create

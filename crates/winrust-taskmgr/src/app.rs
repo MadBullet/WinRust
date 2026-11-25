@@ -702,6 +702,12 @@ impl TaskManagerApp {
 // ---------------------------------------------------------------------------
 
 impl eframe::App for TaskManagerApp {
+    /// The window's clear colour: the theme background with the configured
+    /// opacity, so transparency reaches the compositor in every program.
+    fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {
+        winrust_ui::theme::bg_color(&self.appearance)
+    }
+
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         self.pump(ctx);
         if self.hwnd == 0 {
