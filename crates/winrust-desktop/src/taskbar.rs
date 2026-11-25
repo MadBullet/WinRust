@@ -45,7 +45,7 @@ pub fn windows() -> Vec<WindowEntry> {
             title: w.title,
             pid: w.pid,
             hwnd: w.hwnd,
-            exe: w.exe, 
+            exe: w.exe,
         })
         .collect()
 }
@@ -76,7 +76,10 @@ impl DesktopApp {
         painter.rect_filled(bar, 0.0, bar_fill);
         painter.line_segment(
             [bar.left_top(), bar.right_top()],
-            egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
+            egui::Stroke::new(
+                1.0_f32,
+                Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
+            ),
         );
 
         // ---- Left: the Start button only -----------------------------------
@@ -152,97 +155,89 @@ impl DesktopApp {
                 .layout(egui::Layout::left_to_right(egui::Align::Center)),
         );
         apps_ui.spacing_mut().item_spacing.x = gap;
-        apps_ui
-            .horizontal(|ui| {
-                for pid in order {
-                    let first = windows_list.iter().find(|w| w.pid == pid);
-                    let Some(first) = first else { continue };
-                    let count = windows_list.iter().filter(|w| w.pid == pid).count();
-                    let icon = self.window_icon(ctx, first);
-                    let (rect, resp) =
-                        ui.allocate_exact_size(egui::vec2(button_w, 38.0), egui::Sense::click());
-                    let selected = self.active_pid == Some(pid);
-                    if resp.hovered() || selected {
-                        ui.painter().rect_filled(
-                            rect.shrink(1.0),
-                            5.0,
-                            Color32::from_rgba_unmultiplied(
-                                pal.hover.0,
-                                pal.hover.1,
-                                pal.hover.2,
-                                if selected { 150 } else { 90 },
-                            ),
-                        );
-                    }
-                    let icon_rect =
-                        egui::Rect::from_center_size(rect.center(), egui::vec2(22.0, 22.0));
-                    match icon {
-                        Some(id) => {
-                            ui.painter().image(
-                                id,
-                                icon_rect,
-                                egui::Rect::from_min_max(
-                                    egui::pos2(0.0, 0.0),
-                                    egui::pos2(1.0, 1.0),
-                                ),
-                                Color32::WHITE,
-                            );
-                        }
-                        None => {
-                            ui.painter().text(
-                                icon_rect.center(),
-                                egui::Align2::CENTER_CENTER,
-                                glyph_for_title(&first.title),
-                                egui::FontId::proportional(17.0),
-                                Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
-                            );
-                        }
-                    }
-                    // The running underline: one segment per window.
-                    let segments = count.min(4) as f32;
-                    let total_w = 14.0;
-                    let seg_w = (total_w - (segments - 1.0) * 2.0) / segments;
-                    for i in 0..count.min(4) {
-                        let x = rect.center().x - total_w / 2.0 + i as f32 * (seg_w + 2.0);
-                        ui.painter().rect_filled(
-                            egui::Rect::from_min_size(
-                                egui::pos2(x, rect.bottom() - 3.0),
-                                egui::vec2(seg_w, 3.0),
-                            ),
-                            1.5,
-                            if selected {
-                                Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2)
-                            } else {
-                                Color32::from_rgba_unmultiplied(
-                                    pal.accent.0,
-                                    pal.accent.1,
-                                    pal.accent.2,
-                                    170,
-                                )
-                            },
-                        );
-                    }
-                    if resp.clicked() {
-                        self.active_pid = Some(pid);
-                        winrust_core::shell::activate_window(pid);
-                    }
-                    let hover = if count > 1 {
-                        format!("{}\n{}", first.title, tf!("{} windows", count))
-                    } else {
-                        first.title.clone()
-                    };
-                    resp.on_hover_text(hover);
-                }
-                // Nothing running: say so quietly instead of leaving a void.
-                if order_empty(&self.open_windows) {
-                    ui.label(
-                        RichText::new(ts("No open windows"))
-                            .small()
-                            .weak()
-                            .color(Color32::from_rgb(pal.text_weak.0, pal.text_weak.1, pal.text_weak.2)),
+        apps_ui.horizontal(|ui| {
+            for pid in order {
+                let first = windows_list.iter().find(|w| w.pid == pid);
+                let Some(first) = first else { continue };
+                let count = windows_list.iter().filter(|w| w.pid == pid).count();
+                let icon = self.window_icon(ctx, first);
+                let (rect, resp) =
+                    ui.allocate_exact_size(egui::vec2(button_w, 38.0), egui::Sense::click());
+                let selected = self.active_pid == Some(pid);
+                if resp.hovered() || selected {
+                    ui.painter().rect_filled(
+                        rect.shrink(1.0),
+                        5.0,
+                        Color32::from_rgba_unmultiplied(
+                            pal.hover.0,
+                            pal.hover.1,
+                            pal.hover.2,
+                            if selected { 150 } else { 90 },
+                        ),
                     );
                 }
-            });
+                let icon_rect = egui::Rect::from_center_size(rect.center(), egui::vec2(22.0, 22.0));
+                match icon {
+                    Some(id) => {
+                        ui.painter().image(
+                            id,
+                            icon_rect,
+                            egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+                            Color32::WHITE,
+                        );
+                    }
+                    None => {
+                        ui.painter().text(
+                            icon_rect.center(),
+                            egui::Align2::CENTER_CENTER,
+                            glyph_for_title(&first.title),
+                            egui::FontId::proportional(17.0),
+                            Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
+                        );
+                    }
+                }
+                // The running underline: one segment per window.
+                let segments = count.min(4) as f32;
+                let total_w = 14.0;
+                let seg_w = (total_w - (segments - 1.0) * 2.0) / segments;
+                for i in 0..count.min(4) {
+                    let x = rect.center().x - total_w / 2.0 + i as f32 * (seg_w + 2.0);
+                    ui.painter().rect_filled(
+                        egui::Rect::from_min_size(
+                            egui::pos2(x, rect.bottom() - 3.0),
+                            egui::vec2(seg_w, 3.0),
+                        ),
+                        1.5,
+                        if selected {
+                            Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2)
+                        } else {
+                            Color32::from_rgba_unmultiplied(
+                                pal.accent.0,
+                                pal.accent.1,
+                                pal.accent.2,
+                                170,
+                            )
+                        },
+                    );
+                }
+                if resp.clicked() {
+                    self.active_pid = Some(pid);
+                    winrust_core::shell::activate_window(pid);
+                }
+                let hover = if count > 1 {
+                    format!("{}\n{}", first.title, tf!("{} windows", count))
+                } else {
+                    first.title.clone()
+                };
+                resp.on_hover_text(hover);
+            }
+            // Nothing running: say so quietly instead of leaving a void.
+            if order_empty(&self.open_windows) {
+                ui.label(RichText::new(ts("No open windows")).small().weak().color(
+                    Color32::from_rgb(pal.text_weak.0, pal.text_weak.1, pal.text_weak.2),
+                ));
+            }
+        });
 
         // ---- Right: the tray -------------------------------------------------
         tray::draw(self, ctx, inner);

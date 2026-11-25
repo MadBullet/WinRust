@@ -168,7 +168,10 @@ pub fn device_name() -> Option<String> {
                 while *ptr.add(len) != 0 && len < 512 {
                     len += 1;
                 }
-                Some(crate::wide::from_wide(std::slice::from_raw_parts(ptr, len), len))
+                Some(crate::wide::from_wide(
+                    std::slice::from_raw_parts(ptr, len),
+                    len,
+                ))
             }
         } else {
             None
@@ -215,14 +218,15 @@ fn with_device() -> Option<ComObject> {
         let vtbl = *(enumerator.0 as *const *const usize);
         // IUnknown(3) + IMMDeviceEnumerator: EnumAudioEndpoints(3),
         // GetDefaultAudioEndpoint(4), GetDevice(5), Register(6), Unregister(7).
-        let get_default: unsafe extern "system" fn(
-            *mut usize,
-            i32,
-            i32,
-            *mut *mut usize,
-        ) -> i32 = std::mem::transmute(*vtbl.add(4));
+        let get_default: unsafe extern "system" fn(*mut usize, i32, i32, *mut *mut usize) -> i32 =
+            std::mem::transmute(*vtbl.add(4));
         let mut device: *mut usize = std::ptr::null_mut();
-        if get_default(enumerator.0 as *mut usize, E_RENDER, E_MULTIMEDIA, &mut device) < 0
+        if get_default(
+            enumerator.0 as *mut usize,
+            E_RENDER,
+            E_MULTIMEDIA,
+            &mut device,
+        ) < 0
             || device.is_null()
         {
             return None;

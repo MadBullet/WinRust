@@ -293,13 +293,13 @@ fn network_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
     }
     ui.separator();
     if ui
-        .selectable_label(false, RichText::new(t("Network & Internet settings")).size(13.0))
+        .selectable_label(
+            false,
+            RichText::new(t("Network & Internet settings")).size(13.0),
+        )
         .clicked()
     {
-        let _ = winrust_core::shell::launch(
-            "rundll32.exe",
-            "shell32.dll,Control_RunDLL ncpa.cpl",
-        );
+        let _ = winrust_core::shell::launch("rundll32.exe", "shell32.dll,Control_RunDLL ncpa.cpl");
         app.tray_flyout = Flyout::None;
     }
 }
@@ -315,7 +315,10 @@ fn volume_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
     ui.add_space(6.0);
     ui.horizontal(|ui| {
         let mute = ui
-            .add(egui::Button::new(RichText::new(if app.muted { "🔇" } else { "🔊" }).size(16.0)).frame(false))
+            .add(
+                egui::Button::new(RichText::new(if app.muted { "🔇" } else { "🔊" }).size(16.0))
+                    .frame(false),
+            )
             .on_hover_text(t("Mute"));
         if mute.clicked() {
             let target = !app.muted;
@@ -365,8 +368,7 @@ fn language_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         if selected {
             button = button.fill(ui.visuals().selection.bg_fill);
         }
-        if ui.add_sized([ui.available_width(), 38.0], button).clicked()
-        {
+        if ui.add_sized([ui.available_width(), 38.0], button).clicked() {
             // `ActivateKeyboardLayout` would only change *this* process; the
             // user wants the system-wide switch, so post WM_INPUTLANGCHANGEREQUEST
             // to the foreground window.
@@ -387,13 +389,17 @@ fn language_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
 
 /// Ask the foreground window to install a layout with the given language tag.
 fn switch_layout(tag: &str) {
-    use windows_sys::Win32::UI::WindowsAndMessaging::{
-        GetForegroundWindow, PostMessageW, WM_INPUTLANGCHANGEREQUEST,
-    };
     use windows_sys::Win32::UI::Input::KeyboardAndMouse::{
         GetKeyboardLayoutList, LoadKeyboardLayoutW, HKL,
     };
-    let prefix = if tag == "РУС" { "00000419" } else { "00000409" };
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        GetForegroundWindow, PostMessageW, WM_INPUTLANGCHANGEREQUEST,
+    };
+    let prefix = if tag == "РУС" {
+        "00000419"
+    } else {
+        "00000409"
+    };
     let name: Vec<u16> = prefix.encode_utf16().chain(std::iter::once(0)).collect();
     let hkl: HKL = unsafe { LoadKeyboardLayoutW(name.as_ptr(), 0x0000_0001) };
     if hkl.is_null() {
@@ -420,11 +426,7 @@ fn calendar_panel(app: &DesktopApp, ui: &mut egui::Ui) {
     ui.label(RichText::new(&time).size(26.0));
     ui.label(RichText::new(&date).small().weak());
     ui.separator();
-    ui.label(
-        RichText::new(ts("Calendar"))
-            .strong()
-            .size(12.5),
-    );
+    ui.label(RichText::new(ts("Calendar")).strong().size(12.5));
     ui.label(
         RichText::new(ts("The full month view is drawn from the system clock."))
             .small()
@@ -635,7 +637,13 @@ fn draw_chevron(p: &egui::Painter, rect: egui::Rect, color: Color32) {
     );
 }
 
-fn draw_bell(p: &egui::Painter, rect: egui::Rect, unread: usize, color: Color32, accent: (u8, u8, u8)) {
+fn draw_bell(
+    p: &egui::Painter,
+    rect: egui::Rect,
+    unread: usize,
+    color: Color32,
+    accent: (u8, u8, u8),
+) {
     let c = rect.center() + egui::vec2(0.0, -1.0);
     let stroke = egui::Stroke::new(1.4_f32, color);
     // A simple bell: a rounded cup, a rim and a clapper.
@@ -650,7 +658,10 @@ fn draw_bell(p: &egui::Painter, rect: egui::Rect, unread: usize, color: Color32,
         ],
         stroke,
     ));
-    p.line_segment([c + egui::vec2(-7.5, 4.0), c + egui::vec2(7.5, 4.0)], stroke);
+    p.line_segment(
+        [c + egui::vec2(-7.5, 4.0), c + egui::vec2(7.5, 4.0)],
+        stroke,
+    );
     p.circle_filled(c + egui::vec2(0.0, 6.5), 1.4, color);
     if unread > 0 {
         let badge = c + egui::vec2(7.0, -6.0);
@@ -665,7 +676,13 @@ fn draw_bell(p: &egui::Painter, rect: egui::Rect, unread: usize, color: Color32,
     }
 }
 
-fn draw_speaker(p: &egui::Painter, rect: egui::Rect, muted: bool, volume: Option<u8>, color: Color32) {
+fn draw_speaker(
+    p: &egui::Painter,
+    rect: egui::Rect,
+    muted: bool,
+    volume: Option<u8>,
+    color: Color32,
+) {
     let c = rect.center() + egui::vec2(-2.0, 0.0);
     let stroke = egui::Stroke::new(1.4_f32, color);
     // The cone.
@@ -694,7 +711,11 @@ fn draw_speaker(p: &egui::Painter, rect: egui::Rect, muted: bool, volume: Option
     }
     // One arc per 33 % of volume, so the icon reflects the level.
     let level = volume.unwrap_or(0);
-    let arcs = if level == 0 { 0 } else { ((level / 34) + 1).min(3) };
+    let arcs = if level == 0 {
+        0
+    } else {
+        ((level / 34) + 1).min(3)
+    };
     for i in 0..arcs {
         let r = 3.5 + i as f32 * 2.6;
         let mut points = Vec::new();
@@ -731,12 +752,13 @@ fn draw_network(
         p.circle_filled(c + egui::vec2(0.0, 5.0), 1.5, col);
         if !connected {
             // A slashed circle means "no internet".
-            p.circle_stroke(c + egui::vec2(0.0, -1.0), 9.0, egui::Stroke::new(1.3_f32, weak));
+            p.circle_stroke(
+                c + egui::vec2(0.0, -1.0),
+                9.0,
+                egui::Stroke::new(1.3_f32, weak),
+            );
             p.line_segment(
-                [
-                    c + egui::vec2(-6.5, -9.5),
-                    c + egui::vec2(6.5, 7.5),
-                ],
+                [c + egui::vec2(-6.5, -9.5), c + egui::vec2(6.5, 7.5)],
                 egui::Stroke::new(1.3_f32, weak),
             );
         }
@@ -756,7 +778,11 @@ fn draw_network(
             egui::Stroke::new(1.3_f32, col),
         );
         if connected {
-            p.circle_filled(c + egui::vec2(-6.0, -6.0), 2.0, Color32::from_rgb(120, 200, 120));
+            p.circle_filled(
+                c + egui::vec2(-6.0, -6.0),
+                2.0,
+                Color32::from_rgb(120, 200, 120),
+            );
         }
     }
 }

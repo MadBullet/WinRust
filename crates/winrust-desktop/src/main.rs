@@ -18,8 +18,8 @@
 
 mod desktop;
 mod start;
-mod tray;
 mod taskbar;
+mod tray;
 
 use eframe::egui;
 use std::time::{Duration, Instant};

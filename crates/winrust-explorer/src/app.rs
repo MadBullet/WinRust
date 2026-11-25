@@ -2124,8 +2124,7 @@ impl ExplorerApp {
                                         );
                                     }
                                     let tile_rect = egui::Rect::from_min_size(
-                                        ui.cursor().min
-                                            - egui::vec2(0.0, icon as f32 + 4.0),
+                                        ui.cursor().min - egui::vec2(0.0, icon as f32 + 4.0),
                                         egui::vec2(icon as f32 + 8.0, icon as f32),
                                     );
                                     let resp = ui.interact(
@@ -3163,9 +3162,9 @@ impl ExplorerApp {
                             ui.close_menu();
                         }
                         if ui.button(t("Properties")).clicked() {
-                            let _ = winrust_core::shell::show_properties(
-                                std::path::Path::new(&drive.root),
-                            );
+                            let _ = winrust_core::shell::show_properties(std::path::Path::new(
+                                &drive.root,
+                            ));
                             ui.close_menu();
                         }
                     });

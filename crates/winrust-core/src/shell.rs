@@ -679,14 +679,20 @@ pub fn top_level_windows() -> Vec<WindowInfo> {
 /// source is scaled by `draw_icon` on the way out.
 pub fn window_icon_rgba(hwnd: isize, size: u32) -> Option<Vec<u8>> {
     use windows_sys::Win32::UI::WindowsAndMessaging::{
-        GetClassLongPtrW, GetIconInfo, SendMessageTimeoutW, ICONINFO, GCLP_HICON, GCLP_HICONSM,
+        GetClassLongPtrW, GetIconInfo, SendMessageTimeoutW, GCLP_HICON, GCLP_HICONSM, ICONINFO,
         ICON_BIG, ICON_SMALL, ICON_SMALL2, SMTO_ABORTIFHUNG, WM_GETICON,
     };
     let h = hwnd as HWND;
     if h.is_null() {
         return None;
     }
-    let px = if size <= 16 { 16 } else if size <= 32 { 32 } else { 48 };
+    let px = if size <= 16 {
+        16
+    } else if size <= 32 {
+        32
+    } else {
+        48
+    };
 
     /// `WM_GETICON` answers with an `HICON` in the result word.
     unsafe fn query(h: HWND, which: u32) -> Option<*mut core::ffi::c_void> {
@@ -749,7 +755,13 @@ pub fn exe_icon_rgba(exe: &str, size: u32) -> Option<Vec<u8>> {
     if exe.is_empty() {
         return None;
     }
-    let px = if size <= 16 { 16 } else if size <= 32 { 32 } else { 48 };
+    let px = if size <= 16 {
+        16
+    } else if size <= 32 {
+        32
+    } else {
+        48
+    };
     let info = file_info_sized(exe, px);
     info.icon_rgba
 }

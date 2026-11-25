@@ -658,9 +658,8 @@ impl DesktopApp {
 
         // Rubber-band selection: press on the wallpaper starts a box, release
         // selects every icon it touched.  A plain click clears the selection.
-        let (up, drag_started) = ctx.input(|i| {
-            (i.pointer.primary_released(), i.pointer.primary_pressed())
-        });
+        let (up, drag_started) =
+            ctx.input(|i| (i.pointer.primary_released(), i.pointer.primary_pressed()));
         if bg.hovered() && drag_started && self.band_start.is_none() {
             self.band_start = pointer;
         }
