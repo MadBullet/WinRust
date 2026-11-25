@@ -447,4 +447,3 @@ pub fn local_time_text() -> String {
         st.wHour, st.wMinute, st.wDay, st.wMonth, st.wYear
     )
 }
-
