@@ -1,1 +1,23 @@
-exit=True
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\main.rs:518:
+         self.start_anim = ease(self.start_anim, if self.start_open { 1.0 } else { 0.0 }, dt);
+         self.flyout_anim = ease(
+             self.flyout_anim,
+[31m-            if self.tray.flyout().is_open() { 1.0 } else { 0.0 },
+[0m[32m+            if self.tray.flyout().is_open() {
+[0m[32m+                1.0
+[0m[32m+            } else {
+[0m[32m+                0.0
+[0m[32m+            },
+[0m             dt,
+         );
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\tray.rs:524:
+                 egui::Button::new(
+                     RichText::new(if app.tray.is_muted() { "🔇" } else { "🔊" }).size(16.0),
+                 )
+[31m-                    .frame(false),
+[0m[32m+                .frame(false),
+[0m             )
+             .on_hover_text(t("Mute"));
+         if mute.clicked() {
+exit=False
