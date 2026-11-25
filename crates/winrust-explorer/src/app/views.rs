@@ -1,21 +1,21 @@
 //! The four file views - details, list, tiles, content - and the drop
 //! handling they share.
 
+use super::commands::Command;
+use super::state::{truncate_middle, ExplorerApp};
+use super::tabs::file_name_of;
+use super::viewmode::{SortKeySerde, ViewMode};
+use eframe::egui;
+use egui::Color32;
+use egui::RichText;
+use egui_extras::Column;
+use egui_extras::TableBuilder;
+use std::path::Path;
+use std::path::PathBuf;
 use winrust_core::disk::{self, DirEntry, SortKey};
 use winrust_core::shell::KnownFolder;
 use winrust_core::t;
 use winrust_core::tf;
-use egui::Color32;
-use egui::RichText;
-use egui_extras::TableBuilder;
-use egui_extras::Column;
-use eframe::egui;
-use std::path::Path;
-use std::path::PathBuf;
-use super::commands::Command;
-use super::state::{truncate_middle, ExplorerApp};
-use super::viewmode::{SortKeySerde, ViewMode};
-use super::tabs::file_name_of;
 
 impl ExplorerApp {
     pub(super) fn file_area(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
@@ -195,7 +195,12 @@ impl ExplorerApp {
             .unwrap_or_default();
     }
 
-    pub(super) fn details_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+    pub(super) fn details_view(
+        &mut self,
+        ui: &mut egui::Ui,
+        ctx: &egui::Context,
+        entries: &[DirEntry],
+    ) {
         let app_list = self.open_with.clone();
         let sort_key = self.current().sort_key;
         let sort_asc = self.current().sort_asc;
@@ -367,7 +372,12 @@ impl ExplorerApp {
         self.finish_drag_and_commands(ctx, entries, commands);
     }
 
-    pub(super) fn list_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+    pub(super) fn list_view(
+        &mut self,
+        ui: &mut egui::Ui,
+        ctx: &egui::Context,
+        entries: &[DirEntry],
+    ) {
         let app_list = self.open_with.clone();
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
@@ -589,7 +599,12 @@ impl ExplorerApp {
     }
 
     /// Explorer's "Content" view: rows with a larger icon, name, and metadata.
-    pub(super) fn content_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+    pub(super) fn content_view(
+        &mut self,
+        ui: &mut egui::Ui,
+        ctx: &egui::Context,
+        entries: &[DirEntry],
+    ) {
         let app_list = self.open_with.clone();
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;

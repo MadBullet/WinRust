@@ -1,6 +1,10 @@
 //! Keyboard handling, the modal dialogs, and the window's own loop: what a
 //! key does, what confirms a delete, and what happens on exit.
 
+use super::commands::Command;
+use super::state::ExplorerApp;
+use super::tabs::{file_name_of, new_file_in, Tab};
+use super::viewmode::{save_state, PersistedState, SortKeySerde, ViewMode};
 use eframe::egui;
 use egui::{Color32, RichText};
 use std::path::PathBuf;
@@ -9,11 +13,6 @@ use winrust_core::i18n::{self, Lang};
 use winrust_core::shell;
 use winrust_core::t;
 use winrust_core::ts;
-use super::commands::Command;
-use super::state::ExplorerApp;
-use super::tabs::{Tab, file_name_of, new_file_in};
-use super::viewmode::{PersistedState, SortKeySerde, ViewMode, save_state};
-
 
 // ---------------------------------------------------------------------------
 // Drag ghost and mouse navigation

@@ -1,19 +1,19 @@
 //! The navigation pane's two sections: This PC's drives, and the folders
 //! the user pinned.
 
+use super::state::ExplorerApp;
+use eframe::egui;
+use egui::Color32;
+use egui::RichText;
+use std::path::Path;
+use std::path::PathBuf;
 use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::i18n::{self, Lang};
 use winrust_core::shell;
 use winrust_core::shell::KnownFolder;
 use winrust_core::t;
 use winrust_core::tf;
 use winrust_core::ts;
-use winrust_core::i18n::{self, Lang};
-use egui::Color32;
-use egui::RichText;
-use eframe::egui;
-use std::path::Path;
-use std::path::PathBuf;
-use super::state::ExplorerApp;
 
 impl ExplorerApp {
     pub(super) fn drives_section(&mut self, ui: &mut egui::Ui) {

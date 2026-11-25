@@ -1,18 +1,18 @@
 //! File verbs - open, copy, cut, paste, delete, rename, new folder - shared
 //! by the context menus and the keyboard, so both always agree.
 
-use winrust_core::disk::{self, DirEntry, SortKey};
-use winrust_core::shell;
-use winrust_core::shell::KnownFolder;
+use super::state::{ExplorerApp, FileClipboard, JobUpdate};
+use super::tabs::{file_name_of, FileJob, Tab};
 use eframe::egui;
+use std::collections::HashSet;
 use std::path::Path;
 use std::path::PathBuf;
-use std::collections::HashSet;
 use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
-use super::state::{ExplorerApp, FileClipboard, JobUpdate};
-use super::tabs::{FileJob, Tab, file_name_of};
+use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::shell;
+use winrust_core::shell::KnownFolder;
 
 // Not `Copy`: `OpenWithProgram` carries a command line and a path, and every
 // use site either moves or matches by reference.

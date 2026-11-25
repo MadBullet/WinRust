@@ -1,14 +1,14 @@
 //! The preview pane and the status bar along the bottom edge.
 
-use winrust_core::disk::{self, DirEntry, SortKey};
-use winrust_core::shell;
-use winrust_core::t;
-use egui::RichText;
-use eframe::egui;
-use std::path::Path;
 use super::state::{truncate_middle, ExplorerApp};
 use super::tabs::file_name_of;
 use super::viewmode::ViewMode;
+use eframe::egui;
+use egui::RichText;
+use std::path::Path;
+use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::shell;
+use winrust_core::t;
 
 impl ExplorerApp {
     pub(super) fn preview_pane(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {

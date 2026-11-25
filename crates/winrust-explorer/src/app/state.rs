@@ -1,18 +1,18 @@
 //! The window itself: [`ExplorerApp`], its construction, navigation verbs,
 //! and the caches that make a directory listing cheap to draw twice.
 
+use super::tabs::{file_name_of, FileJob, Listing, Tab};
+use super::viewmode::{load_state, FolderPrefs, SortKeySerde};
+use eframe::egui;
+use std::collections::HashMap;
+use std::path::PathBuf;
+use std::sync::mpsc::channel;
+use std::sync::mpsc::Receiver;
+use std::sync::mpsc::Sender;
 use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::i18n::{self, Lang};
 use winrust_core::shell;
 use winrust_core::shell::KnownFolder;
-use winrust_core::i18n::{self, Lang};
-use eframe::egui;
-use std::path::PathBuf;
-use std::collections::HashMap;
-use std::sync::mpsc::channel;
-use std::sync::mpsc::Sender;
-use std::sync::mpsc::Receiver;
-use super::tabs::{FileJob, Listing, Tab, file_name_of};
-use super::viewmode::{FolderPrefs, SortKeySerde, load_state};
 
 pub struct ExplorerApp {
     pub(super) tabs: Vec<Tab>,

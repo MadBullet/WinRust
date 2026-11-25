@@ -1,10 +1,10 @@
 //! View modes, sort orders and the per-folder preferences that the
 //! explorer window remembers between runs (`%APPDATA%\WinRust`).
 
+use std::collections::HashMap;
+use std::path::PathBuf;
 use winrust_core::disk::{self, DirEntry, SortKey};
 use winrust_core::ts;
-use std::path::PathBuf;
-use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub(super) enum ViewMode {

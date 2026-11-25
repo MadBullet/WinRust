@@ -1,21 +1,21 @@
 //! The chrome around the file area: the tab strip, the command bar and the
 //! navigation pane.
 
+use super::commands::Command;
+use super::state::{truncate_middle, ExplorerApp, FileClipboard};
+use super::tabs::{file_name_of, Tab};
+use super::viewmode::{SortKeySerde, ViewMode};
+use eframe::egui;
+use egui::Color32;
+use egui::RichText;
+use std::path::Path;
+use std::path::PathBuf;
 use winrust_core::disk::{self, DirEntry, SortKey};
 use winrust_core::shell;
 use winrust_core::shell::KnownFolder;
 use winrust_core::t;
 use winrust_core::tf;
 use winrust_core::ts;
-use egui::Color32;
-use egui::RichText;
-use eframe::egui;
-use std::path::Path;
-use std::path::PathBuf;
-use super::commands::Command;
-use super::state::{truncate_middle, ExplorerApp, FileClipboard};
-use super::tabs::{Tab, file_name_of};
-use super::viewmode::{SortKeySerde, ViewMode};
 
 impl ExplorerApp {
     /// Explorer's tab strip (Win11 style) with a "+" button.

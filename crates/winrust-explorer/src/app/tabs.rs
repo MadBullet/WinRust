@@ -1,12 +1,12 @@
 //! One browser tab: its path, history, listing and selection, plus the
 //! messages the worker thread sends back.
 
-use winrust_core::disk::{self, DirEntry, SortKey};
-use winrust_core::ts;
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
+use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::ts;
 
 pub(super) struct Tab {
     pub(super) path: PathBuf,
