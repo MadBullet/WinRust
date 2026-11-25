@@ -283,10 +283,10 @@ mod tests {
     fn volume_round_trips() {
         // On CI there is usually no audio device; both directions must then
         // simply report "unknown" instead of panicking.
-        let before = super::master_volume();
+        let before = crate::devices::audio::master_volume();
         if let Some(v) = before {
-            let _ = super::set_master_volume(v);
-            assert_eq!(super::master_volume(), Some(v));
+            let _ = crate::devices::audio::set_master_volume(v);
+            assert_eq!(crate::devices::audio::master_volume(), Some(v));
         }
     }
 }

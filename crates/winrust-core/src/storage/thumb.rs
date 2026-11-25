@@ -159,7 +159,7 @@ pub fn window_size(hwnd: isize) -> Option<(u32, u32)> {
 mod tests {
     #[test]
     fn a_null_window_has_no_thumbnail() {
-        assert!(super::window_thumbnail(0, 320, 200).is_none());
-        assert!(super::window_size(0).is_none());
+        assert!(crate::storage::thumb::window_thumbnail(0, 320, 200).is_none());
+        assert!(crate::storage::thumb::window_size(0).is_none());
     }
 }

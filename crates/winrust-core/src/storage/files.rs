@@ -101,7 +101,7 @@ pub fn create_folder(dir: &Path, base_name: &str) -> std::io::Result<PathBuf> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::storage::files::*;
 
     fn temp_dir(tag: &str) -> PathBuf {
         let dir =

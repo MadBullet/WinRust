@@ -6,21 +6,23 @@
 //! the difference between a `BOOL` and a `bool`.
 //!
 //! Modules
-//! -------\n//! * [`wide`]        — UTF-16 buffer helpers
-//! * [`error`]       — `WinError`, the single error type used across the project
-//! * [`handle`]      — RAII ownership for kernel handles
-//! * [`gpu`]         — per-adapter GPU utilisation through PDH
-//! * [`i18n`]        — the shared English/Russian translation layer
-//! * [`process`]     — process enumeration, inspection, termination
-//! * [`system`]      — memory, uptime, computer name, OS build
-//! * [`disk`]        — volumes, free space, file-system walk / file operations
-//! * [`net`]         — TCP/UDP connection tables with owning PIDs
-//! * [`registry`]    — typed registry access
-//! * [`shell`]       — ShellExecute, file icons, known folders, recycle bin
-//! * [`window`]      — top-level window list, icons, focus, the `Win` key
-//! * [`service`]     — SCM enumeration and control
-//! * [`user`]        — token information (user, elevation, integrity)
-//! * [`sysinfo_cpu`] — per-process CPU accounting helper
+//! -------
+//! The crate is a stack, and the modules are grouped so the stack is visible:
+//!
+//! * leaf      — [`wide`] (UTF-16), [`error`] (`WinError`), [`handle`] (RAII),
+//!               [`icon`] (HICON to RGBA)
+//! * [`storage`] — [`disk`], [`files`], [`fileassoc`], [`registry`],
+//!                 [`restore`], [`thumb`]
+//! * [`system`]  — [`system`](self::system::mod@system), [`process`],
+//!                 [`service`], [`user`], [`gpu`]
+//! * [`shell`]   — ShellExecute, known folders, the recycle bin,
+//!                 [`window`]
+//! * [`devices`] — [`audio`], [`net`], [`install`]
+//! * [`i18n`]    — the shared English/Russian translation layer
+//!
+//! Each old path still works: `winrust_core::process` is
+//! `winrust_core::system::process` behind a `pub use`, so grouping the files
+//! changed no call site.
 //!
 //! Everything is `#[cfg(windows)]`; the crate intentionally does not build on
 //! other platforms because it models Windows behaviour exactly.
@@ -30,27 +32,26 @@
 #[cfg(not(windows))]
 compile_error!("winrust-core targets Windows only. Build it on Windows or in CI.");
 
-pub mod audio;
-pub mod disk;
+// The leaf layer: nothing above depends on anything below it in this list.
 pub mod error;
-pub mod fileassoc;
-pub mod files;
-pub mod gpu;
 pub mod handle;
-pub mod i18n;
 pub mod icon;
-pub mod install;
-pub mod net;
-pub mod process;
-pub mod registry;
-pub mod restore;
-pub mod service;
-pub mod shell;
-pub mod system;
-pub mod thumb;
-pub mod user;
 pub mod wide;
-pub mod window;
+
+// The groups.  `system.rs` and `shell.rs` are both a group and a module, so
+// the group's facade re-exports the module under its own name.
+pub mod devices;
+pub mod i18n;
+pub mod shell;
+pub mod storage;
+pub mod system;
+
+// The old flat paths, kept so no caller had to move: `winrust_core::disk`
+// still resolves, now to `winrust_core::storage::disk`.
+pub use devices::{audio, install, net};
+pub use shell::window;
+pub use storage::{disk, fileassoc, files, registry, restore, thumb};
+pub use system::{gpu, process, service, user};
 
 pub use error::{Result, WinError};
 pub use handle::Handle;

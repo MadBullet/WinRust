@@ -229,7 +229,7 @@ fn exe_name(exe: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::storage::fileassoc::*;
 
     #[test]
     fn exe_names_are_tidied() {
