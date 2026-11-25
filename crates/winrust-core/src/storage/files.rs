@@ -37,11 +37,11 @@ pub fn delete(paths: &[PathBuf], permanent: bool) -> DeleteReport {
         if !path.exists() {
             report
                 .errors
-                .push(format!("{}: not found", crate::disk::file_name_of(path)));
+                .push(format!("{}: not found", super::disk::file_name_of(path)));
             continue;
         }
         let result = if permanent {
-            crate::disk::delete_permanent(path)
+            super::disk::delete_permanent(path)
         } else {
             crate::shell::recycle(std::slice::from_ref(path))
         };
@@ -49,7 +49,7 @@ pub fn delete(paths: &[PathBuf], permanent: bool) -> DeleteReport {
             Ok(()) => report.done += 1,
             Err(e) => report
                 .errors
-                .push(format!("{}: {e}", crate::disk::file_name_of(path))),
+                .push(format!("{}: {e}", super::disk::file_name_of(path))),
         }
     }
     report
@@ -86,7 +86,7 @@ pub fn create_file(dir: &Path, extension: &str, base_name: &str) -> std::io::Res
     let ext = extension.trim_start_matches('.');
     let name = unique_name(dir, base_name, Some(ext));
     let path = dir.join(name);
-    match crate::fileassoc::new_template(ext) {
+    match super::fileassoc::new_template(ext) {
         Some(template) => std::fs::copy(template, &path).map(|_| path),
         None => std::fs::File::create(&path).map(|_| path),
     }

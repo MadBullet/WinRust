@@ -96,7 +96,7 @@ pub fn create_restore_point(description: &str) -> RestorePointResult {
 /// This is informational only: the authoritative answer comes from the API
 /// call itself, which is why [`create_restore_point`] is always attempted.
 pub fn restore_enabled_hint() -> bool {
-    let disabled = crate::registry::read_machine_u32(
+    let disabled = super::registry::read_machine_u32(
         r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore",
         "DisableSR",
     )

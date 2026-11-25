@@ -15,7 +15,7 @@
 //! uses for the shell namespace.
 
 use crate::i18n::ts;
-use crate::registry::{Key, Root};
+use super::registry::{Key, Root};
 
 /// One entry of the "New" submenu.
 #[derive(Debug, Clone, PartialEq, Eq)]

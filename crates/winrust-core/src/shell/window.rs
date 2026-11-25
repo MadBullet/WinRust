@@ -7,7 +7,7 @@
 //! a taskbar button, while `shell` (launching, known folders, the recycle bin)
 //! must not depend on `process`.  The edge runs `window` -> `shell`, one way.
 
-use crate::shell::file_info_sized;
+use super::shell::file_info_sized;
 use crate::wide::from_wide;
 use windows_sys::Win32::Foundation::{BOOL, HWND, LPARAM};
 use windows_sys::Win32::UI::WindowsAndMessaging::EnumWindows;
@@ -41,7 +41,7 @@ unsafe extern "system" fn enum_window_proc(hwnd: HWND, lparam: LPARAM) -> BOOL {
         hwnd: hwnd as isize,
         title: from_wide(&buf, len as usize),
         pid,
-        exe: crate::process::exe_path_of(pid).unwrap_or_default(),
+        exe: crate::system::process::exe_path_of(pid).unwrap_or_default(),
     });
     1
 }
