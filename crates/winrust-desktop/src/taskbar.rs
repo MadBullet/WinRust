@@ -148,6 +148,13 @@ impl DesktopApp {
                     .small()
                     .weak(),
                 );
+                // A shell has nowhere to print to, so the last note (a missing
+                // binary, a restored shell, an unreadable Desktop folder) lives
+                // in the taskbar next to the clock.
+                if !self.status.is_empty() {
+                    ui.label(RichText::new(&self.status).small().weak())
+                        .on_hover_text(&self.status);
+                }
                 if ui
                     .add(egui::Button::new(RichText::new("⏻").size(15.0)).frame(false))
                     .on_hover_text(t("Power"))

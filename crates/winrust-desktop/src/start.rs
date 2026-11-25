@@ -7,6 +7,7 @@ use winrust_core::i18n::ts;
 use winrust_core::shell::KnownFolder;
 use winrust_core::{t, tf};
 
+use crate::taskbar::describe_running;
 use crate::DesktopApp;
 
 #[derive(Debug, Clone)]
@@ -107,13 +108,15 @@ impl DesktopApp {
                         ui.add_sized(
                             [ui.available_width(), 26.0],
                             egui::TextEdit::singleline(&mut self.start_search)
-                                .hint_text(format!("🔍 {}", t("Search apps"))),
+                                .hint_text(format!("🔍 {}", t("Search apps")))
+                                .on_hover_text(hint_text()),
                         );
                         ui.add_space(4.0);
 
                         let needle = self.start_search.to_lowercase();
                         let mut launch: Option<PathBuf> = None;
                         let mut nav: Option<PathBuf> = None;
+                        let mut switched = false;
 
                         // Known folders row.
                         ui.horizontal(|ui| {
@@ -167,6 +170,35 @@ impl DesktopApp {
                                 }
                             });
 
+                        // Running windows, so the Start menu doubles as the
+                        // task switcher the real Start menu's app list is.
+                        ui.separator();
+                        ui.label(RichText::new(describe_running(&self.open_windows)).small().weak());
+                        egui::ScrollArea::vertical()
+                            .id_salt("start_windows")
+                            .auto_shrink([false, false])
+                            .max_height(96.0)
+                            .show(ui, |ui| {
+                                for w in self.open_windows.iter().take(12) {
+                                    if ui
+                                        .add_sized(
+                                            [ui.available_width(), 22.0],
+                                            egui::Button::new(
+                                                RichText::new(
+                                                    winrust_core::i18n::end(&w.title, 40),
+                                                )
+                                                .size(12.5),
+                                            )
+                                            .frame(false),
+                                        )
+                                        .clicked()
+                                    {
+                                        winrust_core::shell::activate_window(w.pid);
+                                        switched = true;
+                                    }
+                                }
+                            });
+
                         ui.separator();
                         // Power and the escape hatch back to the stock shell.
                         ui.horizontal(|ui| {
@@ -212,6 +244,11 @@ impl DesktopApp {
                             );
                         });
 
+                        if switched {
+                            // Bringing a window forward is not navigation, but
+                            // the Start menu should still get out of the way.
+                            self.close_start();
+                        }
                         if let Some(path) = launch {
                             self.close_start();
                             self.open_path(&path);

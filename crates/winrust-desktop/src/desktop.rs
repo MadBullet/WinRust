@@ -229,9 +229,17 @@ impl DesktopApp {
                         );
                     }
                     if drag_stopped {
-                        if let (Some(p), Some(cell)) = (pointer, drop_off_cell) {
-                            let _ = p;
-                            moved = Some((icon.name.clone(), cell));
+                        if let (Some(_p), Some(cell)) = (pointer, drop_off_cell) {
+                            // A cell can only hold one icon: say so instead of
+                            // dropping the icon on top of its neighbour.
+                            let taken = icons
+                                .iter()
+                                .any(|other| other.cell == cell && other.name != icon.name);
+                            if taken {
+                                self.status = occupied_note(&icon.name);
+                            } else {
+                                moved = Some((icon.name.clone(), cell));
+                            }
                         }
                         self.mode = crate::ShellMode::Idle;
                     }
@@ -252,7 +260,11 @@ impl DesktopApp {
                     ui.close_menu();
                 }
             });
-            resp.on_hover_text(icon.path.display().to_string());
+            resp.on_hover_text(format!(
+                "{}\n{}",
+                icon.name,
+                type_text(icon.is_dir, &icon.path)
+            ));
         }
 
         if bg.clicked() {
