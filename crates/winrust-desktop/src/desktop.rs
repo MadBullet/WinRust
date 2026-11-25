@@ -385,7 +385,8 @@ impl DesktopApp {
                     ui.close_menu();
                 }
                 if ui.button(t("Shortcut")).clicked() {
-                    let _ = winrust_core::shell::launch("rundll32.exe", "appwiz.cpl,NewLinkHere %1");
+                    let _ =
+                        winrust_core::shell::launch("rundll32.exe", "appwiz.cpl,NewLinkHere %1");
                     ui.close_menu();
                 }
                 ui.separator();
