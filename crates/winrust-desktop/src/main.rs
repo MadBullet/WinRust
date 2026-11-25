@@ -181,6 +181,31 @@ impl DesktopApp {
         }
     }
 
+    /// "New -> Text document" and friends: an empty file on the Desktop, with a
+    /// de-duplicated name, selected afterwards like Explorer does.
+    pub(crate) fn create_desktop_file(&mut self, extension: &str) {
+        let Some(dir) = winrust_core::shell::KnownFolder::Desktop.path() else {
+            return;
+        };
+        let base = i18n::ts("New file");
+        let mut name = format!("{base}.{extension}");
+        let mut n = 2;
+        while dir.join(&name).exists() {
+            name = format!("{base} ({n}).{extension}");
+            n += 1;
+        }
+        let target = dir.join(&name);
+        match std::fs::File::create(&target) {
+            Ok(_) => {
+                self.reload_icons();
+                if let Some(idx) = self.icons.iter().position(|i| i.path == target) {
+                    self.selected = Some(idx);
+                }
+            }
+            Err(e) => self.status = i18n::tf!("Cannot create the folder: {}", e),
+        }
+    }
+
     /// Paste the clipboard item onto the Desktop folder.
     pub(crate) fn paste_into_desktop(&mut self, src: &std::path::Path) {
         let Some(dir) = winrust_core::shell::KnownFolder::Desktop.path() else {

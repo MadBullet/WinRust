@@ -186,4 +186,9 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Open the WinRust launcher's settings page", "Открыть страницу параметров лаунчера WinRust"),
     ("Cannot create the folder: {}", "Не удалось создать папку: {}"),
     ("Cannot paste: {}", "Не удалось вставить: {}"),
+    ("Shortcut", "Ярлык"),
+    ("Word document", "Документ Word"),
+    ("Excel worksheet", "Лист Excel"),
+    ("PowerPoint presentation", "Презентация PowerPoint"),
+    ("WinRAR archive", "Архив WinRAR"),
 ];

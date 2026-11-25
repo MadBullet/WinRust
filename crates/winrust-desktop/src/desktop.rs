@@ -261,6 +261,8 @@ struct FrameActions {
     moved: Option<(String, (usize, usize))>,
     clicked: Option<usize>,
     new_folder: bool,
+    /// New -> <kind>: an empty file with that extension on the Desktop.
+    new_file: Option<&'static str>,
     refresh: bool,
     sort: Option<SortOrder>,
     order_toggled: bool,
@@ -376,10 +378,46 @@ impl DesktopApp {
                 ui.close_menu();
             }
             ui.separator();
-            if ui.button(t("New folder")).clicked() {
-                act.new_folder = true;
-                ui.close_menu();
-            }
+            ui.menu_button(t("New"), |ui| {
+                ui.set_min_width(230.0);
+                if ui.button(t("Folder")).clicked() {
+                    act.new_folder = true;
+                    ui.close_menu();
+                }
+                if ui.button(t("Shortcut")).clicked() {
+                    let _ = winrust_core::shell::launch("rundll32.exe", "appwiz.cpl,NewLinkHere %1");
+                    ui.close_menu();
+                }
+                ui.separator();
+                if ui.button(t("Bitmap image")).clicked() {
+                    act.new_file = Some("bmp");
+                    ui.close_menu();
+                }
+                if ui.button(t("Text document")).clicked() {
+                    act.new_file = Some("txt");
+                    ui.close_menu();
+                }
+                if ui.button(t("Word document")).clicked() {
+                    act.new_file = Some("docx");
+                    ui.close_menu();
+                }
+                if ui.button(t("Excel worksheet")).clicked() {
+                    act.new_file = Some("xlsx");
+                    ui.close_menu();
+                }
+                if ui.button(t("PowerPoint presentation")).clicked() {
+                    act.new_file = Some("pptx");
+                    ui.close_menu();
+                }
+                if ui.button(t("ZIP archive")).clicked() {
+                    act.new_file = Some("zip");
+                    ui.close_menu();
+                }
+                if ui.button(t("WinRAR archive")).clicked() {
+                    act.new_file = Some("rar");
+                    ui.close_menu();
+                }
+            });
             ui.separator();
             if ui.button(t("Display settings")).clicked() {
                 let _ = winrust_core::shell::launch(
@@ -646,6 +684,9 @@ impl DesktopApp {
         }
         if act.new_folder {
             self.create_desktop_folder();
+        }
+        if let Some(ext) = act.new_file {
+            self.create_desktop_file(ext);
         }
         if act.refresh {
             self.reload_icons();
