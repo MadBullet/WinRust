@@ -1,1 +1,2 @@
-exit=True
+Error writing files: failed to resolve mod `shell`: file for module found at both "\\\\?\\D:\\a\\WinRust\\WinRust\\crates\\winrust-core\\src\\shell.rs" and "\\\\?\\D:\\a\\WinRust\\WinRust\\crates\\winrust-core\\src\\shell\\mod.rs"
+exit=False
