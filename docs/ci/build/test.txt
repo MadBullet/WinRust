@@ -9,19 +9,19 @@
   Downloaded itoa v1.0.19
   Downloaded log v0.4.35
   Downloaded windows-targets v0.52.6
-  Downloaded thiserror v1.0.69
-  Downloaded quote v1.0.47
-  Downloaded zmij v1.0.23
-  Downloaded thiserror-impl v1.0.69
-  Downloaded unicode-ident v1.0.27
   Downloaded serde_core v1.0.229
-  Downloaded proc-macro2 v1.0.107
+  Downloaded thiserror v1.0.69
   Downloaded serde_derive v1.0.229
-  Downloaded serde v1.0.229
+  Downloaded unicode-ident v1.0.27
+  Downloaded proc-macro2 v1.0.107
+  Downloaded quote v1.0.47
   Downloaded memchr v2.8.3
+  Downloaded serde v1.0.229
   Downloaded serde_json v1.0.154
   Downloaded syn v3.0.10
+  Downloaded thiserror-impl v1.0.69
   Downloaded syn v2.0.119
+  Downloaded zmij v1.0.23
   Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
    Compiling proc-macro2 v1.0.107
@@ -30,14 +30,14 @@
    Compiling serde_core v1.0.229
    Compiling windows_x86_64_msvc v0.52.6
    Compiling zmij v1.0.23
-   Compiling syn v2.0.119
    Compiling syn v3.0.10
-   Compiling serde v1.0.229
-   Compiling serde_json v1.0.154
+   Compiling syn v2.0.119
    Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.154
+   Compiling serde v1.0.229
    Compiling windows-targets v0.52.6
-   Compiling thiserror-impl v1.0.69
    Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v1.0.69
    Compiling memchr v2.8.3
    Compiling itoa v1.0.19
    Compiling windows-sys v0.59.0

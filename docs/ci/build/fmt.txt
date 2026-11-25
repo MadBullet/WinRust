@@ -1,1 +1,11 @@
-exit=True
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\desktop.rs:385:
+                     ui.close_menu();
+                 }
+                 if ui.button(t("Shortcut")).clicked() {
+[31m-                    let _ = winrust_core::shell::launch("rundll32.exe", "appwiz.cpl,NewLinkHere %1");
+[0m[32m+                    let _ =
+[0m[32m+                        winrust_core::shell::launch("rundll32.exe", "appwiz.cpl,NewLinkHere %1");
+[0m                     ui.close_menu();
+                 }
+                 ui.separator();
+exit=False

@@ -13,8 +13,8 @@
     Checking once_cell v1.21.4
     Checking adler2 v2.0.1
     Checking tinystr v0.8.5
-    Checking writeable v0.6.4
     Checking utf_types v1.0.0
+    Checking writeable v0.6.4
     Checking litemap v0.8.3
     Checking utf8_iter v1.1.0
     Checking icu_locale_core v2.4.0
@@ -27,14 +27,14 @@
     Checking icu_collections v2.4.0
     Checking flate2 v1.1.11
     Checking icu_properties_data v2.4.0
-    Checking icu_normalizer_data v2.4.0
     Checking serde_core v1.0.229
-    Checking ttf-parser v0.25.1
+    Checking icu_normalizer_data v2.4.0
     Checking scopeguard v1.2.0
-    Checking lock_api v0.4.14
+    Checking ttf-parser v0.25.1
     Checking owned_ttf_parser v0.25.1
-    Checking icu_properties v2.4.0
+    Checking lock_api v0.4.14
     Checking icu_normalizer v2.4.0
+    Checking icu_properties v2.4.0
     Checking parking_lot_core v0.9.12
     Checking zerocopy v0.8.65
     Checking emath v0.29.1
@@ -42,13 +42,13 @@
     Checking ab_glyph_rasterizer v0.1.10
     Checking ab_glyph v0.2.32
     Checking serde v1.0.229
+    Checking ahash v0.8.13
     Checking ecolor v0.29.1
     Checking idna_adapter v1.2.2
     Checking parking_lot v0.12.5
-    Checking ahash v0.8.13
     Checking epaint_default_fonts v0.29.1
-    Checking bitflags v2.13.2
     Checking nohash-hasher v0.2.0
+    Checking bitflags v2.13.2
     Checking percent-encoding v2.3.2
     Checking epaint v0.29.1
     Checking form_urlencoded v1.2.3
@@ -56,43 +56,37 @@
     Checking zmij v1.0.23
     Checking miniz_oxide v0.8.9
     Checking fdeflate v0.3.7
-    Checking raw-window-handle v0.6.2
     Checking itoa v1.0.19
+    Checking raw-window-handle v0.6.2
     Checking serde_json v1.0.154
     Checking egui v0.29.1
     Checking thiserror v1.0.69
     Checking url v2.5.9
     Checking aho-corasick v1.1.5
-    Checking windows-sys v0.52.0
     Checking windows-sys v0.59.0
+    Checking windows-sys v0.52.0
     Checking regex-syntax v0.8.12
     Checking regex-automata v0.4.19
-    Checking tracing-core v0.1.36
     Checking utf8parse v0.2.2
-    Checking once_cell_polyfill v1.70.2
+    Checking tracing-core v0.1.36
     Checking anstyle v1.0.14
+    Checking once_cell_polyfill v1.70.2
     Checking pin-project-lite v0.2.18
     Checking tracing v0.1.44
     Checking anstyle-wincon v3.0.11
     Checking anstyle-parse v1.0.0
-    Checking num-traits v0.2.19
-    Checking regex v1.13.2
     Checking winrust-core v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-    Checking anstyle-query v1.1.5
-    Checking colorchoice v1.0.5
-    Checking dpi v0.1.2
+    Checking num-traits v0.2.19
 error[E0432]: unresolved import `windows_sys::Win32::System::Threading::ProcessIdToSessionId`
   --> crates\winrust-core\src\process.rs:21:47
    |
 21 |     GetProcessTimes, OpenProcess, OpenThread, ProcessIdToSessionId, QueryFullProcessImageNameW,
    |                                               ^^^^^^^^^^^^^^^^^^^^ no `ProcessIdToSessionId` in `Win32::System::Threading`
 
-    Checking zeroize v1.9.2
-    Checking weezl v0.1.12
-    Checking smol_str v0.2.2
-    Checking is_terminal_polyfill v1.70.2
-    Checking error-code v3.4.0
+    Checking regex v1.13.2
+    Checking anstyle-query v1.1.5
     Checking arrayvec v0.7.8
+    Checking pxfm v0.1.30
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32
    |
@@ -113,7 +107,6 @@ warning: unnecessary `unsafe` block
 87 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-    Checking jiff-core v1.0.2
 For more information about this error, try `rustc --explain E0432`.
 warning: `winrust-core` (lib) generated 2 warnings
 error: could not compile `winrust-core` (lib) due to 1 previous error; 2 warnings emitted
