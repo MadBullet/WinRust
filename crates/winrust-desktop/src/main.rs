@@ -51,8 +51,6 @@ pub struct DesktopApp {
     pub(crate) lang: Lang,
     /// When the registry was last polled for a language change.
     pub(crate) lang_checked_at: Instant,
-    /// Grid cell the drag currently hovers, so the drop animation can snap.
-    pub(crate) drop_cell: Option<(usize, usize)>,
     pub(crate) hwnd: isize,
     /// Wallpaper brush colour mode — the desktop paints itself instead of
     /// showing a picture, so it works on a bare Windows install as well.
@@ -85,7 +83,6 @@ impl DesktopApp {
             apps_at: Instant::now() - Duration::from_secs(300),
             lang: i18n::current(),
             lang_checked_at: Instant::now(),
-            drop_cell: None,
             hwnd: 0,
             appearance,
             appearance_dirty: false,

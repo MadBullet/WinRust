@@ -21,8 +21,6 @@ mod win {
     pub struct GpuQuery {
         query: isize,
         counter: isize,
-        /// engtype_3D totals per engine instance, keyed by instance name.
-        last: HashMap<String, f64>,
     }
 
     impl GpuQuery {
@@ -41,11 +39,7 @@ mod win {
                 // First collection just primes the counters.
                 PdhCollectQueryData(query);
             }
-            Some(Self {
-                query,
-                counter,
-                last: HashMap::new(),
-            })
+            Some(Self { query, counter })
         }
 
         /// Prime the counters and return per-engine utilisation in percent.

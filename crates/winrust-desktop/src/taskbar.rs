@@ -6,7 +6,6 @@
 
 use eframe::egui;
 use egui::{Color32, RichText};
-use std::path::PathBuf;
 use winrust_core::i18n::ts;
 use winrust_core::{t, tf};
 
@@ -18,7 +17,6 @@ pub const HEIGHT: f32 = 46.0;
 pub struct WindowEntry {
     pub title: String,
     pub pid: u32,
-    pub exe: PathBuf,
 }
 
 /// List windows through `EnumWindows`; the launcher's `windows` helper already
@@ -30,7 +28,6 @@ pub fn windows() -> Vec<WindowEntry> {
         .map(|w| WindowEntry {
             title: w.title,
             pid: w.pid,
-            exe: PathBuf::new(),
         })
         .collect()
 }
