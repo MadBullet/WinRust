@@ -345,6 +345,46 @@ fn spawn_sampler(interval: Duration) -> Sampler {
                 prev_cpu = now_cpu;
                 prev_wall = Instant::now();
 
+                // Windows groups a child process under the application that
+                // started it: the helpers of Explorer belong to Explorer, not to
+                // a group of their own.  Walk the parent chain to the topmost
+                // ancestor that is itself an application row and use its name as
+                // the group key; everything else keeps its own name.
+                {
+                    let mut info: HashMap<u32, (u32, String, bool)> = HashMap::new();
+                    for r in &rows {
+                        info.insert(
+                            r.info.pid,
+                            (r.info.parent_pid, r.app_name.clone(), is_app_row(r)),
+                        );
+                    }
+                    let mut resolved: HashMap<u32, String> = HashMap::new();
+                    for r in &rows {
+                        let mut pid = r.info.pid;
+                        let mut group = r.app_name.clone();
+                        // Depth-limited so a corrupt parent link cannot loop.
+                        for _ in 0..32 {
+                            let Some((parent, name, is_app)) = info.get(&pid) else {
+                                break;
+                            };
+                            if *is_app {
+                                group = name.clone();
+                                break;
+                            }
+                            if *parent == 0 || *parent == pid {
+                                break;
+                            }
+                            pid = *parent;
+                        }
+                        resolved.insert(r.info.pid, group);
+                    }
+                    for r in &mut rows {
+                        if let Some(g) = resolved.get(&r.info.pid) {
+                            r.group = g.to_lowercase();
+                        }
+                    }
+                }
+
                 // Group aggregates for the "Приложения (N)" headers.
                 let mut groups: HashMap<String, (f32, u64, usize, f32)> = HashMap::new();
                 for r in &rows {
@@ -1381,10 +1421,17 @@ impl TaskManagerApp {
                     } else {
                         r.app_name.clone()
                     };
-                    let resp = ui.selectable_label(
-                        selected,
-                        RichText::new(winrust_core::i18n::middle(&label, 40, 22)),
-                    );
+                    // A process that belongs to another application's group is
+                    // drawn indented, the way Windows shows app children.
+                    let child = self.group_by_app
+                        && r.group != label.to_lowercase()
+                        && r.group != r.info.name.to_lowercase();
+                    let shown = if child {
+                        format!("    ↳ {}", winrust_core::i18n::middle(&label, 36, 20))
+                    } else {
+                        winrust_core::i18n::middle(&label, 40, 22)
+                    };
+                    let resp = ui.selectable_label(selected, RichText::new(shown));
                     if resp.clicked() {
                         clicked = Some(r.info.pid);
                     }

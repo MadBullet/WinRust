@@ -184,4 +184,6 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Power options are above", "Параметры питания — в меню выше"),
     ("{} open", "Открыто окон: {}"),
     ("Open the WinRust launcher's settings page", "Открыть страницу параметров лаунчера WinRust"),
+    ("Cannot create the folder: {}", "Не удалось создать папку: {}"),
+    ("Cannot paste: {}", "Не удалось вставить: {}"),
 ];
