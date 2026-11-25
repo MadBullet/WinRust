@@ -1,195 +1,196 @@
  Downloading crates ...
-  Downloaded anstyle-query v1.1.5
   Downloaded ab_glyph v0.2.32
-  Downloaded anstream v1.0.0
-  Downloaded arboard v3.7.0
-  Downloaded static_assertions v1.1.0
-  Downloaded raw-window-handle v0.6.2
-  Downloaded ab_glyph_rasterizer v0.1.10
-  Downloaded colorchoice v1.0.5
-  Downloaded adler2 v2.0.1
-  Downloaded pin-project-lite v0.2.18
-  Downloaded byteorder-lite v0.1.0
-  Downloaded color_quant v1.1.0
-  Downloaded dpi v0.1.2
+  Downloaded arrayvec v0.7.8
   Downloaded phf_shared v0.11.3
-  Downloaded pico-args v0.5.0
-  Downloaded document-features v0.2.12
-  Downloaded cfg_aliases v0.2.2
-  Downloaded float-cmp v0.9.0
-  Downloaded cfg-if v1.0.5
-  Downloaded potential_utf v0.1.6
-  Downloaded imagesize v0.12.0
-  Downloaded nohash-hasher v0.2.0
-  Downloaded ehttp v0.5.0
-  Downloaded glutin_egl_sys v0.7.1
-  Downloaded owned_ttf_parser v0.25.1
-  Downloaded error-code v3.4.0
-  Downloaded glutin-winit v0.5.0
-  Downloaded glutin_wgl_sys v0.6.1
-  Downloaded stable_deref_trait v1.2.1
-  Downloaded scopeguard v1.2.0
-  Downloaded version_check v0.9.5
-  Downloaded idna_adapter v1.2.2
-  Downloaded once_cell_polyfill v1.70.2
+  Downloaded dpi v0.1.2
+  Downloaded ab_glyph_rasterizer v0.1.10
+  Downloaded enum-map-derive v0.17.0
   Downloaded percent-encoding v2.3.2
-  Downloaded is_terminal_polyfill v1.70.2
-  Downloaded smol_str v0.2.2
-  Downloaded phf_generator v0.11.3
   Downloaded anstyle-wincon v3.0.11
   Downloaded arrayref v0.3.9
-  Downloaded cursor-icon v1.2.0
-  Downloaded form_urlencoded v1.2.3
-  Downloaded rctree v0.5.0
-  Downloaded enum-map-derive v0.17.0
-  Downloaded memoffset v0.9.1
-  Downloaded siphasher v1.0.4
-  Downloaded utf8parse v0.2.2
-  Downloaded siphasher v0.3.11
-  Downloaded emath v0.29.1
-  Downloaded env_filter v2.1.0
-  Downloaded fdeflate v0.3.7
-  Downloaded find-msvc-tools v0.1.15
-  Downloaded jobserver v0.1.35
-  Downloaded lock_api v0.4.14
-  Downloaded mime v0.3.18
-  Downloaded mime_guess2 v2.3.1
-  Downloaded phf_macros v0.11.3
-  Downloaded strict-num v0.1.1
-  Downloaded untrusted v0.9.0
-  Downloaded utf8_iter v1.1.0
-  Downloaded webpki-roots v0.26.11
-  Downloaded windows-link v0.2.1
-  Downloaded yoke-derive v0.8.4
-  Downloaded zerofrom v0.1.8
-  Downloaded zerofrom-derive v0.1.8
-  Downloaded anstyle v1.0.14
-  Downloaded anstyle-parse v1.0.0
-  Downloaded autocfg v1.5.1
-  Downloaded clipboard-win v5.4.3
-  Downloaded phf v0.11.3
-  Downloaded bitflags v1.3.2
+  Downloaded nohash-hasher v0.2.0
+  Downloaded adler2 v2.0.1
+  Downloaded glutin-winit v0.5.0
+  Downloaded colorchoice v1.0.5
+  Downloaded anstyle-query v1.1.5
   Downloaded ecolor v0.29.1
+  Downloaded pico-args v0.5.0
+  Downloaded cfg-if v1.0.5
+  Downloaded glutin_egl_sys v0.7.1
+  Downloaded byteorder-lite v0.1.0
+  Downloaded eframe v0.29.1
+  Downloaded float-cmp v0.9.0
+  Downloaded ehttp v0.5.0
+  Downloaded glutin_wgl_sys v0.6.1
+  Downloaded error-code v3.4.0
+  Downloaded potential_utf v0.1.6
+  Downloaded form_urlencoded v1.2.3
+  Downloaded document-features v0.2.12
   Downloaded subtle v2.6.1
-  Downloaded xmlwriter v0.1.0
-  Downloaded rand_core v0.6.4
-  Downloaded simplecss v0.2.2
-  Downloaded unicase v2.10.0
+  Downloaded owned_ttf_parser v0.25.1
+  Downloaded env_filter v2.1.0
+  Downloaded memoffset v0.9.1
+  Downloaded is_terminal_polyfill v1.70.2
+  Downloaded phf_generator v0.11.3
+  Downloaded untrusted v0.9.0
+  Downloaded cfg_aliases v0.2.2
+  Downloaded idna_adapter v1.2.2
+  Downloaded imagesize v0.12.0
+  Downloaded strict-num v0.1.1
+  Downloaded cursor-icon v1.2.0
+  Downloaded rctree v0.5.0
+  Downloaded color_quant v1.1.0
+  Downloaded anstream v1.0.0
+  Downloaded autocfg v1.5.1
+  Downloaded bitflags v1.3.2
+  Downloaded egui-winit v0.29.1
+  Downloaded once_cell_polyfill v1.70.2
+  Downloaded anstyle v1.0.14
+  Downloaded clipboard-win v5.4.3
+  Downloaded emath v0.29.1
+  Downloaded libloading v0.8.9
+  Downloaded phf v0.11.3
+  Downloaded data-url v0.3.2
   Downloaded displaydoc v0.2.7
+  Downloaded phf_macros v0.11.3
+  Downloaded anstyle-parse v1.0.0
+  Downloaded fdeflate v0.3.7
+  Downloaded lock_api v0.4.14
   Downloaded bytemuck_derive v1.12.1
   Downloaded gl_generator v0.14.0
-  Downloaded shlex v2.0.1
-  Downloaded egui-winit v0.29.1
-  Downloaded gif v0.14.2
-  Downloaded libloading v0.8.9
-  Downloaded rgb v0.8.53
-  Downloaded simd-adler32 v0.3.10
-  Downloaded tinystr v0.8.5
-  Downloaded web-time v1.1.0
-  Downloaded zerovec-derive v0.11.7
-  Downloaded arrayvec v0.7.8
-  Downloaded bitflags v2.13.2
-  Downloaded data-url v0.3.2
-  Downloaded egui_glow v0.29.1
+  Downloaded jobserver v0.1.35
+  Downloaded mime_guess2 v2.3.1
   Downloaded env_logger v0.11.12
-  Downloaded getrandom v0.2.17
-  Downloaded once_cell v1.21.4
-  Downloaded parking_lot_core v0.9.12
-  Downloaded usvg v0.37.0
-  Downloaded usvg-tree v0.37.0
-  Downloaded writeable v0.6.4
-  Downloaded litemap v0.8.3
-  Downloaded enum-map v2.7.3
-  Downloaded getrandom v0.4.3
-  Downloaded parking_lot v0.12.5
-  Downloaded synstructure v0.14.0
-  Downloaded utf_types v1.0.0
   Downloaded egui_extras v0.29.1
-  Downloaded num-traits v0.2.19
-  Downloaded bytemuck v1.25.2
+  Downloaded siphasher v0.3.11
+  Downloaded enum-map v2.7.3
+  Downloaded gif v0.14.2
+  Downloaded litemap v0.8.3
+  Downloaded parking_lot_core v0.9.12
+  Downloaded once_cell v1.21.4
+  Downloaded find-msvc-tools v0.1.15
+  Downloaded mime v0.3.18
+  Downloaded egui_glow v0.29.1
+  Downloaded scopeguard v1.2.0
+  Downloaded siphasher v1.0.4
+  Downloaded stable_deref_trait v1.2.1
+  Downloaded utf8_iter v1.1.0
+  Downloaded webpki-roots v0.26.11
+  Downloaded getrandom v0.4.3
+  Downloaded rand_core v0.6.4
   Downloaded crc32fast v1.5.6
-  Downloaded smallvec v1.16.6
-  Downloaded icu_locale_core v2.4.0
-  Downloaded icu_normalizer_data v2.4.0
-  Downloaded icu_provider v2.4.0
-  Downloaded miniz_oxide v0.9.1
   Downloaded litrs v1.1.0
+  Downloaded bitflags v2.13.2
+  Downloaded bytemuck v1.25.2
+  Downloaded getrandom v0.2.17
+  Downloaded num-traits v0.2.19
+  Downloaded parking_lot v0.12.5
+  Downloaded icu_provider v2.4.0
+  Downloaded arboard v3.7.0
   Downloaded miniz_oxide v0.8.9
-  Downloaded ahash v0.8.14
+  Downloaded miniz_oxide v0.9.1
   Downloaded glutin v0.32.3
   Downloaded base64 v0.21.7
+  Downloaded icu_normalizer_data v2.4.0
+  Downloaded ahash v0.8.14
+  Downloaded icu_locale_core v2.4.0
   Downloaded base64 v0.22.1
-  Downloaded eframe v0.29.1
   Downloaded flate2 v1.1.11
+  Downloaded epaint v0.29.1
+  Downloaded xmlwriter v0.1.0
+  Downloaded zerofrom v0.1.8
+  Downloaded utf8parse v0.2.2
+  Downloaded smol_str v0.2.2
+  Downloaded zerofrom-derive v0.1.8
+  Downloaded yoke-derive v0.8.4
+  Downloaded icu_collections v2.4.0
+  Downloaded kurbo v0.9.5
+  Downloaded jiff-core v1.0.2
+  Downloaded version_check v0.9.5
+  Downloaded icu_properties v2.4.0
+  Downloaded cc v1.11.3
+  Downloaded glow v0.14.2
+  Downloaded idna v1.1.0
+  Downloaded aho-corasick v1.1.5
+  Downloaded moxcms v0.8.1
+  Downloaded icu_properties_data v2.4.0
+  Downloaded zerovec-derive v0.11.7
+  Downloaded shlex v2.0.1
+  Downloaded simd-adler32 v0.3.10
+  Downloaded synstructure v0.14.0
+  Downloaded utf_types v1.0.0
+  Downloaded web-time v1.1.0
+  Downloaded windows-link v0.2.1
+  Downloaded image v0.25.10
+  Downloaded static_assertions v1.1.0
+  Downloaded writeable v0.6.4
+  Downloaded raw-window-handle v0.6.2
+  Downloaded egui v0.29.1
+  Downloaded unicase v2.10.0
+  Downloaded icu_normalizer v2.4.0
+  Downloaded pin-project-lite v0.2.18
+  Downloaded svgtypes v0.13.0
+  Downloaded simplecss v0.2.2
+  Downloaded usvg v0.37.0
+  Downloaded usvg-tree v0.37.0
+  Downloaded khronos_api v3.1.0
+  Downloaded jiff v1.0.3
+  Downloaded rgb v0.8.53
+  Downloaded epaint_default_fonts v0.29.1
   Downloaded weezl v0.1.12
-  Downloaded yoke v0.8.4
+  Downloaded tinystr v0.8.5
   Downloaded zeroize v1.9.2
   Downloaded rustls-pki-types v1.16.0
-  Downloaded usvg-parser v0.37.0
-  Downloaded epaint v0.29.1
-  Downloaded icu_collections v2.4.0
-  Downloaded roxmltree v0.19.0
-  Downloaded tiny-skia-path v0.11.4
-  Downloaded tracing-core v0.1.36
+  Downloaded smallvec v1.16.6
+  Downloaded yoke v0.8.4
+  Downloaded png v0.18.1
   Downloaded webbrowser v1.2.7
+  Downloaded tiny-skia-path v0.11.4
   Downloaded xml-rs v0.8.29
-  Downloaded kurbo v0.9.5
+  Downloaded roxmltree v0.19.0
+  Downloaded tracing-core v0.1.36
   Downloaded rand v0.8.8
-  Downloaded resvg v0.37.0
-  Downloaded rustls-webpki v0.103.17
-  Downloaded svgtypes v0.13.0
+  Downloaded usvg-parser v0.37.0
   Downloaded url v2.5.9
   Downloaded zerotrie v0.2.5
-  Downloaded jiff-core v1.0.2
+  Downloaded resvg v0.37.0
+  Downloaded rustls-webpki v0.103.17
   Downloaded unicode-segmentation v1.13.3
-  Downloaded cc v1.11.3
-  Downloaded idna v1.1.0
   Downloaded png v0.17.16
   Downloaded ureq v2.12.1
   Downloaded zerovec v0.11.9
-  Downloaded glow v0.14.2
-  Downloaded png v0.18.1
-  Downloaded icu_properties_data v2.4.0
-  Downloaded moxcms v0.8.1
-  Downloaded aho-corasick v1.1.5
-  Downloaded icu_properties v2.4.0
   Downloaded regex v1.13.2
-  Downloaded ttf-parser v0.25.1
-  Downloaded webpki-roots v1.0.12
   Downloaded tiny-skia v0.11.4
+  Downloaded webpki-roots v1.0.12
   Downloaded zlib-rs v0.6.9
-  Downloaded image v0.25.10
-  Downloaded egui v0.29.1
+  Downloaded ttf-parser v0.25.1
   Downloaded regex-syntax v0.8.12
   Downloaded zerocopy v0.8.65
   Downloaded rustls v0.23.46
-  Downloaded icu_normalizer v2.4.0
   Downloaded tracing v0.1.44
-  Downloaded khronos_api v3.1.0
-  Downloaded winit v0.30.13
-  Downloaded jiff v1.0.3
   Downloaded regex-automata v0.4.19
-  Downloaded epaint_default_fonts v0.29.1
+  Downloaded winit v0.30.13
   Downloaded pxfm v0.1.30
   Downloaded winapi v0.3.9
   Downloaded ring v0.17.14
-  Downloaded windows-sys v0.52.0
   Downloaded windows-sys v0.61.2
+  Downloaded windows-sys v0.52.0
    Compiling cfg-if v1.0.5
    Compiling syn v3.0.10
    Compiling log v0.4.35
-   Compiling windows-link v0.2.1
    Compiling stable_deref_trait v1.2.1
+   Compiling windows-link v0.2.1
    Compiling smallvec v1.16.6
    Compiling simd-adler32 v0.3.10
-   Compiling adler2 v2.0.1
    Compiling crc32fast v1.5.6
-   Compiling writeable v0.6.4
-   Compiling once_cell v1.21.4
+   Compiling adler2 v2.0.1
    Compiling utf_types v1.0.0
-   Compiling synstructure v0.14.0
+   Compiling writeable v0.6.4
    Compiling litemap v0.8.3
+   Compiling once_cell v1.21.4
+   Compiling synstructure v0.14.0
    Compiling utf8_iter v1.1.0
+   Compiling miniz_oxide v0.9.1
    Compiling zerofrom-derive v0.1.8
    Compiling yoke-derive v0.8.4
    Compiling zerofrom v0.1.8
@@ -197,27 +198,26 @@
    Compiling yoke v0.8.4
    Compiling zerovec-derive v0.11.7
    Compiling bytemuck v1.25.2
-   Compiling zerovec v0.11.9
    Compiling displaydoc v0.2.7
-   Compiling potential_utf v0.1.6
-   Compiling miniz_oxide v0.9.1
-   Compiling tinystr v0.8.5
-   Compiling icu_locale_core v2.4.0
+   Compiling zerovec v0.11.9
    Compiling zerotrie v0.2.5
+   Compiling tinystr v0.8.5
+   Compiling potential_utf v0.1.6
+   Compiling icu_locale_core v2.4.0
    Compiling icu_normalizer_data v2.4.0
    Compiling khronos_api v3.1.0
    Compiling icu_properties_data v2.4.0
+   Compiling icu_collections v2.4.0
    Compiling icu_provider v2.4.0
    Compiling flate2 v1.1.11
-   Compiling icu_collections v2.4.0
    Compiling autocfg v1.5.1
    Compiling cfg_aliases v0.2.2
    Compiling zerocopy v0.8.65
+   Compiling parking_lot_core v0.9.12
    Compiling xml-rs v0.8.29
    Compiling version_check v0.9.5
-   Compiling parking_lot_core v0.9.12
-   Compiling gl_generator v0.14.0
    Compiling ahash v0.8.14
+   Compiling gl_generator v0.14.0
    Compiling icu_properties v2.4.0
    Compiling icu_normalizer v2.4.0
    Compiling ttf-parser v0.25.1
@@ -227,91 +227,92 @@
    Compiling owned_ttf_parser v0.25.1
    Compiling emath v0.29.1
    Compiling windows-sys v0.61.2
+   Compiling ab_glyph_rasterizer v0.1.10
+   Compiling shlex v2.0.1
    Compiling find-msvc-tools v0.1.15
    Compiling percent-encoding v2.3.2
-   Compiling shlex v2.0.1
    Compiling bitflags v2.13.2
-   Compiling ab_glyph_rasterizer v0.1.10
-   Compiling ab_glyph v0.2.32
-   Compiling cc v1.11.3
    Compiling form_urlencoded v1.2.3
+   Compiling cc v1.11.3
+   Compiling ab_glyph v0.2.32
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
    Compiling idna v1.1.0
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
-   Compiling epaint_default_fonts v0.29.1
    Compiling nohash-hasher v0.2.0
+   Compiling epaint_default_fonts v0.29.1
    Compiling epaint v0.29.1
    Compiling url v2.5.9
    Compiling ring v0.17.14
    Compiling num-traits v0.2.19
    Compiling windows-sys v0.52.0
    Compiling serde_derive v1.0.229
-   Compiling zeroize v1.9.2
-   Compiling float-cmp v0.9.0
-   Compiling raw-window-handle v0.6.2
    Compiling arrayvec v0.7.8
-   Compiling serde v1.0.229
-   Compiling strict-num v0.1.1
+   Compiling float-cmp v0.9.0
+   Compiling zeroize v1.9.2
+   Compiling raw-window-handle v0.6.2
    Compiling rustls-pki-types v1.16.0
+   Compiling strict-num v0.1.1
+   Compiling serde v1.0.229
    Compiling egui v0.29.1
    Compiling aho-corasick v1.1.5
    Compiling glutin_egl_sys v0.7.1
    Compiling glutin_wgl_sys v0.6.1
    Compiling winit v0.30.13
+   Compiling tracing-core v0.1.36
+   Compiling pin-project-lite v0.2.18
    Compiling regex-syntax v0.8.12
    Compiling arrayref v0.3.9
-   Compiling pin-project-lite v0.2.18
-   Compiling tracing-core v0.1.36
-   Compiling tracing v0.1.44
    Compiling tiny-skia-path v0.11.4
    Compiling regex-automata v0.4.19
+   Compiling tracing v0.1.44
    Compiling kurbo v0.9.5
-   Compiling glutin v0.32.3
    Compiling memoffset v0.9.1
+   Compiling glutin v0.32.3
    Compiling getrandom v0.2.17
-   Compiling weezl v0.1.12
-   Compiling dpi v0.1.2
-   Compiling smol_str v0.2.2
-   Compiling litrs v1.1.0
-   Compiling color_quant v1.1.0
+   Compiling error-code v3.4.0
+   Compiling cursor-icon v1.2.0
    Compiling utf8parse v0.2.2
+   Compiling litrs v1.1.0
+   Compiling dpi v0.1.2
+   Compiling unicase v2.10.0
+   Compiling color_quant v1.1.0
+   Compiling siphasher v1.0.4
+   Compiling anstyle v1.0.14
    Compiling pxfm v0.1.30
    Compiling untrusted v0.9.0
-   Compiling anstyle v1.0.14
-   Compiling once_cell_polyfill v1.70.2
-   Compiling cursor-icon v1.2.0
-   Compiling siphasher v1.0.4
    Compiling unicode-segmentation v1.13.3
-   Compiling error-code v3.4.0
-   Compiling unicase v2.10.0
    Compiling siphasher v0.3.11
-   Compiling svgtypes v0.13.0
-   Compiling moxcms v0.8.1
-   Compiling phf_shared v0.11.3
-   Compiling clipboard-win v5.4.3
-   Compiling anstyle-wincon v3.0.11
-   Compiling anstyle-parse v1.0.0
+   Compiling smol_str v0.2.2
+   Compiling once_cell_polyfill v1.70.2
+   Compiling weezl v0.1.12
    Compiling gif v0.14.2
+   Compiling moxcms v0.8.1
+   Compiling anstyle-wincon v3.0.11
+   Compiling svgtypes v0.13.0
+   Compiling phf_shared v0.11.3
    Compiling document-features v0.2.12
+   Compiling anstyle-parse v1.0.0
+   Compiling clipboard-win v5.4.3
    Compiling regex v1.13.2
    Compiling png v0.18.1
    Compiling anstyle-query v1.1.5
    Compiling glutin-winit v0.5.0
    Compiling libloading v0.8.9
-   Compiling rctree v0.5.0
-   Compiling rustls v0.23.46
-   Compiling colorchoice v1.0.5
    Compiling winapi v0.3.9
-   Compiling jiff-core v1.0.2
    Compiling is_terminal_polyfill v1.70.2
+   Compiling jiff-core v1.0.2
+   Compiling rustls v0.23.46
    Compiling byteorder-lite v0.1.0
-   Compiling image v0.25.10
-   Compiling jiff v1.0.3
+   Compiling rctree v0.5.0
+   Compiling colorchoice v1.0.5
    Compiling anstream v1.0.0
+   Compiling jiff v1.0.3
    Compiling usvg-tree v0.37.0
+   Compiling image v0.25.10
    Compiling winrust-core v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-core)
+   Compiling env_filter v2.1.0
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32
    |
@@ -323,20 +324,19 @@ warning: unnecessary `unsafe` block
    |
    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
 
-   Compiling env_filter v2.1.0
-   Compiling rustls-webpki v0.103.17
    Compiling arboard v3.7.0
    Compiling phf v0.11.3
-warning: `winrust-core` (lib) generated 1 warning
+   Compiling rustls-webpki v0.103.17
    Compiling webpki-roots v1.0.12
    Compiling webbrowser v1.2.7
    Compiling simplecss v0.2.2
-   Compiling imagesize v0.12.0
+warning: `winrust-core` (lib) generated 1 warning
    Compiling data-url v0.3.2
+   Compiling imagesize v0.12.0
    Compiling bitflags v1.3.2
-   Compiling roxmltree v0.19.0
    Compiling glow v0.14.2
    Compiling subtle v2.6.1
+   Compiling roxmltree v0.19.0
    Compiling web-time v1.1.0
    Compiling egui-winit v0.29.1
    Compiling egui_glow v0.29.1
@@ -345,171 +345,73 @@ warning: `winrust-core` (lib) generated 1 warning
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
    Compiling env_logger v0.11.12
-   Compiling xmlwriter v0.1.0
-   Compiling static_assertions v1.1.0
+   Compiling base64 v0.22.1
    Compiling pico-args v0.5.0
    Compiling base64 v0.21.7
-   Compiling base64 v0.22.1
-   Compiling ureq v2.12.1
+   Compiling static_assertions v1.1.0
+   Compiling xmlwriter v0.1.0
    Compiling usvg v0.37.0
    Compiling eframe v0.29.1
+   Compiling ureq v2.12.1
    Compiling tiny-skia v0.11.4
    Compiling winrust-ui v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-ui)
    Compiling enum-map-derive v0.17.0
    Compiling rgb v0.8.53
    Compiling mime v0.3.18
-   Compiling enum-map v2.7.3
    Compiling resvg v0.37.0
+   Compiling enum-map v2.7.3
    Compiling ehttp v0.5.0
    Compiling egui_extras v0.29.1
    Compiling winrust-kernel-abi v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
    Compiling winrust-kernel-control v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-   Compiling winrust-launcher v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-launcher)
+   Compiling winrust-desktop v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-desktop)
+warning: method `flush_desktop_settings` is never used
+   --> crates\winrust-desktop\src\main.rs:326:19
+    |
+113 | impl DesktopApp {
+    | --------------- method in this implementation
+...
+326 |     pub(crate) fn flush_desktop_settings(&mut self) {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling winrust-services v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-services)
    Compiling winrust-taskmgr v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
-error[E0425]: cannot find type `HashMap` in this scope
-    --> crates\winrust-taskmgr\src\app\ui.rs:1007:25
-     |
-1007 |         let mut by_pid: HashMap<u32, (usize, Vec<u16>)> = HashMap::new();
-     |                         ^^^^^^^ not found in this scope
-     |
-help: consider importing this struct
-     |
-   5 + use std::collections::HashMap;
-     |
-
-error[E0433]: cannot find type `HashMap` in this scope
-    --> crates\winrust-taskmgr\src\app\ui.rs:1007:59
-     |
-1007 |         let mut by_pid: HashMap<u32, (usize, Vec<u16>)> = HashMap::new();
-     |                                                           ^^^^^^^ use of undeclared type `HashMap`
-     |
-help: consider importing this struct
-     |
-   5 + use std::collections::HashMap;
-     |
-
-error[E0425]: cannot find type `Connection` in this scope
-  --> crates\winrust-taskmgr\src\app.rs:78:33
-   |
-78 |     pub(super) connections: Vec<Connection>,
-   |                                 ^^^^^^^^^^ not found in this scope
-   |
+error[E0425]: cannot find type `Priority` in this scope
+   --> crates\winrust-taskmgr\src\app\ui.rs:534:44
+    |
+534 |         let mut new_priority: Option<(u32, Priority)> = None;
+    |                                            ^^^^^^^^ not found in this scope
+    |
+help: there is an enum variant `crate::app::SortBy::Priority`; try using the variant's enum
+    |
+534 -         let mut new_priority: Option<(u32, Priority)> = None;
+534 +         let mut new_priority: Option<(u32, crate::app::SortBy)> = None;
+    |
 help: you might be missing a type parameter
-   |
-51 | pub struct TaskManagerApp<Connection> {
-   |                          ++++++++++++
+    |
+ 22 | impl<Priority> TaskManagerApp {
+    |     ++++++++++
 
-error[E0433]: cannot find module or crate `system` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:155:32
+error[E0425]: cannot find type `Priority` in this scope
+   --> crates\winrust-taskmgr\src\app\ui.rs:864:32
     |
-155 |             let mut prev_cpu = system::cpu_sample();
-    |                                ^^^^^^ use of unresolved module or unlinked crate `system`
+864 |         let mut chosen: Option<Priority> = None;
+    |                                ^^^^^^^^ not found in this scope
     |
-    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
+help: there is an enum variant `crate::app::SortBy::Priority`; try using the variant's enum
+    |
+864 -         let mut chosen: Option<Priority> = None;
+864 +         let mut chosen: Option<crate::app::SortBy> = None;
+    |
+help: you might be missing a type parameter
+    |
+ 22 | impl<Priority> TaskManagerApp {
+    |     ++++++++++
 
-error[E0433]: cannot find module or crate `system` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:160:25
-    |
-160 |             let cores = system::cpu_count().max(1) as f64;
-    |                         ^^^^^^ use of unresolved module or unlinked crate `system`
-    |
-    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
-
-error[E0433]: cannot find type `GpuQuery` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:161:27
-    |
-161 |             let mut gpu = GpuQuery::open();
-    |                           ^^^^^^^^ use of undeclared type `GpuQuery`
-
-error[E0433]: cannot find module or crate `system` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:166:31
-    |
-166 |                 let now_cpu = system::cpu_sample();
-    |                               ^^^^^^ use of unresolved module or unlinked crate `system`
-    |
-    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
-
-error[E0433]: cannot find module or crate `system` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:167:35
-    |
-167 |                 let cpu_percent = system::cpu_usage_between(prev_cpu, now_cpu);
-    |                                   ^^^^^^ use of unresolved module or unlinked crate `system`
-    |
-    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
-
-error[E0433]: cannot find module or crate `process` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:168:29
-    |
-168 |                 let procs = process::enumerate().unwrap_or_default();
-    |                             ^^^^^^^ use of unresolved module or unlinked crate `process`
-    |
-    = help: if you wanted to use a crate named `process`, use `cargo add process` to add it to your `Cargo.toml`
-
-error[E0433]: cannot find module or crate `net` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:170:34
-    |
-170 |                 let net_totals = net::net_bytes_per_pid();
-    |                                  ^^^ use of unresolved module or unlinked crate `net`
-    |
-    = help: if you wanted to use a crate named `net`, use `cargo add net` to add it to your `Cargo.toml`
-
-error[E0433]: cannot find module or crate `shell` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:237:42
-    |
-237 | ...                   let vi = shell::version_info(&p.exe_path);
-    |                                ^^^^^ use of unresolved module or unlinked crate `shell`
-    |
-    = help: if you wanted to use a crate named `shell`, use `cargo add shell` to add it to your `Cargo.toml`
-
-error[E0433]: cannot find module or crate `system` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:336:29
-    |
-336 |                     memory: system::memory_status(),
-    |                             ^^^^^^ use of unresolved module or unlinked crate `system`
-    |
-    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
-
-error[E0433]: cannot find module or crate `system` in this scope
-   --> crates\winrust-taskmgr\src\app\model.rs:340:32
-    |
-340 |                     uptime_ms: system::uptime_ms(),
-    |                                ^^^^^^ use of unresolved module or unlinked crate `system`
-    |
-    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
-
-error[E0433]: cannot find module or crate `shell` in this scope
-  --> crates\winrust-taskmgr\src\app\startup.rs:54:30
-   |
-54 |                     let vi = shell::version_info(&exe);
-   |                              ^^^^^ use of unresolved module or unlinked crate `shell`
-   |
-   = help: if you wanted to use a crate named `shell`, use `cargo add shell` to add it to your `Cargo.toml`
-
-error[E0624]: associated constant `ALL` is private
-  --> crates\winrust-taskmgr\src\app\ui.rs:98:29
-   |
-98 |             for tab in Tab::ALL {
-   |                             ^^^ private associated constant
-   |
-  ::: crates\winrust-taskmgr\src\app\tabs.rs:42:5
-   |
-42 |     const ALL: [Tab; 8] = [
-   |     ------------------- private associated constant defined here
-
-error[E0433]: cannot find type `ScManager` in this scope
-   --> crates\winrust-taskmgr\src\app.rs:176:30
-    |
-176 |             if let Ok(scm) = ScManager::connect() {
-    |                              ^^^^^^^^^ use of undeclared type `ScManager`
-
-error[E0433]: cannot find type `RichText` in this scope
-   --> crates\winrust-taskmgr\src\app.rs:248:21
-    |
-248 |                     RichText::new(tf!(
-    |                     ^^^^^^^^ use of undeclared type `RichText`
-
-Some errors have detailed explanations: E0425, E0433, E0624.
-For more information about an error, try `rustc --explain E0425`.
-error: could not compile `winrust-taskmgr` (bin "winrust-taskmgr") due to 17 previous errors
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `winrust-taskmgr` (bin "winrust-taskmgr") due to 2 previous errors
 warning: build failed, waiting for other jobs to finish...
+warning: `winrust-desktop` (bin "winrust-desktop") generated 1 warning
 exit=False
