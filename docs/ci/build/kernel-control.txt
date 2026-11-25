@@ -6,37 +6,37 @@
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
-  Downloaded env_filter v2.1.0
-  Downloaded anstyle-wincon v3.0.11
-  Downloaded anstream v1.0.0
   Downloaded anstyle-query v1.1.5
   Downloaded once_cell_polyfill v1.70.2
-  Downloaded colorchoice v1.0.5
-  Downloaded is_terminal_polyfill v1.70.2
+  Downloaded anstyle-wincon v3.0.11
+  Downloaded aho-corasick v1.1.5
   Downloaded itoa v1.0.19
-  Downloaded windows-targets v0.52.6
-  Downloaded windows-link v0.2.1
   Downloaded utf8parse v0.2.2
-  Downloaded anstyle v1.0.14
-  Downloaded thiserror v1.0.69
+  Downloaded windows-link v0.2.1
+  Downloaded windows-targets v0.52.6
+  Downloaded env_filter v2.1.0
+  Downloaded is_terminal_polyfill v1.70.2
+  Downloaded colorchoice v1.0.5
   Downloaded thiserror-impl v1.0.69
+  Downloaded anstyle v1.0.14
+  Downloaded anstream v1.0.0
+  Downloaded env_logger v0.11.12
   Downloaded zmij v1.0.23
+  Downloaded thiserror v1.0.69
+  Downloaded unicode-ident v1.0.27
   Downloaded anstyle-parse v1.0.0
   Downloaded quote v1.0.47
-  Downloaded env_logger v0.11.12
-  Downloaded serde_core v1.0.229
-  Downloaded unicode-ident v1.0.27
-  Downloaded proc-macro2 v1.0.107
-  Downloaded serde_derive v1.0.229
   Downloaded log v0.4.35
+  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
   Downloaded serde v1.0.229
+  Downloaded serde_core v1.0.229
   Downloaded memchr v2.8.3
   Downloaded jiff-core v1.0.2
-  Downloaded regex v1.13.2
   Downloaded serde_json v1.0.154
-  Downloaded aho-corasick v1.1.5
-  Downloaded syn v2.0.119
+  Downloaded regex v1.13.2
   Downloaded syn v3.0.10
+  Downloaded syn v2.0.119
   Downloaded regex-syntax v0.8.12
   Downloaded regex-automata v0.4.19
   Downloaded jiff v1.0.3
@@ -47,47 +47,41 @@
    Compiling quote v1.0.47
    Compiling unicode-ident v1.0.27
    Compiling memchr v2.8.3
-   Compiling serde_core v1.0.229
    Compiling windows-link v0.2.1
    Compiling windows_x86_64_msvc v0.52.6
+   Compiling serde_core v1.0.229
    Compiling windows-sys v0.61.2
    Compiling aho-corasick v1.1.5
    Compiling regex-syntax v0.8.12
    Compiling zmij v1.0.23
    Compiling regex-automata v0.4.19
-   Compiling syn v3.0.10
    Compiling syn v2.0.119
-   Compiling thiserror v1.0.69
-   Compiling utf8parse v0.2.2
+   Compiling syn v3.0.10
    Compiling anstyle v1.0.14
-   Compiling serde_json v1.0.154
-   Compiling once_cell_polyfill v1.70.2
    Compiling log v0.4.35
+   Compiling utf8parse v0.2.2
+   Compiling once_cell_polyfill v1.70.2
+   Compiling serde_json v1.0.154
+   Compiling thiserror v1.0.69
    Compiling serde v1.0.229
-   Compiling anstyle-wincon v3.0.11
-   Compiling thiserror-impl v1.0.69
-   Compiling anstyle-parse v1.0.0
    Compiling serde_derive v1.0.229
+   Compiling anstyle-wincon v3.0.11
+   Compiling anstyle-parse v1.0.0
+   Compiling thiserror-impl v1.0.69
    Compiling windows-targets v0.52.6
    Compiling regex v1.13.2
    Compiling anstyle-query v1.1.5
-   Compiling colorchoice v1.0.5
    Compiling is_terminal_polyfill v1.70.2
-   Compiling jiff-core v1.0.2
+   Compiling colorchoice v1.0.5
    Compiling itoa v1.0.19
+   Compiling jiff-core v1.0.2
    Compiling jiff v1.0.3
    Compiling anstream v1.0.0
    Compiling env_filter v2.1.0
    Compiling windows-sys v0.59.0
    Compiling env_logger v0.11.12
-   Compiling winrust-kernel-abi v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-   Compiling winrust-core v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-error[E0432]: unresolved import `windows_sys::Win32::System::Threading::ProcessIdToSessionId`
-  --> crates\winrust-core\src\process.rs:21:47
-   |
-21 |     GetProcessTimes, OpenProcess, OpenThread, ProcessIdToSessionId, QueryFullProcessImageNameW,
-   |                                               ^^^^^^^^^^^^^^^^^^^^ no `ProcessIdToSessionId` in `Win32::System::Threading`
-
+   Compiling winrust-kernel-abi v0.7.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
+   Compiling winrust-core v0.7.0 (D:\a\WinRust\WinRust\crates\winrust-core)
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32
    |
@@ -108,7 +102,7 @@ warning: unnecessary `unsafe` block
 87 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-For more information about this error, try `rustc --explain E0432`.
 warning: `winrust-core` (lib) generated 2 warnings
-error: could not compile `winrust-core` (lib) due to 1 previous error; 2 warnings emitted
-exit=False
+   Compiling winrust-kernel-control v0.7.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
+    Finished `release` profile [optimized] target(s) in 1m 03s
+exit=True
