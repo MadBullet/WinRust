@@ -256,7 +256,8 @@ fn flyout(
         top + slide,
     );
     let alpha = (anim * 252.0) as u8;
-    let surface = Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, alpha);
+    let surface =
+        Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, alpha);
     let line = Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2);
 
     let response = egui::Area::new(egui::Id::new("tray_flyout"))

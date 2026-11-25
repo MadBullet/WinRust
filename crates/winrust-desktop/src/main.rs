@@ -375,12 +375,7 @@ impl DesktopApp {
         if ctx.memory(|m| m.focused().is_some()) {
             return;
         }
-        let (del, shift) = ctx.input(|i| {
-            (
-                i.key_pressed(egui::Key::Delete),
-                i.modifiers.shift,
-            )
-        });
+        let (del, shift) = ctx.input(|i| (i.key_pressed(egui::Key::Delete), i.modifiers.shift));
         if ctx.input(|i| i.key_pressed(egui::Key::A) && i.modifiers.ctrl) {
             self.selection = (0..self.icons.len()).collect();
             self.selected = self.selection.iter().next().copied();

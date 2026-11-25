@@ -33,8 +33,8 @@ pub fn window_thumbnail(hwnd: isize, max_w: u32, max_h: u32) -> Option<Thumbnail
 
     unsafe {
         use windows_sys::Win32::Graphics::Gdi::{
-            CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC,
-            ReleaseDC, SelectObject, SRCCOPY,
+            CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC, ReleaseDC,
+            SelectObject, SRCCOPY,
         };
         // `PrintWindow` lives under `Storage::Xps` in windows-sys (a historical
         // quirk of the crate's metadata), not under `WindowsAndMessaging`.
@@ -69,16 +69,7 @@ pub fn window_thumbnail(hwnd: isize, max_w: u32, max_h: u32) -> Option<Thumbnail
                     if !dst_bmp.is_null() {
                         let old_dst = SelectObject(dst_dc, dst_bmp);
                         if windows_sys::Win32::Graphics::Gdi::StretchBlt(
-                            dst_dc,
-                            0,
-                            0,
-                            tw as i32,
-                            th as i32,
-                            src_dc,
-                            0,
-                            0,
-                            w as i32,
-                            h as i32,
+                            dst_dc, 0, 0, tw as i32, th as i32, src_dc, 0, 0, w as i32, h as i32,
                             SRCCOPY,
                         ) != 0
                         {

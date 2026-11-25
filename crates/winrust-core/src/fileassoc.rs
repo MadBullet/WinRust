@@ -37,7 +37,9 @@ pub struct OpenWith {
 }
 
 /// Extensions Windows never offers in "New".
-const SKIP_EXT: &[&str] = &["exe", "dll", "sys", "msi", "msp", "cpl", "scr", "inf", "ico"];
+const SKIP_EXT: &[&str] = &[
+    "exe", "dll", "sys", "msi", "msp", "cpl", "scr", "inf", "ico",
+];
 
 /// The "New" submenu: every extension that registers a `ShellNew` handler.
 ///
@@ -115,7 +117,8 @@ fn friendly_type(ext: &str) -> String {
     // `.<ext>\(Default)` names the ProgID, whose own default value is the name.
     if let Ok(key) = Key::open(Root::LocalMachine, &format!("SOFTWARE\\Classes\\.{ext}")) {
         if let Some(progid) = key.string("") {
-            if let Ok(pkg) = Key::open(Root::LocalMachine, &format!("SOFTWARE\\Classes\\{progid}")) {
+            if let Ok(pkg) = Key::open(Root::LocalMachine, &format!("SOFTWARE\\Classes\\{progid}"))
+            {
                 if let Some(name) = pkg.string("") {
                     if !name.is_empty() {
                         return name;
@@ -159,7 +162,8 @@ pub fn open_with(path: &std::path::Path) -> Vec<OpenWith> {
             if !supported {
                 continue;
             }
-            let Ok(cmd_key) = Key::open(Root::LocalMachine, &format!("{base}\\shell\\open\\command"))
+            let Ok(cmd_key) =
+                Key::open(Root::LocalMachine, &format!("{base}\\shell\\open\\command"))
             else {
                 continue;
             };
@@ -174,8 +178,10 @@ pub fn open_with(path: &std::path::Path) -> Vec<OpenWith> {
     }
 
     // 2. `HKCR\.ext\OpenWithList` names executables without their own entry.
-    if let Ok(key) = Key::open(Root::LocalMachine, &format!("SOFTWARE\\Classes\\.{ext}\\OpenWithList"))
-    {
+    if let Ok(key) = Key::open(
+        Root::LocalMachine,
+        &format!("SOFTWARE\\Classes\\.{ext}\\OpenWithList"),
+    ) {
         for name in key.subkeys() {
             if !name.to_ascii_lowercase().ends_with(".exe") {
                 continue;
@@ -213,10 +219,7 @@ fn command_for_exe(exe: &str) -> Option<OpenWith> {
 
 /// `notepad.exe` -> `Notepad`, without the extension.
 fn exe_name(exe: &str) -> String {
-    let stem = exe
-        .rsplit_once('.')
-        .map(|(s, _)| s)
-        .unwrap_or(exe);
+    let stem = exe.rsplit_once('.').map(|(s, _)| s).unwrap_or(exe);
     let mut chars = stem.chars();
     match chars.next() {
         Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),

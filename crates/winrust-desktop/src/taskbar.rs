@@ -15,8 +15,8 @@
 //! (`shell::window_icon_rgba`), so an entry never renders as an empty square.
 
 use eframe::egui;
-use std::time::Instant;
 use egui::{Color32, RichText};
+use std::time::Instant;
 use winrust_core::i18n::ts;
 use winrust_core::{t, tf};
 
@@ -419,8 +419,7 @@ fn preview(
         app.thumbs_at = Some(Instant::now());
         // Forget pictures of windows that are gone; otherwise the texture map
         // grew for the lifetime of the shell (each entry is a GPU texture).
-        let live: std::collections::HashSet<isize> =
-            windows.iter().map(|w| w.hwnd).collect();
+        let live: std::collections::HashSet<isize> = windows.iter().map(|w| w.hwnd).collect();
         app.thumbs.retain(|hwnd, _| live.contains(hwnd));
     }
 
@@ -464,7 +463,10 @@ fn preview(
     painter.rect_stroke(
         rect,
         8.0,
-        egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
+        egui::Stroke::new(
+            1.0_f32,
+            Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
+        ),
     );
 
     // Texture ids only: holding the map borrowed would block the `app` writes
@@ -473,7 +475,11 @@ fn preview(
         .iter()
         .map(|w| {
             let tex = app.thumbs.get(&w.hwnd).and_then(|t| t.as_ref());
-            (w.hwnd, tex.map(|t| t.id()), tex.map(|t| t.size_vec2()).unwrap_or_default())
+            (
+                w.hwnd,
+                tex.map(|t| t.id()),
+                tex.map(|t| t.size_vec2()).unwrap_or_default(),
+            )
         })
         .collect();
 
@@ -517,7 +523,6 @@ fn preview(
             egui::FontId::proportional(11.5),
             Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
         );
-
     }
 
     // The click targets are registered after painting: `Painter` borrows the

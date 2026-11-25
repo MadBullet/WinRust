@@ -740,7 +740,7 @@ pub fn win_key_down() -> bool {
 /// process is allowed, and the shell is that process right after a click.
 pub fn focus_window(hwnd: isize) {
     use windows_sys::Win32::UI::WindowsAndMessaging::{
-        BringWindowToTop, SetForegroundWindow, SetFocus,
+        BringWindowToTop, SetFocus, SetForegroundWindow,
     };
     if hwnd == 0 {
         return;
