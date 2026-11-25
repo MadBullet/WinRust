@@ -1,6 +1,7 @@
 //! Machine-level information: memory, uptime, CPU, OS build, computer name.
 
 use crate::error::{check, Result, WinError};
+use crate::i18n::ts;
 use crate::wide::from_wide;
 use serde::{Deserialize, Serialize};
 use windows_sys::Win32::Foundation::FILETIME;
@@ -296,6 +297,26 @@ pub fn broadcast_settings_change() {
             std::ptr::null_mut(),
         );
     }
+}
+
+/// The signed-in user's display name (`Алексей Рябов`), falling back to the
+/// account name.  Used by the Start menu's user row.
+pub fn user_display_name() -> String {
+    // USERNAME is always present and is the account name; the display name can be
+    // read from the account record, but a shell should never block on a network
+    // profile lookup - fall back rather than fail.
+    if let Some(user) = env("USERNAME") {
+        if !user.is_empty() {
+            return user;
+        }
+    }
+    env("USERPROFILE")
+        .and_then(|p| {
+            std::path::PathBuf::from(p)
+                .file_name()
+                .map(|n| n.to_string_lossy().to_string())
+        })
+        .unwrap_or_else(|| ts("User").to_string())
 }
 
 /// Read a user environment variable (process env is enough for WinRust).

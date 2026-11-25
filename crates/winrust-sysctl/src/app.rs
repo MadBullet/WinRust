@@ -97,11 +97,16 @@ pub struct SysCtlApp {
     tcp_count: usize,
     udp_count: usize,
     last_net: std::time::Instant,
+    /// Shared theme and transparency settings, polled from the registry.
+    appearance: winrust_core::i18n::Appearance,
+    appearance_dirty: bool,
 }
 
 impl SysCtlApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        cc.egui_ctx.set_visuals(egui::Visuals::dark());
+        winrust_core::i18n::init();
+        let appearance = winrust_core::i18n::settings::load();
+        winrust_ui::theme::apply(&cc.egui_ctx, &appearance);
         let mut app = Self {
             section: Section::Overview,
             os: system::os_info(),
@@ -118,6 +123,8 @@ impl SysCtlApp {
             tcp_count: 0,
             udp_count: 0,
             last_net: std::time::Instant::now() - Duration::from_secs(10),
+            appearance,
+            appearance_dirty: false,
         };
         app.reload_env();
         app.reload_startup();
@@ -708,6 +715,16 @@ impl SysCtlApp {
 
 impl eframe::App for SysCtlApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Follow the shared appearance: the launcher writes the registry and the
+        // other windows pick the change up within a second, like the language.
+        if self.appearance_dirty || ctx.input(|i| i.time) as u64 % 1 == 0 {
+            let latest = winrust_core::i18n::settings::load();
+            if latest != self.appearance {
+                self.appearance = latest;
+                winrust_ui::theme::apply(ctx, &self.appearance);
+            }
+            self.appearance_dirty = false;
+        }
         self.memory = system::memory_status();
         egui::TopBottomPanel::bottom("status").show(ctx, |ui| {
             ui.horizontal(|ui| {

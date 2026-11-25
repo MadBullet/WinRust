@@ -50,6 +50,7 @@ use winrust_core::{t, tf, ts};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Tab {
     Processes,
+    Details,
     Performance,
     Startup,
     Users,
@@ -62,6 +63,7 @@ impl Tab {
     fn label(self) -> &'static str {
         match self {
             Tab::Processes => ts("Processes"),
+            Tab::Details => ts("Details"),
             Tab::Performance => ts("Performance"),
             Tab::Startup => ts("Startup"),
             Tab::Users => ts("Users"),
@@ -73,6 +75,7 @@ impl Tab {
     fn glyph(self) -> &'static str {
         match self {
             Tab::Processes => "▤",
+            Tab::Details => "☷",
             Tab::Performance => "📈",
             Tab::Startup => "🚀",
             Tab::Users => "👤",
@@ -81,8 +84,9 @@ impl Tab {
             Tab::Settings => "☰",
         }
     }
-    const ALL: [Tab; 7] = [
+    const ALL: [Tab; 8] = [
         Tab::Processes,
+        Tab::Details,
         Tab::Performance,
         Tab::Startup,
         Tab::Users,
@@ -432,7 +436,17 @@ enum SortBy {
     Disk,
     Network,
     Gpu,
+    /// "GPU engine" is text (`3D`, `Copy`, ...): compare it as a string.
+    GpuEngine,
+    /// Suspended / normal / not responding.
+    Status,
+    /// Base priority class.
+    Priority,
     Pid,
+    /// Details tab only: the owning account.
+    UserName,
+    /// Details tab only: the image path.
+    Path,
 }
 
 /// Which rows a view shows: the stock "Apps" / "Background" split.
@@ -459,6 +473,10 @@ pub struct TaskManagerApp {
     gpus: Vec<(u32, String)>,
     search: String,
     group_by_app: bool,
+    /// Groups whose arrow is pointing right: their rows are hidden.  Windows
+    /// calls them "Приложения" and "Фоновые процессы" and both collapse.
+    apps_collapsed: bool,
+    background_collapsed: bool,
     row_filter: RowFilter,
     sort_by: SortBy,
     sort_desc: bool,
@@ -611,6 +629,8 @@ impl TaskManagerApp {
             gpus: gpu::adapters(),
             search: String::new(),
             group_by_app: true,
+            apps_collapsed: false,
+            background_collapsed: false,
             row_filter: RowFilter::All,
             sort_by: SortBy::Cpu,
             sort_desc: true,
@@ -756,6 +776,7 @@ impl eframe::App for TaskManagerApp {
         });
         egui::CentralPanel::default().show(ctx, |ui| match self.tab {
             Tab::Processes => self.processes_tab(ui),
+            Tab::Details => self.details_tab(ui),
             Tab::Performance => self.performance_tab(ui),
             Tab::Startup => self.startup_tab(ui),
             Tab::Users => self.users_tab(ui),
@@ -945,6 +966,172 @@ impl TaskManagerApp {
         });
     }
 
+    /// Details: every process on its own line, the columns Task Manager's own
+    /// Details tab shows, each one clickable to sort by it.
+    ///
+    /// The stock tab has no grouping - grouping is what the Processes tab is
+    /// for - so this is a flat, dense, sortable table.
+    fn details_tab(&mut self, ui: &mut egui::Ui) {
+        let needle = self.search.to_lowercase();
+        let mut rows: Vec<Row> = self
+            .snapshot
+            .rows
+            .iter()
+            .filter(|r| {
+                needle.is_empty()
+                    || r.info.name.to_lowercase().contains(&needle)
+                    || r.info.exe_path.to_lowercase().contains(&needle)
+                    || r.info.user_name.to_lowercase().contains(&needle)
+                    || r.info.pid.to_string() == needle
+            })
+            .cloned()
+            .collect();
+        sort_rows(&mut rows, self.sort_by, self.sort_desc);
+
+        ui.horizontal(|ui| {
+            ui.label(
+                RichText::new(format!("{}: {}", ts("Processes"), rows.len()))
+                    .size(12.0)
+                    .weak(),
+            );
+            ui.separator();
+            ui.label(
+                RichText::new(ts("Click any column header to sort; click again to reverse"))
+                    .small()
+                    .weak(),
+            );
+        });
+        ui.add_space(2.0);
+
+        // (title, sort key, width).  Every header is a live sort button, which is
+        // what the request asked for ("sorting on every column").
+        let columns: Vec<(String, SortBy, f32)> = vec![
+            (ts("Name").to_string(), SortBy::Name, 200.0),
+            (format!("{} (PID)", ts("PID")), SortBy::Pid, 80.0),
+            (ts("Status").to_string(), SortBy::Status, 90.0),
+            (ts("User name").to_string(), SortBy::UserName, 150.0),
+            (ts("CPU").to_string(), SortBy::Cpu, 70.0),
+            (ts("Memory").to_string(), SortBy::Memory, 90.0),
+            (ts("Disk").to_string(), SortBy::Disk, 90.0),
+            (ts("Network").to_string(), SortBy::Network, 90.0),
+            (ts("GPU").to_string(), SortBy::Gpu, 70.0),
+            (format!("{} ({})", ts("Threads"), "threads"), SortBy::Name, 70.0),
+            (format!("{} ({})", ts("Handles"), "handles"), SortBy::Name, 70.0),
+            (format!("{} ({})", ts("Session"), "id"), SortBy::Name, 60.0),
+            (ts("Priority").to_string(), SortBy::Priority, 100.0),
+            (ts("Path").to_string(), SortBy::Path, 280.0),
+        ];
+
+        let mut clicked_header: Option<SortBy> = None;
+        let mut table = TableBuilder::new(ui)
+            .striped(true)
+            .resizable(true)
+            .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+            .auto_shrink([false, false]);
+        for (_, _, width) in &columns {
+            table = table.column(Column::initial(*width).at_least(50.0).clip(true));
+        }
+        table
+            .header(22.0, |mut header| {
+                for (title, key, _) in &columns {
+                    header.col(|ui| {
+                        let arrow = if self.sort_by == *key {
+                            if self.sort_desc {
+                                " ▼"
+                            } else {
+                                " ▲"
+                            }
+                        } else {
+                            ""
+                        };
+                        if ui
+                            .add(
+                                egui::Button::new(
+                                    RichText::new(format!("{title}{arrow}")).strong().size(11.0),
+                                )
+                                .frame(false),
+                            )
+                            .clicked()
+                        {
+                            clicked_header = Some(*key);
+                        }
+                    });
+                }
+            })
+            .body(|body| {
+                body.rows(21.0, rows.len(), |mut row| {
+                    let idx = row.index();
+                    let r = match rows.get(idx) {
+                        Some(r) => r,
+                        None => return,
+                    };
+                    let values: [String; 14] = [
+                        r.info.name.clone(),
+                        r.info.pid.to_string(),
+                        if r.info.suspended {
+                            ts("Suspended").to_string()
+                        } else {
+                            ts("Running").to_string()
+                        },
+                        if r.info.user_name.is_empty() {
+                            "—".to_string()
+                        } else {
+                            r.info.user_name.clone()
+                        },
+                        format!("{:.1}%", r.cpu_percent),
+                        mb(r.info.private_bytes),
+                        rate(r.disk_bps),
+                        rate(r.net_bps),
+                        format!("{:.1}%", r.gpu_percent),
+                        r.info.threads.to_string(),
+                        r.info.handles.to_string(),
+                        r.info.session_id.to_string(),
+                        r.info.priority.label().to_string(),
+                        if r.info.exe_path.is_empty() {
+                            "—".to_string()
+                        } else {
+                            r.info.exe_path.clone()
+                        },
+                    ];
+                    for (i, text) in values.iter().enumerate() {
+                        row.col(|ui| {
+                            let mut label = RichText::new(text).size(11.5);
+                            // Heat the numeric columns the way the Processes tab
+                            // does, so a busy process stands out at a glance.
+                            if let Some(m) = match i {
+                                4 => Some(Metric::Cpu),
+                                5 => Some(Metric::Memory),
+                                6 => Some(Metric::Disk),
+                                7 => Some(Metric::Network),
+                                8 => Some(Metric::Gpu),
+                                _ => None,
+                            } {
+                                label = label.color(if m == Metric::Memory {
+                                    Color32::from_rgb(200, 210, 240)
+                                } else {
+                                    heat_color(r.metric_heat(m), 100.0)
+                                });
+                            }
+                            if i == 0 {
+                                label = label.strong();
+                            }
+                            ui.add(egui::Label::new(label).truncate(true))
+                                .on_hover_text(text);
+                        });
+                    }
+                });
+            });
+
+        if let Some(key) = clicked_header {
+            if self.sort_by == key {
+                self.sort_desc = !self.sort_desc;
+            } else {
+                self.sort_by = key;
+                self.sort_desc = true;
+            }
+        }
+    }
+
     fn processes_tab(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
             ui.add_sized(
@@ -1066,6 +1253,39 @@ impl TaskManagerApp {
                     .reverse()
                     .then(a.group.cmp(&b.group))
             });
+            // A collapsed group hides all of its rows, which is the whole point
+            // of the chevron in the stock Task Manager.
+            display.retain(|r| {
+                if is_app_row(r) {
+                    !self.apps_collapsed
+                } else {
+                    !self.background_collapsed
+                }
+            });
+        }
+
+        // Group headers: the chevron plus "Приложения (13)" with the group's
+        // aggregate CPU and memory, exactly where Windows puts them.
+        if self.group_by_app {
+            let apps: Vec<&Row> = self
+                .snapshot
+                .rows
+                .iter()
+                .filter(|r| is_app_row(r))
+                .collect();
+            let bg: Vec<&Row> = self
+                .snapshot
+                .rows
+                .iter()
+                .filter(|r| !is_app_row(r))
+                .collect();
+            let mut apps_collapsed = self.apps_collapsed;
+            let mut bg_collapsed = self.background_collapsed;
+            group_header(ui, &ts("Apps"), &apps, &mut apps_collapsed);
+            group_header(ui, &ts("Background processes"), &bg, &mut bg_collapsed);
+            self.apps_collapsed = apps_collapsed;
+            self.background_collapsed = bg_collapsed;
+            ui.add_space(2.0);
         }
 
         let mut clicked: Option<u32> = None;
@@ -1085,13 +1305,15 @@ impl TaskManagerApp {
                 Metric::Disk => SortBy::Disk,
                 Metric::Network => SortBy::Network,
                 Metric::Gpu => SortBy::Gpu,
-                // "GPU engine" is text, not a sortable quantity.
-                Metric::GpuEngine => SortBy::Pid,
+                // "GPU engine" is text now compared as such.
+                Metric::GpuEngine => SortBy::GpuEngine,
             };
             headers.push((m.caption().to_string(), key));
         }
-        headers.push((ts("Status").to_string(), SortBy::Pid));
-        headers.push((ts("Priority").to_string(), SortBy::Pid));
+        // Every column is sortable on its own value: Status by running /
+        // suspended / denied, Priority by the class constant, not by PID.
+        headers.push((ts("Status").to_string(), SortBy::Status));
+        headers.push((ts("Priority").to_string(), SortBy::Priority));
 
         let mut table = TableBuilder::new(ui)
             .striped(true)
@@ -1725,6 +1947,41 @@ impl TaskManagerApp {
 /// "Apps" are processes that own a visible top-level window; without a window
 /// list the cheapest good proxy is "has a version description and is not a
 /// Windows host process".  Background processes are the rest.
+/// Order rows for the Status column: running first, then suspended, then
+/// "access denied" rows.  Sorting status alphabetically would be useless.
+fn status_rank(r: &Row) -> u8 {
+    if r.info.suspended {
+        1
+    } else if r.info.access == winrust_core::process::AccessLevel::Denied {
+        2
+    } else {
+        0
+    }
+}
+
+/// One collapsible group caption: `▾ Приложения (13)` plus the aggregate CPU and
+/// memory of everything inside.  Clicking the caption toggles the group.
+fn group_header(ui: &mut egui::Ui, title: &str, rows: &[&Row], collapsed: &mut bool) {
+    let cpu: f32 = rows.iter().map(|r| r.cpu_percent).sum();
+    let mem: u64 = rows.iter().map(|r| r.info.private_bytes).sum();
+    ui.horizontal(|ui| {
+        let arrow = if *collapsed { "▸" } else { "▾" };
+        let caption = format!("{arrow} {title} ({})", rows.len());
+        let resp = ui.add(
+            egui::Button::new(RichText::new(caption).strong().size(12.5)).frame(false),
+        );
+        if resp.clicked() {
+            *collapsed = !*collapsed;
+        }
+        ui.label(
+            RichText::new(format!("CPU {:.1}%", cpu))
+                .small()
+                .weak(),
+        );
+        ui.label(RichText::new(mb(mem)).small().weak());
+    });
+}
+
 fn is_app_row(r: &Row) -> bool {
     let n = r.info.name.to_lowercase();
     let host = n.starts_with("svchost")
@@ -1763,7 +2020,23 @@ fn sort_rows(rows: &mut [Row], by: SortBy, desc: bool) {
                 .gpu_percent
                 .partial_cmp(&b.gpu_percent)
                 .unwrap_or(std::cmp::Ordering::Equal),
+            SortBy::GpuEngine => a
+                .gpu_engine
+                .to_lowercase()
+                .cmp(&b.gpu_engine.to_lowercase()),
+            SortBy::Status => status_rank(a).cmp(&status_rank(b)),
+            SortBy::Priority => a.info.priority.cmp(&b.info.priority),
             SortBy::Pid => a.info.pid.cmp(&b.info.pid),
+            SortBy::UserName => a
+                .info
+                .user_name
+                .to_lowercase()
+                .cmp(&b.info.user_name.to_lowercase()),
+            SortBy::Path => a
+                .info
+                .exe_path
+                .to_lowercase()
+                .cmp(&b.info.exe_path.to_lowercase()),
         };
         if desc {
             ord.reverse()

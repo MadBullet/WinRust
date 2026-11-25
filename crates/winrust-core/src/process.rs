@@ -7,7 +7,7 @@
 
 use crate::error::{check, Result, WinError};
 use crate::handle::Handle;
-use crate::wide::from_wide_fixed;
+use crate::wide::{from_wide_fixed, from_wide_len};
 use serde::{Deserialize, Serialize};
 use windows_sys::Win32::Foundation::{FILETIME, MAX_PATH};
 use windows_sys::Win32::System::Diagnostics::ToolHelp::{
@@ -17,7 +17,7 @@ use windows_sys::Win32::System::ProcessStatus::{
     K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS_EX,
 };
 use windows_sys::Win32::System::Threading::{
-    GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
+    ProcessIdToSessionId, GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
     GetProcessTimes, OpenProcess, OpenThread, QueryFullProcessImageNameW, ResumeThread,
     SetPriorityClass, SetProcessAffinityMask, SuspendThread, ABOVE_NORMAL_PRIORITY_CLASS,
     BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, IDLE_PRIORITY_CLASS, IO_COUNTERS,
@@ -57,6 +57,11 @@ pub struct ProcessInfo {
     pub io_other_bytes: u64,
     /// Access we managed to obtain: `full`, `limited`, `denied`.
     pub access: AccessLevel,
+    /// Owning account (`DOMAIN\\user`), empty when the token is inaccessible.
+    /// The Details tab shows this and Task Manager sorts by it.
+    pub user_name: String,
+    /// Session the process belongs to (0 = services, 1+ = interactive).
+    pub session_id: u32,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -202,6 +207,12 @@ fn enrich(info: &mut ProcessInfo) {
             info.handles = handles;
         }
 
+        info.user_name = process_user(pid);
+        info.session_id = unsafe {
+            let mut sid = 0u32;
+            if ProcessIdToSessionId(pid, &mut sid) != 0 { sid } else { 0 }
+        };
+
         let prio = unsafe { GetPriorityClass(h.raw()) };
         info.priority = match prio {
             IDLE_PRIORITY_CLASS => Priority::Idle,
@@ -222,6 +233,113 @@ fn enrich(info: &mut ProcessInfo) {
     } else {
         info.access = AccessLevel::Denied;
     }
+}
+
+/// Cache of SID string -> display name, so the 300-process Details tab does not
+/// call `LookupAccountSidW` 300 times a second.  Only a handful of distinct
+/// accounts exist on a normal machine.
+fn user_cache() -> &'static std::sync::Mutex<std::collections::HashMap<Vec<u8>, String>> {
+    static CACHE: std::sync::OnceLock<std::sync::Mutex<std::collections::HashMap<Vec<u8>, String>>> =
+        std::sync::OnceLock::new();
+    CACHE.get_or_init(|| std::sync::Mutex::new(std::collections::HashMap::new()))
+}
+
+/// `DOMAIN\\user` for a process, by way of its token.  Empty when the token is
+/// inaccessible, which is normal for protected processes - the Details tab then
+/// shows an em dash, exactly like Task Manager.
+fn process_user(pid: u32) -> String {
+    use windows_sys::Win32::Foundation::{CloseHandle, HANDLE};
+    use windows_sys::Win32::Security::{
+        GetTokenInformation, LookupAccountSidW, TokenUser, TOKEN_QUERY, TOKEN_USER,
+    };
+    use windows_sys::Win32::System::Threading::OpenProcessToken;
+
+    let h = unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid) };
+    if h.is_null() {
+        return String::new();
+    }
+    let mut token: HANDLE = std::ptr::null_mut();
+    let opened = unsafe { OpenProcessToken(h, TOKEN_QUERY, &mut token) } != 0;
+    unsafe { CloseHandle(h) };
+    if !opened {
+        return String::new();
+    }
+
+    // Two-step: ask for the size, then read the SID out of the buffer.
+    let mut needed = 0u32;
+    unsafe {
+        GetTokenInformation(token, TokenUser, std::ptr::null_mut(), 0, &mut needed);
+    }
+    if needed == 0 {
+        unsafe { CloseHandle(token) };
+        return String::new();
+    }
+    let mut buf = vec![0u8; needed as usize];
+    let ok = unsafe {
+        GetTokenInformation(
+            token,
+            TokenUser,
+            buf.as_mut_ptr() as *mut _,
+            needed,
+            &mut needed,
+        )
+    } != 0;
+    unsafe { CloseHandle(token) };
+    if !ok {
+        return String::new();
+    }
+    let user: TOKEN_USER = unsafe { std::ptr::read_unaligned(buf.as_ptr() as *const TOKEN_USER) };
+    let sid = user.User.Sid;
+    if sid.is_null() {
+        return String::new();
+    }
+
+    // Cache by the SID bytes.  `GetLengthSid` is not in scope, so read the
+    // sub-authority count out of the SID header: 8 bytes + 4 per authority.
+    let sid_len = unsafe {
+        let revision = *(sid as *const u8) as usize;
+        let _ = revision;
+        let count = *((sid as *const u8).add(1)) as usize;
+        8 + 4 * count
+    };
+    let key = unsafe { std::slice::from_raw_parts(sid as *const u8, sid_len).to_vec() };
+    if let Ok(cache) = user_cache().lock() {
+        if let Some(name) = cache.get(&key) {
+            return name.clone();
+        }
+    }
+
+    let mut name = [0u16; 256];
+    let mut name_len = name.len() as u32;
+    let mut domain = [0u16; 256];
+    let mut domain_len = domain.len() as u32;
+    let mut use_kind = 0i32;
+    let ok = unsafe {
+        LookupAccountSidW(
+            std::ptr::null(),
+            sid,
+            name.as_mut_ptr(),
+            &mut name_len,
+            domain.as_mut_ptr(),
+            &mut domain_len,
+            &mut use_kind,
+        )
+    } != 0;
+    let result = if ok {
+        let account = from_wide_len(&name, name_len as usize);
+        let dom = from_wide_len(&domain, domain_len as usize);
+        if dom.is_empty() {
+            account
+        } else {
+            format!("{dom}\\{account}")
+        }
+    } else {
+        String::new()
+    };
+    if let Ok(mut cache) = user_cache().lock() {
+        cache.insert(key, result.clone());
+    }
+    result
 }
 
 fn open_limited(pid: u32) -> Option<Handle> {

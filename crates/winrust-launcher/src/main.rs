@@ -20,6 +20,7 @@ use egui::{Color32, RichText};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 use winrust_core::i18n::{self, Lang};
+use winrust_core::i18n::{t, ts, tf};
 use winrust_core::install::{self, Integration, TargetSpec};
 use winrust_core::process;
 use winrust_core::restore;
@@ -1493,6 +1494,29 @@ impl LauncherApp {
         ui.separator();
 
         ui.heading(RichText::new(format!("🎨 {}", t("Appearance"))).size(16.0));
+        let mut changed = false;
+
+        // Theme: three palettes, one radio each, stored next to the rest.
+        ui.label(RichText::new(format!("{}:", t("Theme"))).strong());
+        let mut theme = self.appearance.theme;
+        ui.horizontal(|ui| {
+            for th in winrust_core::i18n::Theme::ALL {
+                ui.radio_value(&mut theme, th, th.localized_label());
+            }
+        });
+        if theme != self.appearance.theme {
+            self.appearance.theme = theme;
+            changed = true;
+        }
+        ui.label(
+            RichText::new(ts(
+                "Dark is the classic WinRust scheme, AMOLED is pure black for OLED panels, Light matches Windows 11.",
+            ))
+            .small()
+            .weak(),
+        );
+        ui.separator();
+
         ui.label(
             RichText::new(ts(
                 "Transparency and blur cost GPU time every frame. They are off by default; turn them off for the lowest CPU/GPU use.",
@@ -1500,7 +1524,6 @@ impl LauncherApp {
             .small()
             .weak(),
         );
-        let mut changed = false;
         changed |= ui
             .checkbox(&mut self.appearance.transparent, t("Transparency"))
             .changed();

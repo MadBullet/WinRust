@@ -104,6 +104,13 @@ struct FolderPrefs {
     show_hidden: bool,
     sort_key: SortKeySerde,
     sort_ascending: bool,
+    /// Icon-tile gap set through the background context menu.
+    #[serde(default = "default_spacing")]
+    spacing: f32,
+}
+
+fn default_spacing() -> f32 {
+    12.0
 }
 
 impl Default for FolderPrefs {
@@ -113,6 +120,7 @@ impl Default for FolderPrefs {
             show_hidden: false,
             sort_key: SortKeySerde::Name,
             sort_ascending: true,
+            spacing: default_spacing(),
         }
     }
 }
@@ -174,6 +182,9 @@ struct Tab {
     request_id: u64,
     /// Scroll offset survives re-sorting so the view does not jump.
     scroll_to_top: bool,
+    /// Gap between icon tiles in the icon views, in points.  Explorer never
+    /// exposed this, the request explicitly asks for it.
+    spacing: f32,
 }
 
 impl Tab {
@@ -195,6 +206,7 @@ impl Tab {
             sort_asc: true,
             request_id: 0,
             scroll_to_top: false,
+            spacing: 12.0,
         }
     }
 
@@ -221,6 +233,21 @@ impl Tab {
     fn is_selected(&self, path: &Path) -> bool {
         self.selection.iter().any(|p| p == path)
     }
+}
+
+/// Create an empty file with `extension` in `dir`, naming it the way Explorer's
+/// "New -> ..." menu does (`New Text Document.txt`, then `(2)`, `(3)`, ...).
+fn new_file_in(dir: &Path, extension: &str) -> Option<PathBuf> {
+    let base = ts("New file");
+    let ext = extension.trim_start_matches('.');
+    let mut name = format!("{base}.{ext}");
+    let mut n = 2;
+    while dir.join(&name).exists() {
+        name = format!("{base} ({n}).{ext}");
+        n += 1;
+    }
+    let path = dir.join(&name);
+    std::fs::File::create(&path).ok().map(|_| path)
 }
 
 fn file_name_of(p: &Path) -> String {
@@ -318,6 +345,8 @@ pub struct ExplorerApp {
 #[derive(Debug, Clone)]
 struct DragGhost {
     label: String,
+    /// Short display name (mid-truncated, extension preserved) shown on the card.
+    short: String,
     count: usize,
     /// Smoothed cursor position — the animation is this easing towards the
     /// real pointer, which is what makes the ghost feel attached to the hand.
@@ -341,7 +370,8 @@ impl ExplorerApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         install_fonts(&cc.egui_ctx);
         i18n::init();
-        style(&cc.egui_ctx);
+        let appearance = i18n::settings::load();
+        winrust_ui::theme::apply(&cc.egui_ctx, &appearance);
 
         let persisted = load_state();
         let default_start = KnownFolder::Profile
@@ -360,6 +390,7 @@ impl ExplorerApp {
                         t.show_hidden = pref.show_hidden;
                         t.sort_key = pref.sort_key;
                         t.sort_asc = pref.sort_ascending;
+                        t.spacing = pref.spacing;
                     }
                     t
                 })
@@ -411,7 +442,7 @@ impl ExplorerApp {
             search_tx,
             last_search: std::time::Instant::now(),
             drag_ghost: None,
-            appearance: i18n::settings::load(),
+            appearance,
             appearance_dirty: false,
             hwnd: 0,
             lang: i18n::current(),
@@ -499,6 +530,7 @@ impl ExplorerApp {
                 tab.show_hidden = p.show_hidden;
                 tab.sort_key = p.sort_key;
                 tab.sort_asc = p.sort_ascending;
+                tab.spacing = p.spacing;
             }
         }
         self.search_results = None;
@@ -556,6 +588,7 @@ impl ExplorerApp {
                     show_hidden: tab.show_hidden,
                     sort_key: tab.sort_key,
                     sort_ascending: tab.sort_asc,
+                    spacing: tab.spacing,
                 },
             );
         }
@@ -680,16 +713,9 @@ impl ExplorerApp {
     }
 }
 
-/// Visual theme tuned to look like Explorer in dark mode.
-fn style(ctx: &egui::Context) {
-    let mut visuals = egui::Visuals::dark();
-    visuals.panel_fill = Color32::from_rgb(32, 32, 32);
-    visuals.window_fill = Color32::from_rgb(43, 43, 43);
-    visuals.extreme_bg_color = Color32::from_rgb(24, 24, 24);
-    visuals.faint_bg_color = Color32::from_rgb(38, 38, 38);
-    visuals.selection.bg_fill = Color32::from_rgb(0, 95, 184);
-    visuals.selection.stroke = egui::Stroke::new(1.0_f32, Color32::from_rgb(120, 190, 255));
-    ctx.set_visuals(visuals);
+/// Palette triple -> egui colour.  Kept next to hand-drawn widgets.
+fn c32(c: (u8, u8, u8)) -> Color32 {
+    Color32::from_rgb(c.0, c.1, c.2)
 }
 
 /// Install a UI font that covers Cyrillic and CJK, falling back to the bundled
@@ -2029,8 +2055,12 @@ impl ExplorerApp {
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
         let mut drag_started: Option<PathBuf> = None;
         let mut drop_on: Option<PathBuf> = None;
-        let cell_w = 116.0;
-        let cell_h = icon as f32 + 34.0;
+        // The background context menu's "Icon spacing" slider widens the tiles.
+        // Explorer has no such control, the request asks for one, so the gap the
+        // user picks is added to the fixed tile width.
+        let gap = self.current().spacing.clamp(0.0, 180.0);
+        let cell_w = 116.0 + gap;
+        let cell_h = icon as f32 + 34.0 + gap * 0.35;
         egui::ScrollArea::vertical()
             .id_salt("tiles")
             .auto_shrink([false, false])
@@ -2832,6 +2862,7 @@ impl ExplorerApp {
                 .first()
                 .map(|p| file_name_of(p.as_path()))
                 .unwrap_or_default();
+            let short = i18n::middle(&label, 28, 14);
             match &mut self.drag_ghost {
                 Some(g) if g.count == count && g.label == label => {
                     // Ease: 45 % of the remaining distance per frame at 60 fps.
@@ -2844,6 +2875,7 @@ impl ExplorerApp {
                 _ => {
                     self.drag_ghost = Some(DragGhost {
                         label,
+                        short,
                         count,
                         pos: pointer.unwrap_or(egui::Pos2::ZERO),
                         spawned: std::time::Instant::now(),
@@ -2870,24 +2902,66 @@ impl ExplorerApp {
         } else {
             ghost.label.clone()
         };
-        let size = egui::vec2(190.0, 26.0) * scale;
-        let rect = egui::Rect::from_min_size(ghost.pos + egui::vec2(14.0, 12.0), size);
         let painter = ctx.layer_painter(egui::LayerId::new(
             egui::Order::Tooltip,
             egui::Id::new("drag_ghost"),
         ));
-        painter.rect_filled(rect, 5.0, Color32::from_rgba_unmultiplied(34, 48, 70, 225));
+        let pal = winrust_ui::theme::pal(&self.appearance);
+
+        // The translucent picture above the cursor: Explorer's drag image.  A
+        // folder or file gets its own shell icon, so the picture matches what is
+        // being dragged; the card below carries the name.
+        let icon_side = 40.0 * scale.max(0.55);
+        let icon_center = ghost.pos - egui::vec2(0.0, 22.0 * scale);
+        let icon_rect =
+            egui::Rect::from_center_size(icon_center, egui::vec2(icon_side, icon_side));
+        let tex = self
+            .drag_paths
+            .first()
+            .and_then(|p| self.icon_for_path(ctx, p, 48));
+        match tex {
+            Some(id) => {
+                painter.image(
+                    id,
+                    icon_rect,
+                    egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+                    Color32::from_white_alpha(150),
+                );
+            }
+            None => {
+                painter.text(
+                    icon_rect.center(),
+                    egui::Align2::CENTER_CENTER,
+                    "📄",
+                    egui::FontId::proportional(icon_side * 0.8),
+                    Color32::from_white_alpha(150),
+                );
+            }
+        }
+
+        let size = egui::vec2(190.0, 26.0) * scale;
+        let rect = egui::Rect::from_min_size(ghost.pos + egui::vec2(14.0, 12.0), size);
+        painter.rect_filled(
+            rect,
+            5.0,
+            Color32::from_rgba_unmultiplied(pal.selection.0, pal.selection.1, pal.selection.2, 200),
+        );
         painter.rect_stroke(
             rect,
             5.0,
-            egui::Stroke::new(1.0_f32, Color32::from_rgb(96, 176, 255)),
+            egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2)),
         );
+        let label = if ghost.count > 1 {
+            text.clone()
+        } else {
+            ghost.short.clone()
+        };
         painter.text(
             rect.left_center() + egui::vec2(8.0, 0.0),
             egui::Align2::LEFT_CENTER,
-            i18n::middle(&text, 30, 18),
+            &label,
             egui::FontId::proportional(12.0 * scale.max(0.6)),
-            Color32::from_rgb(220, 232, 255),
+            Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
         );
         // A count badge when several items travel together.
         if ghost.count > 1 {
@@ -2895,7 +2969,7 @@ impl ExplorerApp {
                 rect.right_center() - egui::vec2(14.0, 0.0),
                 egui::vec2(22.0, 16.0),
             );
-            painter.rect_filled(badge, 8.0, Color32::from_rgb(96, 176, 255));
+            painter.rect_filled(badge, 8.0, Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2));
             painter.text(
                 badge.center(),
                 egui::Align2::CENTER_CENTER,
@@ -3097,6 +3171,16 @@ impl ExplorerApp {
                     if resp.clicked() {
                         nav = Some(path.clone());
                     }
+                    // Drag a folder tile onto another folder (or onto the tree)
+                    // to move it there.  `drag_started` seeds `drag_paths` with
+                    // this single folder; the selection is deliberately not
+                    // consulted, because a tile is its own drag source.
+                    if resp.drag_started() {
+                        self.drag_paths = vec![path.clone()];
+                        self.drag_active = true;
+                        self.drag_ghost = None;
+                        ui.ctx().request_repaint();
+                    }
                     // Folders are drop targets here too, with the same
                     // highlight animation as in the list views.
                     if self.drag_active && resp.hovered() {
@@ -3182,25 +3266,99 @@ impl eframe::App for ExplorerApp {
             );
             let mut cmds: Vec<Command> = Vec::new();
             bg.context_menu(|ui| {
+                ui.set_min_width(230.0);
+                // View: the three tile sizes and the grid switches, exactly the
+                // order Windows 11 uses.
+                ui.menu_button(t("View"), |ui| {
+                    ui.set_min_width(220.0);
+                    for (view, label) in [
+                        (ViewMode::Tiles, "Large icons"),
+                        (ViewMode::List, "List"),
+                        (ViewMode::Details, "Details"),
+                        (ViewMode::Content, "Content"),
+                    ] {
+                        let selected = self.current().view == view;
+                        if ui.selectable_label(selected, t(label)).clicked() {
+                            self.current_mut().view = view;
+                            self.remember_prefs();
+                            ui.close_menu();
+                        }
+                    }
+                });
+                ui.menu_button(t("Sort by"), |ui| {
+                    ui.set_min_width(220.0);
+                    let current = self.current().sort_key;
+                    for key in SortKeySerde::ALL {
+                        if ui.selectable_label(current == key, key.label()).clicked() {
+                            self.set_sort(key);
+                            ui.close_menu();
+                        }
+                    }
+                    ui.separator();
+                    let asc = self.current().sort_asc;
+                    if ui.selectable_label(asc, t("Ascending")).clicked() {
+                        self.current_mut().sort_asc = true;
+                        self.remember_prefs();
+                        self.refresh();
+                        ui.close_menu();
+                    }
+                    if ui.selectable_label(!asc, t("Descending")).clicked() {
+                        self.current_mut().sort_asc = false;
+                        self.remember_prefs();
+                        self.refresh();
+                        ui.close_menu();
+                    }
+                });
+                // Tile spacing: Explorer never let the user set this, but the
+                // request explicitly asks for it, so it lives here as a slider.
+                ui.menu_button(t("Icon spacing"), |ui| {
+                    ui.set_min_width(240.0);
+                    let mut gap = self.current().spacing;
+                    if ui
+                        .add(egui::Slider::new(&mut gap, 0..=180).text(t("pixels")))
+                        .changed()
+                    {
+                        self.current_mut().spacing = gap;
+                        self.remember_prefs();
+                    }
+                    ui.label(
+                        RichText::new(ts("Applies to the icon views of this folder"))
+                            .small()
+                            .weak(),
+                    );
+                });
+                if ui.button(t("Refresh")).clicked() {
+                    cmds.push(Command::Refresh);
+                    ui.close_menu();
+                }
+                ui.separator();
                 if ui.button(t("Paste")).clicked() {
                     cmds.push(Command::Paste);
                     ui.close_menu();
                 }
-                if ui.button(t("New folder")).clicked() {
-                    self.creating_folder = true;
-                    self.new_folder_buffer = t("New folder");
-                    ui.close_menu();
-                }
-                ui.separator();
-                if ui.button(t("View: Details")).clicked() {
-                    self.current_mut().view = ViewMode::Details;
-                    self.remember_prefs();
-                    ui.close_menu();
-                }
-                if ui.button(t("Sort by name")).clicked() {
-                    self.set_sort(SortKeySerde::Name);
-                    ui.close_menu();
-                }
+                ui.menu_button(t("New"), |ui| {
+                    ui.set_min_width(220.0);
+                    if ui.button(t("Folder")).clicked() {
+                        self.creating_folder = true;
+                        self.new_folder_buffer = t("New folder");
+                        ui.close_menu();
+                    }
+                    if ui.button(t("Text document")).clicked() {
+                        new_file_in(&self.current().path, "txt");
+                        cmds.push(Command::Refresh);
+                        ui.close_menu();
+                    }
+                    if ui.button(t("Bitmap image")).clicked() {
+                        new_file_in(&self.current().path, "bmp");
+                        cmds.push(Command::Refresh);
+                        ui.close_menu();
+                    }
+                    if ui.button(t("ZIP archive")).clicked() {
+                        new_file_in(&self.current().path, "zip");
+                        cmds.push(Command::Refresh);
+                        ui.close_menu();
+                    }
+                });
                 ui.separator();
                 if ui.button(t("Select all")).clicked() {
                     cmds.push(Command::SelectAll);
@@ -3210,13 +3368,13 @@ impl eframe::App for ExplorerApp {
                     cmds.push(Command::InvertSelection);
                     ui.close_menu();
                 }
-                if ui.button(t("Refresh")).clicked() {
-                    cmds.push(Command::Refresh);
-                    ui.close_menu();
-                }
                 ui.separator();
                 if ui.button(t("Send to Desktop")).clicked() {
                     cmds.push(Command::SendToDesktop);
+                    ui.close_menu();
+                }
+                if ui.button(t("Properties")).clicked() {
+                    let _ = winrust_core::shell::show_properties(&self.current().path);
                     ui.close_menu();
                 }
             });

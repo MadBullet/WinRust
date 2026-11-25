@@ -8,6 +8,57 @@ use crate::registry::{self, Root};
 
 const KEY: &str = r"SOFTWARE\WinRust";
 
+/// The three palettes every component offers.
+///
+/// `Dark` is the classic WinRust scheme, `Amoled` is the same layout on pure
+/// black (for OLED panels), and `Light` is the Windows 11 light grey.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Theme {
+    #[default]
+    Dark,
+    Light,
+    Amoled,
+}
+
+impl Theme {
+    pub const ALL: [Theme; 3] = [Theme::Dark, Theme::Light, Theme::Amoled];
+
+    /// Registry value, stable across versions.
+    pub fn id(self) -> u32 {
+        match self {
+            Theme::Dark => 0,
+            Theme::Light => 1,
+            Theme::Amoled => 2,
+        }
+    }
+
+    pub fn from_id(v: u32) -> Theme {
+        match v {
+            1 => Theme::Light,
+            2 => Theme::Amoled,
+            _ => Theme::Dark,
+        }
+    }
+
+    /// The name shown in the settings page (translated at call time).
+    /// Localized label; the English strings are also the translation keys.
+    pub fn localized_label(self) -> String {
+        crate::i18n::t(self.label())
+    }
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Theme::Dark => "Dark",
+            Theme::Light => "Light",
+            Theme::Amoled => "AMOLED black",
+        }
+    }
+
+    pub fn is_dark(self) -> bool {
+        !matches!(self, Theme::Light)
+    }
+}
+
 /// Which window chrome style a component should use.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Appearance {
@@ -19,6 +70,8 @@ pub struct Appearance {
     pub transparent: bool,
     /// Blur strength 0..=100, applied through the acrylic system backdrop.
     pub blur_amount: u8,
+    /// Dark / light / AMOLED palette, shared by every window.
+    pub theme: Theme,
 }
 
 impl Default for Appearance {
@@ -29,6 +82,7 @@ impl Default for Appearance {
             blur: false,
             transparent: false,
             blur_amount: 40,
+            theme: Theme::Dark,
         }
     }
 }
@@ -74,6 +128,10 @@ pub fn load() -> Appearance {
                 .u32("BlurAmount")
                 .map(|v| v as u8)
                 .unwrap_or(d.blur_amount),
+            theme: k
+                .u32("Theme")
+                .map(Theme::from_id)
+                .unwrap_or(d.theme),
         })
         .unwrap_or(d)
         .sanitized()
@@ -86,7 +144,8 @@ pub fn save(a: &Appearance) -> crate::Result<()> {
     key.set_u32("Opacity", a.opacity as u32)?;
     key.set_u32("Blur", u32::from(a.blur))?;
     key.set_u32("Transparent", u32::from(a.transparent))?;
-    key.set_u32("BlurAmount", a.blur_amount as u32)
+    key.set_u32("BlurAmount", a.blur_amount as u32)?;
+    key.set_u32("Theme", a.theme.id())
 }
 
 /// Registry path, exported so components can show where the setting lives.
@@ -122,6 +181,14 @@ mod tests {
             ..Appearance::default()
         };
         assert!((a.alpha() - 0.65).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn theme_round_trips_through_registry_values() {
+        for t in Theme::ALL {
+            assert_eq!(Theme::from_id(t.id()), t);
+        }
+        assert_eq!(Theme::from_id(99), Theme::Dark);
     }
 
     #[test]

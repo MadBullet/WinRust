@@ -41,11 +41,27 @@ pub struct DesktopApp {
     pub(crate) icons_at: Instant,
     pub(crate) selected: Option<usize>,
     pub(crate) start_open: bool,
+    /// True when the menu was opened from the tray power button, so it lands on
+    /// the power section instead of the app list.
+    pub(crate) start_power_menu: bool,
     pub(crate) start_search: String,
     pub(crate) open_windows: Vec<taskbar::WindowEntry>,
     pub(crate) windows_at: Instant,
     pub(crate) clock: String,
     pub(crate) status: String,
+    /// Icon picture size in pixels (View -> Large/Medium/Small icons).
+    pub(crate) icon_size: f32,
+    /// View -> Sort by.
+    pub(crate) sort_order: desktop::SortOrder,
+    pub(crate) sort_desc: bool,
+    /// Desktop-specific switches, persisted next to the icon positions.
+    pub(crate) settings: desktop::DesktopSettings,
+    pub(crate) settings_dirty: bool,
+    /// Shell icons, loaded once per path and size.
+    pub(crate) icon_cache: std::collections::HashMap<String, Option<egui::TextureHandle>>,
+    /// Last copied/cut desktop item, for the Paste command.
+    pub(crate) clipboard: Option<std::path::PathBuf>,
+    pub(crate) clipboard_cut: bool,
     pub(crate) apps: Vec<start::AppEntry>,
     pub(crate) apps_at: Instant,
     pub(crate) lang: Lang,
@@ -74,11 +90,20 @@ impl DesktopApp {
             icons_at: Instant::now() - Duration::from_secs(30),
             selected: None,
             start_open: false,
+            start_power_menu: false,
             start_search: String::new(),
             open_windows: Vec::new(),
             windows_at: Instant::now() - Duration::from_secs(30),
             clock: String::new(),
             status: String::new(),
+            icon_size: desktop::DEFAULT_ICON,
+            sort_order: desktop::SortOrder::Name,
+            sort_desc: false,
+            settings: desktop::DesktopSettings::load(),
+            settings_dirty: false,
+            icon_cache: std::collections::HashMap::new(),
+            clipboard: None,
+            clipboard_cut: false,
             apps: Vec::new(),
             apps_at: Instant::now() - Duration::from_secs(300),
             lang: i18n::current(),
@@ -95,7 +120,7 @@ impl DesktopApp {
     fn tick(&mut self) {
         self.now = Instant::now();
         if self.icons_at.elapsed() >= Duration::from_secs(5) {
-            self.icons = desktop::scan();
+            self.icons = desktop::scan(self.sort_order, self.sort_desc);
             self.icons_at = Instant::now();
         }
         if self.windows_at.elapsed() >= Duration::from_secs(3) {
@@ -124,6 +149,117 @@ impl DesktopApp {
         }
     }
 
+    /// Re-read the Desktop folder now (after a paste, delete or sort change).
+    pub(crate) fn reload_icons(&mut self) {
+        self.icons = desktop::scan(self.sort_order, self.sort_desc);
+        self.icons_at = Instant::now();
+        self.icon_cache.clear();
+    }
+
+    /// "New folder" on the wallpaper, with Explorer's de-duplicated name.
+    pub(crate) fn create_desktop_folder(&mut self) {
+        let Some(dir) = winrust_core::shell::KnownFolder::Desktop.path() else {
+            return;
+        };
+        let base = i18n::ts("New folder");
+        let mut name = base.to_string();
+        let mut n = 2;
+        while dir.join(&name).exists() {
+            name = format!("{base} ({n})");
+            n += 1;
+        }
+        let target = dir.join(&name);
+        match std::fs::create_dir(&target) {
+            Ok(()) => {
+                self.reload_icons();
+                // Select it, like Explorer does after Ctrl+Shift+N.
+                if let Some(idx) = self.icons.iter().position(|i| i.path == target) {
+                    self.selected = Some(idx);
+                }
+            }
+            Err(e) => self.status = i18n::tf!("Cannot create the folder: {}", e),
+        }
+    }
+
+    /// Paste the clipboard item onto the Desktop folder.
+    pub(crate) fn paste_into_desktop(&mut self, src: &std::path::Path) {
+        let Some(dir) = winrust_core::shell::KnownFolder::Desktop.path() else {
+            return;
+        };
+        let Some(name) = src.file_name() else {
+            return;
+        };
+        let dest = dir.join(name);
+        if dest == src {
+            return;
+        }
+        let res = if self.clipboard_cut {
+            winrust_core::disk::move_path(src, &dest, false)
+        } else {
+            winrust_core::disk::copy_path(src, &dest, false)
+        };
+        match res {
+            Ok(()) => {
+                self.clipboard = None;
+                self.clipboard_cut = false;
+                self.reload_icons();
+            }
+            Err(e) => self.status = i18n::tf!("Cannot paste: {}", e),
+        }
+    }
+
+    /// The shell icon for one desktop entry, cached per path.
+    pub(crate) fn icon_texture(
+        &mut self,
+        ctx: &egui::Context,
+        icon: &desktop::DesktopIcon,
+    ) -> Option<egui::TextureId> {
+        let size = self.icon_size as u32;
+        let key = format!("{}|{}", icon.path.display(), size);
+        if let Some(slot) = self.icon_cache.get(&key) {
+            return slot.as_ref().map(|t| t.id());
+        }
+        // The shell image lists only come in 16, 32, 48 and 256 px.  Ask for the
+        // nearest of those and then use the square size the pixels actually are,
+        // otherwise a 24 px request would be rejected as a short buffer.
+        let want = match size {
+            0..=16 => 16,
+            17..=32 => 32,
+            33..=48 => 48,
+            _ => 48,
+        };
+        let info = winrust_core::shell::file_info_sized(&icon.path, want);
+        let texture = info.icon_rgba.and_then(|rgba| {
+            let px = match rgba.len() / 4 {
+                n if n >= (256 * 256) => 256,
+                n if n >= (48 * 48) => 48,
+                n if n >= (32 * 32) => 32,
+                n if n >= (16 * 16) => 16,
+                _ => return None,
+            };
+            let expected = px * px * 4;
+            if rgba.len() < expected {
+                return None;
+            }
+            let image = egui::ColorImage::from_rgba_unmultiplied(
+                [px, px],
+                &rgba[..expected],
+            );
+            Some(ctx.load_texture(key.clone(), image, egui::TextureOptions::LINEAR))
+        });
+        let id = texture.as_ref().map(|t| t.id());
+        self.icon_cache.insert(key, texture);
+        id
+    }
+
+    /// Persist the View-menu switches if anything changed.
+    pub(crate) fn flush_desktop_settings(&mut self) {
+        if self.settings_dirty {
+            self.settings.save();
+            self.settings_dirty = false;
+        }
+    }
+
     pub(crate) fn close_start(&mut self) {
         self.start_open = false;
         self.start_search.clear();
@@ -131,6 +267,12 @@ impl DesktopApp {
 }
 
 impl eframe::App for DesktopApp {
+    /// Save the View settings when the shell shuts down.
+    fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
+        self.settings.save();
+        desktop::save_positions(&self.icons);
+    }
+
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         self.tick();
         if self.hwnd == 0 {

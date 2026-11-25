@@ -10,7 +10,7 @@ pub mod settings;
 pub mod shorten;
 
 pub use lang::Lang;
-pub use settings::Appearance;
+pub use settings::{Appearance, Theme};
 pub use shorten::{end, head, middle, wrap};
 
 use std::collections::HashMap;

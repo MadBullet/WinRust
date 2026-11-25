@@ -486,6 +486,13 @@ pub fn copy_tree(from: impl AsRef<Path>, to: impl AsRef<Path>, overwrite: bool) 
     }
 }
 
+/// Copy a file or directory the way a clipboard paste does: into `to`, keeping
+/// the source.  Exists next to [`copy_tree`] so callers do not have to remember
+/// the `overwrite` argument for the common "just copy it" case.
+pub fn copy_path(from: impl AsRef<Path>, to: impl AsRef<Path>, overwrite: bool) -> Result<()> {
+    copy_tree(from, to, overwrite).map(|_| ())
+}
+
 /// Generate a non-clashing destination name (`report (2).txt`), the way Explorer
 /// resolves "a file with that name already exists" when copying.
 pub fn unique_destination(path: impl AsRef<Path>) -> std::path::PathBuf {

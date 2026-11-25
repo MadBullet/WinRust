@@ -80,4 +80,9 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("K", "К"),
     ("M", "М"),
     ("G", "Г"),
+    ("User name", "Пользователь"),
+    ("Threads", "Потоки"),
+    ("Handles", "Дескрипторы"),
+    ("Suspended", "Приостановлено"),
+    ("Click any column header to sort; click again to reverse", "Щёлкните заголовок столбца для сортировки; повторный щелчок меняет порядок"),
 ];
