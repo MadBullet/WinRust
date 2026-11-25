@@ -3,133 +3,133 @@
    Compiling unicode-ident v1.0.27
    Compiling cfg-if v1.0.5
    Compiling log v0.4.35
+   Compiling syn v3.0.10
    Compiling stable_deref_trait v1.2.1
    Compiling windows-link v0.2.1
-   Compiling syn v3.0.10
    Compiling smallvec v1.16.6
    Compiling simd-adler32 v0.3.10
    Compiling crc32fast v1.5.6
+   Compiling synstructure v0.14.0
    Compiling adler2 v2.0.1
    Compiling windows_x86_64_msvc v0.52.6
-   Compiling utf_types v1.0.0
    Compiling litemap v0.8.3
-   Compiling writeable v0.6.4
-   Compiling once_cell v1.21.4
-   Compiling synstructure v0.14.0
-   Compiling utf8_iter v1.1.0
-   Compiling miniz_oxide v0.9.1
    Compiling zerofrom-derive v0.1.8
    Compiling yoke-derive v0.8.4
-   Compiling zerofrom v0.1.8
    Compiling bytemuck_derive v1.12.1
+   Compiling zerofrom v0.1.8
    Compiling yoke v0.8.4
    Compiling zerovec-derive v0.11.7
    Compiling bytemuck v1.25.2
-   Compiling displaydoc v0.2.7
    Compiling zerovec v0.11.9
-   Compiling zerotrie v0.2.5
+   Compiling displaydoc v0.2.7
+   Compiling writeable v0.6.4
    Compiling tinystr v0.8.5
+   Compiling once_cell v1.21.4
+   Compiling utf_types v1.0.0
    Compiling icu_locale_core v2.4.0
+   Compiling utf8_iter v1.1.0
+   Compiling zerotrie v0.2.5
    Compiling potential_utf v0.1.6
+   Compiling miniz_oxide v0.9.1
    Compiling icu_properties_data v2.4.0
    Compiling khronos_api v3.1.0
    Compiling icu_normalizer_data v2.4.0
-   Compiling icu_provider v2.4.0
-   Compiling icu_collections v2.4.0
    Compiling flate2 v1.1.11
    Compiling windows-targets v0.52.6
+   Compiling icu_provider v2.4.0
+   Compiling icu_collections v2.4.0
    Compiling cfg_aliases v0.2.2
    Compiling autocfg v1.5.1
+   Compiling version_check v0.9.5
    Compiling parking_lot_core v0.9.12
    Compiling xml-rs v0.8.29
-   Compiling version_check v0.9.5
    Compiling zerocopy v0.8.65
    Compiling gl_generator v0.14.0
    Compiling ahash v0.8.14
-   Compiling icu_normalizer v2.4.0
    Compiling icu_properties v2.4.0
-   Compiling scopeguard v1.2.0
+   Compiling icu_normalizer v2.4.0
    Compiling ttf-parser v0.25.1
    Compiling memchr v2.8.3
+   Compiling scopeguard v1.2.0
    Compiling serde_core v1.0.229
    Compiling owned_ttf_parser v0.25.1
-   Compiling idna_adapter v1.2.2
    Compiling lock_api v0.4.14
+   Compiling idna_adapter v1.2.2
    Compiling emath v0.29.1
-   Compiling syn v2.0.119
    Compiling windows-sys v0.61.2
-   Compiling find-msvc-tools v0.1.15
-   Compiling shlex v2.0.1
-   Compiling percent-encoding v2.3.2
+   Compiling syn v2.0.119
    Compiling ab_glyph_rasterizer v0.1.10
+   Compiling find-msvc-tools v0.1.15
    Compiling bitflags v2.13.2
-   Compiling ab_glyph v0.2.32
-   Compiling form_urlencoded v1.2.3
+   Compiling percent-encoding v2.3.2
+   Compiling shlex v2.0.1
    Compiling cc v1.11.3
+   Compiling form_urlencoded v1.2.3
+   Compiling ab_glyph v0.2.32
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
    Compiling idna v1.1.0
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
-   Compiling serde v1.0.229
-   Compiling nohash-hasher v0.2.0
    Compiling epaint_default_fonts v0.29.1
+   Compiling nohash-hasher v0.2.0
+   Compiling serde v1.0.229
    Compiling epaint v0.29.1
-   Compiling ring v0.17.14
    Compiling url v2.5.9
+   Compiling ring v0.17.14
    Compiling num-traits v0.2.19
    Compiling windows-sys v0.52.0
    Compiling serde_derive v1.0.229
-   Compiling float-cmp v0.9.0
-   Compiling raw-window-handle v0.6.2
    Compiling arrayvec v0.7.8
    Compiling zeroize v1.9.2
    Compiling zmij v1.0.23
-   Compiling rustls-pki-types v1.16.0
+   Compiling float-cmp v0.9.0
+   Compiling raw-window-handle v0.6.2
    Compiling strict-num v0.1.1
+   Compiling rustls-pki-types v1.16.0
    Compiling egui v0.29.1
    Compiling aho-corasick v1.1.5
    Compiling glutin_egl_sys v0.7.1
    Compiling glutin_wgl_sys v0.6.1
    Compiling winit v0.30.13
-   Compiling serde_json v1.0.154
-   Compiling thiserror v1.0.69
-   Compiling pin-project-lite v0.2.18
    Compiling tracing-core v0.1.36
    Compiling arrayref v0.3.9
+   Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.154
+   Compiling pin-project-lite v0.2.18
    Compiling regex-syntax v0.8.12
    Compiling regex-automata v0.4.19
-   Compiling tiny-skia-path v0.11.4
    Compiling tracing v0.1.44
+   Compiling tiny-skia-path v0.11.4
    Compiling kurbo v0.9.5
    Compiling thiserror-impl v1.0.69
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
    Compiling getrandom v0.2.17
-   Compiling weezl v0.1.12
-   Compiling siphasher v0.3.11
-   Compiling unicase v2.10.0
-   Compiling itoa v1.0.19
-   Compiling anstyle v1.0.14
-   Compiling cursor-icon v1.2.0
-   Compiling utf8parse v0.2.2
-   Compiling smol_str v0.2.2
-   Compiling error-code v3.4.0
-   Compiling once_cell_polyfill v1.70.2
-   Compiling color_quant v1.1.0
    Compiling untrusted v0.9.0
-   Compiling unicode-segmentation v1.13.3
    Compiling litrs v1.1.0
-   Compiling dpi v0.1.2
+   Compiling siphasher v0.3.11
+   Compiling unicode-segmentation v1.13.3
+   Compiling error-code v3.4.0
    Compiling siphasher v1.0.4
+   Compiling color_quant v1.1.0
+   Compiling utf8parse v0.2.2
+   Compiling anstyle v1.0.14
+   Compiling weezl v0.1.12
+   Compiling unicase v2.10.0
+   Compiling dpi v0.1.2
    Compiling pxfm v0.1.30
-   Compiling phf_shared v0.11.3
+   Compiling once_cell_polyfill v1.70.2
+   Compiling smol_str v0.2.2
+   Compiling cursor-icon v1.2.0
+   Compiling itoa v1.0.19
    Compiling moxcms v0.8.1
-   Compiling document-features v0.2.12
-   Compiling gif v0.14.2
    Compiling anstyle-wincon v3.0.11
-   Compiling clipboard-win v5.4.3
+   Compiling gif v0.14.2
+   Compiling phf_shared v0.11.3
    Compiling anstyle-parse v1.0.0
+   Compiling clipboard-win v5.4.3
+   Compiling document-features v0.2.12
    Compiling svgtypes v0.13.0
    Compiling regex v1.13.2
    Compiling png v0.18.1
@@ -137,93 +137,19 @@
    Compiling glutin-winit v0.5.0
    Compiling windows-sys v0.59.0
    Compiling libloading v0.8.9
-   Compiling colorchoice v1.0.5
-   Compiling rctree v0.5.0
-   Compiling byteorder-lite v0.1.0
-   Compiling winapi v0.3.9
    Compiling is_terminal_polyfill v1.70.2
-   Compiling rustls v0.23.46
+   Compiling rctree v0.5.0
    Compiling jiff-core v1.0.2
-   Compiling jiff v1.0.3
+   Compiling rustls v0.23.46
+   Compiling winapi v0.3.9
+   Compiling colorchoice v1.0.5
+   Compiling byteorder-lite v0.1.0
+   Compiling image v0.25.10
    Compiling winrust-core v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-error[E0432]: unresolved import `windows_sys::Win32::UI::WindowsAndMessaging::SetFocus`
-   --> crates\winrust-core\src\shell.rs:743:48
-    |
-743 |         BringWindowToTop, SetForegroundWindow, SetFocus,
-    |                                                ^^^^^^^^ no `SetFocus` in `Win32::UI::WindowsAndMessaging`
-
-error[E0308]: mismatched types
-   --> crates\winrust-core\src\i18n\mod.rs:151:36
-    |
-151 |     let addr = GetProcAddress(lib, proc_name.as_ptr());
-    |                --------------      ^^^^^^^^^^^^^^^^^^ expected `*const u8`, found `*const i8`
-    |                |
-    |                arguments to this function are incorrect
-    |
-    = note: expected raw pointer `*const u8`
-               found raw pointer `*const i8`
-note: function defined here
-   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\System\LibraryLoader\mod.rs:33:51
-    |
- 33 | windows_targets::link!("kernel32.dll" "system" fn GetProcAddress(hmodule : super::super::Foundation:: HMODULE, lpprocname : windows...
-    |                                                   ^^^^^^^^^^^^^^
-
-error[E0308]: arguments to this function are incorrect
-   --> crates\winrust-core\src\thumb.rs:85:35
-    |
- 85 | ...                   out = read_rgba(dst_dc, dst_bmp, tw, th);
-    |                             ^^^^^^^^^
-    |
-note: expected `isize`, found `*mut c_void`
-   --> crates\winrust-core\src\thumb.rs:85:45
-    |
- 85 | ...                   out = read_rgba(dst_dc, dst_bmp, tw, th);
-    |                                       ^^^^^^
-    = note:     expected type `isize`
-            found raw pointer `*mut c_void`
-note: expected `isize`, found `*mut c_void`
-   --> crates\winrust-core\src\thumb.rs:85:53
-    |
- 85 | ...                   out = read_rgba(dst_dc, dst_bmp, tw, th);
-    |                                               ^^^^^^^
-    = note:     expected type `isize`
-            found raw pointer `*mut c_void`
-note: function defined here
-   --> crates\winrust-core\src\thumb.rs:104:11
-    |
-104 | unsafe fn read_rgba(dc: isize, bitmap: isize, w: u32, h: u32) -> Option<Thumbnail> {
-    |           ^^^^^^^^^ ---------  -------------
-
-error[E0308]: arguments to this function are incorrect
-   --> crates\winrust-core\src\thumb.rs:121:17
-    |
-121 |     let lines = GetDIBits(
-    |                 ^^^^^^^^^
-    |
-note: expected `*mut c_void`, found `isize`
-   --> crates\winrust-core\src\thumb.rs:122:9
-    |
-122 |         dc,
-    |         ^^
-    = note: expected raw pointer `*mut c_void`
-                      found type `isize`
-note: expected `*mut c_void`, found `isize`
-   --> crates\winrust-core\src\thumb.rs:123:9
-    |
-123 |         bitmap,
-    |         ^^^^^^
-    = note: expected raw pointer `*mut c_void`
-                      found type `isize`
-note: function defined here
-   --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\windows-sys-0.59.0\src\Windows\Win32\Graphics\Gdi\mod.rs:167:48
-    |
-167 | windows_targets::link!("gdi32.dll" "system" fn GetDIBits(hdc : HDC, hbm : HBITMAP, start : u32, clines : u32, lpvbits : *mut core::...
-    |                                                ^^^^^^^^^
-
 warning: unused variable: `root`
-   --> crates\winrust-core\src\fileassoc.rs:112:12
+   --> crates\winrust-core\src\fileassoc.rs:114:12
     |
-112 |     let Ok(root) = Key::open(Root::LocalMachine, "SOFTWARE\\Classes") else {
+114 |     let Ok(root) = Key::open(Root::LocalMachine, "SOFTWARE\\Classes") else {
     |            ^^^^ help: if this is intentional, prefix it with an underscore: `_root`
     |
     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
@@ -248,9 +174,65 @@ warning: unnecessary `unsafe` block
 87 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-Some errors have detailed explanations: E0308, E0432.
-For more information about an error, try `rustc --explain E0308`.
-warning: `winrust-core` (lib) generated 3 warnings
-error: could not compile `winrust-core` (lib) due to 4 previous errors; 3 warnings emitted
+warning: `winrust-core` (lib) generated 3 warnings (run `cargo fix --lib -p winrust-core` to apply 1 suggestion)
+   Compiling anstream v1.0.0
+   Compiling jiff v1.0.3
+   Compiling usvg-tree v0.37.0
+   Compiling env_filter v2.1.0
+   Compiling rustls-webpki v0.103.17
+   Compiling arboard v3.7.0
+   Compiling phf v0.11.3
+   Compiling webpki-roots v1.0.12
+   Compiling webbrowser v1.2.7
+   Compiling simplecss v0.2.2
+   Compiling data-url v0.3.2
+   Compiling imagesize v0.12.0
+   Compiling glow v0.14.2
+   Compiling web-time v1.1.0
+   Compiling roxmltree v0.19.0
+   Compiling subtle v2.6.1
+   Compiling bitflags v1.3.2
+   Compiling png v0.17.16
+   Compiling egui_glow v0.29.1
+   Compiling usvg-parser v0.37.0
+   Compiling egui-winit v0.29.1
+   Compiling webpki-roots v0.26.11
+   Compiling mime_guess2 v2.3.1
+   Compiling env_logger v0.11.12
+   Compiling static_assertions v1.1.0
+   Compiling pico-args v0.5.0
+   Compiling xmlwriter v0.1.0
+   Compiling base64 v0.21.7
+   Compiling base64 v0.22.1
+   Compiling usvg v0.37.0
+   Compiling ureq v2.12.1
+   Compiling eframe v0.29.1
+   Compiling tiny-skia v0.11.4
+   Compiling winrust-ui v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-ui)
+   Compiling enum-map-derive v0.17.0
+   Compiling rgb v0.8.53
+   Compiling mime v0.3.18
+   Compiling resvg v0.37.0
+   Compiling enum-map v2.7.3
+   Compiling ehttp v0.5.0
+   Compiling winrust-kernel-abi v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
+   Compiling winrust-kernel-control v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
+   Compiling egui_extras v0.29.1
+   Compiling winrust-explorer v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
+error[E0204]: the trait `std::marker::Copy` cannot be implemented for this type
+   --> crates\winrust-explorer\src\app.rs:770:6
+    |
+769 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |                        ---- in this derive macro expansion
+770 | enum Command {
+    |      ^^^^^^^
+...
+776 |     OpenWithProgram(String, PathBuf),
+    |                     ------  ------- this field does not implement `std::marker::Copy`
+    |                     |
+    |                     this field does not implement `std::marker::Copy`
+
+For more information about this error, try `rustc --explain E0204`.
+error: could not compile `winrust-explorer` (bin "winrust-explorer") due to 1 previous error
 warning: build failed, waiting for other jobs to finish...
 exit=False
