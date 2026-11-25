@@ -104,13 +104,14 @@ impl DesktopApp {
                         ui.set_width(rect.width() - 24.0);
                         ui.set_height(rect.height() - 20.0);
 
-                        // Search
+                        // Search.  The hint doubles as the tooltip on the
+                        // field itself, since the placeholder may be cut short.
                         ui.add_sized(
                             [ui.available_width(), 26.0],
                             egui::TextEdit::singleline(&mut self.start_search)
-                                .hint_text(format!("🔍 {}", t("Search apps")))
-                                .on_hover_text(hint_text()),
-                        );
+                                .hint_text(format!("🔍 {}", t("Search apps"))),
+                        )
+                        .on_hover_text(hint_text());
                         ui.add_space(4.0);
 
                         let needle = self.start_search.to_lowercase();
