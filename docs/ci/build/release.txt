@@ -3,24 +3,24 @@
    Compiling quote v1.0.47
    Compiling cfg-if v1.0.5
    Compiling log v0.4.35
-   Compiling windows-link v0.2.1
    Compiling syn v3.0.10
    Compiling stable_deref_trait v1.2.1
+   Compiling windows-link v0.2.1
    Compiling smallvec v1.16.6
    Compiling simd-adler32 v0.3.10
-   Compiling windows_x86_64_msvc v0.52.6
    Compiling crc32fast v1.5.6
+   Compiling windows_x86_64_msvc v0.52.6
    Compiling adler2 v2.0.1
    Compiling litemap v0.8.3
    Compiling once_cell v1.21.4
-   Compiling utf_types v1.0.0
    Compiling writeable v0.6.4
    Compiling synstructure v0.14.0
+   Compiling utf_types v1.0.0
    Compiling utf8_iter v1.1.0
    Compiling miniz_oxide v0.9.1
    Compiling zerofrom-derive v0.1.8
-   Compiling zerofrom v0.1.8
    Compiling yoke-derive v0.8.4
+   Compiling zerofrom v0.1.8
    Compiling bytemuck_derive v1.12.1
    Compiling yoke v0.8.4
    Compiling zerovec-derive v0.11.7
@@ -31,59 +31,59 @@
    Compiling tinystr v0.8.5
    Compiling potential_utf v0.1.6
    Compiling icu_locale_core v2.4.0
-   Compiling icu_properties_data v2.4.0
    Compiling khronos_api v3.1.0
+   Compiling icu_properties_data v2.4.0
    Compiling icu_normalizer_data v2.4.0
-   Compiling icu_provider v2.4.0
    Compiling icu_collections v2.4.0
+   Compiling icu_provider v2.4.0
    Compiling flate2 v1.1.11
    Compiling windows-targets v0.52.6
-   Compiling cfg_aliases v0.2.2
    Compiling autocfg v1.5.1
+   Compiling cfg_aliases v0.2.2
+   Compiling xml-rs v0.8.29
    Compiling parking_lot_core v0.9.12
    Compiling zerocopy v0.8.65
-   Compiling xml-rs v0.8.29
    Compiling version_check v0.9.5
-   Compiling ahash v0.8.14
    Compiling gl_generator v0.14.0
+   Compiling ahash v0.8.14
    Compiling icu_normalizer v2.4.0
    Compiling icu_properties v2.4.0
-   Compiling scopeguard v1.2.0
-   Compiling serde_core v1.0.229
    Compiling ttf-parser v0.25.1
+   Compiling serde_core v1.0.229
+   Compiling scopeguard v1.2.0
    Compiling memchr v2.8.3
-   Compiling idna_adapter v1.2.2
-   Compiling lock_api v0.4.14
    Compiling owned_ttf_parser v0.25.1
+   Compiling lock_api v0.4.14
+   Compiling idna_adapter v1.2.2
    Compiling emath v0.29.1
    Compiling windows-sys v0.61.2
    Compiling syn v2.0.119
-   Compiling shlex v2.0.1
-   Compiling bitflags v2.13.2
-   Compiling percent-encoding v2.3.2
    Compiling find-msvc-tools v0.1.15
+   Compiling bitflags v2.13.2
+   Compiling shlex v2.0.1
+   Compiling percent-encoding v2.3.2
    Compiling ab_glyph_rasterizer v0.1.10
    Compiling ab_glyph v0.2.32
-   Compiling cc v1.11.3
    Compiling form_urlencoded v1.2.3
+   Compiling cc v1.11.3
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
    Compiling idna v1.1.0
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
-   Compiling nohash-hasher v0.2.0
    Compiling epaint_default_fonts v0.29.1
+   Compiling nohash-hasher v0.2.0
    Compiling serde v1.0.229
    Compiling epaint v0.29.1
-   Compiling url v2.5.9
    Compiling ring v0.17.14
+   Compiling url v2.5.9
    Compiling num-traits v0.2.19
    Compiling windows-sys v0.52.0
    Compiling serde_derive v1.0.229
    Compiling zeroize v1.9.2
-   Compiling float-cmp v0.9.0
-   Compiling arrayvec v0.7.8
    Compiling raw-window-handle v0.6.2
+   Compiling arrayvec v0.7.8
+   Compiling float-cmp v0.9.0
    Compiling zmij v1.0.23
    Compiling strict-num v0.1.1
    Compiling rustls-pki-types v1.16.0
@@ -92,9 +92,9 @@
    Compiling glutin_wgl_sys v0.6.1
    Compiling glutin_egl_sys v0.7.1
    Compiling winit v0.30.13
-   Compiling tracing-core v0.1.36
-   Compiling arrayref v0.3.9
    Compiling serde_json v1.0.154
+   Compiling arrayref v0.3.9
+   Compiling tracing-core v0.1.36
    Compiling pin-project-lite v0.2.18
    Compiling regex-syntax v0.8.12
    Compiling thiserror v1.0.69
@@ -106,54 +106,46 @@
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
    Compiling getrandom v0.2.17
-   Compiling once_cell_polyfill v1.70.2
-   Compiling siphasher v1.0.4
-   Compiling utf8parse v0.2.2
-   Compiling anstyle v1.0.14
-   Compiling itoa v1.0.19
-   Compiling untrusted v0.9.0
-   Compiling cursor-icon v1.2.0
-   Compiling color_quant v1.1.0
-   Compiling siphasher v0.3.11
-   Compiling dpi v0.1.2
+   Compiling pxfm v0.1.30
    Compiling error-code v3.4.0
+   Compiling color_quant v1.1.0
+   Compiling dpi v0.1.2
+   Compiling once_cell_polyfill v1.70.2
+   Compiling unicase v2.10.0
    Compiling weezl v0.1.12
+   Compiling siphasher v1.0.4
    Compiling smol_str v0.2.2
    Compiling litrs v1.1.0
-   Compiling unicase v2.10.0
+   Compiling siphasher v0.3.11
+   Compiling cursor-icon v1.2.0
+   Compiling untrusted v0.9.0
+   Compiling utf8parse v0.2.2
+   Compiling itoa v1.0.19
    Compiling unicode-segmentation v1.13.3
-   Compiling pxfm v0.1.30
+   Compiling anstyle v1.0.14
+   Compiling anstyle-wincon v3.0.11
+   Compiling anstyle-parse v1.0.0
    Compiling moxcms v0.8.1
+   Compiling svgtypes v0.13.0
    Compiling document-features v0.2.12
    Compiling phf_shared v0.11.3
    Compiling gif v0.14.2
    Compiling clipboard-win v5.4.3
-   Compiling svgtypes v0.13.0
-   Compiling anstyle-wincon v3.0.11
-   Compiling anstyle-parse v1.0.0
    Compiling regex v1.13.2
    Compiling png v0.18.1
    Compiling anstyle-query v1.1.5
    Compiling glutin-winit v0.5.0
    Compiling windows-sys v0.59.0
    Compiling libloading v0.8.9
-   Compiling is_terminal_polyfill v1.70.2
-   Compiling rctree v0.5.0
-   Compiling jiff-core v1.0.2
-   Compiling winapi v0.3.9
-   Compiling rustls v0.23.46
    Compiling colorchoice v1.0.5
+   Compiling winapi v0.3.9
+   Compiling rctree v0.5.0
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling rustls v0.23.46
+   Compiling jiff-core v1.0.2
    Compiling byteorder-lite v0.1.0
    Compiling image v0.25.10
    Compiling winrust-core v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-warning: unused variable: `root`
-   --> crates\winrust-core\src\fileassoc.rs:114:12
-    |
-114 |     let Ok(root) = Key::open(Root::LocalMachine, "SOFTWARE\\Classes") else {
-    |            ^^^^ help: if this is intentional, prefix it with an underscore: `_root`
-    |
-    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
-
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32
    |
@@ -165,45 +157,36 @@ warning: unnecessary `unsafe` block
    |
    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
 
-warning: unnecessary `unsafe` block
-  --> crates\winrust-core\src\gpu.rs:87:33
-   |
-47 |             unsafe {
-   |             ------ because it's nested under this `unsafe` block
-...
-87 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
-   |                                 ^^^^^^ unnecessary `unsafe` block
-
-   Compiling anstream v1.0.0
+warning: `winrust-core` (lib) generated 1 warning
    Compiling jiff v1.0.3
-warning: `winrust-core` (lib) generated 3 warnings (run `cargo fix --lib -p winrust-core` to apply 1 suggestion)
+   Compiling anstream v1.0.0
    Compiling usvg-tree v0.37.0
    Compiling env_filter v2.1.0
-   Compiling rustls-webpki v0.103.17
    Compiling arboard v3.7.0
    Compiling phf v0.11.3
+   Compiling rustls-webpki v0.103.17
    Compiling webpki-roots v1.0.12
    Compiling webbrowser v1.2.7
    Compiling simplecss v0.2.2
-   Compiling web-time v1.1.0
+   Compiling roxmltree v0.19.0
+   Compiling subtle v2.6.1
    Compiling bitflags v1.3.2
+   Compiling imagesize v0.12.0
    Compiling glow v0.14.2
    Compiling data-url v0.3.2
-   Compiling subtle v2.6.1
-   Compiling roxmltree v0.19.0
-   Compiling imagesize v0.12.0
-   Compiling usvg-parser v0.37.0
-   Compiling egui_glow v0.29.1
-   Compiling png v0.17.16
+   Compiling web-time v1.1.0
    Compiling egui-winit v0.29.1
+   Compiling egui_glow v0.29.1
+   Compiling usvg-parser v0.37.0
+   Compiling png v0.17.16
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
    Compiling env_logger v0.11.12
-   Compiling static_assertions v1.1.0
-   Compiling xmlwriter v0.1.0
-   Compiling base64 v0.22.1
    Compiling pico-args v0.5.0
    Compiling base64 v0.21.7
+   Compiling static_assertions v1.1.0
+   Compiling base64 v0.22.1
+   Compiling xmlwriter v0.1.0
    Compiling usvg v0.37.0
    Compiling ureq v2.12.1
    Compiling eframe v0.29.1
@@ -215,211 +198,884 @@ warning: `winrust-core` (lib) generated 3 warnings (run `cargo fix --lib -p winr
    Compiling resvg v0.37.0
    Compiling enum-map v2.7.3
    Compiling ehttp v0.5.0
+   Compiling egui_extras v0.29.1
    Compiling winrust-kernel-abi v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
    Compiling winrust-kernel-control v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-   Compiling egui_extras v0.29.1
-   Compiling winrust-sysctl v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
-   Compiling winrust-explorer v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
+   Compiling winrust-taskmgr v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
+error[E0365]: `RowFilter` is private, and cannot be re-exported
+  --> crates\winrust-taskmgr\src\app.rs:35:16
+   |
+35 | pub use sort::{RowFilter, SortBy};
+   |                ^^^^^^^^^ re-export of private `RowFilter`
+   |
+   = note: consider declaring type or module `RowFilter` with `pub`
+
+error[E0365]: `SortBy` is private, and cannot be re-exported
+  --> crates\winrust-taskmgr\src\app.rs:35:27
+   |
+35 | pub use sort::{RowFilter, SortBy};
+   |                           ^^^^^^ re-export of private `SortBy`
+   |
+   = note: consider declaring type or module `SortBy` with `pub`
+
+error[E0365]: `Tab` is private, and cannot be re-exported
+  --> crates\winrust-taskmgr\src\app.rs:36:9
+   |
+36 | pub use tabs::Tab;
+   |         ^^^^^^^^^ re-export of private `Tab`
+   |
+   = note: consider declaring type or module `Tab` with `pub`
+
 error: cannot find macro `tf` in this scope
-  --> crates\winrust-explorer\src\app\keyboard.rs:67:13
-   |
-67 |             tf!("{} items", ghost.count)
-   |             ^^
+   --> crates\winrust-taskmgr\src\app.rs:249:35
+    |
+249 |                     RichText::new(tf!(
+    |                                   ^^
 
-error[E0422]: cannot find struct, variant or union type `DragGhost` in this scope
-  --> crates\winrust-explorer\src\app\keyboard.rs:42:44
-   |
-42 |                     self.drag_ghost = Some(DragGhost {
-   |                                            ^^^^^^^^^ not found in this scope
-   |
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:155:32
+    |
+155 |             let mut prev_proc: HashMap<u32, (u64, u64)> = HashMap::new();
+    |                                ^^^^^^^ not found in this scope
+    |
 help: consider importing this struct
-   |
- 4 + use crate::app::state::DragGhost;
-   |
+    |
+ 12 + use std::collections::HashMap;
+    |
 
-error[E0425]: cannot find type `ViewMode` in this scope
-  --> crates\winrust-explorer\src\app\tabs.rs:24:22
-   |
-24 |     pub(super) view: ViewMode,
-   |                      ^^^^^^^^ not found in this scope
-   |
-help: consider importing this enum
-   |
- 4 + use crate::app::viewmode::ViewMode;
-   |
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:155:59
+    |
+155 |             let mut prev_proc: HashMap<u32, (u64, u64)> = HashMap::new();
+    |                                                           ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
 
-error[E0425]: cannot find type `SortKeySerde` in this scope
-  --> crates\winrust-explorer\src\app\tabs.rs:26:26
-   |
-26 |     pub(super) sort_key: SortKeySerde,
-   |                          ^^^^^^^^^^^^ not found in this scope
-   |
-help: consider importing this enum
-   |
- 4 + use crate::app::viewmode::SortKeySerde;
-   |
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:156:30
+    |
+156 |             let mut prev_io: HashMap<u32, u64> = HashMap::new();
+    |                              ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
 
-error[E0433]: cannot find type `ViewMode` in this scope
-  --> crates\winrust-explorer\src\app\tabs.rs:51:19
-   |
-51 |             view: ViewMode::Details,
-   |                   ^^^^^^^^ use of undeclared type `ViewMode`
-   |
-help: consider importing this enum
-   |
- 4 + use crate::app::viewmode::ViewMode;
-   |
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:156:50
+    |
+156 |             let mut prev_io: HashMap<u32, u64> = HashMap::new();
+    |                                                  ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
 
-error[E0433]: cannot find type `SortKeySerde` in this scope
-  --> crates\winrust-explorer\src\app\tabs.rs:53:23
-   |
-53 |             sort_key: SortKeySerde::Name,
-   |                       ^^^^^^^^^^^^ use of undeclared type `SortKeySerde`
-   |
-help: consider importing this enum
-   |
- 4 + use crate::app::viewmode::SortKeySerde;
-   |
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:157:31
+    |
+157 |             let mut prev_net: HashMap<u32, u64> = HashMap::new();
+    |                               ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
 
-warning: unused import: `std::path::Path`
- --> crates\winrust-explorer\src\app\commands.rs:8:5
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:157:51
+    |
+157 |             let mut prev_net: HashMap<u32, u64> = HashMap::new();
+    |                                                   ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:161:32
+    |
+161 |             let mut app_names: HashMap<String, String> = HashMap::new();
+    |                                ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:161:58
+    |
+161 |             let mut app_names: HashMap<String, String> = HashMap::new();
+    |                                                          ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:172:38
+    |
+172 |                 let mut per_pid_gpu: HashMap<u32, (f32, String)> = HashMap::new();
+    |                                      ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:172:68
+    |
+172 |                 let mut per_pid_gpu: HashMap<u32, (f32, String)> = HashMap::new();
+    |                                                                    ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:176:45
+    |
+176 |                         let mut by_adapter: HashMap<u32, f32> = HashMap::new();
+    |                                             ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:176:65
+    |
+176 |                         let mut by_adapter: HashMap<u32, f32> = HashMap::new();
+    |                                                                 ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:204:36
+    |
+204 |                 let mut new_proc = HashMap::with_capacity(procs.len());
+    |                                    ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:205:33
+    |
+205 |                 let mut new_io: HashMap<u32, u64> = HashMap::with_capacity(procs.len());
+    |                                 ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:205:53
+    |
+205 |                 let mut new_io: HashMap<u32, u64> = HashMap::with_capacity(procs.len());
+    |                                                     ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:206:34
+    |
+206 |                 let mut new_net: HashMap<u32, u64> = HashMap::with_capacity(procs.len());
+    |                                  ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:206:54
+    |
+206 |                 let mut new_net: HashMap<u32, u64> = HashMap::with_capacity(procs.len());
+    |                                                      ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:275:35
+    |
+275 |                     let mut info: HashMap<u32, (u32, String, bool)> = HashMap::new();
+    |                                   ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:275:71
+    |
+275 |                     let mut info: HashMap<u32, (u32, String, bool)> = HashMap::new();
+    |                                                                       ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:282:39
+    |
+282 |                     let mut resolved: HashMap<u32, String> = HashMap::new();
+    |                                       ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:282:62
+    |
+282 |                     let mut resolved: HashMap<u32, String> = HashMap::new();
+    |                                                              ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:310:33
+    |
+310 |                 let mut groups: HashMap<String, (f32, u64, usize, f32)> = HashMap::new();
+    |                                 ^^^^^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0433]: cannot find type `HashMap` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:310:75
+    |
+310 |                 let mut groups: HashMap<String, (f32, u64, usize, f32)> = HashMap::new();
+    |                                                                           ^^^^^^^ use of undeclared type `HashMap`
+    |
+help: consider importing this struct
+    |
+ 12 + use std::collections::HashMap;
+    |
+
+error[E0425]: cannot find type `HashMap` in this scope
+    --> crates\winrust-taskmgr\src\app\ui.rs:1009:25
+     |
+1009 |         let mut by_pid: HashMap<u32, (usize, Vec<u16>)> = HashMap::new();
+     |                         ^^^^^^^ not found in this scope
+     |
+help: consider importing this struct
+     |
+   5 + use std::collections::HashMap;
+     |
+
+error[E0433]: cannot find type `HashMap` in this scope
+    --> crates\winrust-taskmgr\src\app\ui.rs:1009:59
+     |
+1009 |         let mut by_pid: HashMap<u32, (usize, Vec<u16>)> = HashMap::new();
+     |                                                           ^^^^^^^ use of undeclared type `HashMap`
+     |
+help: consider importing this struct
+     |
+   5 + use std::collections::HashMap;
+     |
+
+error[E0425]: cannot find type `Connection` in this scope
+  --> crates\winrust-taskmgr\src\app.rs:79:33
+   |
+79 |     pub(super) connections: Vec<Connection>,
+   |                                 ^^^^^^^^^^ not found in this scope
+   |
+help: you might be missing a type parameter
+   |
+52 | pub struct TaskManagerApp<Connection> {
+   |                          ++++++++++++
+
+warning: unused import: `std::sync::atomic::Ordering`
+ --> crates\winrust-taskmgr\src\app\ui.rs:8:5
   |
-8 | use std::path::Path;
-  |     ^^^^^^^^^^^^^^^
+8 | use std::sync::atomic::Ordering;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
 
-warning: unused imports: `DirEntry` and `SortKey`
-  --> crates\winrust-explorer\src\app\commands.rs:13:32
+warning: unused import: `self`
+  --> crates\winrust-taskmgr\src\app\ui.rs:10:26
    |
-13 | use winrust_core::disk::{self, DirEntry, SortKey};
-   |                                ^^^^^^^^  ^^^^^^^
+10 | use winrust_core::i18n::{self, Lang};
+   |                          ^^^^
 
-warning: unused import: `Lang`
-  --> crates\winrust-explorer\src\app\keyboard.rs:12:32
+warning: unused import: `winrust_core::system`
+  --> crates\winrust-taskmgr\src\app\ui.rs:15:5
    |
-12 | use winrust_core::i18n::{self, Lang};
-   |                                ^^^^
+15 | use winrust_core::system;
+   |     ^^^^^^^^^^^^^^^^^^^^
 
-warning: unused import: `super::commands::Command`
- --> crates\winrust-explorer\src\app\panels.rs:4:5
-  |
-4 | use super::commands::Command;
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^
-
-warning: unused import: `std::path::Path`
-  --> crates\winrust-explorer\src\app\panels.rs:11:5
+warning: unused import: `winrust_core::process`
+  --> crates\winrust-taskmgr\src\app.rs:44:5
    |
-11 | use std::path::Path;
-   |     ^^^^^^^^^^^^^^^
+44 | use winrust_core::process;
+   |     ^^^^^^^^^^^^^^^^^^^^^
 
-warning: unused imports: `DirEntry` and `SortKey`
-  --> crates\winrust-explorer\src\app\panels.rs:13:32
+error[E0204]: the trait `std::marker::Copy` cannot be implemented for this type
+  --> crates\winrust-taskmgr\src\app.rs:52:12
    |
-13 | use winrust_core::disk::{self, DirEntry, SortKey};
-   |                                ^^^^^^^^  ^^^^^^^
-
-warning: unused imports: `DirEntry` and `SortKey`
- --> crates\winrust-explorer\src\app\preview.rs:9:32
-  |
-9 | use winrust_core::disk::{self, DirEntry, SortKey};
-  |                                ^^^^^^^^  ^^^^^^^
-
-warning: unused import: `std::path::Path`
- --> crates\winrust-explorer\src\app\sidebar.rs:8:5
-  |
-8 | use std::path::Path;
-  |     ^^^^^^^^^^^^^^^
-
-warning: unused imports: `DirEntry` and `SortKey`
-  --> crates\winrust-explorer\src\app\sidebar.rs:10:32
+51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+   |                        ---- in this derive macro expansion
+52 | pub struct TaskManagerApp {
+   |            ^^^^^^^^^^^^^^
+53 |     pub(super) tab: Tab,
+54 |     pub(super) sampler: Sampler,
+   |     --------------------------- this field does not implement `std::marker::Copy`
+55 |     pub(super) snapshot: Snapshot,
+   |     ----------------------------- this field does not implement `std::marker::Copy`
+56 |     pub(super) history_cpu: Vec<f32>,
+   |     -------------------------------- this field does not implement `std::marker::Copy`
+...
+61 |     pub(super) user: user::UserInfo,
+   |     ------------------------------- this field does not implement `std::marker::Copy`
+62 |     pub(super) os: String,
+   |     --------------------- this field does not implement `std::marker::Copy`
+...
+65 |     pub(super) gpus: Vec<(u32, String)>,
+   |     ----------------------------------- this field does not implement `std::marker::Copy`
+...
+76 |     pub(super) confirm_kill: Option<(u32, String)>,
+   |     ---------------------------------------------- this field does not implement `std::marker::Copy`
+77 |     pub(super) startup: Vec<StartupItem>,
+   |     ------------------------------------ this field does not implement `std::marker::Copy`
+...
+81 |     pub(super) services: Vec<winrust_core::service::ServiceEntry>,
+   |     ------------------------------------------------------------- this field does not implement `std::marker::Copy`
    |
-10 | use winrust_core::disk::{self, DirEntry, SortKey};
-   |                                ^^^^^^^^  ^^^^^^^
-
-warning: unused import: `Lang`
-  --> crates\winrust-explorer\src\app\sidebar.rs:11:32
+note: the `std::marker::Copy` impl for `Option<(u32, String)>` requires that `String: std::marker::Copy`
+  --> crates\winrust-taskmgr\src\app.rs:76:30
    |
-11 | use winrust_core::i18n::{self, Lang};
-   |                                ^^^^
+76 |     pub(super) confirm_kill: Option<(u32, String)>,
+   |                              ^^^^^^^^^^^^^^^^^^^^^
 
-warning: unused import: `winrust_core::shell`
-  --> crates\winrust-explorer\src\app\sidebar.rs:12:5
+error[E0433]: cannot find module or crate `system` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:154:32
+    |
+154 |             let mut prev_cpu = system::cpu_sample();
+    |                                ^^^^^^ use of unresolved module or unlinked crate `system`
+    |
+    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `system` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:159:25
+    |
+159 |             let cores = system::cpu_count().max(1) as f64;
+    |                         ^^^^^^ use of unresolved module or unlinked crate `system`
+    |
+    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find type `GpuQuery` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:160:27
+    |
+160 |             let mut gpu = GpuQuery::open();
+    |                           ^^^^^^^^ use of undeclared type `GpuQuery`
+
+error[E0433]: cannot find module or crate `system` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:165:31
+    |
+165 |                 let now_cpu = system::cpu_sample();
+    |                               ^^^^^^ use of unresolved module or unlinked crate `system`
+    |
+    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `system` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:166:35
+    |
+166 |                 let cpu_percent = system::cpu_usage_between(prev_cpu, now_cpu);
+    |                                   ^^^^^^ use of unresolved module or unlinked crate `system`
+    |
+    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `process` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:167:29
+    |
+167 |                 let procs = process::enumerate().unwrap_or_default();
+    |                             ^^^^^^^ use of unresolved module or unlinked crate `process`
+    |
+    = help: if you wanted to use a crate named `process`, use `cargo add process` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `net` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:169:34
+    |
+169 |                 let net_totals = net::net_bytes_per_pid();
+    |                                  ^^^ use of unresolved module or unlinked crate `net`
+    |
+    = help: if you wanted to use a crate named `net`, use `cargo add net` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `shell` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:236:42
+    |
+236 | ...                   let vi = shell::version_info(&p.exe_path);
+    |                                ^^^^^ use of unresolved module or unlinked crate `shell`
+    |
+    = help: if you wanted to use a crate named `shell`, use `cargo add shell` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `system` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:335:29
+    |
+335 |                     memory: system::memory_status(),
+    |                             ^^^^^^ use of unresolved module or unlinked crate `system`
+    |
+    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `system` in this scope
+   --> crates\winrust-taskmgr\src\app\model.rs:339:32
+    |
+339 |                     uptime_ms: system::uptime_ms(),
+    |                                ^^^^^^ use of unresolved module or unlinked crate `system`
+    |
+    = help: if you wanted to use a crate named `system`, use `cargo add system` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `shell` in this scope
+  --> crates\winrust-taskmgr\src\app\startup.rs:54:30
    |
-12 | use winrust_core::shell;
-   |     ^^^^^^^^^^^^^^^^^^^
-
-warning: unused import: `SortKey`
-  --> crates\winrust-explorer\src\app\state.rs:12:42
+54 |                     let vi = shell::version_info(&exe);
+   |                              ^^^^^ use of unresolved module or unlinked crate `shell`
    |
-12 | use winrust_core::disk::{self, DirEntry, SortKey};
-   |                                          ^^^^^^^
-
-warning: unused imports: `SortKey` and `self`
- --> crates\winrust-explorer\src\app\tabs.rs:8:26
-  |
-8 | use winrust_core::disk::{self, DirEntry, SortKey};
-  |                          ^^^^            ^^^^^^^
-
-warning: unused imports: `DirEntry` and `self`
- --> crates\winrust-explorer\src\app\viewmode.rs:6:26
-  |
-6 | use winrust_core::disk::{self, DirEntry, SortKey};
-  |                          ^^^^  ^^^^^^^^
-
-warning: unused import: `SortKey`
-  --> crates\winrust-explorer\src\app\views.rs:15:42
-   |
-15 | use winrust_core::disk::{self, DirEntry, SortKey};
-   |                                          ^^^^^^^
+   = help: if you wanted to use a crate named `shell`, use `cargo add shell` to add it to your `Cargo.toml`
 
 error[E0624]: associated constant `ALL` is private
-   --> crates\winrust-explorer\src\app\keyboard.rs:553:46
+   --> crates\winrust-taskmgr\src\app\ui.rs:100:29
     |
-553 |                     for key in SortKeySerde::ALL {
-    |                                              ^^^ private associated constant
+100 |             for tab in Tab::ALL {
+    |                             ^^^ private associated constant
     |
-   ::: crates\winrust-explorer\src\app\viewmode.rs:64:5
+   ::: crates\winrust-taskmgr\src\app\tabs.rs:42:5
     |
- 64 |     const ALL: [SortKeySerde; 5] = [
-    |     ---------------------------- private associated constant defined here
+ 42 |     const ALL: [Tab; 8] = [
+    |     ------------------- private associated constant defined here
+
+error[E0624]: method `glyph` is private
+   --> crates\winrust-taskmgr\src\app\ui.rs:135:47
+    |
+135 |                 ui.label(RichText::new(metric.glyph()).size(15.0).color(color));
+    |                                               ^^^^^ private method
+    |
+   ::: crates\winrust-taskmgr\src\app\model.rs:45:5
+    |
+ 45 |     fn glyph(self) -> &'static str {
+    |     ------------------------------ private method defined here
+
+error[E0624]: method `caption` is private
+   --> crates\winrust-taskmgr\src\app\ui.rs:138:55
+    |
+138 |                         ui.label(RichText::new(metric.caption()).small().weak());
+    |                                                       ^^^^^^^ private method
+    |
+   ::: crates\winrust-taskmgr\src\app\model.rs:35:5
+    |
+ 35 |     fn caption(self) -> &'static str {
+    |     -------------------------------- private method defined here
+
+error[E0624]: method `short` is private
+   --> crates\winrust-taskmgr\src\app\ui.rs:140:55
+    |
+140 |                         ui.label(RichText::new(metric.short()).small().weak());
+    |                                                       ^^^^^ private method
+    |
+   ::: crates\winrust-taskmgr\src\app\model.rs:55:5
+    |
+ 55 |     fn short(self) -> &'static str {
+    |     ------------------------------ private method defined here
+
+error[E0624]: method `caption` is private
+   --> crates\winrust-taskmgr\src\app\ui.rs:147:44
+    |
+147 |         resp.response.on_hover_text(metric.caption());
+    |                                            ^^^^^^^ private method
+    |
+   ::: crates\winrust-taskmgr\src\app\model.rs:35:5
+    |
+ 35 |     fn caption(self) -> &'static str {
+    |     -------------------------------- private method defined here
+
+error[E0624]: method `metric_heat` is private
+   --> crates\winrust-taskmgr\src\app\ui.rs:353:50
+    |
+353 | ...                   heat_color(r.metric_heat(m), 100.0)
+    |                                    ^^^^^^^^^^^ private method
+    |
+   ::: crates\winrust-taskmgr\src\app\model.rs:114:5
+    |
+114 |     fn metric_heat(&self, m: Metric) -> f32 {
+    |     --------------------------------------- private method defined here
 
 error[E0624]: associated constant `ALL` is private
-   --> crates\winrust-explorer\src\app\panels.rs:297:40
+   --> crates\winrust-taskmgr\src\app\ui.rs:542:26
     |
-297 |                     for v in ViewMode::ALL {
-    |                                        ^^^ private associated constant
+542 |         for m in Metric::ALL {
+    |                          ^^^ private associated constant
     |
-   ::: crates\winrust-explorer\src\app\viewmode.rs:26:5
+   ::: crates\winrust-taskmgr\src\app\model.rs:65:5
     |
- 26 |     const ALL: [ViewMode; 4] = [
-    |     ------------------------ private associated constant defined here
+ 65 |     const ALL: [Metric; 6] = [
+    |     ---------------------- private associated constant defined here
+
+error[E0624]: method `caption` is private
+   --> crates\winrust-taskmgr\src\app\ui.rs:552:29
+    |
+552 |             headers.push((m.caption().to_string(), key));
+    |                             ^^^^^^^ private method
+    |
+   ::: crates\winrust-taskmgr\src\app\model.rs:35:5
+    |
+ 35 |     fn caption(self) -> &'static str {
+    |     -------------------------------- private method defined here
 
 error[E0624]: associated constant `ALL` is private
-   --> crates\winrust-explorer\src\app\panels.rs:311:44
+   --> crates\winrust-taskmgr\src\app\ui.rs:565:26
     |
-311 |                     for k in SortKeySerde::ALL {
-    |                                            ^^^ private associated constant
+565 |         for _ in Metric::ALL {
+    |                          ^^^ private associated constant
     |
-   ::: crates\winrust-explorer\src\app\viewmode.rs:64:5
+   ::: crates\winrust-taskmgr\src\app\model.rs:65:5
     |
- 64 |     const ALL: [SortKeySerde; 5] = [
-    |     ---------------------------- private associated constant defined here
+ 65 |     const ALL: [Metric; 6] = [
+    |     ---------------------- private associated constant defined here
 
 error[E0624]: associated constant `ALL` is private
-   --> crates\winrust-explorer\src\app\preview.rs:178:36
+   --> crates\winrust-taskmgr\src\app\ui.rs:670:34
     |
-178 |                 for v in ViewMode::ALL {
-    |                                    ^^^ private associated constant
+670 |                 for m in Metric::ALL {
+    |                                  ^^^ private associated constant
     |
-   ::: crates\winrust-explorer\src\app\viewmode.rs:26:5
+   ::: crates\winrust-taskmgr\src\app\model.rs:65:5
     |
- 26 |     const ALL: [ViewMode; 4] = [
-    |     ------------------------ private associated constant defined here
+ 65 |     const ALL: [Metric; 6] = [
+    |     ---------------------- private associated constant defined here
 
-Some errors have detailed explanations: E0422, E0425, E0433, E0624.
-For more information about an error, try `rustc --explain E0422`.
-warning: `winrust-explorer` (bin "winrust-explorer") generated 15 warnings
-error: could not compile `winrust-explorer` (bin "winrust-explorer") due to 10 previous errors; 15 warnings emitted
+error[E0624]: method `metric` is private
+   --> crates\winrust-taskmgr\src\app\ui.rs:672:38
+    |
+672 |                         let text = r.metric(m);
+    |                                      ^^^^^^ private method
+    |
+   ::: crates\winrust-taskmgr\src\app\model.rs:98:5
+    |
+ 98 |     fn metric(&self, m: Metric) -> String {
+    |     ------------------------------------- private method defined here
+
+error[E0624]: method `metric_heat` is private
+   --> crates\winrust-taskmgr\src\app\ui.rs:673:38
+    |
+673 |                         let heat = r.metric_heat(m);
+    |                                      ^^^^^^^^^^^ private method
+    |
+   ::: crates\winrust-taskmgr\src\app\model.rs:114:5
+    |
+114 |     fn metric_heat(&self, m: Metric) -> f32 {
+    |     --------------------------------------- private method defined here
+
+error[E0277]: `Sampler` doesn't implement `std::fmt::Debug`
+   --> crates\winrust-taskmgr\src\app.rs:54:5
+    |
+ 51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |          ----- in this derive macro expansion
+...
+ 54 |     pub(super) sampler: Sampler,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `std::fmt::Debug` is not implemented for `Sampler`
+    |
+help: consider annotating `Sampler` with `#[derive(Debug)]`
+   --> crates\winrust-taskmgr\src\app\model.rs:139:1
+    |
+139 + #[derive(Debug)]
+140 | pub(super) struct Sampler {
+    |
+
+error[E0277]: the trait bound `Sampler: Clone` is not satisfied
+   --> crates\winrust-taskmgr\src\app.rs:54:5
+    |
+ 51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |                 ----- in this derive macro expansion
+...
+ 54 |     pub(super) sampler: Sampler,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `Clone` is not implemented for `Sampler`
+   --> crates\winrust-taskmgr\src\app\model.rs:139:1
+    |
+139 | pub(super) struct Sampler {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+note: required by a bound in `std::clone::AssertParamIsClone`
+   --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\clone.rs:458:0
+
+error[E0369]: binary operation `==` cannot be applied to type `Sampler`
+   --> crates\winrust-taskmgr\src\app.rs:54:5
+    |
+ 51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |                              --------- in this derive macro expansion
+...
+ 54 |     pub(super) sampler: Sampler,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+note: an implementation of `PartialEq` might be missing for `Sampler`
+   --> crates\winrust-taskmgr\src\app\model.rs:139:1
+    |
+139 | pub(super) struct Sampler {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^ must implement `PartialEq`
+help: consider annotating `Sampler` with `#[derive(PartialEq)]`
+   --> crates\winrust-taskmgr\src\app\model.rs:139:1
+    |
+139 + #[derive(PartialEq)]
+140 | pub(super) struct Sampler {
+    |
+
+error[E0369]: binary operation `==` cannot be applied to type `Snapshot`
+   --> crates\winrust-taskmgr\src\app.rs:55:5
+    |
+ 51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |                              --------- in this derive macro expansion
+...
+ 55 |     pub(super) snapshot: Snapshot,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+note: an implementation of `PartialEq` might be missing for `Snapshot`
+   --> crates\winrust-taskmgr\src\app\model.rs:129:1
+    |
+129 | pub(super) struct Snapshot {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^ must implement `PartialEq`
+help: consider annotating `Snapshot` with `#[derive(PartialEq)]`
+   --> crates\winrust-taskmgr\src\app\model.rs:129:1
+    |
+129 + #[derive(PartialEq)]
+130 | pub(super) struct Snapshot {
+    |
+
+error[E0369]: binary operation `==` cannot be applied to type `UserInfo`
+  --> crates\winrust-taskmgr\src\app.rs:61:5
+   |
+51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+   |                              --------- in this derive macro expansion
+...
+61 |     pub(super) user: user::UserInfo,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: `UserInfo` does not implement `PartialEq`
+  --> crates\winrust-core\src\user.rs:13:1
+   |
+13 | pub struct UserInfo {
+   | ^^^^^^^^^^^^^^^^^^^ `UserInfo` is defined in another crate
+
+error[E0369]: binary operation `==` cannot be applied to type `CpuInfo`
+   --> crates\winrust-taskmgr\src\app.rs:63:5
+    |
+ 51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |                              --------- in this derive macro expansion
+...
+ 63 |     pub(super) cpu_info: system::CpuInfo,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+note: `CpuInfo` does not implement `PartialEq`
+   --> crates\winrust-core\src\system.rs:120:1
+    |
+120 | pub struct CpuInfo {
+    | ^^^^^^^^^^^^^^^^^^ `CpuInfo` is defined in another crate
+
+error[E0369]: binary operation `==` cannot be applied to type `std::vec::Vec<StartupItem>`
+  --> crates\winrust-taskmgr\src\app.rs:77:5
+   |
+51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+   |                              --------- in this derive macro expansion
+...
+77 |     pub(super) startup: Vec<StartupItem>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: an implementation of `PartialEq` might be missing for `StartupItem`
+  --> crates\winrust-taskmgr\src\app\startup.rs:14:1
+   |
+14 | pub(super) struct StartupItem {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ must implement `PartialEq`
+help: consider annotating `StartupItem` with `#[derive(PartialEq)]`
+  --> crates\winrust-taskmgr\src\app\startup.rs:14:1
+   |
+14 + #[derive(PartialEq)]
+15 | pub(super) struct StartupItem {
+   |
+
+error[E0369]: binary operation `==` cannot be applied to type `std::vec::Vec<ServiceEntry>`
+   --> crates\winrust-taskmgr\src\app.rs:81:5
+    |
+ 51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |                              --------- in this derive macro expansion
+...
+ 81 |     pub(super) services: Vec<winrust_core::service::ServiceEntry>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+note: `ServiceEntry` does not implement `PartialEq`
+   --> crates\winrust-core\src\service.rs:155:1
+    |
+155 | pub struct ServiceEntry {
+    | ^^^^^^^^^^^^^^^^^^^^^^^ `ServiceEntry` is defined in another crate
+
+error[E0277]: the trait bound `Sampler: Eq` is not satisfied
+   --> crates\winrust-taskmgr\src\app.rs:54:5
+    |
+ 51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |                                         -- in this derive macro expansion
+...
+ 54 |     pub(super) sampler: Sampler,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `Eq` is not implemented for `Sampler`
+   --> crates\winrust-taskmgr\src\app\model.rs:139:1
+    |
+139 | pub(super) struct Sampler {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+note: required by a bound in `std::cmp::AssertParamIsEq`
+   --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\cmp.rs:395:0
+
+error[E0277]: the trait bound `Snapshot: Eq` is not satisfied
+   --> crates\winrust-taskmgr\src\app.rs:55:5
+    |
+ 51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    |                                         -- in this derive macro expansion
+...
+ 55 |     pub(super) snapshot: Snapshot,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `Eq` is not implemented for `Snapshot`
+   --> crates\winrust-taskmgr\src\app\model.rs:129:1
+    |
+129 | pub(super) struct Snapshot {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+note: required by a bound in `std::cmp::AssertParamIsEq`
+   --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\cmp.rs:395:0
+
+error[E0277]: the trait bound `UserInfo: Eq` is not satisfied
+  --> crates\winrust-taskmgr\src\app.rs:61:5
+   |
+51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+   |                                         -- in this derive macro expansion
+...
+61 |     pub(super) user: user::UserInfo,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Eq` is not implemented for `UserInfo`
+   |
+note: required by a bound in `std::cmp::AssertParamIsEq`
+  --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\cmp.rs:395:0
+
+error[E0277]: the trait bound `CpuInfo: Eq` is not satisfied
+  --> crates\winrust-taskmgr\src\app.rs:63:5
+   |
+51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+   |                                         -- in this derive macro expansion
+...
+63 |     pub(super) cpu_info: system::CpuInfo,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Eq` is not implemented for `CpuInfo`
+   |
+note: required by a bound in `std::cmp::AssertParamIsEq`
+  --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\cmp.rs:395:0
+
+error[E0277]: the trait bound `f32: Eq` is not satisfied
+  --> crates\winrust-taskmgr\src\app.rs:56:5
+   |
+51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+   |                                         -- in this derive macro expansion
+...
+56 |     pub(super) history_cpu: Vec<f32>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Eq` is not implemented for `f32`
+   |
+   = help: the following other types implement trait `Eq`:
+             i128
+             i16
+             i32
+             i64
+             i8
+             isize
+             u128
+             u16
+           and 4 others
+   = note: required for `std::vec::Vec<f32>` to implement `Eq`
+note: required by a bound in `std::cmp::AssertParamIsEq`
+  --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\cmp.rs:395:0
+
+error[E0277]: the trait bound `StartupItem: Eq` is not satisfied
+  --> crates\winrust-taskmgr\src\app.rs:77:5
+   |
+51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+   |                                         -- in this derive macro expansion
+...
+77 |     pub(super) startup: Vec<StartupItem>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Eq` is not implemented for `StartupItem`
+   |
+help: the trait `Eq` is conditionally implemented for `std::vec::Vec<T, A>`
+  --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/alloc\src\vec\mod.rs:4304:8
+   |
+   = note: unsatisfied requirement introduced here: `StartupItem: Eq`
+   = note: required for `std::vec::Vec<StartupItem>` to implement `Eq`
+note: required by a bound in `std::cmp::AssertParamIsEq`
+  --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\cmp.rs:395:0
+help: consider annotating `StartupItem` with `#[derive(Eq)]`
+  --> crates\winrust-taskmgr\src\app\startup.rs:14:1
+   |
+14 + #[derive(Eq)]
+15 | pub(super) struct StartupItem {
+   |
+
+error[E0277]: the trait bound `ServiceEntry: Eq` is not satisfied
+  --> crates\winrust-taskmgr\src\app.rs:81:5
+   |
+51 | #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+   |                                         -- in this derive macro expansion
+...
+81 |     pub(super) services: Vec<winrust_core::service::ServiceEntry>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Eq` is not implemented for `ServiceEntry`
+   |
+help: the trait `Eq` is conditionally implemented for `std::vec::Vec<T, A>`
+  --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/alloc\src\vec\mod.rs:4304:8
+   |
+   = note: unsatisfied requirement introduced here: `ServiceEntry: Eq`
+   = note: required for `std::vec::Vec<ServiceEntry>` to implement `Eq`
+note: required by a bound in `std::cmp::AssertParamIsEq`
+  --> /rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\cmp.rs:395:0
+
+error[E0433]: cannot find type `ScManager` in this scope
+   --> crates\winrust-taskmgr\src\app.rs:177:30
+    |
+177 |             if let Ok(scm) = ScManager::connect() {
+    |                              ^^^^^^^^^ use of undeclared type `ScManager`
+
+error[E0433]: cannot find type `RichText` in this scope
+   --> crates\winrust-taskmgr\src\app.rs:249:21
+    |
+249 |                     RichText::new(tf!(
+    |                     ^^^^^^^^ use of undeclared type `RichText`
+
+Some errors have detailed explanations: E0204, E0277, E0365, E0369, E0425, E0433, E0624.
+For more information about an error, try `rustc --explain E0204`.
+warning: `winrust-taskmgr` (bin "winrust-taskmgr") generated 4 warnings
+error: could not compile `winrust-taskmgr` (bin "winrust-taskmgr") due to 73 previous errors; 4 warnings emitted
 warning: build failed, waiting for other jobs to finish...
 exit=False

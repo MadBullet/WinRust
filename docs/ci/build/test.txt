@@ -6,22 +6,22 @@
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
+  Downloaded serde_core v1.0.229
   Downloaded itoa v1.0.19
-  Downloaded log v0.4.35
-  Downloaded windows-targets v0.52.6
   Downloaded thiserror v1.0.69
-  Downloaded quote v1.0.47
-  Downloaded zmij v1.0.23
-  Downloaded thiserror-impl v1.0.69
   Downloaded unicode-ident v1.0.27
   Downloaded proc-macro2 v1.0.107
+  Downloaded log v0.4.35
   Downloaded serde_derive v1.0.229
-  Downloaded serde_core v1.0.229
+  Downloaded windows-targets v0.52.6
+  Downloaded thiserror-impl v1.0.69
+  Downloaded quote v1.0.47
+  Downloaded zmij v1.0.23
   Downloaded memchr v2.8.3
   Downloaded serde v1.0.229
+  Downloaded syn v3.0.10
   Downloaded serde_json v1.0.154
   Downloaded syn v2.0.119
-  Downloaded syn v3.0.10
   Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
    Compiling proc-macro2 v1.0.107
@@ -30,27 +30,19 @@
    Compiling serde_core v1.0.229
    Compiling windows_x86_64_msvc v0.52.6
    Compiling zmij v1.0.23
-   Compiling syn v3.0.10
    Compiling syn v2.0.119
-   Compiling thiserror v1.0.69
+   Compiling syn v3.0.10
    Compiling serde v1.0.229
+   Compiling thiserror v1.0.69
    Compiling serde_json v1.0.154
    Compiling windows-targets v0.52.6
-   Compiling serde_derive v1.0.229
    Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.229
    Compiling itoa v1.0.19
    Compiling memchr v2.8.3
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.8.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-warning: unused variable: `root`
-   --> crates\winrust-core\src\fileassoc.rs:114:12
-    |
-114 |     let Ok(root) = Key::open(Root::LocalMachine, "SOFTWARE\\Classes") else {
-    |            ^^^^ help: if this is intentional, prefix it with an underscore: `_root`
-    |
-    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
-
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32
    |
@@ -62,18 +54,9 @@ warning: unnecessary `unsafe` block
    |
    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
 
-warning: unnecessary `unsafe` block
-  --> crates\winrust-core\src\gpu.rs:87:33
-   |
-47 |             unsafe {
-   |             ------ because it's nested under this `unsafe` block
-...
-87 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
-   |                                 ^^^^^^ unnecessary `unsafe` block
-
-warning: `winrust-core` (lib test) generated 3 warnings (3 duplicates)
-warning: `winrust-core` (lib) generated 3 warnings (run `cargo fix --lib -p winrust-core` to apply 1 suggestion)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.77s
+warning: `winrust-core` (lib test) generated 1 warning (1 duplicate)
+warning: `winrust-core` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 40.81s
      Running unittests src\lib.rs (target\debug\build\winrust-core/592d4cc3bbb450ea\out\winrust_core-592d4cc3bbb450ea.exe)
 
 running 29 tests
@@ -107,7 +90,7 @@ test wide::tests::roundtrip_cyrillic ... ok
 test wide::tests::stops_at_nul ... ok
 test fileassoc::tests::slash_free_extensions_only ... ok
 
-test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
 
    Doc-tests winrust_core
 
