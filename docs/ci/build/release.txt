@@ -1,20 +1,20 @@
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
    Compiling cfg-if v1.0.5
    Compiling log v0.4.35
-   Compiling stable_deref_trait v1.2.1
    Compiling syn v3.0.10
    Compiling windows-link v0.2.1
+   Compiling stable_deref_trait v1.2.1
    Compiling smallvec v1.16.6
    Compiling simd-adler32 v0.3.10
-   Compiling crc32fast v1.5.6
    Compiling windows_x86_64_msvc v0.52.6
+   Compiling crc32fast v1.5.6
    Compiling adler2 v2.0.1
-   Compiling writeable v0.6.4
    Compiling once_cell v1.21.4
-   Compiling utf_types v1.0.0
    Compiling litemap v0.8.3
+   Compiling writeable v0.6.4
+   Compiling utf_types v1.0.0
    Compiling synstructure v0.14.0
    Compiling utf8_iter v1.1.0
    Compiling miniz_oxide v0.9.1
@@ -38,199 +38,242 @@
    Compiling icu_provider v2.4.0
    Compiling flate2 v1.1.11
    Compiling windows-targets v0.52.6
-   Compiling cfg_aliases v0.2.2
    Compiling autocfg v1.5.1
-   Compiling version_check v0.9.5
-   Compiling parking_lot_core v0.9.12
-   Compiling xml-rs v0.8.29
+   Compiling cfg_aliases v0.2.2
    Compiling zerocopy v0.8.65
+   Compiling version_check v0.9.5
+   Compiling xml-rs v0.8.29
+   Compiling parking_lot_core v0.9.12
    Compiling ahash v0.8.13
-   Compiling gl_generator v0.14.0
    Compiling icu_normalizer v2.4.0
+   Compiling gl_generator v0.14.0
    Compiling icu_properties v2.4.0
    Compiling memchr v2.8.3
    Compiling scopeguard v1.2.0
-   Compiling ttf-parser v0.25.1
    Compiling serde_core v1.0.229
+   Compiling ttf-parser v0.25.1
    Compiling lock_api v0.4.14
    Compiling idna_adapter v1.2.2
    Compiling owned_ttf_parser v0.25.1
    Compiling emath v0.29.1
    Compiling windows-sys v0.61.2
    Compiling syn v2.0.119
-   Compiling ab_glyph_rasterizer v0.1.10
-   Compiling bitflags v2.13.2
-   Compiling percent-encoding v2.3.2
    Compiling shlex v2.0.1
+   Compiling percent-encoding v2.3.2
    Compiling find-msvc-tools v0.1.15
-   Compiling form_urlencoded v1.2.3
+   Compiling bitflags v2.13.2
+   Compiling ab_glyph_rasterizer v0.1.10
    Compiling ab_glyph v0.2.32
    Compiling cc v1.11.3
+   Compiling form_urlencoded v1.2.3
    Compiling ecolor v0.29.1
    Compiling parking_lot v0.12.5
    Compiling idna v1.1.0
    Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
    Compiling serde v1.0.229
-   Compiling nohash-hasher v0.2.0
    Compiling epaint_default_fonts v0.29.1
-   Compiling ring v0.17.14
+   Compiling nohash-hasher v0.2.0
    Compiling epaint v0.29.1
    Compiling url v2.5.9
+   Compiling ring v0.17.14
    Compiling num-traits v0.2.19
    Compiling windows-sys v0.52.0
    Compiling serde_derive v1.0.229
-   Compiling zeroize v1.9.2
-   Compiling raw-window-handle v0.6.2
    Compiling zmij v1.0.23
-   Compiling arrayvec v0.7.8
    Compiling float-cmp v0.9.0
-   Compiling strict-num v0.1.1
+   Compiling raw-window-handle v0.6.2
+   Compiling zeroize v1.9.2
+   Compiling arrayvec v0.7.8
    Compiling rustls-pki-types v1.16.0
+   Compiling strict-num v0.1.1
    Compiling egui v0.29.1
    Compiling aho-corasick v1.1.5
-   Compiling glutin_egl_sys v0.7.1
    Compiling glutin_wgl_sys v0.6.1
+   Compiling glutin_egl_sys v0.7.1
    Compiling winit v0.30.13
-   Compiling tracing-core v0.1.36
-   Compiling serde_json v1.0.154
-   Compiling pin-project-lite v0.2.18
    Compiling thiserror v1.0.69
    Compiling regex-syntax v0.8.12
+   Compiling tracing-core v0.1.36
+   Compiling pin-project-lite v0.2.18
    Compiling arrayref v0.3.9
+   Compiling serde_json v1.0.154
    Compiling tiny-skia-path v0.11.4
-   Compiling regex-automata v0.4.19
    Compiling tracing v0.1.44
+   Compiling regex-automata v0.4.19
    Compiling kurbo v0.9.5
    Compiling thiserror-impl v1.0.69
    Compiling memoffset v0.9.1
    Compiling glutin v0.32.3
    Compiling getrandom v0.2.17
-   Compiling litrs v1.1.0
-   Compiling cursor-icon v1.2.0
+   Compiling utf8parse v0.2.2
    Compiling unicase v2.10.0
-   Compiling once_cell_polyfill v1.70.2
+   Compiling weezl v0.1.12
+   Compiling smol_str v0.2.2
+   Compiling color_quant v1.1.0
+   Compiling error-code v3.4.0
+   Compiling anstyle v1.0.14
+   Compiling untrusted v0.9.0
+   Compiling litrs v1.1.0
    Compiling dpi v0.1.2
    Compiling pxfm v0.1.30
    Compiling siphasher v0.3.11
-   Compiling color_quant v1.1.0
    Compiling unicode-segmentation v1.13.3
-   Compiling smol_str v0.2.2
+   Compiling once_cell_polyfill v1.70.2
    Compiling itoa v1.0.19
-   Compiling untrusted v0.9.0
-   Compiling utf8parse v0.2.2
    Compiling siphasher v1.0.4
-   Compiling weezl v0.1.12
-   Compiling error-code v3.4.0
-   Compiling anstyle v1.0.14
-   Compiling anstyle-wincon v3.0.11
+   Compiling cursor-icon v1.2.0
    Compiling moxcms v0.8.1
-   Compiling clipboard-win v5.4.3
-   Compiling gif v0.14.2
    Compiling phf_shared v0.11.3
-   Compiling anstyle-parse v1.0.0
+   Compiling anstyle-wincon v3.0.11
    Compiling svgtypes v0.13.0
    Compiling document-features v0.2.12
+   Compiling clipboard-win v5.4.3
+   Compiling gif v0.14.2
+   Compiling anstyle-parse v1.0.0
    Compiling regex v1.13.2
    Compiling png v0.18.1
    Compiling anstyle-query v1.1.5
    Compiling glutin-winit v0.5.0
    Compiling windows-sys v0.59.0
    Compiling libloading v0.8.9
-   Compiling byteorder-lite v0.1.0
+   Compiling rustls v0.23.46
    Compiling is_terminal_polyfill v1.70.2
    Compiling winapi v0.3.9
    Compiling jiff-core v1.0.2
    Compiling colorchoice v1.0.5
    Compiling rctree v0.5.0
-   Compiling rustls v0.23.46
-   Compiling usvg-tree v0.37.0
-   Compiling anstream v1.0.0
-   Compiling jiff v1.0.3
+   Compiling byteorder-lite v0.1.0
+   Compiling image v0.25.10
    Compiling winrust-core v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-error[E0428]: the name `from_wide_ptr` is defined multiple times
-  --> crates\winrust-core\src\wide.rs:89:1
+error[E0609]: no field `0` on type `*mut usize`
+  --> crates\winrust-core\src\audio.rs:73:28
    |
-48 | pub unsafe fn from_wide_ptr(ptr: *const u16) -> String {
-   | ------------------------------------------------------ previous definition of the value `from_wide_ptr` here
-...
-89 | pub unsafe fn from_wide_ptr(p: *const u16) -> String {
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `from_wide_ptr` redefined here
+73 |         let vtbl = *volume.0;
+   |                            ^ unknown field
    |
-   = note: `from_wide_ptr` must be defined only once in the value namespace of this module
+help: `volume` is a raw pointer; try dereferencing it
+   |
+73 |         let vtbl = *(*volume).0;
+   |                     ++      +
+
+error[E0599]: no method named `ptr` found for raw pointer `*mut usize` in the current scope
+  --> crates\winrust-core\src\audio.rs:77:23
+   |
+77 |         if get(volume.ptr(), &mut level) < 0 {
+   |                       ^^^ method not found in `*mut usize`
 
 error[E0308]: mismatched types
-  --> crates\winrust-core\src\audio.rs:64:5
+  --> crates\winrust-core\src\audio.rs:71:5
    |
-63 |   pub fn master_volume() -> Option<u8> {
+70 |   pub fn master_volume() -> Option<u8> {
    |                             ---------- expected `std::option::Option<u8>` because of return type
-64 | /     with_endpoint(|volume| unsafe {
-65 | |         // Slot 7 is GetMasterVolumeLevelScalar(f32*).
-66 | |         let vtbl = *(volume as *const *const usize);
-67 | |         let get: unsafe extern "system" fn(*mut usize, *mut f32) -> i32 =
+71 | /     with_endpoint(|volume| unsafe {
+72 | |         // Slot 7 is GetMasterVolumeLevelScalar(f32*).
+73 | |         let vtbl = *volume.0;
+74 | |         let get: unsafe extern "system" fn(*mut usize, *mut f32) -> i32 =
 ...  |
-73 | |         Some((level * 100.0).round().clamp(0.0, 100.0) as u8)
-74 | |     })
+80 | |         Some((level * 100.0).round().clamp(0.0, 100.0) as u8)
+81 | |     })
    | |______^ expected `Option<u8>`, found `Option<Option<u8>>`
    |
    = note: expected enum `Option<u8>`
               found enum `Option<std::option::Option<u8>>`
 help: use the `?` operator to extract the `std::option::Option<std::option::Option<u8>>` value, propagating an `Option::None` value to the caller
    |
-74 |     })?
+81 |     })?
    |       +
 
-error[E0308]: mismatched types
-  --> crates\winrust-core\src\audio.rs:79:5
+error[E0609]: no field `0` on type `*mut usize`
+  --> crates\winrust-core\src\audio.rs:88:28
    |
-78 |   pub fn set_master_volume(percent: u8) -> Option<()> {
+88 |         let vtbl = *volume.0;
+   |                            ^ unknown field
+   |
+help: `volume` is a raw pointer; try dereferencing it
+   |
+88 |         let vtbl = *(*volume).0;
+   |                     ++      +
+
+error[E0599]: no method named `ptr` found for raw pointer `*mut usize` in the current scope
+  --> crates\winrust-core\src\audio.rs:92:23
+   |
+92 |         if set(volume.ptr(), level, std::ptr::null()) < 0 {
+   |                       ^^^ method not found in `*mut usize`
+
+error[E0308]: mismatched types
+  --> crates\winrust-core\src\audio.rs:86:5
+   |
+85 |   pub fn set_master_volume(percent: u8) -> Option<()> {
    |                                            ---------- expected `std::option::Option<()>` because of return type
-79 | /     with_endpoint(|volume| unsafe {
-80 | |         // Slot 8 is SetMasterVolumeLevelScalar(float, LPCGUID).
-81 | |         let vtbl = *(volume as *const *const usize);
-82 | |         let set: unsafe extern "system" fn(*mut usize, f32, *const windows_sys::core::GUID) -> i32 =
+86 | /     with_endpoint(|volume| unsafe {
+87 | |         // Slot 8 is SetMasterVolumeLevelScalar(float, LPCGUID).
+88 | |         let vtbl = *volume.0;
+89 | |         let set: unsafe extern "system" fn(*mut usize, f32, *const windows_sys::core::GUID) -> i32 =
 ...  |
-90 | |     })
+97 | |     })
    | |______^ expected `Option<()>`, found `Option<Option<()>>`
    |
    = note: expected enum `Option<()>`
               found enum `Option<std::option::Option<()>>`
 help: use the `?` operator to extract the `std::option::Option<std::option::Option<()>>` value, propagating an `Option::None` value to the caller
    |
-90 |     })?
+97 |     })?
    |       +
 
-error[E0308]: mismatched types
-   --> crates\winrust-core\src\audio.rs:111:5
+error[E0609]: no field `0` on type `*mut usize`
+   --> crates\winrust-core\src\audio.rs:104:28
     |
-110 |   pub fn set_muted(muted: bool) -> Option<()> {
+104 |         let vtbl = *volume.0;
+    |                            ^ unknown field
+    |
+help: `volume` is a raw pointer; try dereferencing it
+    |
+104 |         let vtbl = *(*volume).0;
+    |                     ++      +
+
+error[E0599]: no method named `ptr` found for raw pointer `*mut usize` in the current scope
+   --> crates\winrust-core\src\audio.rs:108:23
+    |
+108 |         if get(volume.ptr(), &mut muted) < 0 {
+    |                       ^^^ method not found in `*mut usize`
+
+error[E0609]: no field `0` on type `*mut usize`
+   --> crates\winrust-core\src\audio.rs:120:28
+    |
+120 |         let vtbl = *volume.0;
+    |                            ^ unknown field
+    |
+help: `volume` is a raw pointer; try dereferencing it
+    |
+120 |         let vtbl = *(*volume).0;
+    |                     ++      +
+
+error[E0599]: no method named `ptr` found for raw pointer `*mut usize` in the current scope
+   --> crates\winrust-core\src\audio.rs:123:23
+    |
+123 |         if set(volume.ptr(), i32::from(muted), std::ptr::null()) < 0 {
+    |                       ^^^ method not found in `*mut usize`
+
+error[E0308]: mismatched types
+   --> crates\winrust-core\src\audio.rs:118:5
+    |
+117 |   pub fn set_muted(muted: bool) -> Option<()> {
     |                                    ---------- expected `std::option::Option<()>` because of return type
-111 | /     with_endpoint(|volume| unsafe {
-112 | |         // Slot 10 is SetMute(BOOL, LPCGUID).
-113 | |         let vtbl = *(volume as *const *const usize);
-114 | |         let set: unsafe extern "system" fn(*mut usize, i32, *const windows_sys::core::GUID) -> i32 =
+118 | /     with_endpoint(|volume| unsafe {
+119 | |         // Slot 10 is SetMute(BOOL, LPCGUID).
+120 | |         let vtbl = *volume.0;
+121 | |         let set: unsafe extern "system" fn(*mut usize, i32, *const windows_sys::core::GUID) -> i32 =
 ...   |
-121 | |     })
+128 | |     })
     | |______^ expected `Option<()>`, found `Option<Option<()>>`
     |
     = note: expected enum `Option<()>`
                found enum `Option<std::option::Option<()>>`
 help: use the `?` operator to extract the `std::option::Option<std::option::Option<()>>` value, propagating an `Option::None` value to the caller
     |
-121 |     })?
+128 |     })?
     |       +
-
-error[E0605]: non-primitive cast: `ComObject` as `*const *const usize`
-   --> crates\winrust-core\src\audio.rs:129:21
-    |
-129 |         let vtbl = *(device as *const *const usize);
-    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ an `as` expression can only be used to convert between primitive types or to coerce to a specific trait object
-
-error[E0605]: non-primitive cast: `ComObject` as `*mut usize`
-   --> crates\winrust-core\src\audio.rs:135:17
-    |
-135 |         if open(device as *mut usize, STGM_READ, &mut store) < 0 || store.is_null() {
-    |                 ^^^^^^^^^^^^^^^^^^^^ an `as` expression can only be used to convert between primitive types or to coerce to a specific trait object
 
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:83:32
@@ -252,9 +295,9 @@ warning: unnecessary `unsafe` block
 87 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-Some errors have detailed explanations: E0308, E0428, E0605.
+Some errors have detailed explanations: E0308, E0599, E0609.
 For more information about an error, try `rustc --explain E0308`.
 warning: `winrust-core` (lib) generated 2 warnings
-error: could not compile `winrust-core` (lib) due to 6 previous errors; 2 warnings emitted
+error: could not compile `winrust-core` (lib) due to 11 previous errors; 2 warnings emitted
 warning: build failed, waiting for other jobs to finish...
 exit=False
