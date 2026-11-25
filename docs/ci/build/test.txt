@@ -6,77 +6,66 @@
       Adding thiserror v1.0.69 (available: v2.0.21)
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
-  Downloaded serde_derive v1.0.229
-  Downloaded serde_core v1.0.229
-  Downloaded itoa v1.0.19
-  Downloaded windows-targets v0.52.6
   Downloaded quote v1.0.47
+  Downloaded windows-targets v0.52.6
+  Downloaded itoa v1.0.19
   Downloaded thiserror v1.0.69
-  Downloaded thiserror-impl v1.0.69
   Downloaded zmij v1.0.23
+  Downloaded thiserror-impl v1.0.69
   Downloaded unicode-ident v1.0.27
+  Downloaded serde_derive v1.0.229
   Downloaded log v0.4.35
   Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
   Downloaded serde v1.0.229
   Downloaded memchr v2.8.3
   Downloaded serde_json v1.0.154
-  Downloaded syn v2.0.119
   Downloaded syn v3.0.10
+  Downloaded syn v2.0.119
   Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
    Compiling proc-macro2 v1.0.107
-   Compiling unicode-ident v1.0.27
    Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
    Compiling windows_x86_64_msvc v0.52.6
    Compiling serde_core v1.0.229
    Compiling zmij v1.0.23
    Compiling syn v3.0.10
    Compiling syn v2.0.119
-   Compiling serde v1.0.229
    Compiling thiserror v1.0.69
+   Compiling serde v1.0.229
    Compiling serde_json v1.0.154
    Compiling serde_derive v1.0.229
    Compiling thiserror-impl v1.0.69
    Compiling windows-targets v0.52.6
-   Compiling itoa v1.0.19
    Compiling memchr v2.8.3
+   Compiling itoa v1.0.19
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
 warning: unnecessary `unsafe` block
-  --> crates\winrust-core\src\gpu.rs:89:32
+  --> crates\winrust-core\src\gpu.rs:83:32
    |
-53 |             unsafe {
+47 |             unsafe {
    |             ------ because it's nested under this `unsafe` block
 ...
-89 |                     let name = unsafe { from_wide_ptr(item.szName) };
+83 |                     let name = unsafe { from_wide_ptr(item.szName) };
    |                                ^^^^^^ unnecessary `unsafe` block
    |
    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
 
 warning: unnecessary `unsafe` block
-  --> crates\winrust-core\src\gpu.rs:93:33
+  --> crates\winrust-core\src\gpu.rs:87:33
    |
-53 |             unsafe {
+47 |             unsafe {
    |             ------ because it's nested under this `unsafe` block
 ...
-93 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
+87 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
-warning: field `last` is never read
-  --> crates\winrust-core\src\gpu.rs:25:9
-   |
-21 |     pub struct GpuQuery {
-   |                -------- field in this struct
-...
-25 |         last: HashMap<String, f64>,
-   |         ^^^^
-   |
-   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-core` (lib test) generated 3 warnings (3 duplicates)
-warning: `winrust-core` (lib) generated 3 warnings
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 42.19s
+warning: `winrust-core` (lib test) generated 2 warnings (2 duplicates)
+warning: `winrust-core` (lib) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 32.12s
      Running unittests src\lib.rs (target\debug\build\winrust-core/90f128f4169a94b1\out\winrust_core-90f128f4169a94b1.exe)
 
 running 21 tests
@@ -84,25 +73,25 @@ test disk::tests::civil_dates ... ok
 test disk::tests::extensions ... ok
 test disk::tests::local_time_roundtrip ... ok
 test disk::tests::size_formatting ... ok
-test i18n::settings::tests::blur_requires_transparency ... ok
 test i18n::settings::tests::alpha_follows_opacity_when_transparent ... ok
-test i18n::settings::tests::opacity_is_clamped ... ok
+test i18n::settings::tests::blur_requires_transparency ... ok
 test i18n::settings::tests::defaults_are_opaque ... ok
+test i18n::settings::tests::opacity_is_clamped ... ok
 test i18n::shorten::tests::emoji_survives ... ok
 test i18n::shorten::tests::cyrillic_is_never_split ... ok
-test i18n::shorten::tests::head_is_char_safe ... ok
 test i18n::shorten::tests::short_strings_are_untouched ... ok
+test i18n::shorten::tests::head_is_char_safe ... ok
 test i18n::tests::english_is_identity ... ok
 test i18n::shorten::tests::wrap_keeps_all_words ... ok
 test i18n::tests::fill_replaces_in_order ... ok
 test i18n::tests::every_translation_has_the_same_placeholders ... ok
 test i18n::tests::no_duplicate_source_strings ... ok
-test i18n::tests::russian_translates_known_and_keeps_unknown ... ok
 test wide::tests::roundtrip_ascii ... ok
+test i18n::tests::russian_translates_known_and_keeps_unknown ... ok
 test wide::tests::roundtrip_cyrillic ... ok
 test wide::tests::stops_at_nul ... ok
 
-test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
    Doc-tests winrust_core
 
