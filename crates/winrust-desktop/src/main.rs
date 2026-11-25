@@ -23,6 +23,7 @@ mod taskbar;
 use eframe::egui;
 use std::time::{Duration, Instant};
 use winrust_core::i18n::{self, Lang};
+use winrust_core::tf;
 
 /// What the shell is doing with the mouse, across frames.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -177,7 +178,7 @@ impl DesktopApp {
                     self.selected = Some(idx);
                 }
             }
-            Err(e) => self.status = i18n::tf!("Cannot create the folder: {}", e),
+            Err(e) => self.status = tf!("Cannot create the folder: {}", e),
         }
     }
 
@@ -202,7 +203,7 @@ impl DesktopApp {
                     self.selected = Some(idx);
                 }
             }
-            Err(e) => self.status = i18n::tf!("Cannot create the folder: {}", e),
+            Err(e) => self.status = tf!("Cannot create the folder: {}", e),
         }
     }
 
@@ -229,7 +230,7 @@ impl DesktopApp {
                 self.clipboard_cut = false;
                 self.reload_icons();
             }
-            Err(e) => self.status = i18n::tf!("Cannot paste: {}", e),
+            Err(e) => self.status = tf!("Cannot paste: {}", e),
         }
     }
 

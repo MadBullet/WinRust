@@ -157,6 +157,9 @@ impl DesktopApp {
                         if resp.clicked() {
                             winrust_core::shell::activate_window(w.pid);
                         }
+                        // `Response` is not `Copy`: take the rect first, then hand
+                        // the response to `on_hover_text`, which consumes it.
+                        let r = resp.rect;
                         resp.on_hover_text(format!(
                             "{}\n{} · PID {}",
                             w.title,
@@ -165,7 +168,6 @@ impl DesktopApp {
                         ));
                         // The signature Windows 11 underline under a live app.
                         if running {
-                            let r = resp.rect;
                             let underline = egui::Rect::from_min_size(
                                 egui::pos2(r.center().x - 9.0, r.bottom() - 2.0),
                                 egui::vec2(18.0, 3.0),
