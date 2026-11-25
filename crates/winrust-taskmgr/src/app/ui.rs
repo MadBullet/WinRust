@@ -20,7 +20,6 @@ use super::model::{is_app_row, sort_rows, Metric, Row};
 use super::startup::StartupItem;
 use super::{RowFilter, SortBy, Tab, TaskManagerApp};
 
-
 impl TaskManagerApp {
     /// The stock columns as a vertical strip: icon, caption, live value.
     pub(super) fn metric_strip(&mut self, ui: &mut egui::Ui) {

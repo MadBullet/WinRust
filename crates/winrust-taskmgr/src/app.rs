@@ -219,7 +219,6 @@ impl TaskManagerApp {
     }
 }
 
-
 impl eframe::App for TaskManagerApp {
     /// The window's clear colour: the theme background with the configured
     /// opacity, so transparency reaches the compositor in every program.
