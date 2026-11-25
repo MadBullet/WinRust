@@ -660,7 +660,15 @@ impl DesktopApp {
         // selects every icon it touched.  A plain click clears the selection.
         let (up, drag_started) =
             ctx.input(|i| (i.pointer.primary_released(), i.pointer.primary_pressed()));
-        if bg.hovered() && drag_started && self.band_start.is_none() {
+        // Start a band only when the press landed on bare wallpaper.  `bg` spans
+        // the whole desktop, so `hovered()` alone would also start a box when the
+        // press was on an icon (egui only gives the *top* widget the interaction,
+        // but `hovered()` is still true for the one underneath).
+        if bg.hovered()
+            && bg.is_pointer_button_down_on()
+            && drag_started
+            && self.band_start.is_none()
+        {
             self.band_start = pointer;
         }
         if let Some(start) = self.band_start {
