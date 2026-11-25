@@ -31,6 +31,8 @@ compile_error!("winrust-core targets Windows only. Build it on Windows or in CI.
 
 pub mod audio;
 pub mod disk;
+pub mod fileassoc;
+pub mod files;
 pub mod error;
 pub mod gpu;
 pub mod handle;
@@ -44,6 +46,7 @@ pub mod restore;
 pub mod service;
 pub mod shell;
 pub mod system;
+pub mod thumb;
 pub mod user;
 pub mod wide;
 

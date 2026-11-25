@@ -9,6 +9,26 @@ use crate::handle::Handle;
 use crate::wide::{from_wide, to_wide};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
+
+/// Last component of a path, or the whole path when there is none.
+///
+/// A drive root (`C:\`) has no file name but must still read as something in
+/// a menu or an error message, so it falls back to the string itself.  This
+/// existed twice (Explorer and the desktop) before it moved here.
+pub fn file_name_of(p: &Path) -> String {
+    match p.file_name() {
+        Some(n) => n.to_string_lossy().to_string(),
+        None => {
+            let s = p.to_string_lossy().to_string();
+            if s.is_empty() {
+                "This PC".into()
+            } else {
+                s
+            }
+        }
+    }
+}
+
 use windows_sys::Win32::Foundation::INVALID_HANDLE_VALUE;
 use windows_sys::Win32::Storage::FileSystem::{
     FindClose, FindExInfoBasic, FindExSearchNameMatch, FindFirstFileExW, FindNextFileW,

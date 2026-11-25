@@ -721,8 +721,12 @@ impl DesktopApp {
                                 self.selection.insert(idx);
                             }
                         }
+                        // Keep the legacy single-selection field in step so
+                        // rename/properties act on the band's first icon.
+                        self.selected = self.selection.iter().next().copied();
                     } else if bg.clicked() && !mods.ctrl {
                         self.selection.clear();
+                        self.selected = None;
                     }
                 }
             }
@@ -730,6 +734,7 @@ impl DesktopApp {
         if bg.clicked() && self.band_start.is_none() {
             if !mods.ctrl && !mods.command {
                 self.selection.clear();
+                self.selected = None;
             }
             self.close_start();
         }

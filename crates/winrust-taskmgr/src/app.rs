@@ -693,7 +693,6 @@ impl TaskManagerApp {
     }
 
     fn pump(&mut self, ctx: &egui::Context) {
-        let mut got = false;
         while let Ok(snap) = self.sampler.rx.try_recv() {
             // `remove(0)` panics on an empty vector; the histories are created
             // with 120 zeros, but hardening costs nothing and the abort-on-panic
@@ -716,11 +715,13 @@ impl TaskManagerApp {
             }
             self.history_net.push(net_total as f32);
             self.snapshot = snap;
-            got = true;
         }
-        if got {
-            ctx.request_repaint_after(Duration::from_millis(250));
-        }
+        // Repaint unconditionally.  This used to run only after a new snapshot
+        // arrived, which meant the window was left asleep between samples and
+        // egui only woke it on mouse input - the "updates only when I move the
+        // mouse" report.  Asking for the next frame every frame keeps the UI at
+        // its own cadence and costs nothing compared with the sampling itself.
+        ctx.request_repaint_after(Duration::from_millis(200));
         if self.last_conn_refresh.elapsed().as_secs() >= 2 {
             self.connections = net::tcp_connections();
             self.last_conn_refresh = Instant::now();

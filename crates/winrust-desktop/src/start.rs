@@ -81,9 +81,12 @@ fn walk(dir: &std::path::Path, out: &mut Vec<AppEntry>, depth: usize) {
 
 impl DesktopApp {
     pub fn start_menu(&mut self, ctx: &egui::Context) {
-        if !self.start_open {
+        // Drawn while the animation is closing too, so it slides away instead
+        // of vanishing on the frame `start_open` turns false.
+        if !self.start_open && self.start_anim < 0.01 {
             return;
         }
+        let anim = self.start_anim.clamp(0.0, 1.0);
         let screen = ctx.screen_rect();
         // Above the taskbar and horizontally centred on it, like Windows 11.
         let width = 560.0_f32.min(screen.width() - 40.0);
@@ -96,16 +99,19 @@ impl DesktopApp {
             egui::vec2(width, height),
         );
         let pal = winrust_ui::theme::pal(&self.appearance);
+        // Rise 12 px and fade in: the two properties Windows animates.
+        let slide = (1.0 - anim) * 12.0;
+        let alpha = (anim * 252.0) as u8;
         egui::Area::new(egui::Id::new("start_menu"))
             .order(egui::Order::Foreground)
-            .fixed_pos(rect.left_top())
+            .fixed_pos(rect.left_top() + egui::vec2(0.0, slide))
             .show(ctx, |ui| {
                 egui::Frame::popup(ui.style())
                     .fill(Color32::from_rgba_unmultiplied(
                         pal.surface.0,
                         pal.surface.1,
                         pal.surface.2,
-                        252,
+                        alpha,
                     ))
                     .stroke(egui::Stroke::new(
                         1.0_f32,

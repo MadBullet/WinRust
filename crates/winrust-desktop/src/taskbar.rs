@@ -15,6 +15,7 @@
 //! (`shell::window_icon_rgba`), so an entry never renders as an empty square.
 
 use eframe::egui;
+use std::time::Instant;
 use egui::{Color32, RichText};
 use winrust_core::i18n::ts;
 use winrust_core::{t, tf};
@@ -106,6 +107,10 @@ impl DesktopApp {
                 }),
         );
         if start_resp.clicked() {
+            // Claim focus before toggling: a bottom-most shell window does not
+            // become foreground by itself, so without this the very next click
+            // (and the `Win` key) went to whatever was in front.
+            winrust_core::shell::focus_window(self.hwnd);
             self.start_open = !self.start_open;
             self.tray_flyout = tray::Flyout::None;
             if !self.start_open {
@@ -150,6 +155,7 @@ impl DesktopApp {
                 .layout(egui::Layout::left_to_right(egui::Align::Center)),
         );
         apps_ui.spacing_mut().item_spacing.x = gap;
+        let mut hovered_any = false;
         apps_ui.horizontal(|ui| {
             for pid in order {
                 let first = windows_list.iter().find(|w| w.pid == pid);
@@ -215,6 +221,13 @@ impl DesktopApp {
                         },
                     );
                 }
+                if resp.hovered() {
+                    hovered_any = true;
+                    if self.hover_pid != Some(pid) {
+                        self.hover_pid = Some(pid);
+                        self.hover_since = Some(Instant::now());
+                    }
+                }
                 if resp.clicked() {
                     self.active_pid = Some(pid);
                     winrust_core::shell::activate_window(pid);
@@ -233,6 +246,35 @@ impl DesktopApp {
                 ));
             }
         });
+
+        // Hover preview: a strip of miniatures, one per window of the group,
+        // drawn above the button after a short rest - the same behaviour as the
+        // real taskbar.  Single windows get one too.
+        //
+        // This runs outside the button closure: `preview` needs `&mut self`,
+        // which the closure has already borrowed for the button loop.
+        let resting = self
+            .hover_since
+            .map(|t| t.elapsed() >= std::time::Duration::from_millis(350))
+            .unwrap_or(false);
+        if hovered_any && resting {
+            if let Some(pid) = self.hover_pid {
+                let group: Vec<WindowEntry> = self
+                    .open_windows
+                    .iter()
+                    .filter(|w| w.pid == pid)
+                    .cloned()
+                    .collect();
+                if !group.is_empty() {
+                    preview(self, ctx, bar, pal, &group);
+                }
+            }
+        }
+        // Leaving the buttons drops the preview immediately, like the bar does.
+        if !hovered_any {
+            self.hover_pid = None;
+            self.hover_since = None;
+        }
 
         // ---- Right: the tray -------------------------------------------------
         tray::draw(self, ctx, inner);
@@ -348,5 +390,164 @@ pub fn describe_running(list: &[WindowEntry]) -> String {
         ts("No open windows").to_string()
     } else {
         tf!("{} open windows", list.len())
+    }
+}
+
+/// The hover preview: one card per window of a group, above the taskbar.
+///
+/// Cards are 200x124 (16:10, the shape of the originals) with the window title
+/// underneath, and the whole strip is anchored to the bar's bottom edge so it
+/// never floats in the middle of the screen.  Thumbnails are captured at most
+/// once every two seconds per window - `PrintWindow` costs a full window
+/// redraw, which is far too much for every frame.
+fn preview(
+    app: &mut DesktopApp,
+    ctx: &egui::Context,
+    bar: egui::Rect,
+    pal: winrust_ui::theme::Palette,
+    windows: &[WindowEntry],
+) {
+    const CARD: egui::Vec2 = egui::vec2(200.0, 124.0);
+    const GAP: f32 = 8.0;
+    const PAD: f32 = 8.0;
+
+    let refresh = app
+        .thumbs_at
+        .map(|t| t.elapsed() > std::time::Duration::from_secs(2))
+        .unwrap_or(true);
+    if refresh {
+        app.thumbs_at = Some(Instant::now());
+        // Forget pictures of windows that are gone; otherwise the texture map
+        // grew for the lifetime of the shell (each entry is a GPU texture).
+        let live: std::collections::HashSet<isize> =
+            windows.iter().map(|w| w.hwnd).collect();
+        app.thumbs.retain(|hwnd, _| live.contains(hwnd));
+    }
+
+    let count = windows.len() as f32;
+    let width = count * CARD.x + (count - 1.0) * GAP + PAD * 2.0;
+    let height = CARD.y + 30.0 + PAD * 2.0;
+    let screen = ctx.screen_rect();
+    // Right-aligned with the tray, which is where Windows puts it.
+    let left = (screen.right() - crate::tray::WIDTH - width).max(screen.left() + 4.0);
+    let top = bar.top() - height - 6.0;
+    let rect = egui::Rect::from_min_size(egui::pos2(left, top), egui::vec2(width, height));
+
+    // Capture/refresh every picture first.  `Painter` borrows the context, so
+    // calling `ctx.load_texture` while it is alive does not compile - and
+    // loading before painting also keeps the frame's shape list tidy.
+    for w in windows.iter() {
+        if refresh || !app.thumbs.contains_key(&w.hwnd) {
+            let image = winrust_core::thumb::window_thumbnail(w.hwnd, 400, 250).map(|t| {
+                egui::ColorImage::from_rgba_unmultiplied(
+                    [t.width as usize, t.height as usize],
+                    &t.rgba,
+                )
+            });
+            let handle = image.map(|img| {
+                ctx.load_texture(
+                    format!("thumb_{}", w.hwnd),
+                    img,
+                    egui::TextureOptions::LINEAR,
+                )
+            });
+            app.thumbs.insert(w.hwnd, handle);
+        }
+    }
+
+    let surface = Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, 250);
+    let painter = ctx.layer_painter(egui::LayerId::new(
+        egui::Order::Tooltip,
+        egui::Id::new("taskbar_preview_bg"),
+    ));
+    painter.rect_filled(rect, 8.0, surface);
+    painter.rect_stroke(
+        rect,
+        8.0,
+        egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
+    );
+
+    // Texture ids only: holding the map borrowed would block the `app` writes
+    // below (the preview resets the hover state when a card is clicked).
+    let ids: Vec<(isize, Option<egui::TextureId>, egui::Vec2)> = windows
+        .iter()
+        .map(|w| {
+            let tex = app.thumbs.get(&w.hwnd).and_then(|t| t.as_ref());
+            (w.hwnd, tex.map(|t| t.id()), tex.map(|t| t.size_vec2()).unwrap_or_default())
+        })
+        .collect();
+
+    let mut clicked: Option<isize> = None;
+    for (i, w) in windows.iter().enumerate() {
+        let card = egui::Rect::from_min_size(
+            egui::pos2(
+                rect.left() + PAD + i as f32 * (CARD.x + GAP),
+                rect.top() + PAD,
+            ),
+            CARD,
+        );
+        let (_, tex_id, size) = ids[i];
+        match tex_id {
+            Some(id) if size.x > 0.0 && size.y > 0.0 => {
+                // Letterbox inside the card so odd window shapes stay centred.
+                let scale = (CARD.x / size.x).min(CARD.y / size.y);
+                let draw = egui::Rect::from_center_size(CARD.center(), size * scale);
+                painter.image(
+                    id,
+                    draw,
+                    egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+                    Color32::WHITE,
+                );
+            }
+            None => {
+                painter.rect_filled(CARD, 4.0, Color32::from_rgb(30, 33, 42));
+                painter.text(
+                    CARD.center(),
+                    egui::Align2::CENTER_CENTER,
+                    glyph_for_title(&w.title),
+                    egui::FontId::proportional(28.0),
+                    Color32::from_rgb(pal.text_weak.0, pal.text_weak.1, pal.text_weak.2),
+                );
+            }
+        }
+        painter.text(
+            egui::pos2(card.center().x, card.bottom() + 6.0),
+            egui::Align2::CENTER_TOP,
+            winrust_core::i18n::end(&w.title, 28),
+            egui::FontId::proportional(11.5),
+            Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
+        );
+
+    }
+
+    // The click targets are registered after painting: `Painter` borrows the
+    // context, so the two cannot overlap.
+    for (i, w) in windows.iter().enumerate() {
+        let card = egui::Rect::from_min_size(
+            egui::pos2(
+                rect.left() + PAD + i as f32 * (CARD.x + GAP),
+                rect.top() + PAD,
+            ),
+            CARD,
+        );
+        let resp = egui::Area::new(egui::Id::new(("thumb_hit", w.hwnd)))
+            .order(egui::Order::Tooltip)
+            .fixed_pos(card.left_top())
+            .show(ctx, |ui| {
+                ui.allocate_exact_size(CARD.size(), egui::Sense::click()).1
+            })
+            .inner;
+        if resp.clicked() {
+            clicked = Some(w.hwnd);
+        }
+    }
+
+    if let Some(hwnd) = clicked {
+        winrust_core::shell::activate_window_hwnd(hwnd);
+        app.hover_pid = None;
+        app.hover_since = None;
+        // The shell window is behind everything again after this, so the
+        // preview must go away rather than linger until the next repaint.
+        app.thumbs_at = None;
     }
 }

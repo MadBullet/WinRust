@@ -70,6 +70,8 @@ pub struct DesktopApp {
     /// When the registry was last polled for a language change.
     pub(crate) lang_checked_at: Instant,
     pub(crate) hwnd: isize,
+    /// Previous frame's `Win` state, for edge detection.
+    pub(crate) win_key_was_down: bool,
     /// Wallpaper brush colour mode — the desktop paints itself instead of
     /// showing a picture, so it works on a bare Windows install as well.
     pub(crate) appearance: winrust_core::i18n::Appearance,
@@ -103,6 +105,21 @@ pub struct DesktopApp {
     pub(crate) network_at: Instant,
     /// Which application the user last activated from the taskbar.
     pub(crate) active_pid: Option<u32>,
+    /// Delete pressed on the wallpaper: the paths waiting for confirmation and
+    /// whether Shift was held (skip the Recycle Bin).
+    pub(crate) delete_confirm: Vec<std::path::PathBuf>,
+    pub(crate) delete_permanent: bool,
+    /// 0..=1 animation of the Start menu (fade + rise), advanced every frame.
+    pub(crate) start_anim: f32,
+    /// 0..=1 animation of the open tray flyout.
+    pub(crate) flyout_anim: f32,
+    /// Which taskbar button the pointer is resting on, and since when: the
+    /// preview appears after a short delay, like the real bar.
+    pub(crate) hover_pid: Option<u32>,
+    pub(crate) hover_since: Option<Instant>,
+    /// Cached window pictures for the hover preview, keyed by hwnd.
+    pub(crate) thumbs: std::collections::HashMap<isize, Option<egui::TextureHandle>>,
+    pub(crate) thumbs_at: Option<Instant>,
 }
 
 impl DesktopApp {
@@ -136,6 +153,7 @@ impl DesktopApp {
             lang: i18n::current(),
             lang_checked_at: Instant::now(),
             hwnd: 0,
+            win_key_was_down: false,
             appearance,
             appearance_dirty: false,
             cpu_mem: (0.0, winrust_core::system::memory_status()),
@@ -157,6 +175,14 @@ impl DesktopApp {
             tray_sampled_at: Instant::now() - Duration::from_secs(5),
             network_at: Instant::now() - Duration::from_secs(30),
             active_pid: None,
+            delete_confirm: Vec::new(),
+            delete_permanent: false,
+            start_anim: 0.0,
+            flyout_anim: 0.0,
+            hover_pid: None,
+            hover_since: None,
+            thumbs: std::collections::HashMap::new(),
+            thumbs_at: None,
         }
     }
 
@@ -230,19 +256,13 @@ impl DesktopApp {
         let Some(dir) = winrust_core::shell::KnownFolder::Desktop.path() else {
             return;
         };
-        let base = i18n::ts("New folder");
-        let mut name = base.to_string();
-        let mut n = 2;
-        while dir.join(&name).exists() {
-            name = format!("{base} ({n})");
-            n += 1;
-        }
-        let target = dir.join(&name);
-        match std::fs::create_dir(&target) {
-            Ok(()) => {
+        match winrust_core::files::create_folder(&dir, i18n::ts("New folder")) {
+            Ok(target) => {
                 self.reload_icons();
                 // Select it, like Explorer does after Ctrl+Shift+N.
                 if let Some(idx) = self.icons.iter().position(|i| i.path == target) {
+                    self.selection.clear();
+                    self.selection.insert(idx);
                     self.selected = Some(idx);
                 }
             }
@@ -256,18 +276,12 @@ impl DesktopApp {
         let Some(dir) = winrust_core::shell::KnownFolder::Desktop.path() else {
             return;
         };
-        let base = i18n::ts("New file");
-        let mut name = format!("{base}.{extension}");
-        let mut n = 2;
-        while dir.join(&name).exists() {
-            name = format!("{base} ({n}).{extension}");
-            n += 1;
-        }
-        let target = dir.join(&name);
-        match std::fs::File::create(&target) {
-            Ok(_) => {
+        match winrust_core::files::create_file(&dir, extension, i18n::ts("New file")) {
+            Ok(target) => {
                 self.reload_icons();
                 if let Some(idx) = self.icons.iter().position(|i| i.path == target) {
+                    self.selection.clear();
+                    self.selection.insert(idx);
                     self.selected = Some(idx);
                 }
             }
@@ -351,6 +365,113 @@ impl DesktopApp {
         }
     }
 
+    /// Delete / Shift+Delete on the wallpaper, plus Ctrl+A and Escape.
+    ///
+    /// Explorer deletes whatever is selected when the key is pressed; the same
+    /// two-step confirmation is used so a mis-key cannot lose files.
+    fn handle_desktop_keys(&mut self, ctx: &egui::Context) {
+        // Only when no text field has focus: typing in the Start search must
+        // not delete desktop icons.
+        if ctx.memory(|m| m.focused().is_some()) {
+            return;
+        }
+        let (del, shift) = ctx.input(|i| {
+            (
+                i.key_pressed(egui::Key::Delete),
+                i.modifiers.shift,
+            )
+        });
+        if ctx.input(|i| i.key_pressed(egui::Key::A) && i.modifiers.ctrl) {
+            self.selection = (0..self.icons.len()).collect();
+            self.selected = self.selection.iter().next().copied();
+        }
+        if !del || self.selection.is_empty() {
+            return;
+        }
+        let paths: Vec<std::path::PathBuf> = self
+            .selection
+            .iter()
+            .filter_map(|i| self.icons.get(*i))
+            .filter(|icon| icon.shell_path.is_none())
+            .map(|icon| icon.path.clone())
+            .collect();
+        if paths.is_empty() {
+            // Only the virtual entries (This PC / Recycle Bin) were selected;
+            // Windows refuses to delete those, so say so instead of doing
+            // nothing at all.
+            self.status = i18n::ts("This item cannot be deleted").to_string();
+            return;
+        }
+        self.delete_confirm = paths;
+        self.delete_permanent = shift;
+    }
+
+    /// The "move to Recycle Bin / delete permanently" confirmation.
+    fn delete_dialog(&mut self, ctx: &egui::Context) {
+        if self.delete_confirm.is_empty() {
+            return;
+        }
+        let paths = self.delete_confirm.clone();
+        let permanent = self.delete_permanent;
+        let mut action: Option<bool> = None;
+        egui::Window::new(if permanent {
+            t("Delete permanently")
+        } else {
+            t("Delete")
+        })
+        .collapsible(false)
+        .resizable(false)
+        .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+        .show(ctx, |ui| {
+            let name = paths
+                .first()
+                .and_then(|p| p.file_name())
+                .map(|n| n.to_string_lossy().to_string())
+                .unwrap_or_default();
+            let question = if paths.len() == 1 {
+                if permanent {
+                    tf!("Permanently delete \"{}\"?", name)
+                } else {
+                    tf!("Move \"{}\" to the Recycle Bin?", name)
+                }
+            } else if permanent {
+                tf!("Permanently delete {} items?", paths.len())
+            } else {
+                tf!("Move {} items to the Recycle Bin?", paths.len())
+            };
+            ui.label(question);
+            ui.add_space(8.0);
+            ui.horizontal(|ui| {
+                if ui.button(t("Yes")).clicked() {
+                    action = Some(true);
+                }
+                if ui.button(t("No")).clicked() {
+                    action = Some(false);
+                }
+            });
+        });
+        match action {
+            Some(true) => {
+                let report = winrust_core::files::delete(&paths, permanent);
+                self.delete_confirm.clear();
+                self.selection.clear();
+                self.selected = None;
+                self.reload_icons();
+                self.status = if report.ok() {
+                    if permanent {
+                        tf!("Deleted {} item(s)", report.done)
+                    } else {
+                        tf!("Moved {} item(s) to the Recycle Bin", report.done)
+                    }
+                } else {
+                    tf!("{} item(s) could not be deleted", report.errors.len())
+                };
+            }
+            Some(false) => self.delete_confirm.clear(),
+            None => {}
+        }
+    }
+
     pub(crate) fn close_start(&mut self) {
         self.start_open = false;
         self.start_search.clear();
@@ -403,6 +524,39 @@ impl eframe::App for DesktopApp {
             bottom,
         );
 
+        // Ease both panels towards their target.  `dt` comes from egui so the
+        // speed is frame-rate independent; the curve is a plain ease-out, which
+        // is what Windows uses for menus.
+        let dt = ctx.input(|i| i.stable_dt).clamp(0.0, 0.1);
+        let ease = |value: f32, target: f32, dt: f32| {
+            let rate = (dt * 14.0).min(1.0);
+            value + (target - value) * rate
+        };
+        self.start_anim = ease(self.start_anim, if self.start_open { 1.0 } else { 0.0 }, dt);
+        self.flyout_anim = ease(
+            self.flyout_anim,
+            if self.tray_flyout.is_open() { 1.0 } else { 0.0 },
+            dt,
+        );
+
+        self.handle_desktop_keys(ctx);
+        self.delete_dialog(ctx);
+
+        // The `Win` key opens Start, as it does on Windows.  `GetAsyncKeyState`
+        // is read directly because egui has no `Key::Win`, and the edge is
+        // detected here so holding the key does not flap the menu.
+        let win_down = winrust_core::shell::win_key_down();
+        if win_down && !self.win_key_was_down {
+            if self.start_open {
+                self.close_start();
+            } else {
+                winrust_core::shell::focus_window(self.hwnd);
+                self.start_open = true;
+                self.tray_flyout = crate::tray::Flyout::None;
+            }
+        }
+        self.win_key_was_down = win_down;
+
         // Start menu and taskbar are painted as panels; the icon grid fills
         // whatever is left.
         self.taskbar(ctx);
@@ -415,7 +569,14 @@ impl eframe::App for DesktopApp {
                 self.close_start();
             }
         }
-        ctx.request_repaint_after(Duration::from_millis(500));
+        // The shell must react to `Win` quickly, so it is polled at 8 Hz while
+        // the menu is open or a preview is pending, and at 2 Hz otherwise (the
+        // clock only needs seconds).
+        let hot = self.start_open
+            || self.tray_flyout.is_open()
+            || self.hover_pid.is_some()
+            || !self.delete_confirm.is_empty();
+        ctx.request_repaint_after(Duration::from_millis(if hot { 120 } else { 500 }));
     }
 
     fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {

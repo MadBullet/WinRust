@@ -39,6 +39,16 @@ const CLSCTX_ALL: u32 = 23;
 /// `STGM_READ`.
 const STGM_READ: u32 = 0;
 
+// The vtable as `endpointvolume.h` declares it, IUnknown included.  The
+// earlier code was off by two for every call: it used 7 for the *getter*, but
+// slot 7 is `SetMasterVolumeLevelScalar`, so reading wrote a float into the
+// interface and setting wrote into our own stack variable - which is exactly
+// why the tray always showed 0% and the slider did nothing.
+const SLOT_SET_VOLUME_SCALAR: usize = 7;
+const SLOT_GET_VOLUME_SCALAR: usize = 9;
+const SLOT_SET_MUTE: usize = 14;
+const SLOT_GET_MUTE: usize = 15;
+
 /// A COM object whose only responsibility is `Release` on drop.
 struct ComObject(*mut *const usize);
 
@@ -69,10 +79,9 @@ impl Drop for ComObject {
 /// The master volume of the default playback device, 0..=100.
 pub fn master_volume() -> Option<u8> {
     with_endpoint(|volume: &ComObject| unsafe {
-        // Slot 7 is GetMasterVolumeLevelScalar(f32*).
         let vtbl = *volume.0;
         let get: unsafe extern "system" fn(*mut usize, *mut f32) -> i32 =
-            std::mem::transmute(*vtbl.add(7));
+            std::mem::transmute(*vtbl.add(SLOT_GET_VOLUME_SCALAR));
         let mut level = 0.0f32;
         if get(volume.ptr(), &mut level) < 0 {
             return None;
@@ -85,10 +94,9 @@ pub fn master_volume() -> Option<u8> {
 /// Set the master volume, 0..=100.
 pub fn set_master_volume(percent: u8) -> Option<()> {
     with_endpoint(|volume| unsafe {
-        // Slot 8 is SetMasterVolumeLevelScalar(float, LPCGUID).
         let vtbl = *volume.0;
         let set: unsafe extern "system" fn(*mut usize, f32, *const windows_sys::core::GUID) -> i32 =
-            std::mem::transmute(*vtbl.add(8));
+            std::mem::transmute(*vtbl.add(SLOT_SET_VOLUME_SCALAR));
         let level = (percent.min(100) as f32) / 100.0;
         if set(volume.ptr(), level, std::ptr::null()) < 0 {
             None
@@ -102,10 +110,9 @@ pub fn set_master_volume(percent: u8) -> Option<()> {
 /// Whether the default playback device is muted.
 pub fn is_muted() -> bool {
     with_endpoint(|volume| unsafe {
-        // Slot 9 is GetMute(BOOL*).
         let vtbl = *volume.0;
         let get: unsafe extern "system" fn(*mut usize, *mut i32) -> i32 =
-            std::mem::transmute(*vtbl.add(9));
+            std::mem::transmute(*vtbl.add(SLOT_GET_MUTE));
         let mut muted = 0i32;
         if get(volume.ptr(), &mut muted) < 0 {
             return false;
@@ -118,10 +125,9 @@ pub fn is_muted() -> bool {
 /// Mute or unmute the default playback device.
 pub fn set_muted(muted: bool) -> Option<()> {
     with_endpoint(|volume| unsafe {
-        // Slot 10 is SetMute(BOOL, LPCGUID).
         let vtbl = *volume.0;
         let set: unsafe extern "system" fn(*mut usize, i32, *const windows_sys::core::GUID) -> i32 =
-            std::mem::transmute(*vtbl.add(10));
+            std::mem::transmute(*vtbl.add(SLOT_SET_MUTE));
         if set(volume.ptr(), i32::from(muted), std::ptr::null()) < 0 {
             None
         } else {

@@ -86,6 +86,85 @@ pub fn ts(en: &'static str) -> &'static str {
     }
 }
 
+/// Resolve the indirect strings the registry uses for display names.
+///
+/// `FriendlyTypeName` is almost never a literal: it is `@%SystemRoot%\system32\
+/// shell32.dll,-12345`, a resource id inside a DLL.  Windows asks
+/// `SHLoadIndirectString` (shlwapi.dll) for the text, so we do too - a raw
+/// registry string showing `@...,-123` in the UI is a bug.
+///
+/// A plain literal is returned unchanged, which is what most third-party keys
+/// (SAP, WinRAR, ...) store.
+pub fn localize_resource_string(raw: &str) -> String {
+    let trimmed = raw.trim();
+    if !trimmed.starts_with('@') && !trimmed.contains(",-") {
+        return trimmed.to_string();
+    }
+    if let Some(text) = unsafe { load_indirect(trimmed) } {
+        if !text.is_empty() {
+            return text;
+        }
+    }
+    // `@path,-123`: a bare file name beats a resource id in the menu.
+    if let Some((path, _)) = trimmed.trim_start_matches('@').split_once(',') {
+        if let Some(name) = path.rsplit(['\\', '/']).next() {
+            if !name.is_empty() {
+                return name.to_string();
+            }
+        }
+    }
+    trimmed.to_string()
+}
+
+/// `SHLoadIndirectString` from shlwapi.dll, resolved at run time.
+///
+/// The workspace never links a DLL by hand (no `#[link]` anywhere), so this
+/// follows the same rule: `LoadLibrary`/`GetProcAddress` instead of a new
+/// build-time dependency.  Returns `None` when the library or the export is
+/// missing, and the caller falls back to a readable name.
+///
+/// # Safety
+/// Called only from [`localize_resource_string`] with a NUL-terminated buffer.
+unsafe fn load_indirect(source: &str) -> Option<String> {
+    use windows_sys::Win32::System::LibraryLoader::{GetProcAddress, LoadLibraryW};
+
+    #[allow(non_snake_case)]
+    type SHLoadIndirectStringFn = unsafe extern "system" fn(
+        pszsource: *const u16,
+        pszoutbuf: *mut u16,
+        cchoutbuf: u32,
+        ppvreserved: *const *const core::ffi::c_void,
+    ) -> i32;
+
+    let lib_name = crate::wide::str_to_wide("shlwapi.dll");
+    let lib = LoadLibraryW(lib_name.as_ptr());
+    if lib.is_null() {
+        return None;
+    }
+    // The library is deliberately never freed: Windows keeps a reference for the
+    // process lifetime, and a leaked HMODULE is cheaper than a use-after-free.
+    let Ok(proc_name) = std::ffi::CString::new("SHLoadIndirectString") else {
+        return None;
+    };
+    // `FARPROC` is `Option<unsafe extern "system" fn() -> isize>` in
+    // windows-sys 0.59, not a bare pointer, so it is unwrapped first.
+    let addr = GetProcAddress(lib, proc_name.as_ptr());
+    let load: SHLoadIndirectStringFn = std::mem::transmute(addr?);
+
+    let src = crate::wide::str_to_wide(source);
+    let mut out = [0u16; 512];
+    let hr = load(
+        src.as_ptr(),
+        out.as_mut_ptr(),
+        out.len() as u32,
+        std::ptr::null(),
+    );
+    if hr < 0 {
+        return None;
+    }
+    Some(crate::wide::from_wide(&out, out.len()))
+}
+
 /// Fill `{}` placeholders in order.  Extra arguments are appended in
 /// parentheses so a mismatched call is visible rather than silent.
 pub fn fill(template: &str, args: &[String]) -> String {

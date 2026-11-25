@@ -615,6 +615,48 @@ unsafe extern "system" fn enum_window_proc(hwnd: HWND, lparam: LPARAM) -> BOOL {
     1
 }
 
+/// Run a registry "open" command on one file.
+///
+/// Registered commands are command lines, not argument lists: `"C:\Program
+/// Files\App\app.exe" -open "%1"`.  This splits the executable off the front
+/// (respecting the quotes Windows writes) and hands the rest, with `%1`
+/// substituted, to `ShellExecuteW` - which is exactly how the shell treats
+/// `HKCR\...\shell\open\command`.
+pub fn run_command_for_file(command: &str, file: &Path) -> Result<()> {
+    let command = command.trim();
+    let (exe, rest) = if let Some(stripped) = command.strip_prefix('"') {
+        match stripped.split_once('"') {
+            Some((exe, rest)) => (exe.to_string(), rest.trim_start()),
+            None => (stripped.to_string(), ""),
+        }
+    } else {
+        match command.split_once(' ') {
+            Some((exe, rest)) => (exe.to_string(), rest.trim_start()),
+            None => (command.to_string(), ""),
+        }
+    };
+    if exe.is_empty() {
+        return Err(WinError::Other("empty command".into()));
+    }
+    // `%1` (and the unquoted `%L`) are the file; `%*` never appears in a
+    // per-file handler.  A bare placeholder gets quotes so spaces survive.
+    let target = file.display().to_string();
+    let quoted = format!("\"{target}\"");
+    let args = rest
+        .replace("%1", &quoted)
+        .replace("%l", &quoted)
+        .replace("%L", &quoted);
+    let args = if rest.is_empty() {
+        quoted
+    } else if args == rest {
+        // The command has no placeholder: append the file.
+        format!("{} {}", args, quoted).trim().to_string()
+    } else {
+        args
+    };
+    launch(&exe, args.trim())
+}
+
 /// Open a shell namespace entry by its `shell:` path (`shell:RecycleBinFolder`,
 /// `shell:MyComputerFolder`).
 ///
@@ -672,6 +714,59 @@ pub fn foreground_pid() -> Option<u32> {
         } else {
             Some(pid)
         }
+    }
+}
+
+/// Is a left/right `Win` key held down right now?
+///
+/// egui has no `Key::Win`, and the shell is the only program that cares, so the
+/// state is read straight from `GetAsyncKeyState`.  That also works when the
+/// shell window itself is not focused - which is the point: `Win` must open
+/// Start no matter which window the user was in.
+pub fn win_key_down() -> bool {
+    use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_LWIN, VK_RWIN};
+    const DOWN: i16 = 0x8000u16 as i16;
+    unsafe {
+        (GetAsyncKeyState(VK_LWIN as i32) & DOWN) != 0
+            || (GetAsyncKeyState(VK_RWIN as i32) & DOWN) != 0
+    }
+}
+
+/// Make the given window the foreground window and give it keyboard focus.
+///
+/// A shell at the bottom of the z-order never becomes foreground on its own, so
+/// its egui context never sees `Win` or the tray hotkeys.  Clicking the bar has
+/// to claim focus explicitly - `SetForegroundWindow` from the current foreground
+/// process is allowed, and the shell is that process right after a click.
+pub fn focus_window(hwnd: isize) {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        BringWindowToTop, SetForegroundWindow, SetFocus,
+    };
+    if hwnd == 0 {
+        return;
+    }
+    let h = hwnd as HWND;
+    unsafe {
+        SetForegroundWindow(h);
+        BringWindowToTop(h);
+        SetFocus(h);
+    }
+}
+
+/// Raise one specific window (a taskbar preview card was clicked).
+pub fn activate_window_hwnd(hwnd: isize) {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        IsIconic, SetForegroundWindow, ShowWindow, SW_RESTORE,
+    };
+    if hwnd == 0 {
+        return;
+    }
+    let h = hwnd as HWND;
+    unsafe {
+        if IsIconic(h) != 0 {
+            ShowWindow(h, SW_RESTORE);
+        }
+        SetForegroundWindow(h);
     }
 }
 

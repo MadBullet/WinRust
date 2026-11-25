@@ -16,7 +16,13 @@ use winrust_core::{t, tf};
 use crate::DesktopApp;
 
 /// Width reserved on the right of the taskbar for the tray.
-pub const WIDTH: f32 = 250.0;
+///
+/// Sized from the contents rather than guessed: the bell (28) + clock (96) +
+/// language (38) + volume (28) + network (28) + chevron (22), five 4 px gaps
+/// and the 6 px margin on the right.  The old 250 was narrower than the sum, so
+/// the row overflowed and the clock was clipped under the bar's edge.
+const ROW: f32 = 28.0 + 96.0 + 38.0 + 28.0 + 28.0 + 22.0 + 5.0 * 4.0 + 6.0;
+pub const WIDTH: f32 = ROW;
 
 /// The tray icons are drawn as simple vector shapes, so they stay crisp at any
 /// DPI without bundling image assets.
@@ -65,7 +71,10 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
     );
     let mut ui = egui::Ui::new(
         ctx.clone(),
-        egui::LayerId::new(egui::Order::Foreground, egui::Id::new("tray_layer")),
+        // One order above the bar: the bar's own widgets are at `Foreground`,
+        // so a tray drawn there was covered by the bar strip and never received
+        // a click.  `Tooltip` is the next order up and is unused here.
+        egui::LayerId::new(egui::Order::Tooltip, egui::Id::new("tray_layer")),
         egui::Id::new("tray_ui"),
         egui::UiBuilder::new()
             .max_rect(tray_rect)
@@ -87,20 +96,25 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
         // ---- Clock, two lines, opening the calendar ------------------------
         let (time, date) = split_clock(&app.clock);
         let (clock_rect, clock_resp) =
-            ui.allocate_exact_size(egui::vec2(78.0, 38.0), egui::Sense::click());
+            ui.allocate_exact_size(egui::vec2(96.0, 38.0), egui::Sense::click());
+        // Both lines sit in one centred block: the old code anchored each line
+        // to its own y and the date ended up half below the bar.
         let p = ui.painter();
-        p.text(
-            clock_rect.center_top() + egui::vec2(clock_rect.width() / 2.0, 6.0),
-            egui::Align2::CENTER_TOP,
-            &time,
-            egui::FontId::proportional(12.5),
+        let time_font = egui::FontId::proportional(12.0);
+        let date_font = egui::FontId::proportional(10.5);
+        let time_galley = p.layout_no_wrap(time.clone(), time_font, text);
+        let date_galley = p.layout_no_wrap(date.clone(), date_font, weak);
+        let block_h = time_galley.size().y + date_galley.size().y;
+        let mut y = clock_rect.center().y - block_h / 2.0;
+        p.galley(
+            egui::pos2(clock_rect.center().x - time_galley.size().x / 2.0, y),
+            time_galley,
             text,
         );
-        p.text(
-            clock_rect.center_top() + egui::vec2(clock_rect.width() / 2.0, 21.0),
-            egui::Align2::CENTER_TOP,
-            &date,
-            egui::FontId::proportional(11.0),
+        y += time_galley.size().y;
+        p.galley(
+            egui::pos2(clock_rect.center().x - date_galley.size().x / 2.0, y),
+            date_galley,
             weak,
         );
         if clock_resp.clicked() {
@@ -163,7 +177,8 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
     });
 
     // ---- The open flyout ----------------------------------------------------
-    if app.tray_flyout.is_open() {
+    // Drawn while closing too, so it fades instead of disappearing outright.
+    if app.tray_flyout.is_open() || app.flyout_anim > 0.01 {
         flyout(app, ctx, inner, pal);
     }
 }
@@ -219,12 +234,33 @@ fn flyout(
         Flyout::Overflow => 280.0,
         _ => 320.0,
     };
-    let pos = egui::pos2(inner.right() - width - 8.0, inner.top());
-    let surface = Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, 252);
+    // The panel is placed *above* the bar.  It used to be anchored at
+    // `inner.top()`, i.e. directly on the taskbar strip, so the bar painted over
+    // its lower part and the panel looked cut off.
+    let height_hint = match app.tray_flyout {
+        Flyout::Calendar => 460.0,
+        Flyout::Notifications => 470.0,
+        Flyout::Network => 250.0,
+        Flyout::Volume => 190.0,
+        Flyout::Language => 210.0,
+        Flyout::Overflow => 200.0,
+        Flyout::None => 120.0,
+    };
+    let screen = ctx.screen_rect();
+    // Rise and fade, the same easing the Start menu uses.
+    let anim = app.flyout_anim.clamp(0.0, 1.0);
+    let slide = (1.0 - anim) * 10.0;
+    let top = (inner.bottom() + 6.0 - height_hint).max(screen.top() + 8.0);
+    let pos = egui::pos2(
+        (inner.right() - width - 6.0).max(screen.left() + 8.0),
+        top + slide,
+    );
+    let alpha = (anim * 252.0) as u8;
+    let surface = Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, alpha);
     let line = Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2);
 
     let response = egui::Area::new(egui::Id::new("tray_flyout"))
-        .order(egui::Order::Foreground)
+        .order(egui::Order::Tooltip)
         .fixed_pos(pos)
         .show(ctx, |ui| {
             egui::Frame::popup(ui.style())

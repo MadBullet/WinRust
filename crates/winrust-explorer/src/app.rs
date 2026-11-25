@@ -249,30 +249,13 @@ impl Tab {
 /// Create an empty file with `extension` in `dir`, naming it the way Explorer's
 /// "New -> ..." menu does (`New Text Document.txt`, then `(2)`, `(3)`, ...).
 fn new_file_in(dir: &Path, extension: &str) -> Option<PathBuf> {
-    let base = ts("New file");
-    let ext = extension.trim_start_matches('.');
-    let mut name = format!("{base}.{ext}");
-    let mut n = 2;
-    while dir.join(&name).exists() {
-        name = format!("{base} ({n}).{ext}");
-        n += 1;
-    }
-    let path = dir.join(&name);
-    std::fs::File::create(&path).ok().map(|_| path)
+    // Naming, numbering and the `ShellNew` template all live in
+    // `winrust_core::files`, so the desktop and this window cannot disagree.
+    winrust_core::files::create_file(dir, extension, ts("New file")).ok()
 }
 
 fn file_name_of(p: &Path) -> String {
-    match p.file_name() {
-        Some(n) => n.to_string_lossy().to_string(),
-        None => {
-            let s = p.to_string_lossy().to_string();
-            if s.is_empty() {
-                "This PC".into()
-            } else {
-                s
-            }
-        }
-    }
+    winrust_core::disk::file_name_of(p)
 }
 
 /// Message from the directory worker.
@@ -350,6 +333,12 @@ pub struct ExplorerApp {
     lang: Lang,
     /// When the registry was last polled for a language change.
     lang_checked_at: std::time::Instant,
+    /// "New" submenu contents, read from the registry when the menu is opened
+    /// (never every frame - each entry costs a registry walk).
+    new_items: Vec<winrust_core::fileassoc::NewItem>,
+    new_items_at: Option<std::time::Instant>,
+    /// "Open with" entries for the current selection, same policy.
+    open_with: Vec<winrust_core::fileassoc::OpenWith>,
 }
 
 /// The floating label shown under the cursor during a drag & drop.
@@ -459,6 +448,9 @@ impl ExplorerApp {
             hwnd: 0,
             lang: i18n::current(),
             lang_checked_at: std::time::Instant::now(),
+            new_items: Vec::new(),
+            new_items_at: None,
+            open_with: Vec::new(),
         };
         app.start_load(app.active);
         app
@@ -780,6 +772,8 @@ enum Command {
     OpenNewTab,
     Edit,
     OpenWith,
+    /// Run one registered program on one file (`Open with`).
+    OpenWithProgram(String, PathBuf),
     RunAsAdmin,
     Copy,
     Cut,
@@ -823,6 +817,13 @@ impl ExplorerApp {
                 let args = format!("shell32.dll,OpenAs_RunDLL {}", path.display());
                 if let Err(e) = shell::launch("rundll32.exe", &args) {
                     self.status = format!("Open with failed: {e}");
+                }
+            }
+            Command::OpenWithProgram(command, target) => {
+                // The registry command is `"C:\...\app.exe" "%1"`.
+                match winrust_core::shell::run_command_for_file(&command, &target) {
+                    Ok(()) => self.status = format!("{}: {}", command, target.display()),
+                    Err(e) => self.status = format!("Open with failed: {e}"),
                 }
             }
             Command::RunAsAdmin => {
@@ -1799,9 +1800,19 @@ impl ExplorerApp {
             tab.selection = vec![path.to_path_buf()];
             tab.anchor = Some(index);
         }
+        // The "Open with" list belongs to the file, so it is rebuilt when the
+        // selection changes, not every frame.
+        self.open_with = self
+            .current()
+            .selection
+            .first()
+            .filter(|p| p.extension().is_some())
+            .map(|p| winrust_core::fileassoc::open_with(p))
+            .unwrap_or_default();
     }
 
     fn details_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+        let app_list = self.open_with.clone();
         let sort_key = self.current().sort_key;
         let sort_asc = self.current().sort_asc;
         let clicked_cell = std::cell::Cell::new(None::<SortKeySerde>);
@@ -1913,7 +1924,7 @@ impl ExplorerApp {
                         }
                     }
                     let mut local: Vec<Command> = Vec::new();
-                    resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
+                    resp.context_menu(|ui| simple_context_menu(ui, entry, &app_list, &mut local));
                     for c in local {
                         commands.push((entry.path.clone(), c));
                     }
@@ -1973,6 +1984,7 @@ impl ExplorerApp {
     }
 
     fn list_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+        let app_list = self.open_with.clone();
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -2009,7 +2021,7 @@ impl ExplorerApp {
                                         egui::Button::new(text).selected(selected).frame(false),
                                     );
                                     resp.context_menu(|ui| {
-                                        simple_context_menu(ui, entry, &mut local)
+                                        simple_context_menu(ui, entry, &app_list, &mut local)
                                     });
                                     commands
                                         .extend(local.into_iter().map(|c| (entry.path.clone(), c)));
@@ -2070,6 +2082,7 @@ impl ExplorerApp {
         entries: &[DirEntry],
         icon: u32,
     ) {
+        let app_list = self.open_with.clone();
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -2134,7 +2147,7 @@ impl ExplorerApp {
                                     );
                                     let mut local: Vec<Command> = Vec::new();
                                     resp.context_menu(|ui| {
-                                        simple_context_menu(ui, entry, &mut local)
+                                        simple_context_menu(ui, entry, &app_list, &mut local)
                                     });
                                     commands
                                         .extend(local.into_iter().map(|c| (entry.path.clone(), c)));
@@ -2193,6 +2206,7 @@ impl ExplorerApp {
 
     /// Explorer's "Content" view: rows with a larger icon, name, and metadata.
     fn content_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+        let app_list = self.open_with.clone();
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -2261,7 +2275,7 @@ impl ExplorerApp {
                         Color32::from_gray(160),
                     );
                     let mut local: Vec<Command> = Vec::new();
-                    resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
+                    resp.context_menu(|ui| simple_context_menu(ui, entry, &app_list, &mut local));
                     commands.extend(local.into_iter().map(|c| (entry.path.clone(), c)));
                     if resp.clicked() {
                         clicked = Some((idx, entry.path.clone()));
@@ -2284,7 +2298,12 @@ impl ExplorerApp {
 
 /// Right-click menu built without touching `self`, so it can be used inside the
 /// table/tile closures that already borrow the app.
-fn simple_context_menu(ui: &mut egui::Ui, entry: &DirEntry, out: &mut Vec<Command>) {
+fn simple_context_menu(
+    ui: &mut egui::Ui,
+    entry: &DirEntry,
+    app_list: &[winrust_core::fileassoc::OpenWith],
+    out: &mut Vec<Command>,
+) {
     if ui.button(t("Open")).clicked() {
         out.push(Command::Open);
         ui.close_menu();
@@ -2299,9 +2318,31 @@ fn simple_context_menu(ui: &mut egui::Ui, entry: &DirEntry, out: &mut Vec<Comman
             out.push(Command::Edit);
             ui.close_menu();
         }
-        if ui.button(t("Open with…")).clicked() {
-            out.push(Command::OpenWith);
-            ui.close_menu();
+        // "Open with": the programs this extension is actually registered
+        // for, then the system chooser.  The list comes from the registry
+        // (`HKCR\Applications\*\SupportedTypes`, `...\OpenWithList`), so it
+        // shows whatever is installed instead of a fixed set.
+        if app_list.is_empty() {
+            if ui.button(t("Open with…")).clicked() {
+                out.push(Command::OpenWith);
+                ui.close_menu();
+            }
+        } else {
+            ui.menu_button(t("Open with…"), |ui| {
+                ui.set_min_width(220.0);
+                let path = entry.path.clone();
+                for app in app_list {
+                    if ui.button(&app.name).clicked() {
+                        out.push(Command::OpenWithProgram(app.command.clone(), path.clone()));
+                        ui.close_menu();
+                    }
+                }
+                ui.separator();
+                if ui.button(t("Choose another app…")).clicked() {
+                    out.push(Command::OpenWith);
+                    ui.close_menu();
+                }
+            });
         }
         if ui.button(t("Run as administrator")).clicked() {
             out.push(Command::RunAsAdmin);
@@ -2830,25 +2871,19 @@ impl ExplorerApp {
             });
             match action {
                 Some(true) => {
-                    let mut errors = Vec::new();
-                    for p in &paths {
-                        let result = if permanent {
-                            disk::delete_permanent(p)
-                        } else {
-                            shell::recycle(std::slice::from_ref(p))
-                        };
-                        if let Err(e) = result {
-                            errors.push(format!("{}: {e}", file_name_of(p)));
-                        }
-                    }
-                    self.status = if errors.is_empty() {
+                    let report = winrust_core::files::delete(&paths, permanent);
+                    self.status = if report.ok() {
                         if permanent {
-                            format!("Deleted {} item(s)", paths.len())
+                            format!("Deleted {} item(s)", report.done)
                         } else {
-                            format!("Moved {} item(s) to the Recycle Bin", paths.len())
+                            format!("Moved {} item(s) to the Recycle Bin", report.done)
                         }
                     } else {
-                        format!("{} error(s): {}", errors.len(), errors.join("; "))
+                        format!(
+                            "{} error(s): {}",
+                            report.errors.len(),
+                            report.errors.join("; ")
+                        )
                     };
                     self.delete_confirm.clear();
                     self.refresh();
@@ -3338,6 +3373,18 @@ impl eframe::App for ExplorerApp {
                 egui::Sense::click(),
             );
             let mut cmds: Vec<Command> = Vec::new();
+            // The menu closure borrows `self`, so everything it needs from the
+            // registry is fetched *before* it runs, and only when it is stale.
+            let here = self.current().path.clone();
+            let new_stale = self
+                .new_items_at
+                .map(|t| t.elapsed() > std::time::Duration::from_secs(5))
+                .unwrap_or(true);
+            if new_stale && bg.secondary_clicked() {
+                self.new_items = winrust_core::fileassoc::new_items();
+                self.new_items_at = Some(std::time::Instant::now());
+            }
+            let new_items = self.new_items.clone();
             bg.context_menu(|ui| {
                 ui.set_min_width(230.0);
                 // View: the three tile sizes and the grid switches, exactly the
@@ -3427,26 +3474,29 @@ impl eframe::App for ExplorerApp {
                     ui.close_menu();
                 }
                 ui.menu_button(t("New"), |ui| {
-                    ui.set_min_width(220.0);
+                    ui.set_min_width(240.0);
                     if ui.button(t("Folder")).clicked() {
                         self.creating_folder = true;
                         self.new_folder_buffer = t("New folder");
                         ui.close_menu();
                     }
-                    if ui.button(t("Text document")).clicked() {
-                        new_file_in(&self.current().path, "txt");
-                        cmds.push(Command::Refresh);
+                    if ui.button(t("Shortcut")).clicked() {
+                        let _ = shell::launch("rundll32.exe", "appwiz.cpl,NewLinkHere %1");
                         ui.close_menu();
                     }
-                    if ui.button(t("Bitmap image")).clicked() {
-                        new_file_in(&self.current().path, "bmp");
-                        cmds.push(Command::Refresh);
-                        ui.close_menu();
-                    }
-                    if ui.button(t("ZIP archive")).clicked() {
-                        new_file_in(&self.current().path, "zip");
-                        cmds.push(Command::Refresh);
-                        ui.close_menu();
+                    ui.separator();
+                    // Everything else is what this machine has actually
+                    // registered: Word, Excel, WinRAR, SAP ... appear only when
+                    // they are installed, exactly like the real submenu.
+                    //
+                    // The list is read from the registry when the menu opens
+                    // (above), never once per frame.
+                    for item in new_items.iter() {
+                        if ui.button(&item.label).clicked() {
+                            new_file_in(&here, &item.extension);
+                            cmds.push(Command::Refresh);
+                            ui.close_menu();
+                        }
                     }
                 });
                 ui.separator();
