@@ -739,9 +739,8 @@ pub fn win_key_down() -> bool {
 /// to claim focus explicitly - `SetForegroundWindow` from the current foreground
 /// process is allowed, and the shell is that process right after a click.
 pub fn focus_window(hwnd: isize) {
-    use windows_sys::Win32::UI::WindowsAndMessaging::{
-        BringWindowToTop, SetFocus, SetForegroundWindow,
-    };
+    use windows_sys::Win32::UI::Input::KeyboardAndMouse::SetFocus;
+    use windows_sys::Win32::UI::WindowsAndMessaging::{BringWindowToTop, SetForegroundWindow};
     if hwnd == 0 {
         return;
     }

@@ -148,7 +148,7 @@ unsafe fn load_indirect(source: &str) -> Option<String> {
     };
     // `FARPROC` is `Option<unsafe extern "system" fn() -> isize>` in
     // windows-sys 0.59, not a bare pointer, so it is unwrapped first.
-    let addr = GetProcAddress(lib, proc_name.as_ptr());
+    let addr = GetProcAddress(lib, proc_name.as_ptr() as *const u8);
     let load: SHLoadIndirectStringFn = std::mem::transmute(addr?);
 
     let src = crate::wide::str_to_wide(source);

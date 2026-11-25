@@ -92,7 +92,12 @@ pub fn window_thumbnail(hwnd: isize, max_w: u32, max_h: u32) -> Option<Thumbnail
 }
 
 /// Bits of a selected bitmap as RGBA, top-down.
-unsafe fn read_rgba(dc: isize, bitmap: isize, w: u32, h: u32) -> Option<Thumbnail> {
+unsafe fn read_rgba(
+    dc: *mut core::ffi::c_void,
+    bitmap: *mut core::ffi::c_void,
+    w: u32,
+    h: u32,
+) -> Option<Thumbnail> {
     use windows_sys::Win32::Graphics::Gdi::{
         GetDIBits, BITMAPINFO, BITMAPINFOHEADER, BI_RGB, DIB_RGB_COLORS,
     };
