@@ -38,17 +38,16 @@ pub use tabs::Tab;
 use eframe::egui;
 use std::time::{Duration, Instant};
 use winrust_core::i18n::{self, Appearance, Lang};
+use winrust_core::tf;
 
 use winrust_core::gpu;
 use winrust_core::net;
-use winrust_core::process;
 use winrust_core::system;
 use winrust_core::user;
 
 use model::{spawn_sampler, Sampler, Snapshot};
 use startup::StartupItem;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct TaskManagerApp {
     pub(super) tab: Tab,
     pub(super) sampler: Sampler,

@@ -9,6 +9,7 @@
 //! [`Snapshot`] is one finished sample.  The ordering rules below are model
 //! rules too - what "running first" means is not a painting decision.
 
+use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{channel, Receiver};
 use std::sync::Arc;
@@ -32,7 +33,7 @@ pub(super) enum Metric {
 }
 
 impl Metric {
-    fn caption(self) -> &'static str {
+    pub(super) fn caption(self) -> &'static str {
         match self {
             Metric::Cpu => ts("CPU"),
             Metric::Memory => ts("Memory"),
@@ -42,7 +43,7 @@ impl Metric {
             Metric::GpuEngine => ts("GPU engine"),
         }
     }
-    fn glyph(self) -> &'static str {
+    pub(super) fn glyph(self) -> &'static str {
         match self {
             Metric::Cpu => "▦",
             Metric::Memory => "▤",
@@ -52,7 +53,7 @@ impl Metric {
             Metric::GpuEngine => "◫",
         }
     }
-    fn short(self) -> &'static str {
+    pub(super) fn short(self) -> &'static str {
         match self {
             Metric::Cpu => "Ц",
             Metric::Memory => "П",
@@ -62,7 +63,7 @@ impl Metric {
             Metric::GpuEngine => "Я",
         }
     }
-    const ALL: [Metric; 6] = [
+    pub(super) const ALL: [Metric; 6] = [
         Metric::Cpu,
         Metric::Memory,
         Metric::Disk,
@@ -95,7 +96,7 @@ pub(super) struct Row {
 }
 
 impl Row {
-    fn metric(&self, m: Metric) -> String {
+    pub(super) fn metric(&self, m: Metric) -> String {
         match m {
             Metric::Cpu => format!("{:.1}%", self.cpu_percent),
             Metric::Memory => mb(self.info.private_bytes),
@@ -111,7 +112,7 @@ impl Row {
             }
         }
     }
-    fn metric_heat(&self, m: Metric) -> f32 {
+    pub(super) fn metric_heat(&self, m: Metric) -> f32 {
         match m {
             Metric::Cpu => self.cpu_percent,
             Metric::Memory => {

@@ -3,7 +3,7 @@
 use winrust_core::ts;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum Tab {
+pub enum Tab {
     Processes,
     Details,
     Performance,

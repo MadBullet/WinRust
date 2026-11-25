@@ -2,7 +2,7 @@
 //! stock "apps / background" split.
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum SortBy {
+pub enum SortBy {
     Name,
     Cpu,
     Memory,
@@ -24,7 +24,7 @@ pub(super) enum SortBy {
 
 /// Which rows a view shows: the stock "Apps" / "Background" split.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum RowFilter {
+pub enum RowFilter {
     All,
     Apps,
     Background,
