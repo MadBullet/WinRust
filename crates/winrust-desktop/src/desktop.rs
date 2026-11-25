@@ -131,10 +131,29 @@ impl DesktopApp {
             ),
         );
 
+        // One top-level Ui on the Background layer owns every wallpaper widget.
+        // egui 0.29 has no `Context::interact`, so the hit areas are registered
+        // through a Ui whose clip rect is the whole wallpaper.
+        let layer = egui::LayerId::new(egui::Order::Background, egui::Id::new("desktop_layer"));
+        let ui = egui::Ui::new(
+            ctx.clone(),
+            layer,
+            egui::Id::new("desktop_ui"),
+            egui::UiBuilder::new()
+                .max_rect(area)
+                .layout(egui::Layout::top_down(egui::Align::Min)),
+        );
+
         let mut open: Option<PathBuf> = None;
         let mut moved: Option<(String, (usize, usize))> = None;
         let mut clicked: Option<usize> = None;
         let mut drop_off_cell: Option<(usize, usize)> = None;
+
+        // The wallpaper hit area is registered before the icons, because inside a
+        // single layer the widget registered last wins the hit test — icons must
+        // stay clickable.  Clicking empty wallpaper clears the selection and
+        // closes Start.
+        let bg = ui.interact(area, egui::Id::new("desktop_bg"), egui::Sense::click());
 
         let icons = self.icons.clone();
         let selected_idx = self.selected;
@@ -145,17 +164,13 @@ impl DesktopApp {
             let pos = area.left_top()
                 + egui::vec2(icon.cell.0 as f32 * CELL.x, icon.cell.1 as f32 * CELL.y);
             let rect = egui::Rect::from_min_size(pos, egui::vec2(CELL.x - 6.0, CELL.y - 8.0));
-            let resp = ctx.interact(
-                egui::LayerId::new(egui::Order::Background, egui::Id::new("desktop_layer")),
-                egui::Id::new(("desktop_icon", idx)),
+            let resp = ui.interact(
                 rect,
+                egui::Id::new(("desktop_icon", idx)),
                 egui::Sense::click_and_drag(),
             );
             let selected = selected_idx == Some(idx);
-            let painter = ctx.layer_painter(egui::LayerId::new(
-                egui::Order::Background,
-                egui::Id::new("desktop_layer"),
-            ));
+            let painter = ctx.layer_painter(layer);
             if resp.hovered() || selected {
                 painter.rect_filled(
                     rect,
@@ -240,20 +255,10 @@ impl DesktopApp {
             resp.on_hover_text(icon.path.display().to_string());
         }
 
-        // Clicking empty wallpaper clears the selection and closes Start.
-        let bg = ctx.interact(
-            egui::LayerId::new(egui::Order::Background, egui::Id::new("desktop_bg_layer")),
-            egui::Id::new("desktop_bg"),
-            area,
-            egui::Sense::click(),
-        );
         if bg.clicked() {
-            clicked = None;
             self.selected = None;
             self.close_start();
-        }
-
-        if let Some(idx) = clicked {
+        } else if let Some(idx) = clicked {
             self.selected = Some(idx);
         }
         if let Some(path) = open {

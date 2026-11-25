@@ -250,16 +250,18 @@ fn spawn_sampler(interval: Duration) -> Sampler {
                     if let Some(engines) = q.sample() {
                         let mut by_adapter: HashMap<u32, f32> = HashMap::new();
                         for (name, pct) in &engines {
+                            // PDH hands out doubles; the UI works in f32.
+                            let pct = *pct as f32;
                             let pid = pid_from_engine(name).unwrap_or(0);
                             let adapter = gpu::adapter_of(name);
                             let e = by_adapter.entry(adapter).or_insert(0.0);
-                            if *pct > *e {
-                                *e = *pct;
+                            if pct > *e {
+                                *e = pct;
                             }
                             if pid != 0 {
                                 let entry = per_pid_gpu.entry(pid).or_insert((0.0, String::new()));
-                                if *pct > entry.0 {
-                                    entry.0 = *pct;
+                                if pct > entry.0 {
+                                    entry.0 = pct;
                                     entry.1 = engine_short(name);
                                 }
                             }
@@ -382,7 +384,9 @@ fn spawn_sampler(interval: Duration) -> Sampler {
             }
         }));
         if result.is_err() {
-            log::error!("process sampler stopped after a panic; UI keeps running");
+            // No `log` crate in this binary: the sampler thread panicked, but the
+            // UI keeps drawing whatever the last good snapshot was.
+            eprintln!("winrust-taskmgr: process sampler stopped after a panic; UI keeps running");
         }
     });
     Sampler { rx, stop }
@@ -1132,7 +1136,7 @@ impl TaskManagerApp {
                     if resp.clicked() {
                         clicked = Some(r.info.pid);
                     }
-                    resp.on_hover_text(format!(
+                    resp.clone().on_hover_text(format!(
                         "{}\n{}\nPID {}",
                         label,
                         winrust_core::i18n::middle(&r.info.exe_path, 120, 60),
@@ -1229,77 +1233,80 @@ impl TaskManagerApp {
     }
 
     fn performance_tab(&mut self, ui: &mut egui::Ui) {
-        let mut cols = ui.columns(2);
-        let cpu_hist = self.history_cpu.clone();
-        let mem_hist = self.history_mem.clone();
-        let gpu_hist = self.history_gpu.clone();
-        let net_hist = self.history_net.clone();
+        // egui 0.29 wants the column contents as a closure, so the whole body
+        // lives inside `ui.columns`.
+        ui.columns(2, |cols| {
+            let cpu_hist = self.history_cpu.clone();
+            let mem_hist = self.history_mem.clone();
+            let gpu_hist = self.history_gpu.clone();
+            let net_hist = self.history_net.clone();
 
-        cols[0].heading(ts("CPU"));
-        self.graph(&mut cols[0], &cpu_hist, 100.0, ts("CPU"));
-        cols[0].label(tf!(
-            "{} · {} logical processors",
-            self.cpu_info.arch,
-            self.cpu_info.logical
-        ));
-        cols[0].label(tf!("Uptime: {}", format_uptime(self.snapshot.uptime_ms)));
-        cols[0].separator();
+            cols[0].heading(ts("CPU"));
+            self.graph(&mut cols[0], &cpu_hist, 100.0, ts("CPU"));
+            cols[0].label(tf!(
+                "{} · {} logical processors",
+                self.cpu_info.arch,
+                self.cpu_info.logical
+            ));
+            cols[0].label(tf!("Uptime: {}", format_uptime(self.snapshot.uptime_ms)));
+            cols[0].separator();
 
-        cols[0].heading(ts("Memory"));
-        self.graph(&mut cols[0], &mem_hist, 100.0, ts("Memory"));
-        let m = self.snapshot.memory;
-        cols[0].label(tf!(
-            "In use: {} ({}%)",
-            bytes_text(m.used_phys()),
-            format_args!("{:.0}", m.used_percent())
-        ));
-        cols[0].label(tf!("Available: {}", bytes_text(m.avail_phys)));
-        cols[0].label(tf!("Total: {}", bytes_text(m.total_phys)));
-        if let Some(ram) = self.ram_installed {
-            cols[0].label(tf!("Installed RAM: {}", bytes_text(ram)));
-        }
-        cols[0].label(tf!(
-            "Committed: {}",
-            bytes_text(m.total_page_file.saturating_sub(m.avail_page_file))
-        ));
-        cols[0].separator();
-
-        cols[1].heading(ts("GPU"));
-        self.graph(&mut cols[1], &gpu_hist, 100.0, ts("GPU"));
-        if self.snapshot.gpu.by_adapter.is_empty() {
-            cols[1].label(
-                RichText::new(ts("No GPU counters available"))
-                    .weak()
-                    .small(),
-            );
-        } else {
-            for (adapter, pct) in &self.snapshot.gpu.by_adapter {
-                let name = self
-                    .gpus
-                    .get(*adapter as usize)
-                    .map(|(_, n)| n.as_str())
-                    .unwrap_or(ts("GPU"));
-                cols[1].label(format!("{name}: {pct:.0}%"));
+            cols[0].heading(ts("Memory"));
+            self.graph(&mut cols[0], &mem_hist, 100.0, ts("Memory"));
+            let m = self.snapshot.memory;
+            cols[0].label(tf!(
+                "In use: {} ({}%)",
+                bytes_text(m.used_phys()),
+                format_args!("{:.0}", m.used_percent())
+            ));
+            cols[0].label(tf!("Available: {}", bytes_text(m.avail_phys)));
+            cols[0].label(tf!("Total: {}", bytes_text(m.total_phys)));
+            if let Some(ram) = self.ram_installed {
+                cols[0].label(tf!("Installed RAM: {}", bytes_text(ram)));
             }
-        }
-        cols[1].separator();
-        cols[1].heading(ts("Network"));
-        self.graph(&mut cols[1], &net_hist, 100.0 * 1024.0, ts("Network"));
-        cols[1].label(tf!(
-            "Total throughput: {}",
-            rate(net_hist.last().copied().unwrap_or(0.0) as f64)
-        ));
-        cols[1].separator();
-        cols[1].heading(ts("Kernel CPU time"));
-        cols[1].label(format!(
-            "{}: {:.1} s   {}: {:.1} s   {}: {:.1} s",
-            t("Kernel"),
-            self.snapshot.cpu.kernel_100ns() as f64 / 1e7,
-            t("User"),
-            self.snapshot.cpu.user_100ns() as f64 / 1e7,
-            t("Idle"),
-            self.snapshot.cpu.idle_100ns() as f64 / 1e7,
-        ));
+            cols[0].label(tf!(
+                "Committed: {}",
+                bytes_text(m.total_page_file.saturating_sub(m.avail_page_file))
+            ));
+            cols[0].separator();
+
+            cols[1].heading(ts("GPU"));
+            self.graph(&mut cols[1], &gpu_hist, 100.0, ts("GPU"));
+            if self.snapshot.gpu.by_adapter.is_empty() {
+                cols[1].label(
+                    RichText::new(ts("No GPU counters available"))
+                        .weak()
+                        .small(),
+                );
+            } else {
+                for (adapter, pct) in &self.snapshot.gpu.by_adapter {
+                    let name = self
+                        .gpus
+                        .get(*adapter as usize)
+                        .map(|(_, n)| n.as_str())
+                        .unwrap_or(ts("GPU"));
+                    cols[1].label(format!("{name}: {pct:.0}%"));
+                }
+            }
+            cols[1].separator();
+            cols[1].heading(ts("Network"));
+            self.graph(&mut cols[1], &net_hist, 100.0 * 1024.0, ts("Network"));
+            cols[1].label(tf!(
+                "Total throughput: {}",
+                rate(net_hist.last().copied().unwrap_or(0.0) as f64)
+            ));
+            cols[1].separator();
+            cols[1].heading(ts("Kernel CPU time"));
+            cols[1].label(format!(
+                "{}: {:.1} s   {}: {:.1} s   {}: {:.1} s",
+                t("Kernel"),
+                self.snapshot.cpu.kernel_100ns() as f64 / 1e7,
+                t("User"),
+                self.snapshot.cpu.user_100ns() as f64 / 1e7,
+                t("Idle"),
+                self.snapshot.cpu.idle_100ns() as f64 / 1e7,
+            ));
+        });
     }
 
     fn graph(&self, ui: &mut egui::Ui, data: &[f32], max: f32, label: &str) {
@@ -1366,7 +1373,7 @@ impl TaskManagerApp {
         };
         let mut keep_open = true;
         let mut chosen: Option<Priority> = None;
-        egui::Window::new(tf!("Priority — {}", row.info.name))
+        egui::Window::new(tf!("Priority — {}", &row.info.name))
             .collapsible(false)
             .resizable(false)
             .open(&mut keep_open)
@@ -1667,7 +1674,7 @@ impl TaskManagerApp {
                 .resizable(false)
                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
                 .show(ctx, |ui| {
-                    ui.label(tf!("Terminate {} (PID {})?", name, pid));
+                    ui.label(tf!("Terminate {} (PID {})?", &name, pid));
                     ui.label(
                         RichText::new(ts("Unsaved data in this app will be lost."))
                             .small()
@@ -1783,7 +1790,7 @@ fn rate(bps: f64) -> String {
 fn mb(bytes: u64) -> String {
     let m = bytes as f64 / 1_048_576.0;
     if m >= 1024.0 {
-        format!("{:.1} {}", bytes_text(bytes))
+        bytes_text(bytes)
     } else {
         format!("{m:.1} {}", ts("MB"))
     }

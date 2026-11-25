@@ -98,7 +98,7 @@ impl DesktopApp {
                 egui::Frame::popup(ui.style())
                     .fill(Color32::from_rgba_unmultiplied(24, 28, 38, 248))
                     .stroke(egui::Stroke::new(1.0_f32, Color32::from_rgb(56, 64, 82)))
-                    .inner_margin(egui::Margin::same(10))
+                    .inner_margin(egui::Margin::same(10.0))
                     .show(ui, |ui| {
                         ui.set_width(rect.width() - 24.0);
                         ui.set_height(rect.height() - 20.0);

@@ -59,6 +59,7 @@ impl DesktopApp {
 
         let ui = egui::Ui::new(
             ctx.clone(),
+            egui::LayerId::new(egui::Order::Foreground, egui::Id::new("taskbar_layer")),
             egui::Id::new("taskbar"),
             egui::UiBuilder::new()
                 .max_rect(bar.shrink2(egui::vec2(6.0, 5.0)))

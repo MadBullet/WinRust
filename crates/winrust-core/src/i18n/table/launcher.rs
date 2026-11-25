@@ -73,7 +73,6 @@ pub static ENTRIES: &[(&str, &str)] = &[
         "Winlogon Shell override removed — sign-in returns to explorer.exe",
         "Переопределение Winlogon Shell удалено — при входе снова запускается explorer.exe",
     ),
-    ("Administrator rights are required", "Требуются права администратора"),
     ("Restore failed", "Не удалось восстановить"),
     ("Components", "Компоненты"),
     ("Kernel driver", "Драйвер ядра"),
@@ -86,4 +85,6 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Launch", "Запустить"),
     ("Restore", "Восстановить"),
     ("Backups", "Резервные копии"),
+    ("Explorer", "Проводник"),
+    ("WinRust Desktop", "Рабочий стол WinRust"),
 ];

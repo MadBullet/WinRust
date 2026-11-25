@@ -198,7 +198,7 @@ impl ServicesApp {
                     Ok(()) => {
                         self.status = tf!(
                             "{}: start type = {}, description saved",
-                            dlg.name,
+                            &dlg.name,
                             dlg.start_type.label()
                         );
                         self.props = None;
@@ -612,7 +612,7 @@ impl ServicesApp {
         };
         let mut apply = false;
         let mut cancel = false;
-        egui::Window::new(tf!("{} Properties", dlg.display_name))
+        egui::Window::new(tf!("{} Properties", &dlg.display_name))
             .collapsible(false)
             .resizable(false)
             .default_width(520.0)
