@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="1120" viewBox="0 0 1180 1120" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8798"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+
+  <rect width="1180" height="1120" fill="#12171f"/>
+
+  <text x="40" y="46" fill="#e8edf4" font-size="24" font-weight="600">WinRust — структура до и после чистки (deslop-please)</text>
+  <text x="40" y="72" fill="#8b98a8" font-size="14">Стрелка = «модуль использует модуль». Слева — как было на v0.8.0, справа — что стало на этой ветке.</text>
+
+  <!-- ===================== BEFORE ===================== -->
+  <text x="40" y="118" fill="#c0392b" font-size="17" font-weight="600">БЫЛО</text>
+  <rect x="40" y="130" width="520" height="960" rx="10" fill="#171d26" stroke="#2a3441"/>
+
+  <!-- the cycle -->
+  <text x="60" y="162" fill="#c8d2de" font-size="14" font-weight="600">Ядро: цикл из трёх модулей</text>
+  <g stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrowRed)">
+    <path d="M 175 200 L 300 200"/>
+    <path d="M 330 232 L 330 330"/>
+    <path d="M 388 200 L 512 200"/>
+    <path d="M 512 232 C 512 300, 240 300, 240 232"/>
+  </g>
+  <rect x="120" y="185" width="110" height="40" rx="6" fill="#2a1a1a" stroke="#c0392b"/>
+  <text x="175" y="210" fill="#f2b8b0" font-size="14" text-anchor="middle">system</text>
+  <rect x="270" y="185" width="110" height="40" rx="6" fill="#2a1a1a" stroke="#c0392b"/>
+  <text x="325" y="210" fill="#f2b8b0" font-size="14" text-anchor="middle">shell</text>
+  <rect x="420" y="185" width="110" height="40" rx="6" fill="#2a1a1a" stroke="#c0392b"/>
+  <text x="475" y="210" fill="#f2b8b0" font-size="14" text-anchor="middle">process</text>
+  <text x="120" y="262" fill="#e0736a" font-size="12">system → shell (питание через launch)</text>
+  <text x="120" y="280" fill="#e0736a" font-size="12">shell → process (exe окна для taskbar)</text>
+  <text x="120" y="298" fill="#e0736a" font-size="12">process → system (число ядер для affinity)</text>
+  <text x="120" y="322" fill="#8b98a8" font-size="12" font-style="italic">порядка чтения нет: любой из трёх «первый»</text>
+
+  <!-- long files -->
+  <text x="60" y="382" fill="#c8d2de" font-size="14" font-weight="600">Файлы больше 2000 строк</text>
+  <rect x="60" y="396" width="470" height="34" rx="5" fill="#2a1a1a" stroke="#c0392b"/>
+  <text x="72" y="418" fill="#f2b8b0" font-size="13">explorer/app.rs — 3560 строк</text>
+  <rect x="60" y="436" width="330" height="34" rx="5" fill="#2a1a1a" stroke="#c0392b"/>
+  <text x="72" y="458" fill="#f2b8b0" font-size="13">taskmgr/app.rs — 2184 строки</text>
+  <text x="60" y="494" fill="#8b98a8" font-size="12">в одном файле: вкладки, модель, сэмплер,</text>
+  <text x="60" y="512" fill="#8b98a8" font-size="12">команды, все четыре вида, клавиатура</text>
+
+  <!-- field leak -->
+  <text x="60" y="560" fill="#c8d2de" font-size="14" font-weight="600">Утечка полей</text>
+  <rect x="60" y="574" width="470" height="96" rx="5" fill="#2a1a1a" stroke="#c0392b"/>
+  <text x="72" y="596" fill="#f2b8b0" font-size="13">DesktopApp — 55 полей, 8 писал tray.rs напрямую</text>
+  <text x="72" y="618" fill="#e0736a" font-size="12">volume, muted, lang_tag, notifications,</text>
+  <text x="72" y="636" fill="#e0736a" font-size="12">notifications_read, start_open, tray_flyout, tray_overflow</text>
+  <text x="72" y="658" fill="#8b98a8" font-size="12" font-style="italic">у типа не осталось ни одного своего поля —</text>
+
+  <!-- mixed module -->
+  <text x="60" y="712" fill="#c8d2de" font-size="14" font-weight="600">Модуль делал две работы</text>
+  <rect x="60" y="726" width="470" height="86" rx="5" fill="#2a1a1a" stroke="#c0392b"/>
+  <text x="72" y="748" fill="#f2b8b0" font-size="13">shell.rs — 903 строки</text>
+  <text x="72" y="770" fill="#e0736a" font-size="12">ShellExecute, значки, корзина —</text>
+  <text x="72" y="788" fill="#e0736a" font-size="12">и тут же список окон, фокус, клавиша Win</text>
+
+  <!-- counts -->
+  <text x="60" y="856" fill="#c8d2de" font-size="14" font-weight="600">Итог линтера</text>
+  <text x="60" y="882" fill="#e8edf4" font-size="13">field-leak: 8 полей у 1 типа</text>
+  <text x="60" y="904" fill="#e8edf4" font-size="13">tangle: 1 круг из 3 модулей</text>
+  <text x="60" y="926" fill="#e8edf4" font-size="13">long-file: 2 файла</text>
+  <text x="60" y="948" fill="#e8edf4" font-size="13">wide-directory: core/src — 21 элемент</text>
+
+  <!-- ===================== AFTER ===================== -->
+  <text x="620" y="118" fill="#3fbf7f" font-size="17" font-weight="600">СТАЛО</text>
+  <rect x="620" y="130" width="520" height="960" rx="10" fill="#171d26" stroke="#2a3441"/>
+
+  <text x="640" y="162" fill="#c8d2de" font-size="14" font-weight="600">Ядро: семь слоёв, циклов нет</text>
+
+  <!-- layered stack, bottom is the leaf -->
+  <g stroke="#7a8798" stroke-width="1.4" fill="none" marker-end="url(#arrow)">
+    <path d="M 700 360 L 700 330"/>
+    <path d="M 700 300 L 700 270"/>
+    <path d="M 700 240 L 700 210"/>
+  </g>
+
+  <rect x="640" y="372" width="480" height="40" rx="6" fill="#1d2a35" stroke="#3fbf7f"/>
+  <text x="654" y="397" fill="#bfe9d3" font-size="13">files · window — то, чем пользуется UI</text>
+
+  <rect x="640" y="312" width="480" height="40" rx="6" fill="#1b2530" stroke="#4a6a7d"/>
+  <text x="654" y="337" fill="#cfe0ec" font-size="13">disk · fileassoc · install · process · service · shell · system</text>
+
+  <rect x="640" y="252" width="480" height="40" rx="6" fill="#1b2530" stroke="#4a6a7d"/>
+  <text x="654" y="277" fill="#cfe0ec" font-size="13">gpu · i18n · net · restore</text>
+
+  <rect x="640" y="192" width="480" height="40" rx="6" fill="#1b2530" stroke="#4a6a7d"/>
+  <text x="654" y="217" fill="#cfe0ec" font-size="13">registry · user</text>
+
+  <rect x="640" y="132" width="480" height="40" rx="6" fill="#182430" stroke="#5c7a8c"/>
+  <text x="654" y="157" fill="#cfe0ec" font-size="13">handle → error → wide · icon · audio</text>
+
+  <text x="640" y="440" fill="#3fbf7f" font-size="12">каждая стрелка идёт только вниз — файл можно читать сверху</text>
+
+  <text x="640" y="482" fill="#c8d2de" font-size="14" font-weight="600">Три разреза по швам</text>
+  <rect x="640" y="496" width="480" height="120" rx="5" fill="#16241c" stroke="#2f7d55"/>
+  <text x="652" y="518" fill="#bfe9d3" font-size="13">window.rs ← из shell.rs (332 строки)</text>
+  <text x="664" y="538" fill="#8fb8a0" font-size="12">окна, значки окон, фокус, клавиша Win</text>
+  <text x="652" y="562" fill="#bfe9d3" font-size="13">питание: system → shell</text>
+  <text x="664" y="582" fill="#8fb8a0" font-size="12">lock / sign out / restart / shutdown — там, где launch</text>
+  <text x="652" y="604" fill="#bfe9d3" font-size="13">process::set_affinity считает ядра сам</text>
+
+  <text x="640" y="652" fill="#c8d2de" font-size="14" font-weight="600">Файлы — по одной ответственности</text>
+  <rect x="640" y="666" width="480" height="166" rx="5" fill="#16241c" stroke="#2f7d55"/>
+  <text x="652" y="688" fill="#bfe9d3" font-size="13">explorer/app.rs 3560 → 42 + девять модулей</text>
+  <text x="664" y="708" fill="#8fb8a0" font-size="12">viewmode 139 · tabs 116 · state 496 · commands 421</text>
+  <text x="664" y="726" fill="#8fb8a0" font-size="12">panels 478 · sidebar 243 · views 844 · preview 208 · keyboard 679</text>
+  <text x="652" y="752" fill="#bfe9d3" font-size="13">taskmgr/app.rs 2184 → 275 + шесть модулей</text>
+  <text x="664" y="772" fill="#8fb8a0" font-size="12">model 478 · ui 1213 · startup 115 · format 71 · sort 31 · tabs 52</text>
+  <text x="652" y="798" fill="#8fb8a0" font-size="12">зависимости идут в одну сторону: format ← model ← ui</text>
+  <text x="652" y="820" fill="#8fb8a0" font-size="12">ни один файл не перешёл 2000 строк</text>
+
+  <text x="640" y="864" fill="#c8d2de" font-size="14" font-weight="600">Трей владеет своим состоянием</text>
+  <rect x="640" y="878" width="480" height="112" rx="5" fill="#16241c" stroke="#2f7d55"/>
+  <text x="652" y="900" fill="#bfe9d3" font-size="13">TrayState: 10 приватных полей, 9 геттеров, 9 глаголов</text>
+  <text x="664" y="920" fill="#8fb8a0" font-size="12">toggle / open / close · set_volume / set_muted</text>
+  <text x="664" y="938" fill="#8fb8a0" font-size="12">set_language · post / clear / mark_read · sample()</text>
+  <text x="652" y="964" fill="#bfe9d3" font-size="13">StartMenu: show_start / toggle_start / close_start</text>
+  <text x="664" y="982" fill="#8fb8a0" font-size="12">tray.rs и taskbar.rs больше не пишут поля напрямую</text>
+
+  <text x="640" y="1024" fill="#c8d2de" font-size="14" font-weight="600">Итог линтера</text>
+  <text x="640" y="1050" fill="#e8edf4" font-size="13">field-leak: 0</text>
+  <text x="640" y="1070" fill="#e8edf4" font-size="13">tangle: 0 · long-file: 0</text>
+</svg>

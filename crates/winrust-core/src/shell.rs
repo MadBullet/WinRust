@@ -576,6 +576,88 @@ pub fn desktop_hwnd() -> HWND {
     std::ptr::null_mut()
 }
 
+/// Run a registry "open" command on one file.
+///
+/// Registered commands are command lines, not argument lists: `"C:\Program
+/// Files\App\app.exe" -open "%1"`.  This splits the executable off the front
+/// (respecting the quotes Windows writes) and hands the rest, with `%1`
+/// substituted, to `ShellExecuteW` - which is exactly how the shell treats
+/// `HKCR\...\shell\open\command`.
+pub fn run_command_for_file(command: &str, file: &Path) -> Result<()> {
+    let command = command.trim();
+    let (exe, rest) = if let Some(stripped) = command.strip_prefix('"') {
+        match stripped.split_once('"') {
+            Some((exe, rest)) => (exe.to_string(), rest.trim_start()),
+            None => (stripped.to_string(), ""),
+        }
+    } else {
+        match command.split_once(' ') {
+            Some((exe, rest)) => (exe.to_string(), rest.trim_start()),
+            None => (command.to_string(), ""),
+        }
+    };
+    if exe.is_empty() {
+        return Err(WinError::Other("empty command".into()));
+    }
+    // `%1` (and the unquoted `%L`) are the file; `%*` never appears in a
+    // per-file handler.  A bare placeholder gets quotes so spaces survive.
+    let target = file.display().to_string();
+    let quoted = format!("\"{target}\"");
+    let args = rest
+        .replace("%1", &quoted)
+        .replace("%l", &quoted)
+        .replace("%L", &quoted);
+    let args = if rest.is_empty() {
+        quoted
+    } else if args == rest {
+        // The command has no placeholder: append the file.
+        format!("{} {}", args, quoted).trim().to_string()
+    } else {
+        args
+    };
+    launch(&exe, args.trim())
+}
+
+/// Open a shell namespace entry by its `shell:` path (`shell:RecycleBinFolder`,
+/// `shell:MyComputerFolder`).
+///
+/// Some entries have no useful filesystem path: the Recycle Bin's
+/// `KnownFolderPath` is `C:\\$Recycle.Bin\\<SID>`, which Explorer cannot browse
+/// as a normal folder, so it is opened through the namespace instead.  This is
+/// exactly what the real desktop icon does.
+pub fn open_shell_path(shell_path: &str) -> Result<()> {
+    let verb = str_to_wide("open");
+    let target = str_to_wide(shell_path);
+    let rc = unsafe {
+        ShellExecuteW(
+            std::ptr::null_mut(),
+            verb.as_ptr(),
+            target.as_ptr(),
+            std::ptr::null(),
+            std::ptr::null(),
+            SW_SHOWNORMAL,
+        )
+    };
+    if rc as isize > 32 {
+        Ok(())
+    } else {
+        Err(WinError::Other(format!(
+            "ShellExecute({shell_path}) failed ({})",
+            rc as isize
+        )))
+    }
+}
+
+/// The `shell:` path for the virtual folders, if the entry has one.
+pub fn shell_path_of(folder: KnownFolder) -> Option<&'static str> {
+    match folder {
+        KnownFolder::RecycleBin => Some("shell:RecycleBinFolder"),
+        KnownFolder::Computer => Some("shell:MyComputerFolder"),
+        KnownFolder::Network => Some("shell:NetworkPlacesFolder"),
+        _ => None,
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Session power
 // ---------------------------------------------------------------------------
