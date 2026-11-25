@@ -174,7 +174,7 @@ impl DesktopApp {
             // Highlight whatever is actually in front, so the taskbar follows the
             // user switching windows with Alt+Tab instead of remembering only the
             // last button they pressed.
-            self.active_pid = winrust_core::shell::foreground_pid();
+            self.active_pid = winrust_core::window::foreground_pid();
             self.windows_at = Instant::now();
         }
         if self.apps_at.elapsed() >= Duration::from_secs(120) {
@@ -435,7 +435,7 @@ impl DesktopApp {
     /// Show the Start menu (the taskbar button, `Win`, `Win+X`).  Anything
     /// already floating in the tray closes, because only one panel is open.
     pub(crate) fn show_start(&mut self) {
-        winrust_core::shell::focus_window(self.hwnd);
+        winrust_core::window::focus_window(self.hwnd);
         self.start_open = true;
         self.tray.close();
     }
@@ -532,7 +532,7 @@ impl eframe::App for DesktopApp {
         // The `Win` key opens Start, as it does on Windows.  `GetAsyncKeyState`
         // is read directly because egui has no `Key::Win`, and the edge is
         // detected here so holding the key does not flap the menu.
-        let win_down = winrust_core::shell::win_key_down();
+        let win_down = winrust_core::window::win_key_down();
         if win_down && !self.win_key_was_down {
             self.toggle_start();
         }

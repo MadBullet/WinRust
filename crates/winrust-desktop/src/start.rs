@@ -150,11 +150,11 @@ impl DesktopApp {
                                                 ui.close_menu();
                                             }
                                             if ui.button(t("Lock")).clicked() {
-                                                winrust_core::system::lock_workstation();
+                                                winrust_core::shell::lock_workstation();
                                                 ui.close_menu();
                                             }
                                             if ui.button(t("Sign out")).clicked() {
-                                                winrust_core::system::sign_out();
+                                                winrust_core::shell::sign_out();
                                                 ui.close_menu();
                                             }
                                             if ui.button(t("Switch user")).clicked() {
@@ -277,15 +277,15 @@ impl DesktopApp {
                                     ui.close_menu();
                                 }
                                 if ui.button(t("Shut down")).clicked() {
-                                    winrust_core::system::shutdown();
+                                    winrust_core::shell::shutdown();
                                     ui.close_menu();
                                 }
                                 if ui.button(t("Restart")).clicked() {
-                                    winrust_core::system::restart();
+                                    winrust_core::shell::restart();
                                     ui.close_menu();
                                 }
                                 if ui.button(t("Lock")).clicked() {
-                                    winrust_core::system::lock_workstation();
+                                    winrust_core::shell::lock_workstation();
                                     ui.close_menu();
                                 }
                             });
@@ -354,7 +354,7 @@ impl DesktopApp {
                                         )
                                         .clicked()
                                     {
-                                        winrust_core::shell::activate_window(w.pid);
+                                        winrust_core::window::activate_window(w.pid);
                                         switched = true;
                                     }
                                 }

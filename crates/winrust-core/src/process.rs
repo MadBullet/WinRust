@@ -493,11 +493,21 @@ pub fn resume(pid: u32) -> Result<usize> {
     Ok(count)
 }
 
+/// Logical processor count, from the same `SYSTEM_INFO` the shell uses.
+fn cpu_count() -> usize {
+    use windows_sys::Win32::System::SystemInformation::{GetNativeSystemInfo, SYSTEM_INFO};
+    let mut si: SYSTEM_INFO = unsafe { std::mem::zeroed() };
+    unsafe { GetNativeSystemInfo(&mut si) };
+    si.dwNumberOfProcessors.max(1) as usize
+}
+
 /// Bind a process to the given CPU cores (bit mask).  `0` means all cores.
 pub fn set_affinity(pid: u32, mask: usize) -> Result<()> {
     let h = open_with(pid, PROCESS_SET_INFORMATION)?;
-    let cores = crate::system::cpu_count();
     let mask = if mask == 0 {
+        // `0` means every core: read the count here rather than depend on
+        // `system`, which is one layer up from `process`.
+        let cores = cpu_count();
         (1usize << cores.min(64)) - 1
     } else {
         mask

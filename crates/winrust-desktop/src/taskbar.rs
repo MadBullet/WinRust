@@ -12,7 +12,7 @@
 //!   notification centre.  Each opens a flyout (see `tray.rs`).
 //!
 //! Application buttons use the icon the window itself reports
-//! (`shell::window_icon_rgba`), so an entry never renders as an empty square.
+//! (`window::window_icon_rgba`), so an entry never renders as an empty square.
 
 use eframe::egui;
 use egui::{Color32, RichText};
@@ -37,7 +37,7 @@ pub struct WindowEntry {
 /// List windows through `EnumWindows`, with the owning process' image path so
 /// the button can fall back to the executable's icon.
 pub fn windows() -> Vec<WindowEntry> {
-    winrust_core::shell::top_level_windows()
+    winrust_core::window::top_level_windows()
         .into_iter()
         .filter(|w| !w.title.is_empty())
         // The shell's own window is the desktop; it must not appear on the bar.
@@ -110,7 +110,7 @@ impl DesktopApp {
             // Claim focus before toggling: a bottom-most shell window does not
             // become foreground by itself, so without this the very next click
             // (and the `Win` key) went to whatever was in front.
-            winrust_core::shell::focus_window(self.hwnd);
+            winrust_core::window::focus_window(self.hwnd);
             self.toggle_start();
         }
         // Win+X: the power-user menu lives on a right click, as in Windows.
@@ -226,7 +226,7 @@ impl DesktopApp {
                 }
                 if resp.clicked() {
                     self.active_pid = Some(pid);
-                    winrust_core::shell::activate_window(pid);
+                    winrust_core::window::activate_window(pid);
                 }
                 let hover = if count > 1 {
                     format!("{}\n{}", first.title, tf!("{} windows", count))
@@ -285,8 +285,8 @@ impl DesktopApp {
         if let Some(slot) = self.window_icons.get(&w.pid) {
             return slot.as_ref().map(|t| t.id());
         }
-        let rgba = winrust_core::shell::window_icon_rgba(w.hwnd, 32)
-            .or_else(|| winrust_core::shell::exe_icon_rgba(&w.exe, 32));
+        let rgba = winrust_core::window::window_icon_rgba(w.hwnd, 32)
+            .or_else(|| winrust_core::window::exe_icon_rgba(&w.exe, 32));
         let texture = rgba.and_then(|rgba| {
             let px = match rgba.len() / 4 {
                 n if n >= 48 * 48 => 48,
@@ -351,16 +351,16 @@ fn power_menu() -> Vec<(&'static str, fn(&mut DesktopApp))> {
             app.show_start_power();
         }),
         ("Lock", |_app: &mut DesktopApp| {
-            winrust_core::system::lock_workstation();
+            winrust_core::shell::lock_workstation();
         }),
         ("Sign out", |_app: &mut DesktopApp| {
-            winrust_core::system::sign_out();
+            winrust_core::shell::sign_out();
         }),
         ("Shut down", |_app: &mut DesktopApp| {
-            winrust_core::system::shutdown();
+            winrust_core::shell::shutdown();
         }),
         ("Restart", |_app: &mut DesktopApp| {
-            winrust_core::system::restart();
+            winrust_core::shell::restart();
         }),
     ]
 }
@@ -546,7 +546,7 @@ fn preview(
     }
 
     if let Some(hwnd) = clicked {
-        winrust_core::shell::activate_window_hwnd(hwnd);
+        winrust_core::window::activate_window_hwnd(hwnd);
         app.hover_pid = None;
         app.hover_since = None;
         // The shell window is behind everything again after this, so the

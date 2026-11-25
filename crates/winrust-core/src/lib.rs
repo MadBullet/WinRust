@@ -17,6 +17,7 @@
 //! * [`net`]         — TCP/UDP connection tables with owning PIDs
 //! * [`registry`]    — typed registry access
 //! * [`shell`]       — ShellExecute, file icons, known folders, recycle bin
+//! * [`window`]      — top-level window list, icons, focus, the `Win` key
 //! * [`service`]     — SCM enumeration and control
 //! * [`user`]        — token information (user, elevation, integrity)
 //! * [`sysinfo_cpu`] — per-process CPU accounting helper
@@ -49,6 +50,7 @@ pub mod system;
 pub mod thumb;
 pub mod user;
 pub mod wide;
+pub mod window;
 
 pub use error::{Result, WinError};
 pub use handle::Handle;

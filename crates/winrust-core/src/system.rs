@@ -448,22 +448,3 @@ pub fn local_time_text() -> String {
     )
 }
 
-/// Lock the workstation (`Win+L`), through the documented `rundll32` entry.
-pub fn lock_workstation() {
-    let _ = crate::shell::launch("rundll32.exe", "user32.dll,LockWorkStation");
-}
-
-/// Sign the current user out.
-pub fn sign_out() {
-    let _ = crate::shell::launch("shutdown.exe", "/l");
-}
-
-/// Restart the machine.
-pub fn restart() {
-    let _ = crate::shell::launch("shutdown.exe", "/r /t 0");
-}
-
-/// Shut the machine down.
-pub fn shutdown() {
-    let _ = crate::shell::launch("shutdown.exe", "/s /t 0");
-}
