@@ -51,11 +51,7 @@ impl DesktopApp {
             egui::Order::Foreground,
             egui::Id::new("taskbar_bg"),
         ));
-        painter.rect_filled(
-            bar,
-            0.0,
-            Color32::from_rgba_unmultiplied(16, 20, 28, 235),
-        );
+        painter.rect_filled(bar, 0.0, Color32::from_rgba_unmultiplied(16, 20, 28, 235));
         painter.line_segment(
             [bar.left_top(), bar.right_top()],
             egui::Stroke::new(1.0_f32, Color32::from_rgb(44, 52, 66)),

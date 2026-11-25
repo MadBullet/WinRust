@@ -6,6 +6,7 @@ use crate::wide::{from_wide, str_to_wide, to_wide};
 use serde::{Deserialize, Serialize};
 use std::ffi::c_void;
 use std::path::Path;
+use windows_sys::Win32::Foundation::{BOOL, HWND, LPARAM};
 use windows_sys::Win32::Storage::FileSystem::{
     GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO,
 };
@@ -14,8 +15,6 @@ use windows_sys::Win32::System::DataExchange::{
 };
 use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
 use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
-use windows_sys::Win32::Foundation::{BOOL, HWND, LPARAM};
-use windows_sys::Win32::UI::WindowsAndMessaging::{EnumWindows, SW_SHOWNORMAL};
 use windows_sys::Win32::UI::Shell::{
     SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
     FOF_ALLOWUNDO, FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_WANTNUKEWARNING, FO_DELETE,
@@ -23,6 +22,7 @@ use windows_sys::Win32::UI::Shell::{
     SHFILEINFOW, SHFILEOPSTRUCTW, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_LARGEICON, SHGFI_SMALLICON,
     SHGFI_SYSICONINDEX, SHGFI_TYPENAME, SHGFI_USEFILEATTRIBUTES,
 };
+use windows_sys::Win32::UI::WindowsAndMessaging::{EnumWindows, SW_SHOWNORMAL};
 
 /// Well-known folders exposed by the Explorer sidebar.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]

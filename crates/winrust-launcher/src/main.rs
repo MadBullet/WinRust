@@ -21,13 +21,13 @@ use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 use winrust_core::i18n::{self, Lang};
 use winrust_core::install::{self, Integration, TargetSpec};
-use winrust_core::{t, tf, ts};
 use winrust_core::process;
 use winrust_core::restore;
 use winrust_core::service::{ScManager, ServiceState};
 use winrust_core::shell;
 use winrust_core::system;
 use winrust_core::user;
+use winrust_core::{t, tf, ts};
 
 // ---------------------------------------------------------------------------
 // Component catalogue
@@ -590,7 +590,8 @@ impl LauncherApp {
                     Some(binary) => match install::set_shell(Some(&binary)) {
                         Ok(()) => {
                             installed += 1;
-                            let _ = install::record_state(c.id(), Integration::Shell, Some(&binary));
+                            let _ =
+                                install::record_state(c.id(), Integration::Shell, Some(&binary));
                             self.log(
                                 LogKind::Ok,
                                 format!(
@@ -681,7 +682,8 @@ impl LauncherApp {
                         st.integration = Integration::Portable;
                     }
                     let _ = install::clear_state(c.id());
-                    let msg = ts("Winlogon Shell override removed — sign-in returns to explorer.exe");
+                    let msg =
+                        ts("Winlogon Shell override removed — sign-in returns to explorer.exe");
                     self.log(LogKind::Ok, msg);
                     self.status = msg.to_string();
                 }
@@ -1466,14 +1468,9 @@ impl LauncherApp {
             .changed();
         ui.add_enabled_ui(self.appearance.transparent, |ui| {
             changed |= ui
-                .add(
-                    egui::Slider::new(&mut self.appearance.opacity, 30..=100)
-                        .text(t("Opacity")),
-                )
+                .add(egui::Slider::new(&mut self.appearance.opacity, 30..=100).text(t("Opacity")))
                 .changed();
-            changed |= ui
-                .checkbox(&mut self.appearance.blur, t("Blur"))
-                .changed();
+            changed |= ui.checkbox(&mut self.appearance.blur, t("Blur")).changed();
             ui.add_enabled_ui(self.appearance.blur, |ui| {
                 changed |= ui
                     .add(

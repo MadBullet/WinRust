@@ -44,10 +44,8 @@ pub fn save_positions(icons: &[DesktopIcon]) {
     let Some(path) = positions_path() else {
         return;
     };
-    let map: std::collections::HashMap<&str, (usize, usize)> = icons
-        .iter()
-        .map(|i| (i.name.as_str(), i.cell))
-        .collect();
+    let map: std::collections::HashMap<&str, (usize, usize)> =
+        icons.iter().map(|i| (i.name.as_str(), i.cell)).collect();
     if let Ok(text) = serde_json::to_string_pretty(&map) {
         let _ = std::fs::write(path, text);
     }
@@ -127,7 +125,10 @@ impl DesktopApp {
         let screen = ctx.screen_rect();
         let area = egui::Rect::from_min_max(
             screen.left_top() + egui::vec2(8.0, 8.0),
-            egui::pos2(screen.right() - 8.0, screen.bottom() - crate::taskbar::HEIGHT - 4.0),
+            egui::pos2(
+                screen.right() - 8.0,
+                screen.bottom() - crate::taskbar::HEIGHT - 4.0,
+            ),
         );
 
         let mut open: Option<PathBuf> = None;
@@ -137,9 +138,8 @@ impl DesktopApp {
 
         let icons = self.icons.clone();
         let selected_idx = self.selected;
-        let (pointer, drag_stopped) = ctx.input(|i| {
-            (i.pointer.latest_pos(), i.pointer.any_released())
-        });
+        let (pointer, drag_stopped) =
+            ctx.input(|i| (i.pointer.latest_pos(), i.pointer.any_released()));
 
         for (idx, icon) in icons.iter().enumerate() {
             let pos = area.left_top()

@@ -23,9 +23,8 @@ pub fn installed_apps() -> Vec<AppEntry> {
         KnownFolder::RoamingAppData
             .path()
             .map(|p| p.join("Microsoft\\Windows\\Start Menu\\Programs")),
-        std::env::var_os("ProgramData").map(|p| {
-            PathBuf::from(p).join("Microsoft\\Windows\\Start Menu\\Programs")
-        }),
+        std::env::var_os("ProgramData")
+            .map(|p| PathBuf::from(p).join("Microsoft\\Windows\\Start Menu\\Programs")),
     ];
     for root in roots.into_iter().flatten() {
         walk(&root, &mut out, 0);
@@ -34,15 +33,20 @@ pub fn installed_apps() -> Vec<AppEntry> {
     out.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
     // WinRust's own programs first, so a freshly installed suite is usable
     // without hunting through the Start Menu tree.
-    let mut ours: Vec<AppEntry> = ["winrust-explorer.exe", "winrust-taskmgr.exe", "winrust-services.exe", "winrust-sysctl.exe"]
-        .iter()
-        .filter_map(|exe| {
-            winrust_core::install::find_binary(exe).map(|path| AppEntry {
-                name: exe.trim_end_matches(".exe").to_string(),
-                path,
-            })
+    let mut ours: Vec<AppEntry> = [
+        "winrust-explorer.exe",
+        "winrust-taskmgr.exe",
+        "winrust-services.exe",
+        "winrust-sysctl.exe",
+    ]
+    .iter()
+    .filter_map(|exe| {
+        winrust_core::install::find_binary(exe).map(|path| AppEntry {
+            name: exe.trim_end_matches(".exe").to_string(),
+            path,
         })
-        .collect();
+    })
+    .collect();
     ours.extend(out);
     ours
 }

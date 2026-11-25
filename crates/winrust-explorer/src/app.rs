@@ -1159,7 +1159,11 @@ impl ExplorerApp {
                 }
                 ui.separator();
             }
-            if ui.button("+").on_hover_text(t("New tab (Ctrl+T)")).clicked() {
+            if ui
+                .button("+")
+                .on_hover_text(t("New tab (Ctrl+T)"))
+                .clicked()
+            {
                 let p = self.current().path.clone();
                 self.tabs.push(Tab::new(p));
                 activate = Some(self.tabs.len() - 1);
@@ -1314,8 +1318,9 @@ impl ExplorerApp {
                     ui.close_menu();
                 }
                 if ui.button(format!("📄 {}", t("Text document"))).clicked() {
-                    let target =
-                        disk::unique_destination(self.current().path.join(t("New Text Document.txt")));
+                    let target = disk::unique_destination(
+                        self.current().path.join(t("New Text Document.txt")),
+                    );
                     match std::fs::write(&target, b"") {
                         Ok(()) => {
                             self.status = tf!("Created {}", file_name_of(&target));
@@ -1325,7 +1330,10 @@ impl ExplorerApp {
                     }
                     ui.close_menu();
                 }
-                if ui.button(format!("🗜 {}", t("Compressed (zipped) folder"))).clicked() {
+                if ui
+                    .button(format!("🗜 {}", t("Compressed (zipped) folder")))
+                    .clicked()
+                {
                     self.status = t("Use right-click → Send to → Compressed folder");
                     ui.close_menu();
                 }
@@ -2859,10 +2867,7 @@ impl ExplorerApp {
             ghost.label.clone()
         };
         let size = egui::vec2(190.0, 26.0) * scale;
-        let rect = egui::Rect::from_min_size(
-            ghost.pos + egui::vec2(14.0, 12.0),
-            size,
-        );
+        let rect = egui::Rect::from_min_size(ghost.pos + egui::vec2(14.0, 12.0), size);
         let painter = ctx.layer_painter(egui::LayerId::new(
             egui::Order::Tooltip,
             egui::Id::new("drag_ghost"),
@@ -2936,10 +2941,8 @@ impl ExplorerApp {
         for chunk in self.drives.clone().chunks(per_row) {
             ui.horizontal(|ui| {
                 for drive in chunk {
-                    let (rect, resp) = ui.allocate_exact_size(
-                        egui::vec2(260.0, 74.0),
-                        egui::Sense::click(),
-                    );
+                    let (rect, resp) =
+                        ui.allocate_exact_size(egui::vec2(260.0, 74.0), egui::Sense::click());
                     let hovered = resp.hovered();
                     let painter = ui.painter();
                     painter.rect_filled(
@@ -3096,10 +3099,7 @@ impl ExplorerApp {
                         painter.rect_stroke(
                             rect.expand(1.0),
                             4.0,
-                            egui::Stroke::new(
-                                1.5_f32,
-                                Color32::from_rgb(96, 176, 255),
-                            ),
+                            egui::Stroke::new(1.5_f32, Color32::from_rgb(96, 176, 255)),
                         );
                         if resp.drag_stopped() {
                             self.drop_target = Some(path.clone());
