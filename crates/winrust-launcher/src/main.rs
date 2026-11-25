@@ -207,12 +207,12 @@ struct ComponentState {
 impl ComponentState {
     fn status_text(&self) -> (&'static str, Color32) {
         if self.integration != Integration::Portable {
-            return ("installed", Color32::from_rgb(120, 220, 120));
+            return (ts("installed"), Color32::from_rgb(120, 220, 120));
         }
         if self.path.is_none() {
-            return ("not built", Color32::from_rgb(230, 170, 120));
+            return (ts("not built"), Color32::from_rgb(230, 170, 120));
         }
-        ("ready", Color32::GRAY)
+        (ts("ready"), Color32::GRAY)
     }
 }
 
@@ -335,7 +335,7 @@ impl LauncherApp {
             status: String::new(),
             log: vec![LogLine {
                 at: Instant::now(),
-                text: "WinRust launcher started".into(),
+                text: ts("WinRust launcher started").to_string(),
                 kind: LogKind::Info,
             }],
             make_restore_point: restore::restore_enabled_hint(),
@@ -417,11 +417,11 @@ impl LauncherApp {
         };
         let (running, path) = snapshot;
         if running {
-            self.status = format!("{} is already running", c.title());
+            self.status = tf!("{} is already running", c.title());
             return;
         }
         let Some(path) = path else {
-            let msg = format!(
+            let msg = tf!(
                 "{} not found — build it with: cargo build --release -p {}",
                 c.exe(),
                 c.pkg()
@@ -432,12 +432,12 @@ impl LauncherApp {
         };
         match shell::execute(&path, "", None) {
             Ok(pid) => {
-                let msg = format!("Started {} (pid {})", c.title(), pid.unwrap_or(0));
+                let msg = tf!("Started {} (pid {})", c.title(), pid.unwrap_or(0));
                 self.status = msg.clone();
                 self.log(LogKind::Ok, msg);
             }
             Err(e) => {
-                let msg = format!("Failed to start {}: {e}", c.title());
+                let msg = tf!("Failed to start {}: {}", c.title(), e);
                 self.status = msg.clone();
                 self.log(LogKind::Error, msg);
             }
@@ -447,12 +447,12 @@ impl LauncherApp {
     /// Ask for confirmation before touching the system.
     fn request_install(&mut self, components: Vec<Component>) {
         if components.is_empty() {
-            self.status = "Select at least one component".into();
+            self.status = ts("Select at least one component").to_string();
             return;
         }
         if !self.user.elevated {
             let msg =
-                "Administrator rights are required to install. Relaunch WinRust as administrator.";
+                ts("Administrator rights are required to install. Relaunch WinRust as administrator.");
             self.status = msg.into();
             self.log(LogKind::Error, msg);
             return;
@@ -468,16 +468,19 @@ impl LauncherApp {
         let mut body = list.join("\n");
         body.push_str("\n\n");
         if self.make_restore_point {
-            body.push_str("✓ System Restore point will be created\n");
+            body.push_str(&format!("✓ {}\n", ts("System Restore point will be created")));
         }
         if self.make_file_backup {
-            body.push_str("✓ Original files will be backed up\n");
+            body.push_str(&format!("✓ {}\n", ts("Original files will be backed up")));
         }
         if !self.make_restore_point && !self.make_file_backup {
-            body.push_str("⚠ No backup selected — changes cannot be undone automatically\n");
+            body.push_str(&format!(
+                "⚠ {}\n",
+                ts("No backup selected — changes cannot be undone automatically")
+            ));
         }
         self.confirm = Some(PendingAction {
-            title: "Apply changes to this PC?".into(),
+            title: ts("Apply changes to this PC?").to_string(),
             body,
             install: components,
         });
@@ -494,15 +497,15 @@ impl LauncherApp {
         // 1. System Restore point
         let mut restore_sequence = None;
         if self.make_restore_point {
-            let desc = "WinRust selective install";
+            let desc = ts("WinRust selective install");
             let result = restore::create_restore_point(desc);
             if result.created {
                 restore_sequence = Some(result.sequence);
-                let msg = format!("System Restore point #{} created", result.sequence);
+                let msg = tf!("System Restore point #{} created", result.sequence);
                 self.log(LogKind::Ok, msg.clone());
                 self.protection = Some(msg);
             } else {
-                let msg = format!("Restore point FAILED: {}", result.message);
+                let msg = tf!("Restore point FAILED: {}", result.message);
                 self.log(LogKind::Error, msg.clone());
                 self.protection = Some(msg);
             }
@@ -521,7 +524,7 @@ impl LauncherApp {
             Ok(v) => {
                 self.log(
                     LogKind::Ok,
-                    format!(
+                    tf!(
                         "Staged {} binary(ies) into {}",
                         v.len(),
                         install::install_dir().display()
@@ -530,8 +533,8 @@ impl LauncherApp {
                 v
             }
             Err(e) => {
-                self.log(LogKind::Error, format!("Staging failed: {e}"));
-                self.status = format!("Install aborted: {e}");
+                self.log(LogKind::Error, tf!("Staging failed: {}", e));
+                self.status = tf!("Install aborted: {}", e);
                 self.busy = false;
                 return;
             }
@@ -547,11 +550,11 @@ impl LauncherApp {
                 .filter_map(|t| t.system_path.clone())
                 .collect();
             if !paths.is_empty() {
-                match restore::backup_files(&paths, "WinRust selective install", restore_sequence) {
+                match restore::backup_files(&paths, ts("WinRust selective install"), restore_sequence) {
                     Ok(session) => {
                         self.log(
                             LogKind::Ok,
-                            format!(
+                            tf!(
                                 "Backed up {} file(s) to {}",
                                 session.entries.len(),
                                 session.directory().display()
@@ -561,8 +564,8 @@ impl LauncherApp {
                         backup = Some(session);
                     }
                     Err(e) => {
-                        self.log(LogKind::Error, format!("Backup failed: {e}"));
-                        self.status = format!("Install aborted: backup failed ({e})");
+                        self.log(LogKind::Error, tf!("Backup failed: {}", e));
+                        self.status = tf!("Install aborted: backup failed ({})", e);
                         self.busy = false;
                         return;
                     }
@@ -594,7 +597,7 @@ impl LauncherApp {
                                 install::record_state(c.id(), Integration::Shell, Some(&binary));
                             self.log(
                                 LogKind::Ok,
-                                format!(
+                                tf!(
                                     "Desktop shell installed: sign-in starts {}",
                                     binary.display()
                                 ),
@@ -603,14 +606,14 @@ impl LauncherApp {
                         }
                         Err(e) => {
                             failed += 1;
-                            self.log(LogKind::Error, format!("{}: {e}", c.title()));
+                            self.log(LogKind::Error, tf!("{}: {}", c.title(), e));
                         }
                     },
                     None => {
                         failed += 1;
                         self.log(
                             LogKind::Warn,
-                            format!("{}: binary not found, skipped", c.title()),
+                            tf!("{}: binary not found, skipped", c.title()),
                         );
                     }
                 }
@@ -619,7 +622,7 @@ impl LauncherApp {
             let Some(spec) = self.components[st_index].target.clone() else {
                 self.log(
                     LogKind::Info,
-                    format!(
+                    tf!(
                         "{}: no system binary to replace — available from the launcher",
                         c.title()
                     ),
@@ -634,7 +637,7 @@ impl LauncherApp {
             let Some(source) = staged_path else {
                 self.log(
                     LogKind::Warn,
-                    format!("{}: binary not found, skipped", c.title()),
+                    tf!("{}: binary not found, skipped", c.title()),
                 );
                 failed += 1;
                 continue;
@@ -643,7 +646,7 @@ impl LauncherApp {
             if report.success {
                 installed += 1;
                 for a in &report.actions {
-                    self.log(LogKind::Ok, format!("{}: {a}", c.title()));
+                    self.log(LogKind::Ok, tf!("{}: {}", c.title(), a));
                 }
                 self.components[st_index].last_backup = backup.clone();
                 self.components[st_index].installed_at = Some(Instant::now());
@@ -652,7 +655,7 @@ impl LauncherApp {
                     if let Err(e) = install::record_state(c.id(), integration, target) {
                         self.log(
                             LogKind::Warn,
-                            format!("{}: state not saved ({e})", c.title()),
+                            tf!("{}: state not saved ({})", c.title(), e),
                         );
                     }
                 } else {
@@ -660,12 +663,14 @@ impl LauncherApp {
                 }
             } else {
                 failed += 1;
-                let msg = report.error.unwrap_or_else(|| "unknown error".into());
-                self.log(LogKind::Error, format!("{}: {msg}", c.title()));
+                let msg = report
+                    .error
+                    .unwrap_or_else(|| ts("unknown error").to_string());
+                self.log(LogKind::Error, tf!("{}: {}", c.title(), msg));
             }
         }
 
-        self.status = format!("Installed {installed} component(s), {failed} failed");
+        self.status = tf!("Installed {} component(s), {} failed", installed, failed);
         self.log(LogKind::Info, self.status.clone());
         self.busy = false;
     }
@@ -688,7 +693,7 @@ impl LauncherApp {
                     self.status = msg.to_string();
                 }
                 Err(e) => {
-                    let msg = format!("{}: {e}", ts("Restore failed"));
+                    let msg = tf!("{}: {}", ts("Restore failed"), e);
                     self.log(LogKind::Error, msg.clone());
                     self.status = msg;
                 }
@@ -701,12 +706,12 @@ impl LauncherApp {
         };
         let (integration, spec, session) = snapshot;
         if integration == Integration::Portable {
-            self.status = format!("{} is not installed", c.title());
+            self.status = tf!("{} is not installed", c.title());
             return;
         }
         if !self.user.elevated {
-            self.status = "Administrator rights are required to uninstall".into();
-            self.log(LogKind::Error, "Uninstall needs elevation");
+            self.status = ts("Administrator rights are required to uninstall").to_string();
+            self.log(LogKind::Error, ts("Uninstall needs elevation"));
             return;
         }
         let backup = session.or_else(|| {
@@ -722,13 +727,13 @@ impl LauncherApp {
                 .cloned()
         });
         let Some(spec) = spec else {
-            self.status = format!("{} has no undo information", c.title());
+            self.status = tf!("{} has no undo information", c.title());
             return;
         };
         let report = install::uninstall(c.title(), &spec, integration, backup.as_ref());
         if report.success {
             for a in &report.actions {
-                self.log(LogKind::Ok, format!("{}: {a}", c.title()));
+                self.log(LogKind::Ok, tf!("{}: {}", c.title(), a));
             }
             if let Some(st) = self.components.iter_mut().find(|s| s.component == c) {
                 st.integration = Integration::Portable;
@@ -738,17 +743,16 @@ impl LauncherApp {
             if let Err(e) = install::clear_state(c.id()) {
                 self.log(
                     LogKind::Warn,
-                    format!("{}: recorded state not cleared ({e})", c.title()),
+                    tf!("{}: recorded state not cleared ({})", c.title(), e),
                 );
             }
-            self.status = format!("{} restored", c.title());
+            self.status = tf!("{} restored", c.title());
         } else {
-            let msg = report.error.unwrap_or_else(|| "unknown error".into());
-            self.log(
-                LogKind::Error,
-                format!("{}: uninstall failed — {msg}", c.title()),
-            );
-            self.status = format!("{}: uninstall failed", c.title());
+            let msg = report
+                .error
+                .unwrap_or_else(|| ts("unknown error").to_string());
+            self.log(LogKind::Error, tf!("{}: uninstall failed — {}", c.title(), msg));
+            self.status = tf!("{}: uninstall failed", c.title());
         }
     }
 
@@ -767,12 +771,12 @@ impl LauncherApp {
             .map(|out| out.lines().take(4).collect::<Vec<_>>().join(" | "));
         self.log(
             LogKind::Info,
-            format!(
+            tf!(
                 "kernel driver: {}",
                 if self.kernel_installed {
-                    "service registered"
+                    ts("service registered")
                 } else {
-                    "not installed"
+                    ts("not installed")
                 }
             ),
         );
@@ -783,22 +787,22 @@ impl LauncherApp {
     fn install_kernel_driver(&mut self) {
         let image = driver_image_path();
         let Some(image) = image else {
-            let msg = "WinRustKernel.sys not found next to the launcher";
+            let msg = ts("WinRustKernel.sys not found next to the launcher");
             self.log(LogKind::Error, msg);
-            self.status = msg.into();
+            self.status = msg.to_string();
             return;
         };
         match run_driver_console_with(&["install", &image.display().to_string()]) {
             Some(out) => {
                 for line in out.lines() {
-                    self.log(LogKind::Ok, format!("driver: {line}"));
+                    self.log(LogKind::Ok, tf!("driver: {}", line));
                 }
-                self.status = "Kernel driver installed".into();
+                self.status = ts("Kernel driver installed").to_string();
             }
             None => {
-                let msg = "winrust-driver.exe not found - build crates/winrust-kernel/control";
+                let msg = ts("winrust-driver.exe not found - build crates/winrust-kernel/control");
                 self.log(LogKind::Error, msg);
-                self.status = msg.into();
+                self.status = msg.to_string();
             }
         }
         self.refresh_kernel_driver();
@@ -808,11 +812,11 @@ impl LauncherApp {
         match run_driver_console_with(&["remove"]) {
             Some(out) => {
                 for line in out.lines() {
-                    self.log(LogKind::Ok, format!("driver: {line}"));
+                    self.log(LogKind::Ok, tf!("driver: {}", line));
                 }
-                self.status = "Kernel driver removed".into();
+                self.status = ts("Kernel driver removed").to_string();
             }
-            None => self.log(LogKind::Error, "winrust-driver.exe not found"),
+            None => self.log(LogKind::Error, ts("winrust-driver.exe not found")),
         }
         self.refresh_kernel_driver();
     }
@@ -827,23 +831,28 @@ impl LauncherApp {
             None => None,
         };
         let Some(path) = path else {
-            self.status = "WinRust Explorer binary not found".into();
+            self.status = ts("WinRust Explorer binary not found").to_string();
             return;
         };
         if let Err(e) = shell::execute(&path, "", None) {
-            self.status = format!("Start failed: {e}");
+            self.status = tf!("Start failed: {}", e);
             return;
         }
         match pid_of("explorer.exe") {
             Some(pid) => match process::terminate(pid) {
                 Ok(()) => {
-                    let msg = "WinRust Explorer started; system explorer.exe stopped (it restarts at next logon)";
-                    self.status = msg.into();
+                    let msg = ts(
+                        "WinRust Explorer started; system explorer.exe stopped (it restarts at next logon)",
+                    );
+                    self.status = msg.to_string();
                     self.log(LogKind::Ok, msg);
                 }
-                Err(e) => self.log(LogKind::Error, format!("stopping explorer.exe failed: {e}")),
+                Err(e) => self.log(LogKind::Error, tf!("stopping explorer.exe failed: {}", e)),
             },
-            None => self.status = "WinRust Explorer started (explorer.exe was not running)".into(),
+            None => {
+                self.status =
+                    ts("WinRust Explorer started (explorer.exe was not running)").to_string()
+            }
         }
     }
 }
@@ -1009,7 +1018,7 @@ impl eframe::App for LauncherApp {
                                 self.log(LogKind::Info, msg);
                             }
                             Err(e) => {
-                                self.log(LogKind::Error, format!("language: {e}"));
+                                self.log(LogKind::Error, tf!("language: {}", e));
                             }
                         }
                     }
@@ -1141,14 +1150,14 @@ impl LauncherApp {
                                     );
                                     if running {
                                         ui.label(
-                                            RichText::new("running")
+                                            RichText::new(ts("running"))
                                                 .small()
                                                 .color(Color32::from_rgb(120, 220, 120)),
                                         );
                                     }
                                 });
                                 ui.label(
-                                    RichText::new(format!("replaces {}", component.replaces()))
+                                    RichText::new(tf!("replaces {}", component.replaces()))
                                         .small()
                                         .weak(),
                                 );
@@ -1168,7 +1177,7 @@ impl LauncherApp {
                                         }
                                     } else if ui
                                         .button(ts("Restore"))
-                                        .on_hover_text("Undo the installation")
+                                        .on_hover_text(ts("Undo the installation"))
                                         .clicked()
                                     {
                                         uninstall = Some(component);
@@ -1185,7 +1194,7 @@ impl LauncherApp {
                         // "has more than just Portable", not "has a target".
                         if component.levels().len() > 1 {
                             ui.horizontal(|ui| {
-                                ui.label(RichText::new("Integration:").small().weak());
+                                ui.label(RichText::new(tf!("{}:", t("Integration"))).small().weak());
                                 for &level in component.levels() {
                                     let enabled = !level.requires_admin() || elevated;
                                     let resp = ui.add_enabled(
@@ -1199,9 +1208,9 @@ impl LauncherApp {
                             });
                         } else {
                             ui.label(
-                            RichText::new(
+                            RichText::new(ts(
                                 "No single system binary — this component runs from the launcher.",
-                            )
+                            ))
                             .small()
                             .weak(),
                         );
@@ -1238,31 +1247,37 @@ impl LauncherApp {
             // ---- Safety -------------------------------------------------
             ui.heading(ts("Before installing"));
             ui.label(
-                RichText::new("Every change can be undone. Choose at least one safety net.")
+                RichText::new(ts(
+                    "Every change can be undone. Choose at least one safety net.",
+                ))
                     .small()
                     .weak(),
             );
             ui.add_space(4.0);
             let mut restore_pt = self.make_restore_point;
             let hint = if restore::restore_enabled_hint() {
-                "System Restore point"
+                ts("System Restore point")
             } else {
-                "System Restore point (may be disabled by policy)"
+                ts("System Restore point (may be disabled by policy)")
             };
             if ui.checkbox(&mut restore_pt, hint).changed() {
                 self.make_restore_point = restore_pt;
             }
             ui.label(
-                RichText::new("Snapshot Windows itself; can be rolled back from Control Panel.")
+                RichText::new(ts(
+                    "Snapshot Windows itself; can be rolled back from Control Panel.",
+                ))
                     .small()
                     .weak(),
             );
             let mut backup = self.make_file_backup;
-            if ui.checkbox(&mut backup, "Back up replaced files").changed() {
+            if ui.checkbox(&mut backup, ts("Back up replaced files")).changed() {
                 self.make_file_backup = backup;
             }
             ui.label(
-                RichText::new("Copies the exact binaries that get overwritten into %ProgramData%\\WinRust\\backup.")
+                RichText::new(ts(
+                    "Copies the exact binaries that get overwritten into %ProgramData%\\WinRust\\backup.",
+                ))
                     .small()
                     .weak(),
             );
@@ -1283,40 +1298,46 @@ impl LauncherApp {
                 let st = &self.components[idx];
                 match &st.path {
                     Some(p) => {
-                        ui.label(RichText::new(format!("Binary: {}", p.display())).small().weak());
+                        ui.label(RichText::new(tf!("Binary: {}", p.display())).small().weak());
                     }
                     None => {
                         ui.label(
-                            RichText::new(format!("Build with: cargo build --release -p {}", sel.pkg()))
+                            RichText::new(tf!("Build with: cargo build --release -p {}", sel.pkg()))
                                 .small()
                                 .color(Color32::from_rgb(240, 190, 110)),
                         );
                     }
                 }
                 if let Some(t) = &st.target {
+                    let target_text = t
+                        .system_path
+                        .as_ref()
+                        .map(|p| p.display().to_string())
+                        .unwrap_or_else(|| tf!("{} (not found)", t.exe));
                     ui.label(
-                        RichText::new(format!(
-                            "Target: {}",
-                            t.system_path
-                                .as_ref()
-                                .map(|p| p.display().to_string())
-                                .unwrap_or_else(|| format!("{} (not found)", t.exe))
-                        ))
-                        .small()
-                        .weak(),
+                        RichText::new(tf!("Target: {}", target_text))
+                            .small()
+                            .weak(),
                     );
-                    ui.label(RichText::new(format!("IFEO key: HKLM\\{}", t.ifeo_path)).small().weak());
+                    ui.label(
+                        RichText::new(tf!("IFEO key: HKLM\\{}", t.ifeo_path))
+                            .small()
+                            .weak(),
+                    );
                 }
                 if let Some(at) = st.installed_at {
                     ui.label(
-                        RichText::new(format!("Installed {}s ago in this session", at.elapsed().as_secs()))
+                        RichText::new(tf!(
+                            "Installed {}s ago in this session",
+                            at.elapsed().as_secs()
+                        ))
                             .small()
                             .weak(),
                     );
                 }
                 if let Some(b) = &st.last_backup {
                     ui.label(
-                        RichText::new(format!(
+                        RichText::new(tf!(
                             "Backup: {} ({} files)",
                             b.directory().display(),
                             b.entries.len()
@@ -1331,14 +1352,14 @@ impl LauncherApp {
             // ---- Shell takeover ------------------------------------------
             ui.heading(ts("Shell takeover"));
             ui.label(
-                RichText::new(
-                    "Start WinRust Explorer and stop the system shell in one action. \
-                     Windows restarts explorer.exe at next logon unless you install the \
-                     replacement above.",
-                )
+                RichText::new(ts(
+                    "Start WinRust Explorer and stop the system shell in one action. Windows \
+                     restarts explorer.exe at next logon unless you install the replacement \
+                     above.",
+                ))
                 .small(),
             );
-            if ui.button("Start WinRust Explorer as shell").clicked() {
+            if ui.button(ts("Start WinRust Explorer as shell")).clicked() {
                 self.block_with_explorer();
             }
             ui.separator();
@@ -1346,19 +1367,21 @@ impl LauncherApp {
             // ---- Kernel driver -------------------------------------------
             ui.heading(ts("Kernel driver"));
             ui.label(
-                RichText::new(
+                RichText::new(ts(
                     "Installs WinRustKernel.sys as a demand-start kernel service. The driver \
                      adds what user mode cannot see: every process including protected ones, \
                      loaded drivers with base addresses, and a RAM-only process block list. \
                      `winrust-driver remove` unloads and unregisters it.",
-                )
+                ))
                 .small(),
             );
             ui.horizontal(|ui| {
                 let status = if self.kernel_installed {
-                    RichText::new("registered").small().color(Color32::from_rgb(120, 220, 120))
+                    RichText::new(ts("registered"))
+                        .small()
+                        .color(Color32::from_rgb(120, 220, 120))
                 } else {
-                    RichText::new("not installed").small().weak()
+                    RichText::new(ts("not installed")).small().weak()
                 };
                 ui.label(status);
             });
@@ -1367,19 +1390,24 @@ impl LauncherApp {
             }
             ui.horizontal(|ui| {
                 if ui
-                    .add_enabled(self.user.elevated, egui::Button::new("Install driver"))
-                    .on_hover_text("Needs administrator rights and WinRustKernel.sys next to this launcher")
+                    .add_enabled(self.user.elevated, egui::Button::new(ts("Install driver")))
+                    .on_hover_text(ts(
+                        "Needs administrator rights and WinRustKernel.sys next to this launcher",
+                    ))
                     .clicked()
                 {
                     self.install_kernel_driver();
                 }
                 if ui
-                    .add_enabled(self.user.elevated && self.kernel_installed, egui::Button::new("Remove"))
+                    .add_enabled(
+                        self.user.elevated && self.kernel_installed,
+                        egui::Button::new(ts("Remove")),
+                    )
                     .clicked()
                 {
                     self.remove_kernel_driver();
                 }
-                if ui.button("Refresh").clicked() {
+                if ui.button(ts("Refresh")).clicked() {
                     self.refresh_kernel_driver();
                 }
             });
