@@ -181,11 +181,16 @@ fn toggle(app: &mut DesktopApp, which: Flyout) {
     }
 }
 
+/// `local_time_text()` returns `HH:MM\nDD.MM.YYYY`, so both separators are
+/// accepted; the clock draws the two halves on separate lines.
 fn split_clock(text: &str) -> (String, String) {
-    match text.split_once(" · ") {
-        Some((t, d)) => (t.to_string(), d.to_string()),
-        None => (text.to_string(), String::new()),
+    if let Some((t, d)) = text.split_once('\n') {
+        return (t.to_string(), d.to_string());
     }
+    if let Some((t, d)) = text.split_once(" · ") {
+        return (t.to_string(), d.to_string());
+    }
+    (text.to_string(), String::new())
 }
 
 fn network_label(app: &DesktopApp) -> String {
@@ -362,12 +367,9 @@ fn volume_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
 /// really changes the layout of the foreground window.
 fn language_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
     let current = app.lang_tag.clone();
-    for (tag, name, layout) in [
-        ("ENG", "Английский (США)", "США клавиатура"),
-        ("РУС", "Русский", "Русская клавиатура"),
-    ] {
+    for (tag, key) in [("ENG", "English (United States)"), ("РУС", "Russian")] {
         let selected = current == tag;
-        let label = format!("{tag}    {name}\n         {layout}");
+        let label = format!("{tag}    {}\n         {}", ts(key), ts("Keyboard"));
         let mut button = egui::Button::new(RichText::new(label).size(12.0));
         if selected {
             button = button.fill(ui.visuals().selection.bg_fill);
@@ -445,8 +447,8 @@ fn calendar_panel(app: &DesktopApp, ui: &mut egui::Ui) {
         .num_columns(7)
         .spacing(egui::vec2(6.0, 4.0))
         .show(ui, |ui| {
-            for wd in ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"] {
-                ui.label(RichText::new(wd).small().weak());
+            for wd in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] {
+                ui.label(RichText::new(ts(wd)).small().weak());
             }
             ui.end_row();
             let mut col = 0;

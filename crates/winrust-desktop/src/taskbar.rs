@@ -50,11 +50,6 @@ pub fn windows() -> Vec<WindowEntry> {
         .collect()
 }
 
-/// `HH:MM`, plus the long date - the tray draws them on two lines.
-pub fn clock_text() -> String {
-    winrust_core::system::local_time_text()
-}
-
 impl DesktopApp {
     pub fn taskbar(&mut self, ctx: &egui::Context) {
         let screen = ctx.screen_rect();

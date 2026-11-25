@@ -168,6 +168,10 @@ impl DesktopApp {
         }
         if self.windows_at.elapsed() >= Duration::from_secs(3) {
             self.open_windows = taskbar::windows();
+            // Highlight whatever is actually in front, so the taskbar follows the
+            // user switching windows with Alt+Tab instead of remembering only the
+            // last button they pressed.
+            self.active_pid = winrust_core::shell::foreground_pid();
             self.windows_at = Instant::now();
         }
         if self.apps_at.elapsed() >= Duration::from_secs(120) {

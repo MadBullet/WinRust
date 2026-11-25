@@ -655,7 +655,27 @@ pub fn shell_path_of(folder: KnownFolder) -> Option<&'static str> {
     }
 }
 
-/// Every visible top-level window with a title, oldest first./// Every visible top-level window with a title, oldest first.
+/// The process that owns the foreground window, if any.
+pub fn foreground_pid() -> Option<u32> {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        GetForegroundWindow, GetWindowThreadProcessId,
+    };
+    unsafe {
+        let hwnd = GetForegroundWindow();
+        if hwnd.is_null() {
+            return None;
+        }
+        let mut pid = 0u32;
+        GetWindowThreadProcessId(hwnd, &mut pid);
+        if pid == 0 {
+            None
+        } else {
+            Some(pid)
+        }
+    }
+}
+
+/// Every visible top-level window with a title, oldest first.
 ///
 /// The callback allocates nothing that could unwind, which matters because a
 /// panic crossing the FFI boundary is undefined behaviour.
