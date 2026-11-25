@@ -493,8 +493,11 @@ fn preview(
             CARD,
         );
         let (_, tex_id, size) = ids[i];
-        match tex_id {
-            Some(id) if size.x > 0.0 && size.y > 0.0 => {
+        // Guarded arms do not count towards exhaustiveness, so the size check
+        // lives inside the arm rather than on the pattern.
+        let sized = (size.x > 0.0 && size.y > 0.0).then_some(tex_id).flatten();
+        match sized {
+            Some(id) => {
                 // Letterbox inside the card so odd window shapes stay centred.
                 let scale = (card.width() / size.x).min(card.height() / size.y);
                 let draw = egui::Rect::from_center_size(card.center(), size * scale);
