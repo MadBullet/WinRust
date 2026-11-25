@@ -57,7 +57,7 @@ impl DesktopApp {
             egui::Stroke::new(1.0_f32, Color32::from_rgb(44, 52, 66)),
         );
 
-        let ui = egui::Ui::new(
+        let mut ui = egui::Ui::new(
             ctx.clone(),
             egui::LayerId::new(egui::Order::Foreground, egui::Id::new("taskbar_layer")),
             egui::Id::new("taskbar"),

@@ -1647,26 +1647,30 @@ impl ExplorerApp {
         }
 
         if let Some(target) = self.rename_target.clone() {
+            // Reborrow: the closure below is `FnOnce`, so capturing `self`
+            // directly would move the `&mut` and lock the rest of the function.
+            let this = &mut *self;
             ui.horizontal(|ui| {
                 ui.label(tf!("Rename {}:", file_name_of(&target)));
-                let resp = ui.text_edit_singleline(&mut self.rename_buffer);
+                let resp = ui.text_edit_singleline(&mut this.rename_buffer);
                 if !resp.has_focus() {
                     resp.request_focus();
                 }
                 let commit = ui.input(|i| i.key_pressed(egui::Key::Enter));
                 if ui.button(t("Rename")).clicked() || commit {
-                    let dest = target.with_file_name(self.rename_buffer.trim());
+                    let new_name = this.rename_buffer.trim().to_string();
+                    let dest = target.with_file_name(&new_name);
                     match disk::move_path(&target, &dest, false) {
                         Ok(()) => {
-                            self.status = tf!("Renamed to {}", self.rename_buffer);
-                            self.rename_target = None;
-                            self.refresh();
+                            this.status = tf!("Renamed to {}", new_name);
+                            this.rename_target = None;
+                            this.refresh();
                         }
-                        Err(e) => self.status = tf!("Rename failed: {}", e),
+                        Err(e) => this.status = tf!("Rename failed: {}", e),
                     }
                 }
                 if ui.button("Cancel").clicked() || ui.input(|i| i.key_pressed(egui::Key::Escape)) {
-                    self.rename_target = None;
+                    this.rename_target = None;
                 }
             });
             ui.separator();
