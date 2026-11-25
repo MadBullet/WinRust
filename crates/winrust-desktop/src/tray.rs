@@ -200,7 +200,12 @@ fn network_label(app: &DesktopApp) -> String {
 // The flyouts
 // ---------------------------------------------------------------------------
 
-fn flyout(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect, pal: winrust_ui::theme::Palette) {
+fn flyout(
+    app: &mut DesktopApp,
+    ctx: &egui::Context,
+    inner: egui::Rect,
+    pal: winrust_ui::theme::Palette,
+) {
     // Panels sit above the bar, right-aligned the way Windows places them.
     let width = match app.tray_flyout {
         Flyout::Calendar => 340.0,
