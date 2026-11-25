@@ -537,7 +537,7 @@ impl LauncherApp {
                 v
             }
             Err(e) => {
-                self.log(LogKind::Error, tf!("Staging failed: {}", e));
+                self.log(LogKind::Error, tf!("Staging failed: {}", &e));
                 self.status = tf!("Install aborted: {}", e);
                 self.busy = false;
                 return;
@@ -572,7 +572,7 @@ impl LauncherApp {
                         backup = Some(session);
                     }
                     Err(e) => {
-                        self.log(LogKind::Error, tf!("Backup failed: {}", e));
+                        self.log(LogKind::Error, tf!("Backup failed: {}", &e));
                         self.status = tf!("Install aborted: backup failed ({})", e);
                         self.busy = false;
                         return;
@@ -1323,7 +1323,7 @@ impl LauncherApp {
                         .system_path
                         .as_ref()
                         .map(|p| p.display().to_string())
-                        .unwrap_or_else(|| tf!("{} (not found)", t.exe));
+                        .unwrap_or_else(|| tf!("{} (not found)", &t.exe));
                     ui.label(
                         RichText::new(tf!("Target: {}", target_text))
                             .small()
