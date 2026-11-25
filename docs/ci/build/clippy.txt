@@ -10,25 +10,25 @@
     Checking windows_x86_64_msvc v0.52.6
     Checking simd-adler32 v0.3.10
     Checking windows-targets v0.52.6
-    Checking once_cell v1.21.4
     Checking adler2 v2.0.1
+    Checking once_cell v1.21.4
     Checking tinystr v0.8.5
-    Checking utf_types v1.0.0
     Checking writeable v0.6.4
     Checking litemap v0.8.3
-    Checking utf8_iter v1.1.0
+    Checking utf_types v1.0.0
     Checking icu_locale_core v2.4.0
+    Checking utf8_iter v1.1.0
     Checking crc32fast v1.5.6
     Checking miniz_oxide v0.9.1
     Checking potential_utf v0.1.6
     Checking zerotrie v0.2.5
     Checking memchr v2.8.3
     Checking icu_provider v2.4.0
-    Checking icu_collections v2.4.0
     Checking flate2 v1.1.11
-    Checking icu_properties_data v2.4.0
+    Checking icu_collections v2.4.0
     Checking icu_normalizer_data v2.4.0
     Checking serde_core v1.0.229
+    Checking icu_properties_data v2.4.0
     Checking ttf-parser v0.25.1
     Checking scopeguard v1.2.0
     Checking owned_ttf_parser v0.25.1
@@ -46,20 +46,20 @@
     Checking ecolor v0.29.1
     Checking parking_lot v0.12.5
     Checking idna_adapter v1.2.2
-    Checking epaint_default_fonts v0.29.1
     Checking nohash-hasher v0.2.0
-    Checking bitflags v2.13.2
     Checking percent-encoding v2.3.2
-    Checking form_urlencoded v1.2.3
+    Checking epaint_default_fonts v0.29.1
+    Checking bitflags v2.13.2
     Checking epaint v0.29.1
+    Checking form_urlencoded v1.2.3
     Checking idna v1.1.0
     Checking zmij v1.0.23
     Checking miniz_oxide v0.8.9
     Checking fdeflate v0.3.7
-    Checking raw-window-handle v0.6.2
     Checking itoa v1.0.19
-    Checking egui v0.29.1
+    Checking raw-window-handle v0.6.2
     Checking serde_json v1.0.154
+    Checking egui v0.29.1
     Checking thiserror v1.0.69
     Checking url v2.5.9
     Checking aho-corasick v1.1.5
@@ -67,22 +67,22 @@
     Checking windows-sys v0.59.0
     Checking regex-syntax v0.8.12
     Checking regex-automata v0.4.19
-    Checking anstyle v1.0.14
     Checking tracing-core v0.1.36
-    Checking utf8parse v0.2.2
     Checking pin-project-lite v0.2.18
+    Checking utf8parse v0.2.2
+    Checking anstyle v1.0.14
     Checking once_cell_polyfill v1.70.2
     Checking anstyle-wincon v3.0.11
-    Checking tracing v0.1.44
     Checking anstyle-parse v1.0.0
+    Checking tracing v0.1.44
     Checking num-traits v0.2.19
     Checking regex v1.13.2
-    Checking winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
     Checking anstyle-query v1.1.5
-    Checking zeroize v1.9.2
-    Checking is_terminal_polyfill v1.70.2
+    Checking arrayvec v0.7.8
+    Checking winrust-core v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-core)
+    Checking jiff-core v1.0.2
+    Checking weezl v0.1.12
     Checking float-cmp v0.9.0
-    Checking pxfm v0.1.30
 warning: unnecessary `unsafe` block
   --> crates\winrust-core\src\gpu.rs:89:32
    |
@@ -103,6 +103,9 @@ warning: unnecessary `unsafe` block
 93 |                     let value = unsafe { item.FmtValue.Anonymous.doubleValue };
    |                                 ^^^^^^ unnecessary `unsafe` block
 
+    Checking colorchoice v1.0.5
+    Checking is_terminal_polyfill v1.70.2
+    Checking dpi v0.1.2
 warning: field `last` is never read
   --> crates\winrust-core\src\gpu.rs:25:9
    |
@@ -114,60 +117,59 @@ warning: field `last` is never read
    |
    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
 
+    Checking pxfm v0.1.30
 warning: `winrust-core` (lib) generated 3 warnings
-    Checking dpi v0.1.2
     Checking unicode-segmentation v1.13.3
-    Checking cursor-icon v1.2.0
-    Checking jiff-core v1.0.2
     Checking smol_str v0.2.2
-    Checking colorchoice v1.0.5
-    Checking arrayvec v0.7.8
-    Checking error-code v3.4.0
     Checking color_quant v1.1.0
-    Checking weezl v0.1.12
-    Checking clipboard-win v5.4.3
-    Checking gif v0.14.2
-    Checking jiff v1.0.3
-    Checking anstream v1.0.0
+    Checking error-code v3.4.0
+    Checking zeroize v1.9.2
+    Checking cursor-icon v1.2.0
     Checking winit v0.30.13
     Checking moxcms v0.8.1
-    Checking strict-num v0.1.1
     Checking rustls-pki-types v1.16.0
+    Checking clipboard-win v5.4.3
+    Checking gif v0.14.2
+    Checking anstream v1.0.0
+    Checking strict-num v0.1.1
+    Checking jiff v1.0.3
     Checking env_filter v2.1.0
-    Checking glutin_egl_sys v0.7.1
     Checking glutin_wgl_sys v0.6.1
+    Checking glutin_egl_sys v0.7.1
     Checking png v0.18.1
     Checking libloading v0.8.9
     Checking byteorder-lite v0.1.0
     Checking arrayref v0.3.9
     Checking tiny-skia-path v0.11.4
-    Checking glutin v0.32.3
     Checking image v0.25.10
+    Checking glutin v0.32.3
     Checking env_logger v0.11.12
     Checking memoffset v0.9.1
     Checking arboard v3.7.0
     Checking kurbo v0.9.5
     Checking webbrowser v1.2.7
     Checking getrandom v0.2.17
-    Checking siphasher v0.3.11
+    Checking glow v0.14.2
+    Checking untrusted v0.9.0
    Compiling unicase v2.10.0
     Checking web-time v1.1.0
-    Checking untrusted v0.9.0
-    Checking glow v0.14.2
-    Checking ring v0.17.14
-    Checking egui_glow v0.29.1
+    Checking siphasher v0.3.11
+    Checking svgtypes v0.13.0
     Checking egui-winit v0.29.1
    Compiling phf_shared v0.11.3
-    Checking svgtypes v0.13.0
+    Checking ring v0.17.14
+    Checking egui_glow v0.29.1
     Checking glutin-winit v0.5.0
     Checking winapi v0.3.9
     Checking static_assertions v1.1.0
     Checking rctree v0.5.0
     Checking usvg-tree v0.37.0
-   Compiling phf v0.11.3
     Checking rustls-webpki v0.103.17
+    Checking eframe v0.29.1
+   Compiling phf v0.11.3
     Checking webpki-roots v1.0.12
     Checking winrust-ui v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-ui)
+    Checking simplecss v0.2.2
 warning: unused variable: `a`
   --> crates\winrust-ui\src\theme.rs:39:35
    |
@@ -177,151 +179,102 @@ warning: unused variable: `a`
    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
 
 warning: `winrust-ui` (lib) generated 1 warning (run `cargo clippy --fix --lib -p winrust-ui -- ` to apply 1 suggestion)
-    Checking simplecss v0.2.2
-    Checking eframe v0.29.1
+    Checking data-url v0.3.2
+    Checking subtle v2.6.1
     Checking roxmltree v0.19.0
     Checking imagesize v0.12.0
     Checking bitflags v1.3.2
-    Checking subtle v2.6.1
-    Checking data-url v0.3.2
-    Checking rustls v0.23.46
-    Checking usvg-parser v0.37.0
     Checking png v0.17.16
+    Checking usvg-parser v0.37.0
+    Checking rustls v0.23.46
     Checking webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
-    Checking xmlwriter v0.1.0
-    Checking base64 v0.22.1
     Checking base64 v0.21.7
+    Checking base64 v0.22.1
     Checking pico-args v0.5.0
+    Checking xmlwriter v0.1.0
     Checking usvg v0.37.0
     Checking tiny-skia v0.11.4
-    Checking ureq v2.12.1
     Checking rgb v0.8.53
+    Checking ureq v2.12.1
     Checking mime v0.3.18
     Checking resvg v0.37.0
-    Checking enum-map v2.7.3
     Checking ehttp v0.5.0
+    Checking enum-map v2.7.3
     Checking winrust-kernel-abi v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
     Checking egui_extras v0.29.1
     Checking winrust-kernel-control v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
     Checking winrust-taskmgr v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
-error: 2 positional arguments in format string, but there is 1 argument
-    --> crates\winrust-taskmgr\src\app.rs:1786:18
-     |
-1786 |         format!("{:.1} {}", bytes_text(bytes))
-     |                  ^^^^^ ^^   -----------------
-     |
-     = note: for information about formatting flags, visit https://doc.rust-lang.org/std/fmt/index.html
+warning: unnecessary map of the identity function
+   --> crates\winrust-taskmgr\src\app.rs:322:34
+    |
+322 |                           .cloned()
+    |  __________________________________^
+323 | |                         .map(|(pct, eng)| (pct, eng))
+    | |_____________________________________________________^ help: remove the call to `map`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#map_identity
+    = note: `#[warn(clippy::map_identity)]` on by default
 
-error[E0433]: cannot find module or crate `log` in this scope
-   --> crates\winrust-taskmgr\src\app.rs:385:13
-    |
-385 |             log::error!("process sampler stopped after a panic; UI keeps running");
-    |             ^^^ use of unresolved module or unlinked crate `log`
-
-error[E0308]: mismatched types
-   --> crates\winrust-taskmgr\src\app.rs:256:39
-    |
-256 | ...                   if *pct > *e {
-    |                          ----   ^^ expected `f64`, found `f32`
-    |                          |
-    |                          expected because this is `f64`
-    |
-help: you can convert an `f32` to an `f64`
-    |
-256 |                             if *pct > (*e).into() {
-    |                                       +  ++++++++
-
-error[E0308]: mismatched types
-   --> crates\winrust-taskmgr\src\app.rs:257:38
-    |
-257 | ...                   *e = *pct;
-    |                       --   ^^^^ expected `f32`, found `f64`
-    |                       |
-    |                       expected due to the type of this binding
-
-error[E0308]: mismatched types
-   --> crates\winrust-taskmgr\src\app.rs:261:43
-    |
-261 | ...                   if *pct > entry.0 {
-    |                          ----   ^^^^^^^ expected `f64`, found `f32`
-    |                          |
-    |                          expected because this is `f64`
-    |
-help: you can convert an `f32` to an `f64`
-    |
-261 |                                 if *pct > entry.0.into() {
-    |                                                  +++++++
-
-error[E0308]: mismatched types
-   --> crates\winrust-taskmgr\src\app.rs:262:47
-    |
-262 | ...                   entry.0 = *pct;
-    |                       -------   ^^^^ expected `f32`, found `f64`
-    |                       |
-    |                       expected due to the type of this binding
-
-error[E0061]: this method takes 2 arguments but 1 argument was supplied
-    --> crates\winrust-taskmgr\src\app.rs:1232:27
+warning: useless conversion to the same type: `&str`
+    --> crates\winrust-taskmgr\src\app.rs:1596:82
      |
-1232 |         let mut cols = ui.columns(2);
-     |                           ^^^^^^^--- argument #2 is missing
+1596 |                         let state = s.state.map(|x| x.label()).unwrap_or_else(|| "—".into());
+     |                                                                                  ^^^^^^^^^^ help: consider removing `.into()`: `"—"`
      |
-note: method defined here
-    --> C:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\src\ui.rs:2631:12
-     |
-2631 |     pub fn columns<R>(
-     |            ^^^^^^^
-help: provide the argument
-     |
-1232 |         let mut cols = ui.columns(2, /* add_contents */);
-     |                                    ++++++++++++++++++++
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
+     = note: `#[warn(clippy::useless_conversion)]` on by default
 
-error[E0382]: borrow of moved value: `resp`
-    --> crates\winrust-taskmgr\src\app.rs:1141:21
+warning: useless conversion to the same type: `&str`
+    --> crates\winrust-taskmgr\src\app.rs:1606:52
      |
-1128 |                     let resp = ui.selectable_label(
-     |                         ---- move occurs because `resp` has type `egui::Response`, which does not implement the `Copy` trait
+1606 | ...                   .unwrap_or_else(|| "—".into()),
+     |                                          ^^^^^^^^^^ help: consider removing `.into()`: `"—"`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
+
+warning: `winrust-taskmgr` (bin "winrust-taskmgr" test) generated 3 warnings (run `cargo clippy --fix --bin "winrust-taskmgr" -p winrust-taskmgr --tests -- ` to apply 3 suggestions)
+    Checking winrust-sysctl v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
+warning: `winrust-taskmgr` (bin "winrust-taskmgr") generated 3 warnings (3 duplicates)
+    Checking winrust-explorer v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-explorer)
+    Checking winrust-services v0.4.0 (D:\a\WinRust\WinRust\crates\winrust-services)
+error[E0507]: cannot move out of `self.rename_buffer` which is behind a mutable reference
+    --> crates\winrust-explorer\src\app.rs:1661:64
+     |
+1601 |     fn file_area(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+     |                  --------- move occurs because `self.rename_buffer` has type `std::string::String`, which does not implement the `Copy` trait
 ...
-1135 |                     resp.on_hover_text(format!(
-     |                     ---- value moved here
-...
-1141 |                     resp.context_menu(|ui| {
-     |                     ^^^^ value borrowed here after move
+1661 |                             self.status = tf!("Renamed to {}", self.rename_buffer);
+     |                                                                ^^^^^^^^^^^^^^^^^^ `self.rename_buffer` is moved here
      |
 help: consider cloning the value if the performance cost is acceptable
      |
-1135 |                     resp.clone().on_hover_text(format!(
-     |                         ++++++++
+1661 |                             self.status = tf!("Renamed to {}", self.rename_buffer.clone());
+     |                                                                                  ++++++++
 
-error[E0382]: borrow of moved value: `row.info.name`
-    --> crates\winrust-taskmgr\src\app.rs:1394:61
+error[E0382]: borrow of moved value: `self`
+    --> crates\winrust-explorer\src\app.rs:1677:12
      |
-1369 |         egui::Window::new(tf!("Priority — {}", row.info.name))
-     |                                                ------------- value moved here
+1601 |     fn file_area(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+     |                  --------- move occurs because `self` has type `&mut app::ExplorerApp`, which does not implement the `Copy` trait
 ...
-1394 |                 Ok(()) => self.status = format!("{} -> {}", row.info.name, p.label()),
-     |                                                             ^^^^^^^^^^^^^ value borrowed here after move
+1650 |             ui.horizontal(|ui| {
+     |                           ---- value moved into closure here
+...
+1661 |                             self.status = tf!("Renamed to {}", self.rename_buffer);
+     |                                                                ------------------ variable moved due to use in closure
+...
+1677 |         if self.is_computer_view() && self.current().filter.is_empty() {
+     |            ^^^^ value borrowed here after move
      |
-     = note: move occurs because `row.info.name` has type `std::string::String`, which does not implement the `Copy` trait
+help: consider creating a fresh reborrow of `self` here
+     |
+1661 |                             self.status = tf!("Renamed to {}", &mut *self.rename_buffer);
+     |                                                                ++++++
 
-error[E0382]: use of moved value: `name`
-    --> crates\winrust-taskmgr\src\app.rs:1677:35
-     |
-1670 |                     ui.label(tf!("Terminate {} (PID {})?", name, pid));
-     |                                                            ---- value moved here
-...
-1677 |                     ui.horizontal(|ui| {
-     |                                   ^^^^ value used here after move
-...
-1680 |                                 Ok(()) => self.status = tf!("Terminated {}", name),
-     |                                                                              ---- use occurs due to use in closure
-     |
-     = note: move occurs because `name` has type `std::string::String`, which does not implement the `Copy` trait
-
-Some errors have detailed explanations: E0061, E0308, E0382, E0433.
-For more information about an error, try `rustc --explain E0061`.
-error: could not compile `winrust-taskmgr` (bin "winrust-taskmgr") due to 10 previous errors
+Some errors have detailed explanations: E0382, E0507.
+For more information about an error, try `rustc --explain E0382`.
+error: could not compile `winrust-explorer` (bin "winrust-explorer" test) due to 2 previous errors
 warning: build failed, waiting for other jobs to finish...
-error: could not compile `winrust-taskmgr` (bin "winrust-taskmgr" test) due to 10 previous errors
+error: could not compile `winrust-explorer` (bin "winrust-explorer") due to 2 previous errors
 exit=False
