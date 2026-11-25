@@ -82,12 +82,12 @@ pub enum Priority {
 impl Priority {
     pub fn label(self) -> &'static str {
         match self {
-            Priority::Idle => "Low",
-            Priority::BelowNormal => "Below normal",
-            Priority::Normal => "Normal",
-            Priority::AboveNormal => "Above normal",
-            Priority::High => "High",
-            Priority::Realtime => "Realtime",
+            Priority::Idle => crate::i18n::ts("Low"),
+            Priority::BelowNormal => crate::i18n::ts("Below normal"),
+            Priority::Normal => crate::i18n::ts("Normal"),
+            Priority::AboveNormal => crate::i18n::ts("Above normal"),
+            Priority::High => crate::i18n::ts("High"),
+            Priority::Realtime => crate::i18n::ts("Realtime"),
             Priority::Unknown => "—",
         }
     }

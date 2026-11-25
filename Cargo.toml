@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/winrust-core",
     "crates/winrust-explorer",
+    "crates/winrust-desktop",
     "crates/winrust-taskmgr",
     "crates/winrust-services",
     "crates/winrust-sysctl",

@@ -450,3 +450,34 @@ pub fn stage_binaries(sources: &[(String, PathBuf)]) -> Result<Vec<(String, Path
     }
     Ok(out)
 }
+
+/// Locate one of the WinRust binaries.
+///
+/// Search order matches everywhere the project can legitimately put a binary:
+/// next to the running program (portable zip, release assets), the installed
+/// location `%ProgramFiles%\WinRust`, then the build output of a source
+/// checkout.  Used by the desktop shell to launch its sibling programs.
+pub fn find_binary(exe: &str) -> Option<std::path::PathBuf> {
+    let mut dirs: Vec<std::path::PathBuf> = Vec::new();
+    if let Ok(current) = std::env::current_exe() {
+        if let Some(parent) = current.parent() {
+            dirs.push(parent.to_path_buf());
+        }
+    }
+    dirs.push(install_dir());
+    if let Ok(cwd) = std::env::current_dir() {
+        dirs.push(cwd);
+    }
+    for dir in dirs {
+        for candidate in [
+            dir.join(exe),
+            dir.join("target").join("release").join(exe),
+            dir.join("target").join("debug").join(exe),
+        ] {
+            if candidate.is_file() {
+                return Some(candidate);
+            }
+        }
+    }
+    None
+}

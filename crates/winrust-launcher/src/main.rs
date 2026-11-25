@@ -19,7 +19,9 @@ use eframe::egui;
 use egui::{Color32, RichText};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
+use winrust_core::i18n::{self, Lang};
 use winrust_core::install::{self, Integration, TargetSpec};
+use winrust_core::{t, tf, ts};
 use winrust_core::process;
 use winrust_core::restore;
 use winrust_core::service::{ScManager, ServiceState};
@@ -34,6 +36,8 @@ use winrust_core::user;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum Component {
     Explorer,
+    /// The shell itself: desktop icons, taskbar and Start.
+    Desktop,
     TaskManager,
     Services,
     SystemControl,
@@ -45,6 +49,7 @@ impl Component {
     fn id(self) -> &'static str {
         match self {
             Component::Explorer => "explorer",
+            Component::Desktop => "desktop",
             Component::TaskManager => "taskmgr",
             Component::Services => "services",
             Component::SystemControl => "sysctl",
@@ -54,6 +59,7 @@ impl Component {
     fn exe(self) -> &'static str {
         match self {
             Component::Explorer => "winrust-explorer.exe",
+            Component::Desktop => "winrust-desktop.exe",
             Component::TaskManager => "winrust-taskmgr.exe",
             Component::Services => "winrust-services.exe",
             Component::SystemControl => "winrust-sysctl.exe",
@@ -63,6 +69,7 @@ impl Component {
     fn pkg(self) -> &'static str {
         match self {
             Component::Explorer => "winrust-explorer",
+            Component::Desktop => "winrust-desktop",
             Component::TaskManager => "winrust-taskmgr",
             Component::Services => "winrust-services",
             Component::SystemControl => "winrust-sysctl",
@@ -73,6 +80,9 @@ impl Component {
     fn replaces(self) -> &'static str {
         match self {
             Component::Explorer => "explorer.exe",
+            // The desktop *is* explorer.exe; installing it as the shell is the
+            // Winlogon route, which has its own integration level.
+            Component::Desktop => "explorer.exe",
             Component::TaskManager => "Taskmgr.exe",
             Component::Services => "services.msc",
             Component::SystemControl => "control.exe",
@@ -81,7 +91,8 @@ impl Component {
     }
     fn title(self) -> &'static str {
         match self {
-            Component::Explorer => "File Explorer",
+            Component::Explorer => ts("File Explorer"),
+            Component::Desktop => ts("Desktop shell"),
             Component::TaskManager => "Task Manager",
             Component::Services => "Services",
             Component::SystemControl => "System Control",
@@ -91,6 +102,7 @@ impl Component {
     fn glyph(self) -> &'static str {
         match self {
             Component::Explorer => "🗂",
+            Component::Desktop => "🖥",
             Component::TaskManager => "📊",
             Component::Services => "⚙",
             Component::SystemControl => "🛠",
@@ -99,6 +111,12 @@ impl Component {
     }
     fn description(self) -> &'static str {
         match self {
+            Component::Desktop => ts(
+                "A working desktop: icons from your Desktop folder with drag to arrange, \
+                 a taskbar with Start, running windows and the clock, and the Start menu. \
+                 Installed as the Winlogon shell it replaces explorer.exe entirely, and the \
+                 Start menu has a one-click way back to the Windows shell.",
+            ),
             Component::Explorer => {
                 "Tabs, breadcrumbs, four view modes, multi-selection, drag & drop, \
                  preview pane, background copy/move with cancel, shell icons, \
@@ -129,6 +147,8 @@ impl Component {
     /// `None` for components that have no single system binary to replace.
     fn target(self) -> Option<&'static str> {
         match self {
+            // The desktop takes over through Winlogon, not by replacing a file.
+            Component::Desktop => None,
             Component::Explorer => Some("explorer.exe"),
             Component::TaskManager => Some("Taskmgr.exe"),
             Component::Services => None,
@@ -149,12 +169,16 @@ impl Component {
                 Integration::Hijack,
                 Integration::Replace,
             ],
+            // The desktop shell becomes the sign-in shell through Winlogon,
+            // which is the only supported way to replace explorer.exe.
+            Component::Desktop => &[Integration::Portable, Integration::Shell],
             _ => &[Integration::Portable],
         }
     }
 
-    const ALL: [Component; 5] = [
+    const ALL: [Component; 6] = [
         Component::Explorer,
+        Component::Desktop,
         Component::TaskManager,
         Component::Services,
         Component::SystemControl,
@@ -228,6 +252,14 @@ struct LauncherApp {
     kernel_installed: bool,
     /// Last `winrust-driver status` line, if the driver answered.
     kernel_status: Option<String>,
+    /// UI language; saved on change so every component follows.
+    lang: Lang,
+    /// Global transparency/blur, shared with the components.
+    appearance: winrust_core::i18n::Appearance,
+    appearance_dirty: bool,
+    hwnd: isize,
+    /// Show the appearance/language page instead of the component list.
+    show_settings: bool,
 }
 
 struct LogLine {
@@ -252,7 +284,9 @@ struct PendingAction {
 
 impl LauncherApp {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        cc.egui_ctx.set_visuals(egui::Visuals::dark());
+        i18n::init();
+        let appearance = i18n::settings::load();
+        winrust_ui::theme::apply(&cc.egui_ctx, &appearance);
         let components = Component::ALL
             .iter()
             .map(|c| {
@@ -314,6 +348,11 @@ impl LauncherApp {
             show_backups: false,
             kernel_installed: kernel_service_installed(),
             kernel_status: None,
+            lang: i18n::current(),
+            appearance: i18n::settings::load(),
+            appearance_dirty: false,
+            hwnd: 0,
+            show_settings: false,
         }
     }
 
@@ -539,6 +578,43 @@ impl LauncherApp {
                 continue;
             };
             let integration = self.components[st_index].integration;
+            // The desktop shell has no file to swap: it becomes the sign-in
+            // shell through Winlogon, and stays launchable from the launcher.
+            if *c == Component::Desktop && integration == Integration::Shell {
+                let staged = staged
+                    .iter()
+                    .find(|(id, _)| id.as_str() == c.id())
+                    .map(|(_, p)| p.clone())
+                    .or_else(|| self.components[st_index].path.clone());
+                match staged {
+                    Some(binary) => match install::set_shell(Some(&binary)) {
+                        Ok(()) => {
+                            installed += 1;
+                            let _ = install::record_state(c.id(), Integration::Shell, Some(&binary));
+                            self.log(
+                                LogKind::Ok,
+                                format!(
+                                    "Desktop shell installed: sign-in starts {}",
+                                    binary.display()
+                                ),
+                            );
+                            self.components[st_index].installed_at = Some(Instant::now());
+                        }
+                        Err(e) => {
+                            failed += 1;
+                            self.log(LogKind::Error, format!("{}: {e}", c.title()));
+                        }
+                    },
+                    None => {
+                        failed += 1;
+                        self.log(
+                            LogKind::Warn,
+                            format!("{}: binary not found, skipped", c.title()),
+                        );
+                    }
+                }
+                continue;
+            }
             let Some(spec) = self.components[st_index].target.clone() else {
                 self.log(
                     LogKind::Info,
@@ -594,6 +670,29 @@ impl LauncherApp {
     }
 
     fn request_uninstall(&mut self, c: Component) {
+        if c == Component::Desktop {
+            if !self.user.elevated {
+                self.status = ts("Administrator rights are required").to_string();
+                return;
+            }
+            match install::set_shell(None) {
+                Ok(()) => {
+                    if let Some(st) = self.components.iter_mut().find(|s| s.component == c) {
+                        st.integration = Integration::Portable;
+                    }
+                    let _ = install::clear_state(c.id());
+                    let msg = ts("Winlogon Shell override removed — sign-in returns to explorer.exe");
+                    self.log(LogKind::Ok, msg);
+                    self.status = msg.to_string();
+                }
+                Err(e) => {
+                    let msg = format!("{}: {e}", ts("Restore failed"));
+                    self.log(LogKind::Error, msg.clone());
+                    self.status = msg;
+                }
+            }
+            return;
+        }
         let snapshot = match self.components.iter().find(|s| s.component == c) {
             Some(s) => (s.integration, s.target.clone(), s.last_backup.clone()),
             None => return,
@@ -845,26 +944,73 @@ fn pid_of(exe: &str) -> Option<u32> {
 // ---------------------------------------------------------------------------
 
 impl eframe::App for LauncherApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         self.sample();
+        if self.hwnd == 0 {
+            self.hwnd = winrust_ui::theme::hwnd_from_handle(frame).unwrap_or(0);
+        }
+        if self.appearance_dirty {
+            self.appearance = self.appearance.sanitized();
+            winrust_ui::theme::apply(ctx, &self.appearance);
+            winrust_ui::theme::apply_window(self.hwnd, &self.appearance);
+            let _ = i18n::settings::save(&self.appearance);
+            self.appearance_dirty = false;
+        }
 
         egui::TopBottomPanel::top("banner").show(ctx, |ui| {
             ui.add_space(8.0);
             ui.horizontal(|ui| {
                 ui.heading(RichText::new("WinRust").size(26.0).strong());
-                ui.label(RichText::new("Windows components rewritten in Rust").weak());
+                ui.label(RichText::new(ts("Windows components rewritten in Rust")).weak());
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     let (color, text) = if self.user.elevated {
-                        (Color32::from_rgb(120, 220, 120), "administrator")
+                        (Color32::from_rgb(120, 220, 120), ts("administrator"))
                     } else {
                         (
                             Color32::from_rgb(230, 170, 120),
-                            "standard user — install disabled",
+                            ts("standard user — install disabled"),
                         )
                     };
                     ui.label(RichText::new(text).small().color(color));
                     ui.separator();
                     ui.label(RichText::new(self.os.as_str()).small().weak());
+                    ui.separator();
+                    if ui
+                        .selectable_label(self.show_settings, format!("☰ {}", t("Settings")))
+                        .clicked()
+                    {
+                        self.show_settings = !self.show_settings;
+                    }
+                    // The language selector lives here, in the header, so it is
+                    // the first thing a new user sees.
+                    ui.label(RichText::new(format!("🌐 {}", t("Language"))).small().weak());
+                    let mut lang = self.lang;
+                    egui::ComboBox::from_id_salt("launcher_lang")
+                        .selected_text(lang.native_name())
+                        .width(110.0)
+                        .show_ui(ui, |ui| {
+                            for l in Lang::ALL {
+                                ui.selectable_value(&mut lang, l, l.native_name());
+                            }
+                        });
+                    if lang != self.lang {
+                        self.lang = lang;
+                        i18n::set_lang(lang);
+                        // Persist: this is what every other component reads at
+                        // start-up, so the whole suite switches language.
+                        match i18n::lang::save(lang) {
+                            Ok(()) => {
+                                let msg = tf!(
+                                    "Language set to {}. Restart the components to apply it everywhere.",
+                                    lang.native_name()
+                                );
+                                self.log(LogKind::Info, msg);
+                            }
+                            Err(e) => {
+                                self.log(LogKind::Error, format!("language: {e}"));
+                            }
+                        }
+                    }
                 });
             });
             ui.add_space(8.0);
@@ -873,16 +1019,22 @@ impl eframe::App for LauncherApp {
         egui::TopBottomPanel::bottom("footer").show(ctx, |ui| {
             ui.horizontal(|ui| {
                 ui.label(
-                    RichText::new(format!(
-                        "CPU {:.0}%  ·  RAM {:.1} / {:.1} GB  ·  {} cores {}  ·  {} processes  ·  {} / {} services",
-                        self.cpu_percent,
+                    RichText::new(tf!(
+                        "{} {}  ·  {} {:.1} / {:.1} {}  ·  {} {} {}  ·  {} {}  ·  {} / {} {}",
+                        t("CPU"),
+                        format_args!("{:.0}%", self.cpu_percent),
+                        t("RAM"),
                         self.memory.used_phys() as f64 / 1_073_741_824.0,
                         self.memory.total_phys as f64 / 1_073_741_824.0,
+                        t("GB"),
                         self.cpu.logical,
+                        t("cores"),
                         self.cpu.arch,
                         self.processes,
+                        t("processes"),
                         self.services_running,
-                        self.services_total
+                        self.services_total,
+                        t("services")
                     ))
                     .small()
                     .weak(),
@@ -903,7 +1055,13 @@ impl eframe::App for LauncherApp {
             .width_range(320.0..=620.0)
             .show(ctx, |ui| self.side_panel(ui));
 
-        egui::CentralPanel::default().show(ctx, |ui| self.main_panel(ui));
+        egui::CentralPanel::default().show(ctx, |ui| {
+            if self.show_settings {
+                self.settings_page(ui);
+            } else {
+                self.main_panel(ui);
+            }
+        });
 
         self.confirm_modal(ctx);
         self.backups_modal(ctx);
@@ -915,13 +1073,13 @@ impl eframe::App for LauncherApp {
 impl LauncherApp {
     fn main_panel(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
-            ui.heading("Components");
+            ui.heading(ts("Components"));
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                if ui.button("Install selected").clicked() {
+                if ui.button(ts("Install selected")).clicked() {
                     let list = self.selected_components();
                     self.request_install(list);
                 }
-                if ui.button("Explore backups").clicked() {
+                if ui.button(ts("Explore backups")).clicked() {
                     self.show_backups = true;
                 }
             });
@@ -1000,28 +1158,30 @@ impl LauncherApp {
                                         if ui
                                             .add_enabled(
                                                 !running && path_ok,
-                                                egui::Button::new("Launch"),
+                                                egui::Button::new(ts("Launch")),
                                             )
                                             .clicked()
                                         {
                                             launch = Some(component);
                                         }
                                     } else if ui
-                                        .button("Restore")
+                                        .button(ts("Restore"))
                                         .on_hover_text("Undo the installation")
                                         .clicked()
                                     {
                                         uninstall = Some(component);
                                     }
-                                    if ui.button("Details").clicked() {
+                                    if ui.button(ts("Details")).clicked() {
                                         select = Some(component);
                                     }
                                 },
                             );
                         });
 
-                        // Integration selector
-                        if self.components[idx].target.is_some() {
+                        // Integration selector.  The desktop has no file target
+                        // but still offers Portable/Shell, so the condition is
+                        // "has more than just Portable", not "has a target".
+                        if component.levels().len() > 1 {
                             ui.horizontal(|ui| {
                                 ui.label(RichText::new("Integration:").small().weak());
                                 for &level in component.levels() {
@@ -1074,7 +1234,7 @@ impl LauncherApp {
     fn side_panel(&mut self, ui: &mut egui::Ui) {
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             // ---- Safety -------------------------------------------------
-            ui.heading("Before installing");
+            ui.heading(ts("Before installing"));
             ui.label(
                 RichText::new("Every change can be undone. Choose at least one safety net.")
                     .small()
@@ -1167,7 +1327,7 @@ impl LauncherApp {
             ui.separator();
 
             // ---- Shell takeover ------------------------------------------
-            ui.heading("Shell takeover");
+            ui.heading(ts("Shell takeover"));
             ui.label(
                 RichText::new(
                     "Start WinRust Explorer and stop the system shell in one action. \
@@ -1182,7 +1342,7 @@ impl LauncherApp {
             ui.separator();
 
             // ---- Kernel driver -------------------------------------------
-            ui.heading("Kernel driver");
+            ui.heading(ts("Kernel driver"));
             ui.label(
                 RichText::new(
                     "Installs WinRustKernel.sys as a demand-start kernel service. The driver \
@@ -1225,8 +1385,8 @@ impl LauncherApp {
 
             // ---- Log -----------------------------------------------------
             ui.horizontal(|ui| {
-                ui.heading("Activity log");
-                if ui.small_button("Clear").clicked() {
+                ui.heading(ts("Activity log"));
+                if ui.small_button(ts("Clear")).clicked() {
                     self.log.clear();
                 }
             });
@@ -1251,6 +1411,102 @@ impl LauncherApp {
         });
     }
 
+    /// Settings page: language and the shared appearance block.
+    ///
+    /// Every value here is written to `HKCU\SOFTWARE\WinRust`, which is the
+    /// file the other five programs read at start-up — that is how one switch
+    /// in one window changes the whole suite.
+    fn settings_page(&mut self, ui: &mut egui::Ui) {
+        ui.heading(ts("Settings"));
+        ui.label(
+            RichText::new(ts(
+                "These switches are shared by every WinRust program through HKCU\\SOFTWARE\\WinRust.",
+            ))
+            .small()
+            .weak(),
+        );
+        ui.separator();
+
+        ui.heading(RichText::new(format!("🌐 {}", t("Language"))).size(16.0));
+        ui.label(
+            RichText::new(ts(
+                "The launcher ships in English; choose Russian here and every component follows.",
+            ))
+            .small()
+            .weak(),
+        );
+        let mut lang = self.lang;
+        for l in Lang::ALL {
+            ui.radio_value(&mut lang, l, l.native_name());
+        }
+        if lang != self.lang {
+            self.lang = lang;
+            i18n::set_lang(lang);
+            match i18n::lang::save(lang) {
+                Ok(()) => {
+                    let msg = tf!("Language set to {}", lang.native_name());
+                    self.log(LogKind::Info, msg);
+                }
+                Err(e) => self.log(LogKind::Error, format!("language: {e}")),
+            }
+        }
+        ui.separator();
+
+        ui.heading(RichText::new(format!("🎨 {}", t("Appearance"))).size(16.0));
+        ui.label(
+            RichText::new(ts(
+                "Transparency and blur cost GPU time every frame. They are off by default; turn them off for the lowest CPU/GPU use.",
+            ))
+            .small()
+            .weak(),
+        );
+        let mut changed = false;
+        changed |= ui
+            .checkbox(&mut self.appearance.transparent, t("Transparency"))
+            .changed();
+        ui.add_enabled_ui(self.appearance.transparent, |ui| {
+            changed |= ui
+                .add(
+                    egui::Slider::new(&mut self.appearance.opacity, 30..=100)
+                        .text(t("Opacity")),
+                )
+                .changed();
+            changed |= ui
+                .checkbox(&mut self.appearance.blur, t("Blur"))
+                .changed();
+            ui.add_enabled_ui(self.appearance.blur, |ui| {
+                changed |= ui
+                    .add(
+                        egui::Slider::new(&mut self.appearance.blur_amount, 0..=100)
+                            .text(t("Blur amount")),
+                    )
+                    .changed();
+            });
+        });
+        if changed {
+            self.appearance_dirty = true;
+        }
+        ui.label(
+            RichText::new(tf!(
+                "Stored in HKCU\\{}",
+                winrust_core::i18n::settings::REGISTRY_PATH
+            ))
+            .small()
+            .weak(),
+        );
+        ui.separator();
+
+        ui.heading(RichText::new(ts("About")).size(16.0));
+        ui.label(tf!("WinRust {}", env!("CARGO_PKG_VERSION")));
+        ui.label(
+            RichText::new(ts(
+                "Eight programs: launcher, desktop shell, file explorer, task manager, services, system control, driver console and the KMDF driver.",
+            ))
+            .small()
+            .weak(),
+        );
+    }
+
     fn confirm_modal(&mut self, ctx: &egui::Context) {
         let Some(pending) = self.confirm.as_mut() else {
             return;
@@ -1266,7 +1522,7 @@ impl LauncherApp {
                 ui.label(RichText::new(pending.body.as_str()).monospace().size(12.0));
                 ui.add_space(10.0);
                 ui.horizontal(|ui| {
-                    if ui.button(RichText::new("Apply").strong()).clicked() {
+                    if ui.button(RichText::new(ts("Apply")).strong()).clicked() {
                         go = true;
                     }
                     if ui.button("Cancel").clicked() {
@@ -1289,7 +1545,7 @@ impl LauncherApp {
         }
         let mut open = true;
         let mut restore_now: Option<restore::BackupSession> = None;
-        egui::Window::new("Backups")
+        egui::Window::new(ts("Backups"))
             .open(&mut open)
             .resizable(true)
             .default_width(620.0)
@@ -1314,7 +1570,7 @@ impl LauncherApp {
                                 ui.label(RichText::new(format!("restore pt #{seq}")).small().weak());
                             }
                             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                                if ui.button("Restore").clicked() {
+                                if ui.button(ts("Restore")).clicked() {
                                     restore_now = Some(session.clone());
                                 }
                             });
@@ -1360,15 +1616,23 @@ impl LauncherApp {
 
 fn main() -> eframe::Result<()> {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("warn")).init();
+    let appearance = winrust_core::i18n::settings::load();
+    let ru = winrust_core::i18n::lang::load() == winrust_core::i18n::Lang::Ru;
+    let title = if ru {
+        "WinRust — установка и запуск"
+    } else {
+        "WinRust — launcher & installer"
+    };
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1180.0, 760.0])
             .with_min_inner_size([900.0, 560.0])
-            .with_title("WinRust — launcher & installer"),
+            .with_title(title)
+            .with_transparent(appearance.transparent),
         ..Default::default()
     };
     eframe::run_native(
-        "WinRust",
+        title,
         options,
         Box::new(|cc| Ok(Box::new(LauncherApp::new(cc)))),
     )

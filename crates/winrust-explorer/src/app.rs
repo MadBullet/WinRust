@@ -26,7 +26,9 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Arc;
 use winrust_core::disk::{self, DirEntry, SortKey};
+use winrust_core::i18n::{self, Lang};
 use winrust_core::shell::{self, KnownFolder};
+use winrust_core::{t, tf, ts};
 
 // ---------------------------------------------------------------------------
 // View modes
@@ -43,10 +45,10 @@ enum ViewMode {
 impl ViewMode {
     fn label(self) -> &'static str {
         match self {
-            ViewMode::Details => "Details",
-            ViewMode::List => "List",
-            ViewMode::Tiles => "Large icons",
-            ViewMode::Content => "Content",
+            ViewMode::Details => ts("Details"),
+            ViewMode::List => ts("List"),
+            ViewMode::Tiles => ts("Large icons"),
+            ViewMode::Content => ts("Content"),
         }
     }
     const ALL: [ViewMode; 4] = [
@@ -80,11 +82,11 @@ impl SortKeySerde {
     }
     fn label(self) -> &'static str {
         match self {
-            SortKeySerde::Name => "Name",
-            SortKeySerde::Size => "Size",
-            SortKeySerde::Modified => "Date modified",
-            SortKeySerde::Created => "Date created",
-            SortKeySerde::Type => "Type",
+            SortKeySerde::Name => ts("Name"),
+            SortKeySerde::Size => ts("Size"),
+            SortKeySerde::Modified => ts("Date modified"),
+            SortKeySerde::Created => ts("Date created"),
+            SortKeySerde::Type => ts("Type"),
         }
     }
     const ALL: [SortKeySerde; 5] = [
@@ -301,6 +303,26 @@ pub struct ExplorerApp {
     search_rx: Receiver<(PathBuf, Vec<DirEntry>)>,
     search_tx: Sender<(PathBuf, Vec<DirEntry>)>,
     last_search: std::time::Instant,
+    /// Ghost card that follows the cursor while dragging, by animation.
+    drag_ghost: Option<DragGhost>,
+    /// Global transparency/blur, shared with the other components.
+    appearance: winrust_core::i18n::Appearance,
+    appearance_dirty: bool,
+    hwnd: isize,
+    lang: Lang,
+    /// Scroll offset of the details view, so a drag near the edge can pan.
+    last_scroll_y: f32,
+}
+
+/// The floating label shown under the cursor during a drag & drop.
+#[derive(Debug, Clone)]
+struct DragGhost {
+    label: String,
+    count: usize,
+    /// Smoothed cursor position — the animation is this easing towards the
+    /// real pointer, which is what makes the ghost feel attached to the hand.
+    pos: egui::Pos2,
+    spawned: std::time::Instant,
 }
 
 struct JobUpdate {
@@ -318,6 +340,7 @@ struct FileClipboard {
 impl ExplorerApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         install_fonts(&cc.egui_ctx);
+        i18n::init();
         style(&cc.egui_ctx);
 
         let persisted = load_state();
@@ -387,6 +410,12 @@ impl ExplorerApp {
             search_rx,
             search_tx,
             last_search: std::time::Instant::now(),
+            drag_ghost: None,
+            appearance: i18n::settings::load(),
+            appearance_dirty: false,
+            hwnd: 0,
+            lang: i18n::current(),
+            last_scroll_y: 0.0,
         };
         app.start_load(app.active);
         app
@@ -1130,7 +1159,7 @@ impl ExplorerApp {
                 }
                 ui.separator();
             }
-            if ui.button("+").on_hover_text("New tab (Ctrl+T)").clicked() {
+            if ui.button("+").on_hover_text(t("New tab (Ctrl+T)")).clicked() {
                 let p = self.current().path.clone();
                 self.tabs.push(Tab::new(p));
                 activate = Some(self.tabs.len() - 1);
@@ -1160,7 +1189,7 @@ impl ExplorerApp {
                     self.current().can_back(),
                     egui::Button::new(RichText::new("◀").size(14.0)),
                 )
-                .on_hover_text("Back (Alt+←)")
+                .on_hover_text(t("Back (Alt+←)"))
                 .clicked()
             {
                 self.go_back();
@@ -1170,15 +1199,15 @@ impl ExplorerApp {
                     self.current().can_forward(),
                     egui::Button::new(RichText::new("▶").size(14.0)),
                 )
-                .on_hover_text("Forward (Alt+→)")
+                .on_hover_text(t("Forward (Alt+→)"))
                 .clicked()
             {
                 self.go_forward();
             }
-            if ui.button("▲").on_hover_text("Up (Alt+↑)").clicked() {
+            if ui.button("▲").on_hover_text(t("Up (Alt+↑)")).clicked() {
                 self.go_up();
             }
-            if ui.button("⟳").on_hover_text("Refresh (F5)").clicked() {
+            if ui.button("⟳").on_hover_text(t("Refresh (F5)")).clicked() {
                 self.refresh();
             }
 
@@ -1190,7 +1219,7 @@ impl ExplorerApp {
                 let response = ui.add_sized(
                     [addr_w, 24.0],
                     egui::TextEdit::singleline(&mut buf)
-                        .hint_text("Type a path or URL and press Enter"),
+                        .hint_text(t("Type a path or URL and press Enter")),
                 );
                 self.current_mut().address_edit = Some(buf.clone());
                 if response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
@@ -1199,7 +1228,7 @@ impl ExplorerApp {
                     if p.exists() {
                         self.navigate(p);
                     } else {
-                        self.status = format!("Path not found: {}", p.display());
+                        self.status = tf!("Path not found: {}", p.display());
                     }
                 }
                 if ui.input(|i| i.key_pressed(egui::Key::Escape)) {
@@ -1240,7 +1269,7 @@ impl ExplorerApp {
                             }
                             if ui
                                 .small_button("✎")
-                                .on_hover_text("Edit address (Ctrl+L)")
+                                .on_hover_text(t("Edit address (Ctrl+L)"))
                                 .clicked()
                             {
                                 start_edit = true;
@@ -1261,7 +1290,7 @@ impl ExplorerApp {
             let resp = ui.add_sized(
                 [search_w, 24.0],
                 egui::TextEdit::singleline(&mut needle)
-                    .hint_text("🔍 Search")
+                    .hint_text(format!("🔍 {}", t("Search")))
                     .margin(egui::vec2(6.0, 3.0)),
             );
             if resp.changed() {
@@ -1279,25 +1308,25 @@ impl ExplorerApp {
             let entries = self.sorted_filtered();
             let multiselection = self.current().selection.clone();
             ui.menu_button(RichText::new("+ New").strong(), |ui| {
-                if ui.button("📁 Folder").clicked() {
+                if ui.button(format!("📁 {}", t("Folder"))).clicked() {
                     self.creating_folder = true;
-                    self.new_folder_buffer = "New folder".into();
+                    self.new_folder_buffer = t("New folder");
                     ui.close_menu();
                 }
-                if ui.button("📄 Text document").clicked() {
+                if ui.button(format!("📄 {}", t("Text document"))).clicked() {
                     let target =
-                        disk::unique_destination(self.current().path.join("New Text Document.txt"));
+                        disk::unique_destination(self.current().path.join(t("New Text Document.txt")));
                     match std::fs::write(&target, b"") {
                         Ok(()) => {
-                            self.status = format!("Created {}", file_name_of(&target));
+                            self.status = tf!("Created {}", file_name_of(&target));
                             self.refresh();
                         }
-                        Err(e) => self.status = format!("Create failed: {e}"),
+                        Err(e) => self.status = tf!("Create failed: {}", e),
                     }
                     ui.close_menu();
                 }
-                if ui.button("🗜 Compressed (zipped) folder").clicked() {
-                    self.status = "Use right-click → Send to → Compressed folder".into();
+                if ui.button(format!("🗜 {}", t("Compressed (zipped) folder"))).clicked() {
+                    self.status = t("Use right-click → Send to → Compressed folder");
                     ui.close_menu();
                 }
             });
@@ -1306,7 +1335,7 @@ impl ExplorerApp {
 
             let has_sel = !multiselection.is_empty();
             if ui
-                .add_enabled(has_sel, egui::Button::new("✂ Cut"))
+                .add_enabled(has_sel, egui::Button::new(format!("✂ {}", t("Cut"))))
                 .on_hover_text("Ctrl+X")
                 .clicked()
             {
@@ -1314,10 +1343,10 @@ impl ExplorerApp {
                     paths: multiselection.clone(),
                     cut: true,
                 });
-                self.status = format!("Cut {} item(s)", multiselection.len());
+                self.status = tf!("Cut {} item(s)", multiselection.len());
             }
             if ui
-                .add_enabled(has_sel, egui::Button::new("⧉ Copy"))
+                .add_enabled(has_sel, egui::Button::new(format!("⧉ {}", t("Copy"))))
                 .on_hover_text("Ctrl+C")
                 .clicked()
             {
@@ -1325,18 +1354,18 @@ impl ExplorerApp {
                     paths: multiselection.clone(),
                     cut: false,
                 });
-                self.status = format!("Copied {} item(s)", multiselection.len());
+                self.status = tf!("Copied {} item(s)", multiselection.len());
             }
             let has_clip = self.clipboard.is_some();
             if ui
-                .add_enabled(has_clip, egui::Button::new("📋 Paste"))
+                .add_enabled(has_clip, egui::Button::new(format!("📋 {}", t("Paste"))))
                 .on_hover_text("Ctrl+V")
                 .clicked()
             {
                 self.paste_clipboard();
             }
             if ui
-                .add_enabled(has_sel, egui::Button::new("✎ Rename"))
+                .add_enabled(has_sel, egui::Button::new(format!("✎ {}", t("Rename"))))
                 .on_hover_text("F2")
                 .clicked()
             {
@@ -1346,7 +1375,7 @@ impl ExplorerApp {
                 }
             }
             if ui
-                .add_enabled(has_sel, egui::Button::new("🗑 Delete"))
+                .add_enabled(has_sel, egui::Button::new(format!("🗑 {}", t("Delete"))))
                 .on_hover_text("Delete / Shift+Delete")
                 .clicked()
             {
@@ -1355,14 +1384,14 @@ impl ExplorerApp {
             }
             ui.separator();
             if ui
-                .button("⤴ Share")
+                .button(format!("⤴ {}", t("Share")))
                 .on_hover_text("Open sharing options")
                 .clicked()
             {
                 if let Some(one) = multiselection.first() {
                     let _ = shell::open_verb(one, "share");
                 } else {
-                    self.status = "Sharing: select an item first".into();
+                    self.status = t("Sharing: select an item first");
                 }
             }
             ui.separator();
@@ -1384,7 +1413,7 @@ impl ExplorerApp {
             let mut sort_key = self.current().sort_key;
             let sort_asc = self.current().sort_asc;
             egui::ComboBox::from_id_salt("sortby")
-                .selected_text(format!("Sort: {}", sort_key.label()))
+                .selected_text(format!("{}: {}", t("Sort"), sort_key.label()))
                 .width(170.0)
                 .show_ui(ui, |ui| {
                     for k in SortKeySerde::ALL {
@@ -1395,17 +1424,17 @@ impl ExplorerApp {
                         }
                     }
                     ui.separator();
-                    if ui.selectable_label(sort_asc, "Ascending").clicked() {
+                    if ui.selectable_label(sort_asc, t("Ascending")).clicked() {
                         self.current_mut().sort_asc = true;
                     }
-                    if ui.selectable_label(!sort_asc, "Descending").clicked() {
+                    if ui.selectable_label(!sort_asc, t("Descending")).clicked() {
                         self.current_mut().sort_asc = false;
                     }
                 });
 
-            ui.menu_button("⋯ View", |ui| {
+            ui.menu_button(format!("⋯ {}", t("View")), |ui| {
                 let mut hidden = self.current().show_hidden;
-                if ui.checkbox(&mut hidden, "Hidden items").changed() {
+                if ui.checkbox(&mut hidden, t("Hidden items")).changed() {
                     self.current_mut().show_hidden = hidden;
                     self.remember_prefs();
                     self.refresh();
@@ -1415,11 +1444,11 @@ impl ExplorerApp {
                     self.preview_open = prev;
                 }
                 ui.separator();
-                if ui.button("Refresh (F5)").clicked() {
+                if ui.button(t("Refresh (F5)")).clicked() {
                     self.refresh();
                     ui.close_menu();
                 }
-                if ui.button("Select all (Ctrl+A)").clicked() {
+                if ui.button(t("Select all (Ctrl+A)")).clicked() {
                     let paths: Vec<PathBuf> = entries.iter().map(|e| e.path.clone()).collect();
                     self.current_mut().selection = paths;
                     ui.close_menu();
@@ -1451,7 +1480,7 @@ impl ExplorerApp {
             .auto_shrink([false, false])
             .show(ui, |ui| {
                 ui.add_space(4.0);
-                ui.label(RichText::new("QUICK ACCESS").small().weak());
+                ui.label(RichText::new(t("QUICK ACCESS")).small().weak());
                 for folder in KnownFolder::sidebar() {
                     let label = folder.label();
                     let path = folder.path();
@@ -1466,19 +1495,19 @@ impl ExplorerApp {
                         nav_selected = Some(*folder);
                         match path {
                             Some(p) => nav = Some(p),
-                            None => status_msg = Some(format!("{label} is a virtual folder")),
+                            None => status_msg = Some(tf!("{} is a virtual folder", label)),
                         }
                     }
                 }
 
                 ui.add_space(10.0);
-                ui.label(RichText::new("THIS PC").small().weak());
+                ui.label(RichText::new(t("THIS PC")).small().weak());
                 for drive in &drives {
                     let p = PathBuf::from(&drive.root);
                     let name = if drive.label.is_empty() {
                         format!(
                             "{} ({})",
-                            drive.kind.map(|k| k.label()).unwrap_or("Drive"),
+                            drive.kind.map(|k| k.label()).unwrap_or(ts("Drive")),
                             drive.root.trim_end_matches('\\')
                         )
                     } else {
@@ -1513,9 +1542,9 @@ impl ExplorerApp {
                 }
 
                 ui.add_space(10.0);
-                ui.label(RichText::new("FOLDERS IN THIS VIEW").small().weak());
+                ui.label(RichText::new(t("FOLDERS IN THIS VIEW")).small().weak());
                 if subfolders.is_empty() {
-                    ui.label(RichText::new("   (no sub-folders)").size(11.0).weak());
+                    ui.label(RichText::new(t("   (no sub-folders)")).size(11.0).weak());
                 }
                 for (name, path) in &subfolders {
                     if ui
@@ -1572,10 +1601,10 @@ impl ExplorerApp {
                 );
                 ui.label(RichText::new(&err).color(Color32::from_rgb(240, 140, 120)));
                 ui.add_space(6.0);
-                if ui.button("Retry").clicked() {
+                if ui.button(t("Retry")).clicked() {
                     self.refresh();
                 }
-                if ui.button("Up one level").clicked() {
+                if ui.button(t("Up one level")).clicked() {
                     self.go_up();
                 }
             });
@@ -1584,22 +1613,22 @@ impl ExplorerApp {
 
         if self.creating_folder {
             ui.horizontal(|ui| {
-                ui.label("New folder name:");
+                ui.label(t("New folder name:"));
                 let resp = ui.text_edit_singleline(&mut self.new_folder_buffer);
                 if !resp.has_focus() {
                     resp.request_focus();
                 }
                 let commit = ui.input(|i| i.key_pressed(egui::Key::Enter));
-                if ui.button("Create").clicked() || commit {
+                if ui.button(t("Create")).clicked() || commit {
                     let target =
                         disk::unique_destination(self.current().path.join(&self.new_folder_buffer));
                     match disk::create_dir_all(&target) {
                         Ok(()) => {
-                            self.status = format!("Created {}", file_name_of(&target));
+                            self.status = tf!("Created {}", file_name_of(&target));
                             self.creating_folder = false;
                             self.refresh();
                         }
-                        Err(e) => self.status = format!("Create failed: {e}"),
+                        Err(e) => self.status = tf!("Create failed: {}", e),
                     }
                 }
                 if ui.button("Cancel").clicked() || ui.input(|i| i.key_pressed(egui::Key::Escape)) {
@@ -1611,21 +1640,21 @@ impl ExplorerApp {
 
         if let Some(target) = self.rename_target.clone() {
             ui.horizontal(|ui| {
-                ui.label(format!("Rename {}:", file_name_of(&target)));
+                ui.label(tf!("Rename {}:", file_name_of(&target)));
                 let resp = ui.text_edit_singleline(&mut self.rename_buffer);
                 if !resp.has_focus() {
                     resp.request_focus();
                 }
                 let commit = ui.input(|i| i.key_pressed(egui::Key::Enter));
-                if ui.button("Rename").clicked() || commit {
+                if ui.button(t("Rename")).clicked() || commit {
                     let dest = target.with_file_name(self.rename_buffer.trim());
                     match disk::move_path(&target, &dest, false) {
                         Ok(()) => {
-                            self.status = format!("Renamed to {}", self.rename_buffer);
+                            self.status = tf!("Renamed to {}", self.rename_buffer);
                             self.rename_target = None;
                             self.refresh();
                         }
-                        Err(e) => self.status = format!("Rename failed: {e}"),
+                        Err(e) => self.status = tf!("Rename failed: {}", e),
                     }
                 }
                 if ui.button("Cancel").clicked() || ui.input(|i| i.key_pressed(egui::Key::Escape)) {
@@ -1635,15 +1664,28 @@ impl ExplorerApp {
             ui.separator();
         }
 
+        // "This PC" gets the Explorer home layout: folder tiles on top, then
+        // Devices and drives with usage bars and the free-of-total text.
+        if self.is_computer_view() && self.current().filter.is_empty() {
+            egui::ScrollArea::vertical()
+                .id_salt("computer_home")
+                .auto_shrink([false, false])
+                .show(ui, |ui| {
+                    self.folders_section(ui);
+                    self.drives_section(ui);
+                });
+            return;
+        }
+
         let entries = self.sorted_filtered();
         if entries.is_empty() && !self.current().loading {
             ui.add_space(30.0);
             ui.vertical_centered(|ui| {
                 if self.current().filter.is_empty() {
-                    ui.label(RichText::new("This folder is empty").size(15.0).weak());
+                    ui.label(RichText::new(t("This folder is empty")).size(15.0).weak());
                 } else {
                     ui.label(
-                        RichText::new("No items match your search")
+                        RichText::new(t("No items match your search"))
                             .size(15.0)
                             .weak(),
                     );
@@ -1658,6 +1700,20 @@ impl ExplorerApp {
             ViewMode::Tiles => self.tiles_view(ui, ctx, &entries, 72),
             ViewMode::Content => self.content_view(ui, ctx, &entries),
         }
+    }
+
+    /// Is the active tab showing "This PC" (a drive root with no directory
+    /// contents worth listing, i.e. the Computer known folder)?
+    fn is_computer_view(&self) -> bool {
+        let p = &self.current().path;
+        if let Some(computer) = KnownFolder::Computer.path() {
+            if p == &computer {
+                return true;
+            }
+        }
+        // Bare drive root: "C:\\"
+        let s = p.to_string_lossy();
+        s.len() == 3 && s.ends_with(":\\")
     }
 
     /// Shared selection logic: plain click replaces, Ctrl toggles, Shift extends.
@@ -2154,64 +2210,64 @@ impl ExplorerApp {
 /// Right-click menu built without touching `self`, so it can be used inside the
 /// table/tile closures that already borrow the app.
 fn simple_context_menu(ui: &mut egui::Ui, entry: &DirEntry, out: &mut Vec<Command>) {
-    if ui.button("Open").clicked() {
+    if ui.button(t("Open")).clicked() {
         out.push(Command::Open);
         ui.close_menu();
     }
     if entry.is_dir {
-        if ui.button("Open in new tab").clicked() {
+        if ui.button(t("Open in new tab")).clicked() {
             out.push(Command::OpenNewTab);
             ui.close_menu();
         }
     } else {
-        if ui.button("Edit").clicked() {
+        if ui.button(t("Edit")).clicked() {
             out.push(Command::Edit);
             ui.close_menu();
         }
-        if ui.button("Open with…").clicked() {
+        if ui.button(t("Open with…")).clicked() {
             out.push(Command::OpenWith);
             ui.close_menu();
         }
-        if ui.button("Run as administrator").clicked() {
+        if ui.button(t("Run as administrator")).clicked() {
             out.push(Command::RunAsAdmin);
             ui.close_menu();
         }
         if matches!(
             entry.ext.as_str(),
             "zip" | "7z" | "rar" | "tar" | "gz" | "cab"
-        ) && ui.button("Extract All…").clicked()
+        ) && ui.button(t("Extract All…")).clicked()
         {
             out.push(Command::ExtractHere);
             ui.close_menu();
         }
     }
     ui.separator();
-    if ui.button("Cut").clicked() {
+    if ui.button(t("Cut")).clicked() {
         out.push(Command::Cut);
         ui.close_menu();
     }
-    if ui.button("Copy").clicked() {
+    if ui.button(t("Copy")).clicked() {
         out.push(Command::Copy);
         ui.close_menu();
     }
-    if ui.button("Rename").clicked() {
+    if ui.button(t("Rename")).clicked() {
         out.push(Command::Rename);
         ui.close_menu();
     }
-    if ui.button("Delete").clicked() {
+    if ui.button(t("Delete")).clicked() {
         out.push(Command::Delete);
         ui.close_menu();
     }
-    if ui.button("Delete permanently").clicked() {
+    if ui.button(t("Delete permanently")).clicked() {
         out.push(Command::DeletePermanent);
         ui.close_menu();
     }
     ui.separator();
-    if ui.button("Copy as path").clicked() {
+    if ui.button(t("Copy as path")).clicked() {
         out.push(Command::CopyPath);
         ui.close_menu();
     }
-    if ui.button("Properties").clicked() {
+    if ui.button(t("Properties")).clicked() {
         out.push(Command::Properties);
         ui.close_menu();
     }
@@ -2285,7 +2341,7 @@ impl ExplorerApp {
     fn preview_pane(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         let Some(path) = self.current().selected_one().cloned() else {
             ui.add_space(10.0);
-            ui.label(RichText::new("Select a file to preview").weak());
+            ui.label(RichText::new(t("Select a file to preview")).weak());
             return;
         };
         ui.add_space(6.0);
@@ -2576,7 +2632,7 @@ impl ExplorerApp {
         }
         if ctrl && shift && has(egui::Key::N) {
             self.creating_folder = true;
-            self.new_folder_buffer = "New folder".into();
+            self.new_folder_buffer = t("New folder");
         }
         if ctrl && has(egui::Key::A) {
             self.run_selection(Command::SelectAll);
@@ -2748,10 +2804,335 @@ impl ExplorerApp {
     }
 }
 
+impl ExplorerApp {
+    /// Animate and draw the drag & drop ghost.
+    ///
+    /// The ghost eases towards the pointer (exponential smoothing at ~30 fps),
+    /// lifts with a small scale-in over 120 ms, and fades out on drop.  That is
+    /// the whole "animated drag and drop" requirement: the card visibly follows
+    /// the hand instead of teleporting, and the drop target pulses in response.
+    fn drag_ghost(&mut self, ctx: &egui::Context) {
+        let pointer = ctx.input(|i| i.pointer.latest_pos());
+        if self.drag_active && !self.drag_paths.is_empty() {
+            let count = self.drag_paths.len();
+            let label = self
+                .drag_paths
+                .first()
+                .map(|p| file_name_of(p.as_path()))
+                .unwrap_or_default();
+            match &mut self.drag_ghost {
+                Some(g) if g.count == count && g.label == label => {
+                    // Ease: 45 % of the remaining distance per frame at 60 fps.
+                    if let Some(p) = pointer {
+                        let dt = ctx.input(|i| i.stable_dt).clamp(0.004, 0.05);
+                        let k = 1.0 - (-dt * 22.0).exp();
+                        g.pos = g.pos + (p - g.pos) * k;
+                    }
+                }
+                _ => {
+                    self.drag_ghost = Some(DragGhost {
+                        label,
+                        count,
+                        pos: pointer.unwrap_or(egui::Pos2::ZERO),
+                        spawned: std::time::Instant::now(),
+                    });
+                }
+            }
+            // Keep animating while the drag is live.
+            ctx.request_repaint_after(std::time::Duration::from_millis(16));
+        } else if self.drag_ghost.is_some() {
+            // Drop: the ghost disappears; a short repaint settles the fade.
+            self.drag_ghost = None;
+        }
+
+        let Some(ghost) = self.drag_ghost.clone() else {
+            return;
+        };
+        if !self.drag_active {
+            return;
+        }
+        let age = ghost.spawned.elapsed().as_secs_f32();
+        let scale = (age / 0.12).clamp(0.35, 1.0);
+        let text = if ghost.count > 1 {
+            tf!("{} items", ghost.count)
+        } else {
+            ghost.label.clone()
+        };
+        let size = egui::vec2(190.0, 26.0) * scale;
+        let rect = egui::Rect::from_min_size(
+            ghost.pos + egui::vec2(14.0, 12.0),
+            size,
+        );
+        let painter = ctx.layer_painter(egui::LayerId::new(
+            egui::Order::Tooltip,
+            egui::Id::new("drag_ghost"),
+        ));
+        painter.rect_filled(rect, 5.0, Color32::from_rgba_unmultiplied(34, 48, 70, 225));
+        painter.rect_stroke(
+            rect,
+            5.0,
+            egui::Stroke::new(1.0_f32, Color32::from_rgb(96, 176, 255)),
+        );
+        painter.text(
+            rect.left_center() + egui::vec2(8.0, 0.0),
+            egui::Align2::LEFT_CENTER,
+            i18n::middle(&text, 30, 18),
+            egui::FontId::proportional(12.0 * scale.max(0.6)),
+            Color32::from_rgb(220, 232, 255),
+        );
+        // A count badge when several items travel together.
+        if ghost.count > 1 {
+            let badge = egui::Rect::from_center_size(
+                rect.right_center() - egui::vec2(14.0, 0.0),
+                egui::vec2(22.0, 16.0),
+            );
+            painter.rect_filled(badge, 8.0, Color32::from_rgb(96, 176, 255));
+            painter.text(
+                badge.center(),
+                egui::Align2::CENTER_CENTER,
+                ghost.count.to_string(),
+                egui::FontId::proportional(11.0),
+                Color32::from_rgb(16, 22, 30),
+            );
+        }
+    }
+
+    /// Mouse side buttons: XButton1 = Back, XButton2 = Forward, as in Explorer.
+    fn mouse_navigation(&mut self, ctx: &egui::Context) {
+        let (back, forward) = ctx.input(|i| {
+            (
+                i.pointer.button_pressed(egui::PointerButton::Extra1),
+                i.pointer.button_pressed(egui::PointerButton::Extra2),
+            )
+        });
+        if back {
+            self.go_back();
+        }
+        if forward {
+            self.go_forward();
+        }
+    }
+
+    /// This PC's "Devices and drives" section: a tile per volume with the same
+    /// text Explorer prints under each one ("117 ГБ свободно из 228 ГБ").
+    fn drives_section(&mut self, ui: &mut egui::Ui) {
+        if self.drives.is_empty() {
+            self.drives = disk::volumes();
+        }
+        if self.drives.is_empty() {
+            return;
+        }
+        ui.add_space(6.0);
+        let count = self.drives.len();
+        ui.label(
+            RichText::new(format!("{} ({count})", t("Devices and drives")))
+                .size(14.0)
+                .strong(),
+        );
+        ui.add_space(4.0);
+        let mut nav: Option<PathBuf> = None;
+        // Tiles wrap like Explorer's device view: 260 px each.
+        let per_row = ((ui.available_width() + 12.0) / 272.0).floor().max(1.0) as usize;
+        for chunk in self.drives.clone().chunks(per_row) {
+            ui.horizontal(|ui| {
+                for drive in chunk {
+                    let (rect, resp) = ui.allocate_exact_size(
+                        egui::vec2(260.0, 74.0),
+                        egui::Sense::click(),
+                    );
+                    let hovered = resp.hovered();
+                    let painter = ui.painter();
+                    painter.rect_filled(
+                        rect,
+                        6.0,
+                        if hovered {
+                            Color32::from_rgb(40, 44, 56)
+                        } else {
+                            Color32::from_rgb(32, 34, 44)
+                        },
+                    );
+                    // Drive glyph
+                    painter.text(
+                        rect.left_top() + egui::vec2(14.0, 18.0),
+                        egui::Align2::LEFT_TOP,
+                        "▤",
+                        egui::FontId::proportional(28.0),
+                        Color32::from_rgb(150, 190, 240),
+                    );
+                    let name = if drive.label.is_empty() {
+                        format!(
+                            "{} ({})",
+                            drive.kind.map(|k| k.label()).unwrap_or(ts("Drive")),
+                            drive.root.trim_end_matches('\\')
+                        )
+                    } else {
+                        format!("{} ({})", drive.label, drive.root.trim_end_matches('\\'))
+                    };
+                    painter.text(
+                        rect.left_top() + egui::vec2(54.0, 8.0),
+                        egui::Align2::LEFT_TOP,
+                        i18n::end(&name, 30),
+                        egui::FontId::proportional(13.0),
+                        Color32::from_rgb(226, 230, 240),
+                    );
+                    // Usage bar
+                    let frac = if drive.total_bytes > 0 {
+                        drive.used_percent() / 100.0
+                    } else {
+                        0.0
+                    };
+                    let bar = egui::Rect::from_min_size(
+                        rect.left_top() + egui::vec2(54.0, 28.0),
+                        egui::vec2(rect.width() - 70.0, 8.0),
+                    );
+                    painter.rect_filled(bar, 2.0, Color32::from_rgb(20, 22, 30));
+                    let mut filled = bar;
+                    filled.set_width(bar.width() * frac.clamp(0.0, 1.0));
+                    let color = if frac > 0.9 {
+                        Color32::from_rgb(226, 96, 96)
+                    } else if frac > 0.75 {
+                        Color32::from_rgb(226, 180, 96)
+                    } else {
+                        Color32::from_rgb(72, 140, 220)
+                    };
+                    painter.rect_filled(filled, 2.0, color);
+                    // "117 ГБ свободно из 228 ГБ"
+                    let text = if drive.total_bytes == 0 {
+                        ts("Not ready").to_string()
+                    } else {
+                        tf!(
+                            "{} free of {}",
+                            disk::format_size(drive.free_bytes),
+                            disk::format_size(drive.total_bytes)
+                        )
+                    };
+                    painter.text(
+                        rect.left_top() + egui::vec2(54.0, 42.0),
+                        egui::Align2::LEFT_TOP,
+                        text,
+                        egui::FontId::proportional(11.5),
+                        Color32::from_rgb(158, 168, 184),
+                    );
+                    if resp.clicked() {
+                        nav = Some(PathBuf::from(&drive.root));
+                    }
+                    resp.on_hover_text(format!(
+                        "{}\n{}\n{}",
+                        name,
+                        drive.fs_name,
+                        if drive.total_bytes == 0 {
+                            ts("Not ready").to_string()
+                        } else {
+                            tf!(
+                                "{} free of {}",
+                                disk::format_size(drive.free_bytes),
+                                disk::format_size(drive.total_bytes)
+                            )
+                        }
+                    ));
+                }
+            });
+            ui.add_space(6.0);
+        }
+        if let Some(p) = nav {
+            self.navigate(p);
+        }
+    }
+
+    /// The folder tiles of "Папки (7)" — the section Explorer shows on This PC.
+    fn folders_section(&mut self, ui: &mut egui::Ui) {
+        let known = [
+            KnownFolder::Desktop,
+            KnownFolder::Documents,
+            KnownFolder::Downloads,
+            KnownFolder::Pictures,
+            KnownFolder::Music,
+            KnownFolder::Videos,
+        ];
+        let mut nav: Option<PathBuf> = None;
+        ui.add_space(6.0);
+        let count = known.len();
+        ui.label(
+            RichText::new(format!("{} ({count})", t("Folders")))
+                .size(14.0)
+                .strong(),
+        );
+        ui.add_space(4.0);
+        let per_row = ((ui.available_width() + 12.0) / 168.0).floor().max(1.0) as usize;
+        for chunk in known.chunks(per_row) {
+            ui.horizontal(|ui| {
+                for folder in chunk {
+                    let Some(path) = folder.path() else {
+                        continue;
+                    };
+                    let (rect, resp) = ui.allocate_exact_size(
+                        egui::vec2(156.0, 34.0),
+                        egui::Sense::click_and_drag(),
+                    );
+                    let painter = ui.painter();
+                    if resp.hovered() {
+                        painter.rect_filled(rect, 4.0, Color32::from_rgb(40, 44, 56));
+                    }
+                    painter.text(
+                        rect.left_center() + egui::vec2(4.0, 0.0),
+                        egui::Align2::LEFT_CENTER,
+                        "📁",
+                        egui::FontId::proportional(19.0),
+                        Color32::from_rgb(240, 196, 92),
+                    );
+                    painter.text(
+                        rect.left_center() + egui::vec2(30.0, 0.0),
+                        egui::Align2::LEFT_CENTER,
+                        i18n::end(folder.label(), 22),
+                        egui::FontId::proportional(13.0),
+                        Color32::from_rgb(226, 230, 240),
+                    );
+                    if resp.clicked() {
+                        nav = Some(path.clone());
+                    }
+                    // Folders are drop targets here too, with the same
+                    // highlight animation as in the list views.
+                    if self.drag_active && resp.hovered() {
+                        painter.rect_stroke(
+                            rect.expand(1.0),
+                            4.0,
+                            egui::Stroke::new(
+                                1.5_f32,
+                                Color32::from_rgb(96, 176, 255),
+                            ),
+                        );
+                        if resp.drag_stopped() {
+                            self.drop_target = Some(path.clone());
+                        }
+                    }
+                    resp.on_hover_text(path.display().to_string());
+                }
+            });
+        }
+        if let Some(p) = nav {
+            self.navigate(p);
+        }
+    }
+}
+
 impl eframe::App for ExplorerApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         self.pump_workers(ctx);
         self.keyboard(ctx);
+        self.mouse_navigation(ctx);
+        if self.hwnd == 0 {
+            self.hwnd = winrust_ui::theme::hwnd_from_handle(frame).unwrap_or(0);
+            if self.appearance.transparent {
+                self.appearance_dirty = true;
+            }
+        }
+        if self.appearance_dirty {
+            self.appearance = self.appearance.sanitized();
+            winrust_ui::theme::apply(ctx, &self.appearance);
+            winrust_ui::theme::apply_window(self.hwnd, &self.appearance);
+            let _ = i18n::settings::save(&self.appearance);
+            self.appearance_dirty = false;
+        }
 
         egui::TopBottomPanel::top("tabs").show(ctx, |ui| self.tab_bar(ui));
         egui::TopBottomPanel::top("commandbar").show(ctx, |ui| self.command_bar(ui));
@@ -2779,40 +3160,40 @@ impl eframe::App for ExplorerApp {
             );
             let mut cmds: Vec<Command> = Vec::new();
             bg.context_menu(|ui| {
-                if ui.button("Paste").clicked() {
+                if ui.button(t("Paste")).clicked() {
                     cmds.push(Command::Paste);
                     ui.close_menu();
                 }
-                if ui.button("New folder").clicked() {
+                if ui.button(t("New folder")).clicked() {
                     self.creating_folder = true;
-                    self.new_folder_buffer = "New folder".into();
+                    self.new_folder_buffer = t("New folder");
                     ui.close_menu();
                 }
                 ui.separator();
-                if ui.button("View: Details").clicked() {
+                if ui.button(t("View: Details")).clicked() {
                     self.current_mut().view = ViewMode::Details;
                     self.remember_prefs();
                     ui.close_menu();
                 }
-                if ui.button("Sort by name").clicked() {
+                if ui.button(t("Sort by name")).clicked() {
                     self.set_sort(SortKeySerde::Name);
                     ui.close_menu();
                 }
                 ui.separator();
-                if ui.button("Select all").clicked() {
+                if ui.button(t("Select all")).clicked() {
                     cmds.push(Command::SelectAll);
                     ui.close_menu();
                 }
-                if ui.button("Invert selection").clicked() {
+                if ui.button(t("Invert selection")).clicked() {
                     cmds.push(Command::InvertSelection);
                     ui.close_menu();
                 }
-                if ui.button("Refresh").clicked() {
+                if ui.button(t("Refresh")).clicked() {
                     cmds.push(Command::Refresh);
                     ui.close_menu();
                 }
                 ui.separator();
-                if ui.button("Send to Desktop").clicked() {
+                if ui.button(t("Send to Desktop")).clicked() {
                     cmds.push(Command::SendToDesktop);
                     ui.close_menu();
                 }
@@ -2832,6 +3213,8 @@ impl eframe::App for ExplorerApp {
         });
 
         self.modals(ctx);
+        // Drawn last so the drag ghost floats above every panel.
+        self.drag_ghost(ctx);
     }
 
     fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {

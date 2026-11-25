@@ -40,6 +40,7 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Appearance", "Оформление"),
     ("Transparency", "Прозрачность"),
     ("Blur", "Размытие"),
+    ("Blur amount", "Сила размытия"),
     ("Opacity", "Непрозрачность"),
     ("Memory", "Память"),
     ("CPU", "ЦП"),
@@ -50,6 +51,7 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Startup", "Автозагрузка"),
     ("Users", "Пользователи"),
     ("Services", "Службы"),
+    ("cores", "ядер"),
     ("Restart", "Перезапустить"),
     (
         "Select a service to see details",

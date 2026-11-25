@@ -369,3 +369,38 @@ pub fn idle_seconds() -> Option<u32> {
     let now = unsafe { GetTickCount() };
     Some(now.wrapping_sub(info.dwTime) / 1000)
 }
+
+/// `HH:MM` plus the short date, in the current user's locale order.
+///
+/// Used by the desktop shell's taskbar.  Reads `GetLocalTime`, so it is correct
+/// across DST changes and never depends on the process' start time.
+pub fn local_time_text() -> String {
+    use windows_sys::Win32::Foundation::SYSTEMTIME;
+    use windows_sys::Win32::System::SystemInformation::GetLocalTime;
+    let mut st: SYSTEMTIME = unsafe { std::mem::zeroed() };
+    unsafe { GetLocalTime(&mut st) };
+    format!(
+        "{:02}:{:02}\n{:02}.{:02}.{:04}",
+        st.wHour, st.wMinute, st.wDay, st.wMonth, st.wYear
+    )
+}
+
+/// Lock the workstation (`Win+L`), through the documented `rundll32` entry.
+pub fn lock_workstation() {
+    let _ = crate::shell::launch("rundll32.exe", "user32.dll,LockWorkStation");
+}
+
+/// Sign the current user out.
+pub fn sign_out() {
+    let _ = crate::shell::launch("shutdown.exe", "/l");
+}
+
+/// Restart the machine.
+pub fn restart() {
+    let _ = crate::shell::launch("shutdown.exe", "/r /t 0");
+}
+
+/// Shut the machine down.
+pub fn shutdown() {
+    let _ = crate::shell::launch("shutdown.exe", "/s /t 0");
+}

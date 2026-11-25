@@ -1,3 +1,89 @@
-//! Strings used by the launcher component.
+//! Strings used by the launcher, installer and the desktop shell.
 
-pub static ENTRIES: &[(&str, &str)] = &[];
+pub static ENTRIES: &[(&str, &str)] = &[
+    ("Windows components rewritten in Rust", "Компоненты Windows, переписанные на Rust"),
+    ("administrator", "администратор"),
+    ("standard user — install disabled", "обычный пользователь — установка недоступна"),
+    (
+        "Transparency and blur cost GPU time every frame. They are off by default; turn them off for the lowest CPU/GPU use.",
+        "Прозрачность и размытие нагружают видеокарту каждый кадр. По умолчанию они выключены — так нагрузка минимальна.",
+    ),
+    (
+        "These switches are shared by every WinRust program through HKCU\\SOFTWARE\\WinRust.",
+        "Эти параметры общие для всех программ WinRust и хранятся в HKCU\\SOFTWARE\\WinRust.",
+    ),
+    (
+        "Stored in HKCU\\{}",
+        "Хранится в HKCU\\{}",
+    ),
+    (
+        "The launcher ships in English; choose Russian here and every component follows.",
+        "Лаунчер запускается на английском; выберите здесь русский — остальные компоненты переключатся тоже.",
+    ),
+    (
+        "Language set to {}. Restart the components to apply it everywhere.",
+        "Язык изменён на {}. Перезапустите компоненты, чтобы применить его везде.",
+    ),
+    ("Language set to {}", "Язык изменён на {}"),
+    ("About", "О программе"),
+    ("WinRust {}", "WinRust {}"),
+    (
+        "Eight programs: launcher, desktop shell, file explorer, task manager, services, system control, driver console and the KMDF driver.",
+        "Восемь программ: лаунчер, рабочий стол, проводник, диспетчер задач, службы, управление системой, консоль драйвера и драйвер KMDF.",
+    ),
+    // Components
+    ("File Explorer", "Проводник"),
+    ("Desktop shell", "Рабочий стол"),
+    ("Task Manager", "Диспетчер задач"),
+    ("System Control", "Управление системой"),
+    ("Kernel Driver", "Драйвер ядра"),
+    ("Start menu", "Меню «Пуск»"),
+    ("Search apps", "Поиск приложений"),
+    ("Nothing found", "Ничего не найдено"),
+    ("Power", "Завершение работы"),
+    ("Sign out", "Выйти"),
+    ("Lock", "Заблокировать"),
+    ("Shut down", "Завершить работу"),
+    ("Back to Windows shell", "Вернуться к оболочке Windows"),
+    (
+        "Removes the Winlogon Shell override and starts explorer.exe",
+        "Удаляет переопределение Winlogon Shell и запускает explorer.exe",
+    ),
+    ("Windows shell restored", "Оболочка Windows восстановлена"),
+    ("Could not restore the shell: {}", "Не удалось восстановить оболочку: {}"),
+    ("Type to search installed apps and folders", "Введите текст для поиска приложений и папок"),
+    ("No open windows", "Нет открытых окон"),
+    ("{} open windows", "Открытых окон: {}"),
+    ("CPU {}% · RAM {}%", "ЦП {}% · ОЗУ {}%"),
+    ("{} not found", "{} не найден"),
+    ("{} is already in this spot", "{} уже находится на этом месте"),
+    ("Open failed", "Не удалось открыть"),
+    ("RAM", "ОЗУ"),
+    ("processes", "процессов"),
+    ("services", "служб"),
+    (
+        "{} {}  ·  {} {:.1} / {:.1} {}  ·  {} {} {}  ·  {} {}  ·  {} / {} {}",
+        "{} {}  ·  {} {:.1} / {:.1} {}  ·  {} {} {}  ·  {} {}  ·  {} / {} {}",
+    ),
+    (
+        "Desktop shell installed: sign-in starts {}",
+        "Рабочий стол установлен: при входе будет запускаться {}",
+    ),
+    (
+        "Winlogon Shell override removed — sign-in returns to explorer.exe",
+        "Переопределение Winlogon Shell удалено — при входе снова запускается explorer.exe",
+    ),
+    ("Administrator rights are required", "Требуются права администратора"),
+    ("Restore failed", "Не удалось восстановить"),
+    ("Components", "Компоненты"),
+    ("Kernel driver", "Драйвер ядра"),
+    ("Install selected", "Установить выбранные"),
+    ("Explore backups", "Резервные копии"),
+    ("Before installing", "Перед установкой"),
+    ("Shell takeover", "Замена оболочки"),
+    ("Activity log", "Журнал действий"),
+    ("Clear", "Очистить"),
+    ("Launch", "Запустить"),
+    ("Restore", "Восстановить"),
+    ("Backups", "Резервные копии"),
+]

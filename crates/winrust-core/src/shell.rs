@@ -6,7 +6,6 @@ use crate::wide::{from_wide, str_to_wide, to_wide};
 use serde::{Deserialize, Serialize};
 use std::ffi::c_void;
 use std::path::Path;
-use windows_sys::Win32::Foundation::HWND;
 use windows_sys::Win32::Storage::FileSystem::{
     GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW, VS_FIXEDFILEINFO,
 };
@@ -15,6 +14,7 @@ use windows_sys::Win32::System::DataExchange::{
 };
 use windows_sys::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalUnlock, GMEM_MOVEABLE};
 use windows_sys::Win32::System::Ole::CF_UNICODETEXT;
+use windows_sys::Win32::UI::WindowsAndMessaging::{BOOL, EnumWindows, HWND, LPARAM, SW_SHOWNORMAL};
 use windows_sys::Win32::UI::Shell::{
     SHFileOperationW, SHGetFileInfoW, SHGetKnownFolderPath, ShellExecuteExW, ShellExecuteW,
     FOF_ALLOWUNDO, FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_WANTNUKEWARNING, FO_DELETE,
@@ -22,7 +22,6 @@ use windows_sys::Win32::UI::Shell::{
     SHFILEINFOW, SHFILEOPSTRUCTW, SHGFI_DISPLAYNAME, SHGFI_ICON, SHGFI_LARGEICON, SHGFI_SMALLICON,
     SHGFI_SYSICONINDEX, SHGFI_TYPENAME, SHGFI_USEFILEATTRIBUTES,
 };
-use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
 
 /// Well-known folders exposed by the Explorer sidebar.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -67,6 +66,69 @@ impl KnownFolder {
             KnownFolder::Computer => crate::i18n::ts("This PC"),
             KnownFolder::Network => crate::i18n::ts("Network"),
         }
+    }
+
+    fn guid(self) -> windows_sys::core::GUID {
+        use windows_sys::Win32::UI::Shell as S;
+        match self {
+            KnownFolder::Desktop => S::FOLDERID_Desktop,
+            KnownFolder::Downloads => S::FOLDERID_Downloads,
+            KnownFolder::Documents => S::FOLDERID_Documents,
+            KnownFolder::Pictures => S::FOLDERID_Pictures,
+            KnownFolder::Music => S::FOLDERID_Music,
+            KnownFolder::Videos => S::FOLDERID_Videos,
+            KnownFolder::Profile => S::FOLDERID_Profile,
+            KnownFolder::LocalAppData => S::FOLDERID_LocalAppData,
+            KnownFolder::RoamingAppData => S::FOLDERID_RoamingAppData,
+            KnownFolder::ProgramData => S::FOLDERID_ProgramData,
+            KnownFolder::Windows => S::FOLDERID_Windows,
+            KnownFolder::ProgramFiles => S::FOLDERID_ProgramFiles,
+            KnownFolder::ProgramFilesX86 => S::FOLDERID_ProgramFilesX86,
+            KnownFolder::Public => S::FOLDERID_Public,
+            KnownFolder::RecycleBin => S::FOLDERID_RecycleBinFolder,
+            KnownFolder::Computer => S::FOLDERID_ComputerFolder,
+            KnownFolder::Network => S::FOLDERID_NetworkFolder,
+        }
+    }
+
+    /// The on-disk path, or `None` for virtual shell folders.
+    pub fn path(self) -> Option<std::path::PathBuf> {
+        let guid = self.guid();
+        let mut psz: *mut u16 = std::ptr::null_mut();
+        let hr = unsafe { SHGetKnownFolderPath(&guid, 0, std::ptr::null_mut(), &mut psz) };
+        if hr < 0 || psz.is_null() {
+            return None;
+        }
+        let mut len = 0usize;
+        while unsafe { *psz.add(len) } != 0 {
+            len += 1;
+        }
+        let slice = unsafe { std::slice::from_raw_parts(psz, len) };
+        let s = String::from_utf16_lossy(slice);
+        unsafe {
+            windows_sys::Win32::System::Com::CoTaskMemFree(psz as *const c_void);
+        }
+        if s.is_empty() {
+            None
+        } else {
+            Some(std::path::PathBuf::from(s))
+        }
+    }
+
+    /// Everything Explorer lists in its sidebar tree.
+    pub fn sidebar() -> &'static [KnownFolder] {
+        &[
+            KnownFolder::Profile,
+            KnownFolder::Desktop,
+            KnownFolder::Downloads,
+            KnownFolder::Documents,
+            KnownFolder::Pictures,
+            KnownFolder::Music,
+            KnownFolder::Videos,
+            KnownFolder::Computer,
+            KnownFolder::Network,
+            KnownFolder::RecycleBin,
+        ]
     }
 }
 
@@ -512,4 +574,76 @@ pub fn launch(command: &str, args: &str) -> Result<()> {
 /// The desktop window handle (used to parent modal dialogs).
 pub fn desktop_hwnd() -> HWND {
     std::ptr::null_mut()
+}
+
+// ---------------------------------------------------------------------------
+// Top-level windows (the desktop shell's taskbar)
+// ---------------------------------------------------------------------------
+
+/// One visible top-level window, as the taskbar shows it.
+#[derive(Debug, Clone)]
+pub struct WindowInfo {
+    pub hwnd: isize,
+    pub title: String,
+    pub pid: u32,
+}
+
+unsafe extern "system" fn enum_window_proc(hwnd: HWND, lparam: LPARAM) -> BOOL {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        GetWindowTextW, GetWindowThreadProcessId, IsWindowVisible,
+    };
+    if IsWindowVisible(hwnd) == 0 {
+        return 1;
+    }
+    let mut buf = [0u16; 512];
+    let len = GetWindowTextW(hwnd, buf.as_mut_ptr(), buf.len() as i32);
+    if len <= 0 {
+        return 1;
+    }
+    let mut pid = 0u32;
+    GetWindowThreadProcessId(hwnd, &mut pid);
+    let out = &mut *(lparam as *mut Vec<WindowInfo>);
+    out.push(WindowInfo {
+        hwnd: hwnd as isize,
+        title: from_wide(&buf, len as usize),
+        pid,
+    });
+    1
+}
+
+/// Every visible top-level window with a title, oldest first.
+///
+/// The callback allocates nothing that could unwind, which matters because a
+/// panic crossing the FFI boundary is undefined behaviour.
+pub fn top_level_windows() -> Vec<WindowInfo> {
+    let mut out: Vec<WindowInfo> = Vec::new();
+    unsafe {
+        EnumWindows(
+            Some(enum_window_proc),
+            &mut out as *mut Vec<WindowInfo> as LPARAM,
+        );
+    }
+    out
+}
+
+/// Bring a window to the foreground (Start-menu/taskbar click).
+///
+/// `SetForegroundWindow` is refused when the caller is not the foreground
+/// process; the shell is, so the normal path works, and the fallback restores
+/// a minimised window anyway.
+pub fn activate_window(pid: u32) {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        IsIconic, SetForegroundWindow, ShowWindow, SW_RESTORE,
+    };
+    for w in top_level_windows() {
+        if w.pid == pid {
+            let hwnd = w.hwnd as HWND;
+            unsafe {
+                if IsIconic(hwnd) != 0 {
+                    ShowWindow(hwnd, SW_RESTORE);
+                }
+                SetForegroundWindow(hwnd);
+            }
+        }
+    }
 }

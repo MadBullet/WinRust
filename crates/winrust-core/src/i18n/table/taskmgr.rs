@@ -7,7 +7,6 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("GPU engine", "Графический процессор"),
     ("Show captions", "Показать подписи"),
     ("Hide captions", "Скрыть подписи"),
-    ("cores", "ядер"),
     // Processes
     ("Apps", "Приложения"),
     ("Background processes", "Фоновые процессы"),
@@ -73,7 +72,6 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("{} services", "Служб: {}"),
     ("(read-only without elevation)", "(только чтение без прав администратора)"),
     // Settings
-    ("Blur amount", "Сила размытия"),
     ("Transparency and blur cost GPU time every frame. Turn them off for the lowest CPU/GPU use.",
      "Прозрачность и размытие нагружают видеокарту каждый кадр. Отключите их для минимальной нагрузки."),
     ("Settings are stored in HKCU\\{}", "Параметры хранятся в HKCU\\{}"),
