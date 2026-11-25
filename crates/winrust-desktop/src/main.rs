@@ -18,6 +18,7 @@
 
 mod desktop;
 mod start;
+mod tray;
 mod taskbar;
 
 use eframe::egui;
@@ -77,6 +78,31 @@ pub struct DesktopApp {
     pub(crate) cpu_mem: (f32, winrust_core::system::MemoryStatus),
     pub(crate) prev_cpu: winrust_core::system::CpuSample,
     pub(crate) sampled_at: Instant,
+
+    // ---- Tray state -------------------------------------------------------
+    /// Which tray flyout is open, if any.  One at a time, like Windows.
+    pub(crate) tray_flyout: crate::tray::Flyout,
+    /// The overflow list (the chevron) is open.
+    pub(crate) tray_overflow: bool,
+    /// Icons of running applications, keyed by `pid` so they are loaded once.
+    pub(crate) window_icons: std::collections::HashMap<u32, Option<egui::TextureHandle>>,
+    pub(crate) volume: Option<u8>,
+    pub(crate) muted: bool,
+    pub(crate) audio_device: String,
+    pub(crate) network: Option<winrust_core::net::AdapterInfo>,
+    pub(crate) ssid: Option<String>,
+    pub(crate) lang_tag: String,
+    /// Desktop selection: several icons can be selected at once.
+    pub(crate) selection: std::collections::BTreeSet<usize>,
+    /// Rubber-band selection in progress: where the LMB went down.
+    pub(crate) band_start: Option<egui::Pos2>,
+    /// Notifications shown in the notification centre.
+    pub(crate) notifications: Vec<crate::tray::Notification>,
+    pub(crate) notifications_read: usize,
+    pub(crate) tray_sampled_at: Instant,
+    pub(crate) network_at: Instant,
+    /// Which application the user last activated from the taskbar.
+    pub(crate) active_pid: Option<u32>,
 }
 
 impl DesktopApp {
@@ -115,6 +141,22 @@ impl DesktopApp {
             cpu_mem: (0.0, winrust_core::system::memory_status()),
             prev_cpu: winrust_core::system::cpu_sample(),
             sampled_at: Instant::now() - Duration::from_secs(5),
+            tray_flyout: crate::tray::Flyout::None,
+            tray_overflow: false,
+            window_icons: std::collections::HashMap::new(),
+            volume: None,
+            muted: false,
+            audio_device: String::new(),
+            network: None,
+            ssid: None,
+            lang_tag: String::new(),
+            selection: std::collections::BTreeSet::new(),
+            band_start: None,
+            notifications: Vec::new(),
+            notifications_read: 0,
+            tray_sampled_at: Instant::now() - Duration::from_secs(5),
+            network_at: Instant::now() - Duration::from_secs(30),
+            active_pid: None,
         }
     }
 
@@ -132,7 +174,22 @@ impl DesktopApp {
             self.apps = start::installed_apps();
             self.apps_at = Instant::now();
         }
-        self.clock = taskbar::clock_text();
+        self.clock = crate::tray::clock_text();
+        // Tray readouts are cheap but not free: poll them on their own cadence.
+        if self.tray_sampled_at.elapsed() >= Duration::from_millis(1500) {
+            self.tray_sampled_at = Instant::now();
+            self.volume = winrust_core::audio::master_volume();
+            self.muted = winrust_core::audio::is_muted();
+            if self.audio_device.is_empty() {
+                self.audio_device = winrust_core::audio::device_name().unwrap_or_default();
+            }
+            self.network = winrust_core::net::primary_adapter();
+            self.lang_tag = winrust_core::system::keyboard_layout_tag();
+        }
+        if self.network_at.elapsed() >= Duration::from_secs(20) {
+            self.network_at = Instant::now();
+            self.ssid = winrust_core::net::wifi_ssid();
+        }
         // One CPU sample per tick: the taskbar text is derived from a real
         // interval, not two reads a microsecond apart.
         if self.sampled_at.elapsed() >= Duration::from_millis(1000) {
@@ -147,6 +204,13 @@ impl DesktopApp {
     pub(crate) fn open_path(&mut self, path: &std::path::Path) {
         if let Err(e) = winrust_core::shell::open(path) {
             self.status = format!("{}: {e}", i18n::t("Open failed"));
+        }
+    }
+
+    /// Open a `shell:` namespace path (Recycle Bin, This PC, Network).
+    pub(crate) fn open_shell(&mut self, shell_path: &str) {
+        if let Err(e) = winrust_core::shell::open_shell_path(shell_path) {
+            self.status = format!("{shell_path}: {e}");
         }
     }
 

@@ -363,6 +363,20 @@ fn process_user(pid: u32) -> String {
     result
 }
 
+/// Full image path of one process, or `None` when it cannot be opened.
+pub fn exe_path_of(pid: u32) -> Option<String> {
+    let h = open_limited(pid)?;
+    let mut buf = [0u16; MAX_PATH as usize];
+    let mut len = buf.len() as u32;
+    let ok = unsafe {
+        QueryFullProcessImageNameW(h.raw(), PROCESS_NAME_WIN32, buf.as_mut_ptr(), &mut len)
+    };
+    if ok == 0 {
+        return None;
+    }
+    Some(crate::wide::from_wide(&buf, len as usize))
+}
+
 fn open_limited(pid: u32) -> Option<Handle> {
     let h = unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid) };
     Handle::new(h)

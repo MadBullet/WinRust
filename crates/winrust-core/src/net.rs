@@ -434,3 +434,128 @@ pub fn ports_of_pid(pid: u32) -> Vec<(Protocol, u16)> {
 fn _ipv6_helper(b: &[u8; 16]) -> String {
     ipv6_to_string(b)
 }
+
+// ---------------------------------------------------------------------------
+// The tray's network block: which adapter is up, and what it is called.
+// ---------------------------------------------------------------------------
+
+/// One network interface, as the tray needs it.
+#[derive(Debug, Clone, Default)]
+pub struct AdapterInfo {
+    /// Friendly name (`Ethernet`, `Wi-Fi`, `agrohold.ru` is the *profile*, not
+    /// this).
+    pub name: String,
+    pub description: String,
+    /// True when the interface has a usable link and a non-loopback address.
+    pub connected: bool,
+    /// True for a wireless interface (`IfType == 71`).
+    pub wireless: bool,
+    /// One IPv4 address, when there is one.
+    pub ipv4: String,
+}
+
+/// Every adapter with its link state, through `GetAdaptersAddresses`.
+///
+/// This is the same call Windows' own Network flyout makes, so the "connected"
+/// flag matches what the user sees in Settings - no pinging, no timeouts.
+pub fn adapters() -> Vec<AdapterInfo> {
+    use windows_sys::Win32::NetworkManagement::IpHelper::{
+        GetAdaptersAddresses, GAA_FLAG_SKIP_ANYCAST, GAA_FLAG_SKIP_DNS_SERVER,
+        GAA_FLAG_SKIP_MULTICAST, IP_ADAPTER_ADDRESSES_LH,
+    };
+
+    let flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
+    let mut size: u32 = 16 * 1024;
+    let mut buf: Vec<u8> = Vec::new();
+    for _ in 0..3 {
+        buf.resize(size as usize, 0);
+        let rc = unsafe {
+            GetAdaptersAddresses(
+                0, // AF_UNSPEC: IPv4 and IPv6
+                flags,
+                std::ptr::null_mut(),
+                buf.as_mut_ptr() as *mut IP_ADAPTER_ADDRESSES_LH,
+                &mut size,
+            )
+        };
+        // ERROR_BUFFER_OVERFLOW = 111: `size` now holds what is needed.
+        if rc == 111 {
+            continue;
+        }
+        if rc != 0 {
+            return Vec::new();
+        }
+        break;
+    }
+
+    let mut out = Vec::new();
+    let mut cur = buf.as_ptr() as *const IP_ADAPTER_ADDRESSES_LH;
+    while !cur.is_null() {
+        let a = unsafe { &*cur };
+        // `PWSTR`s from IpHelper are NUL-terminated; `from_wide_ptr` walks them.
+        let name = unsafe { crate::wide::from_wide_ptr(a.FriendlyName) };
+        let description = unsafe { crate::wide::from_wide_ptr(a.Description) };
+        // IfOperStatusUp = 1
+        let up = a.OperStatus == 1 && a.IfType != 24; // 24 = loopback
+        let mut ipv4 = String::new();
+        let mut addr = a.FirstUnicastAddress;
+        while !addr.is_null() {
+            if let Some(sa) = unsafe { (*addr).Address.lpSockaddr.as_ref() } {
+                if sa.sa_family == 2 {
+                    // AF_INET
+                    let s: &windows_sys::Win32::Networking::WinSock::SOCKADDR_IN =
+                        unsafe { &*(sa as *const _ as *const _) };
+                    let bytes = unsafe { s.sin_addr.S_un.S_addr.to_ne_bytes() };
+                    ipv4 = format!("{}.{}.{}.{}", bytes[0], bytes[1], bytes[2], bytes[3]);
+                    if ipv4 != "127.0.0.1" && ipv4 != "0.0.0.0" {
+                        break;
+                    }
+                    ipv4.clear();
+                }
+            }
+            addr = unsafe { (*addr).Next };
+        }
+        out.push(AdapterInfo {
+            name,
+            description,
+            connected: up && !ipv4.is_empty(),
+            wireless: a.IfType == 71,
+            ipv4,
+        });
+        cur = a.Next;
+    }
+    out
+}
+
+/// The adapter the tray should describe: the connected one, preferring a
+/// wireless link.
+pub fn primary_adapter() -> Option<AdapterInfo> {
+    let all = adapters();
+    all.iter()
+        .find(|a| a.connected && a.wireless)
+        .or_else(|| all.iter().find(|a| a.connected))
+        .cloned()
+}
+
+/// SSID of the connected wireless network, read from the WLAN registry profiles.
+///
+/// `WlanQueryInterface` needs a handle dance that is not worth it for a label;
+/// the NetworkList keys store the same profile name, and the fallback is the
+/// adapter's friendly name.
+pub fn wifi_ssid() -> Option<String> {
+    use crate::registry::{Key, Root};
+    let path = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\Unmanaged";
+    let base = Key::open(Root::CurrentUser, path).ok()?;
+    for sub in base.subkeys() {
+        let Ok(key) = Key::open(Root::CurrentUser, &format!("{path}\\{sub}")) else {
+            continue;
+        };
+        if let Some(profile) = key.string("Description") {
+            let profile = profile.trim().to_string();
+            if !profile.is_empty() && profile != "Network" {
+                return Some(profile);
+            }
+        }
+    }
+    None
+}

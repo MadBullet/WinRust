@@ -324,7 +324,49 @@ pub fn env(name: &str) -> Option<String> {
     std::env::var(name).ok()
 }
 
-/// Raise a process' working set limits (privilege `SeIncreaseWorkingSetPrivilege`).
+/// The keyboard layout of the foreground window as its Windows language tag
+/// (`ENG`, `РУС`).  `GetKeyboardLayout` returns a HKL whose low word is the
+/// language id; the abbreviations come from the layout's own description but the
+/// three-letter form is what the tray shows.
+pub fn keyboard_layout_tag() -> String {
+    use windows_sys::Win32::UI::Input::KeyboardAndMouse::GetKeyboardLayout;
+    use windows_sys::Win32::UI::WindowsAndMessaging::GetForegroundWindow;
+    let hkl = unsafe { GetKeyboardLayout(0) };
+    let _ = unsafe { GetForegroundWindow() };
+    let lang_id = (hkl as usize) & 0xFFFF;
+    let primary = (lang_id & 0x3FF) as u16;
+    match primary {
+        0x19 => "РУС".to_string(), // Russian
+        0x22 => "УКР".to_string(), // Ukrainian
+        0x23 => "БЕЛ".to_string(), // Belarusian
+        0x09 => "ENG".to_string(), // English
+        0x07 => "DEU".to_string(),
+        0x0C => "FRA".to_string(),
+        0x0A => "ESP".to_string(),
+        0x10 => "ITA".to_string(),
+        0x15 => "POL".to_string(),
+        0x05 => "CSY".to_string(),
+        _ => {
+            // Unknown layout: fall back to the two-letter ISO code.
+            let mut buf = [0u16; 16];
+            let n = unsafe {
+                windows_sys::Win32::Globalization::GetLocaleInfoW(
+                    lang_id as u32,
+                    0x0000_0059, // LOCALE_SISO639LANGNAME
+                    buf.as_mut_ptr(),
+                    buf.len() as i32,
+                )
+            };
+            if n > 1 {
+                from_wide(&buf, (n - 1) as usize).to_uppercase()
+            } else {
+                "---".to_string()
+            }
+        }
+    }
+}
+
+/// Raise a process' working set limits/// Raise a process' working set limits (privilege `SeIncreaseWorkingSetPrivilege`).
 pub fn set_privilege(name: &str, enable: bool) -> Result<()> {
     use windows_sys::Win32::Security::{
         LookupPrivilegeValueW, TOKEN_ADJUST_PRIVILEGES, TOKEN_QUERY,

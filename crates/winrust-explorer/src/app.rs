@@ -1862,6 +1862,9 @@ impl ExplorerApp {
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
         let mut drag_started: Option<PathBuf> = None;
         let mut drop_on: Option<PathBuf> = None;
+        // The folder currently under the pointer during a drag (highlight only).
+        let mut drag_hover: Option<PathBuf> = None;
+        let pointer_released = ctx.input(|i| i.pointer.primary_released());
 
         table.body(|body| {
             body.rows(22.0, entries.len(), |mut row| {
@@ -1892,16 +1895,22 @@ impl ExplorerApp {
                     if resp.drag_started() {
                         drag_started = Some(entry.path.clone());
                     }
-                    if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty() {
-                        drop_on = Some(entry.path.clone());
+                    // Hovering a folder only *highlights* it.  The drop is
+                    // committed when the button comes up, which is what makes
+                    // dragging feel right and stops a drag from "sticking": the
+                    // old code armed the target on hover, so letting go anywhere
+                    // could still drop into whatever folder happened to be under
+                    // the pointer a moment earlier.
+                    if entry.is_dir && resp.hovered() && self.drag_active {
+                        drag_hover = Some(entry.path.clone());
                         ui.painter().rect_stroke(
                             resp.rect.expand(1.0),
                             2.0,
                             egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
                         );
-                    }
-                    if resp.drag_stopped() && entry.is_dir && !self.drag_paths.is_empty() {
-                        drop_on = Some(entry.path.clone());
+                        if pointer_released {
+                            drop_on = Some(entry.path.clone());
+                        }
                     }
                     let mut local: Vec<Command> = Vec::new();
                     resp.context_menu(|ui| simple_context_menu(ui, entry, &mut local));
@@ -1969,6 +1978,9 @@ impl ExplorerApp {
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
         let mut drag_started: Option<PathBuf> = None;
         let mut drop_on: Option<PathBuf> = None;
+        // The folder currently under the pointer during a drag (highlight only).
+        let mut drag_hover: Option<PathBuf> = None;
+        let pointer_released = ctx.input(|i| i.pointer.primary_released());
         egui::ScrollArea::both()
             .id_salt("listview")
             .auto_shrink([false, false])
@@ -2004,9 +2016,8 @@ impl ExplorerApp {
                                     if resp.drag_started() {
                                         drag_started = Some(entry.path.clone());
                                     }
-                                    if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty()
-                                    {
-                                        drop_on = Some(entry.path.clone());
+                                    if entry.is_dir && resp.hovered() && self.drag_active {
+                                        drag_hover = Some(entry.path.clone());
                                         ui.painter().rect_stroke(
                                             resp.rect.expand(1.0),
                                             2.0,
@@ -2015,12 +2026,9 @@ impl ExplorerApp {
                                                 Color32::from_rgb(0, 150, 255),
                                             ),
                                         );
-                                    }
-                                    if resp.drag_stopped()
-                                        && entry.is_dir
-                                        && !self.drag_paths.is_empty()
-                                    {
-                                        drop_on = Some(entry.path.clone());
+                                        if pointer_released {
+                                            drop_on = Some(entry.path.clone());
+                                        }
                                     }
                                     if resp.clicked() {
                                         clicked = Some((idx, entry.path.clone()));
@@ -2067,6 +2075,9 @@ impl ExplorerApp {
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
         let mut drag_started: Option<PathBuf> = None;
         let mut drop_on: Option<PathBuf> = None;
+        // The folder currently under the pointer during a drag (highlight only).
+        let mut drag_hover: Option<PathBuf> = None;
+        let pointer_released = ctx.input(|i| i.pointer.primary_released());
         // The background context menu's "Icon spacing" slider widens the tiles.
         // Explorer has no such control, the request asks for one, so the gap the
         // user picks is added to the fixed tile width.
@@ -2088,7 +2099,12 @@ impl ExplorerApp {
                             ui.allocate_ui(egui::vec2(cell_w, cell_h), |ui| {
                                 ui.vertical_centered(|ui| {
                                     let id = self.icon_for(ctx, entry, icon);
-                                    let resp = if let Some(id) = id {
+                                    // `ImageButton`/`Button` only sense clicks, so a
+                                    // folder tile could never start a drag - which
+                                    // is why dragging "worked only for shortcuts".
+                                    // An explicit `interact` with `click_and_drag`
+                                    // gives every tile the same drag behaviour.
+                                    if let Some(id) = id {
                                         ui.add(
                                             egui::ImageButton::new(egui::Image::new((
                                                 id,
@@ -2096,7 +2112,7 @@ impl ExplorerApp {
                                             )))
                                             .selected(selected)
                                             .frame(false),
-                                        )
+                                        );
                                     } else {
                                         let t = if entry.is_dir { "🗀" } else { "🗎" };
                                         ui.add(
@@ -2105,8 +2121,18 @@ impl ExplorerApp {
                                             )
                                             .selected(selected)
                                             .frame(false),
-                                        )
-                                    };
+                                        );
+                                    }
+                                    let tile_rect = egui::Rect::from_min_size(
+                                        ui.cursor().min
+                                            - egui::vec2(0.0, icon as f32 + 4.0),
+                                        egui::vec2(icon as f32 + 8.0, icon as f32),
+                                    );
+                                    let resp = ui.interact(
+                                        tile_rect,
+                                        egui::Id::new(("tile_drag", idx)),
+                                        egui::Sense::click_and_drag(),
+                                    );
                                     let mut local: Vec<Command> = Vec::new();
                                     resp.context_menu(|ui| {
                                         simple_context_menu(ui, entry, &mut local)
@@ -2116,9 +2142,8 @@ impl ExplorerApp {
                                     if resp.drag_started() {
                                         drag_started = Some(entry.path.clone());
                                     }
-                                    if entry.is_dir && resp.hovered() && !self.drag_paths.is_empty()
-                                    {
-                                        drop_on = Some(entry.path.clone());
+                                    if entry.is_dir && resp.hovered() && self.drag_active {
+                                        drag_hover = Some(entry.path.clone());
                                         ui.painter().rect_stroke(
                                             resp.rect.expand(1.0),
                                             2.0,
@@ -2127,12 +2152,9 @@ impl ExplorerApp {
                                                 Color32::from_rgb(0, 150, 255),
                                             ),
                                         );
-                                    }
-                                    if resp.drag_stopped()
-                                        && entry.is_dir
-                                        && !self.drag_paths.is_empty()
-                                    {
-                                        drop_on = Some(entry.path.clone());
+                                        if pointer_released {
+                                            drop_on = Some(entry.path.clone());
+                                        }
                                     }
                                     if resp.clicked() {
                                         clicked = Some((idx, entry.path.clone()));
@@ -2376,6 +2398,16 @@ impl ExplorerApp {
             }
             self.drag_paths.clear();
             self.drag_active = false;
+        }
+        // A drag ends when the button comes up, wherever the pointer is.  Without
+        // this, releasing outside a folder left `drag_active` set for ever: the
+        // ghost kept following the cursor and the next click was swallowed as a
+        // drop, which is exactly the "перетаскивание залипает" the report saw.
+        if ctx.input(|i| i.pointer.primary_released()) && self.drag_active {
+            self.drag_active = false;
+            self.drag_paths.clear();
+            self.drag_ghost = None;
+            self.drop_target = None;
         }
         if self.current().selection.is_empty() && self.drag_active {
             self.drag_active = false;
@@ -3115,9 +3147,28 @@ impl ExplorerApp {
                         egui::FontId::proportional(11.5),
                         Color32::from_rgb(158, 168, 184),
                     );
-                    if resp.clicked() {
+                    // Open on double click, like every other tile; a single
+                    // click only selects.  The old handler navigated on
+                    // `clicked()`, so a double click opened the same folder twice
+                    // and the view looked dead.
+                    if resp.double_clicked() {
                         nav = Some(PathBuf::from(&drive.root));
                     }
+                    if resp.clicked() {
+                        self.status = tf!("{} selected", name);
+                    }
+                    resp.context_menu(|ui| {
+                        if ui.button(t("Open")).clicked() {
+                            nav = Some(PathBuf::from(&drive.root));
+                            ui.close_menu();
+                        }
+                        if ui.button(t("Properties")).clicked() {
+                            let _ = winrust_core::shell::show_properties(
+                                std::path::Path::new(&drive.root),
+                            );
+                            ui.close_menu();
+                        }
+                    });
                     resp.on_hover_text(format!(
                         "{}\n{}\n{}",
                         name,
@@ -3202,15 +3253,17 @@ impl ExplorerApp {
                         self.drag_ghost = None;
                         ui.ctx().request_repaint();
                     }
-                    // Folders are drop targets here too, with the same
-                    // highlight animation as in the list views.
+                    // Folders are drop targets here too.  Highlight while the
+                    // pointer is over them; commit the drop only on release, so a
+                    // drag that ends anywhere else does not land in the last
+                    // folder it passed over.
                     if self.drag_active && resp.hovered() {
                         painter.rect_stroke(
                             rect.expand(1.0),
                             4.0,
                             egui::Stroke::new(1.5_f32, Color32::from_rgb(96, 176, 255)),
                         );
-                        if resp.drag_stopped() {
+                        if ui.ctx().input(|i| i.pointer.primary_released()) {
                             self.drop_target = Some(path.clone());
                         }
                     }

@@ -28,6 +28,10 @@ pub struct DesktopIcon {
     pub is_dir: bool,
     /// Grid position `(column, row)`.
     pub cell: (usize, usize),
+    /// `shell:` namespace path for a virtual entry (Recycle Bin, This PC).
+    /// `path` alone cannot express them: the Recycle Bin's filesystem path is
+    /// `C:\$Recycle.Bin\<SID>`, which is not the same thing the user sees.
+    pub shell_path: Option<&'static str>,
 }
 
 /// Default grid cell.  `spacing` in the settings scales it.
@@ -166,6 +170,7 @@ pub fn scan(order: SortOrder, descending: bool) -> Vec<DesktopIcon> {
             .unwrap_or_else(|| PathBuf::from("C:\\")),
         is_dir: true,
         cell: (0, 0),
+        shell_path: winrust_core::shell::shell_path_of(KnownFolder::Computer),
     });
     out.push(DesktopIcon {
         name: ts("Recycle Bin").to_string(),
@@ -174,6 +179,7 @@ pub fn scan(order: SortOrder, descending: bool) -> Vec<DesktopIcon> {
             .unwrap_or_else(|| PathBuf::from("C:\\")),
         is_dir: true,
         cell: (0, 1),
+        shell_path: winrust_core::shell::shell_path_of(KnownFolder::RecycleBin),
     });
 
     let mut real: Vec<DesktopIcon> = Vec::new();
@@ -190,6 +196,7 @@ pub fn scan(order: SortOrder, descending: bool) -> Vec<DesktopIcon> {
                     name,
                     is_dir,
                     cell: (0, 0),
+                    shell_path: None,
                 });
             }
         }
@@ -257,9 +264,9 @@ pub fn sort_icons(icons: &mut [DesktopIcon], order: SortOrder) {
 /// no borrow of `self` is alive while the filesystem is touched.
 #[derive(Default)]
 struct FrameActions {
-    open: Option<PathBuf>,
+    open: Option<DesktopIcon>,
     moved: Option<(String, (usize, usize))>,
-    clicked: Option<usize>,
+    clicked: Option<(usize, bool, bool)>,
     new_folder: bool,
     /// New -> <kind>: an empty file with that extension on the Desktop.
     new_file: Option<&'static str>,
@@ -441,7 +448,8 @@ impl DesktopApp {
         } else {
             Vec::new()
         };
-        let selected_idx = self.selected;
+        // Selection is a set now: Ctrl+click toggles, a rubber band replaces it.
+        let selected_set = self.selection.clone();
         let icon_size = self.icon_size;
         let (pointer, drag_stopped, drag_delta) = ctx.input(|i| {
             (
@@ -460,7 +468,7 @@ impl DesktopApp {
                 egui::Id::new(("desktop_icon", idx)),
                 egui::Sense::click_and_drag(),
             );
-            let selected = selected_idx == Some(idx);
+            let selected = selected_set.contains(&idx);
             let painter = ctx.layer_painter(layer);
             if resp.hovered() || selected {
                 let fill = if selected {
@@ -511,10 +519,11 @@ impl DesktopApp {
             );
 
             if resp.clicked() {
-                act.clicked = Some(idx);
+                let mods = ui.ctx().input(|i| i.modifiers);
+                act.clicked = Some((idx, mods.ctrl || mods.command, mods.shift));
             }
             if resp.double_clicked() {
-                act.open = Some(icon.path.clone());
+                act.open = Some(icon.clone());
             }
             if resp.drag_started() {
                 self.mode = crate::ShellMode::DraggingIcon(idx);
@@ -606,7 +615,7 @@ impl DesktopApp {
             }
             resp.context_menu(|ui| {
                 if ui.button(t("Open")).clicked() {
-                    act.open = Some(icon.path.clone());
+                    act.open = Some(icon.clone());
                     ui.close_menu();
                 }
                 if ui.button(t("Rename")).clicked() {
@@ -647,11 +656,89 @@ impl DesktopApp {
             ));
         }
 
-        if bg.clicked() {
-            self.selected = None;
+        // Rubber-band selection: press on the wallpaper starts a box, release
+        // selects every icon it touched.  A plain click clears the selection.
+        let (up, drag_started) = ctx.input(|i| {
+            (i.pointer.primary_released(), i.pointer.primary_pressed())
+        });
+        if bg.hovered() && drag_started && self.band_start.is_none() {
+            self.band_start = pointer;
+        }
+        if let Some(start) = self.band_start {
+            if let Some(p) = pointer {
+                let band = egui::Rect::from_two_pos(start, p);
+                if band.width() > 4.0 || band.height() > 4.0 {
+                    let painter = ctx.layer_painter(layer);
+                    painter.rect_filled(
+                        band,
+                        0.0,
+                        Color32::from_rgba_unmultiplied(
+                            pal.selection.0,
+                            pal.selection.1,
+                            pal.selection.2,
+                            60,
+                        ),
+                    );
+                    painter.rect_stroke(
+                        band,
+                        0.0,
+                        egui::Stroke::new(
+                            1.0_f32,
+                            Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2),
+                        ),
+                    );
+                }
+            }
+        }
+        if up {
+            if let Some(start) = self.band_start.take() {
+                if let Some(p) = pointer {
+                    let band = egui::Rect::from_two_pos(start, p);
+                    if band.width() > 4.0 || band.height() > 4.0 {
+                        // Everything the box touches becomes selected.
+                        let mods = ctx.input(|i| i.modifiers);
+                        if !mods.ctrl && !mods.command {
+                            self.selection.clear();
+                        }
+                        for (idx, icon) in icons.iter().enumerate() {
+                            let pos = area.left_top()
+                                + egui::vec2(
+                                    icon.cell.0 as f32 * cell.x,
+                                    icon.cell.1 as f32 * cell.y,
+                                );
+                            let r = egui::Rect::from_min_size(
+                                pos,
+                                egui::vec2(cell.x - 6.0, cell.y - 8.0),
+                            );
+                            if band.intersects(r) {
+                                self.selection.insert(idx);
+                            }
+                        }
+                    } else if bg.clicked() && !mods.ctrl {
+                        self.selection.clear();
+                    }
+                }
+            }
+        }
+        let mods = ctx.input(|i| i.modifiers);
+        if bg.clicked() && self.band_start.is_none() {
+            if !mods.ctrl && !mods.command {
+                self.selection.clear();
+            }
             self.close_start();
-        } else if let Some(idx) = act.clicked {
-            self.selected = Some(idx);
+        }
+        if let Some((idx, ctrl, _shift)) = act.clicked {
+            if ctrl {
+                if !self.selection.remove(&idx) {
+                    self.selection.insert(idx);
+                }
+            } else {
+                self.selection.clear();
+                self.selection.insert(idx);
+            }
+            // Keep the old single-selection field in step for the code that
+            // still reads it (drag, rename, properties).
+            self.selected = self.selection.iter().next().copied();
         }
         // Dropping a file from Explorer onto the wallpaper: paste if we have
         // something on the clipboard, which is how Explorer behaves.
@@ -663,8 +750,13 @@ impl DesktopApp {
         }
         let _ = drag_delta;
 
-        if let Some(path) = act.open {
-            self.open_path(&path);
+        if let Some(icon) = act.open {
+            // Virtual entries open through their namespace path; everything else
+            // is a normal ShellExecute on the file.
+            match icon.shell_path {
+                Some(shell) => self.open_shell(shell),
+                None => self.open_path(&icon.path),
+            }
         }
         if let Some((name, c)) = act.moved {
             if let Some(icon) = self.icons.iter_mut().find(|i| i.name == name) {
