@@ -310,8 +310,8 @@ pub struct ExplorerApp {
     appearance_dirty: bool,
     hwnd: isize,
     lang: Lang,
-    /// Scroll offset of the details view, so a drag near the edge can pan.
-    last_scroll_y: f32,
+    /// When the registry was last polled for a language change.
+    lang_checked_at: std::time::Instant,
 }
 
 /// The floating label shown under the cursor during a drag & drop.
@@ -415,7 +415,7 @@ impl ExplorerApp {
             appearance_dirty: false,
             hwnd: 0,
             lang: i18n::current(),
-            last_scroll_y: 0.0,
+            lang_checked_at: std::time::Instant::now(),
         };
         app.start_load(app.active);
         app
@@ -3142,6 +3142,18 @@ impl eframe::App for ExplorerApp {
             winrust_ui::theme::apply_window(self.hwnd, &self.appearance);
             let _ = i18n::settings::save(&self.appearance);
             self.appearance_dirty = false;
+        }
+        // The launcher owns the language switch; pick up a change it made so a
+        // running Explorer window follows along instead of needing a restart.
+        // Polled once a second — a registry read per frame would be wasteful.
+        if self.lang_checked_at.elapsed() >= std::time::Duration::from_secs(1) {
+            self.lang_checked_at = std::time::Instant::now();
+            let stored_lang = i18n::lang::load();
+            if stored_lang != self.lang {
+                self.lang = stored_lang;
+                i18n::set_lang(stored_lang);
+                winrust_ui::theme::apply(ctx, &self.appearance);
+            }
         }
 
         egui::TopBottomPanel::top("tabs").show(ctx, |ui| self.tab_bar(ui));

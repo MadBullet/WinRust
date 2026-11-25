@@ -49,6 +49,8 @@ pub struct DesktopApp {
     pub(crate) apps: Vec<start::AppEntry>,
     pub(crate) apps_at: Instant,
     pub(crate) lang: Lang,
+    /// When the registry was last polled for a language change.
+    pub(crate) lang_checked_at: Instant,
     /// Grid cell the drag currently hovers, so the drop animation can snap.
     pub(crate) drop_cell: Option<(usize, usize)>,
     pub(crate) hwnd: isize,
@@ -82,6 +84,7 @@ impl DesktopApp {
             apps: Vec::new(),
             apps_at: Instant::now() - Duration::from_secs(300),
             lang: i18n::current(),
+            lang_checked_at: Instant::now(),
             drop_cell: None,
             hwnd: 0,
             appearance,
@@ -142,6 +145,17 @@ impl eframe::App for DesktopApp {
             winrust_ui::theme::apply_window(self.hwnd, &self.appearance);
             let _ = i18n::settings::save(&self.appearance);
             self.appearance_dirty = false;
+        }
+        // The launcher owns the language switch; follow it live, at most once a
+        // second (a registry read per frame would be wasteful).
+        if self.lang_checked_at.elapsed() >= Duration::from_secs(1) {
+            self.lang_checked_at = Instant::now();
+            let stored_lang = i18n::lang::load();
+            if stored_lang != self.lang {
+                self.lang = stored_lang;
+                i18n::set_lang(stored_lang);
+                winrust_ui::theme::apply(ctx, &self.appearance);
+            }
         }
 
         // The wallpaper: a vertical gradient, painted behind everything.

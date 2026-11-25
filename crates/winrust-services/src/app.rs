@@ -74,6 +74,8 @@ pub struct ServicesApp {
     sort: SortColumn,
     sort_desc: bool,
     lang: Lang,
+    /// When the registry was last polled for a language change.
+    lang_checked_at: std::time::Instant,
     /// Global transparency/blur, shared with the other components.
     appearance: winrust_core::i18n::Appearance,
     appearance_dirty: bool,
@@ -109,6 +111,7 @@ impl ServicesApp {
             sort: SortColumn::Name,
             sort_desc: false,
             lang: i18n::current(),
+            lang_checked_at: std::time::Instant::now(),
             appearance,
             appearance_dirty: false,
             hwnd: 0,
@@ -711,6 +714,17 @@ impl eframe::App for ServicesApp {
             winrust_ui::theme::apply_window(self.hwnd, &self.appearance);
             let _ = i18n::settings::save(&self.appearance);
             self.appearance_dirty = false;
+        }
+        // The launcher owns the language switch; follow it live, at most once a
+        // second (a registry read per frame would be wasteful).
+        if self.lang_checked_at.elapsed() >= std::time::Duration::from_secs(1) {
+            self.lang_checked_at = std::time::Instant::now();
+            let stored_lang = i18n::lang::load();
+            if stored_lang != self.lang {
+                self.lang = stored_lang;
+                i18n::set_lang(stored_lang);
+                winrust_ui::theme::apply(ctx, &self.appearance);
+            }
         }
 
         egui::TopBottomPanel::top("top").show(ctx, |ui| self.top_bar(ui));

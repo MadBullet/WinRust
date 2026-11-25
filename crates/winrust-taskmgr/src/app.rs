@@ -476,6 +476,8 @@ pub struct TaskManagerApp {
     /// Opacity/blur of this window, shared with the other components.
     appearance: Appearance,
     lang: Lang,
+    /// When the registry was last polled for a language change.
+    lang_checked_at: std::time::Instant,
     /// Window handle captured on the first frame, for the DWM calls.
     hwnd: isize,
     appearance_dirty: bool,
@@ -624,6 +626,7 @@ impl TaskManagerApp {
             strip_labels: true,
             appearance,
             lang: i18n::current(),
+            lang_checked_at: std::time::Instant::now(),
             hwnd: 0,
             appearance_dirty: false,
         }
@@ -678,6 +681,17 @@ impl TaskManagerApp {
 
     /// Re-apply transparency/blur once per change, never every frame.
     fn apply_appearance(&mut self, ctx: &egui::Context) {
+        // The launcher owns the language switch; follow it live, at most once a
+        // second (a registry read per frame would be wasteful).
+        if self.lang_checked_at.elapsed() >= std::time::Duration::from_secs(1) {
+            self.lang_checked_at = std::time::Instant::now();
+            let stored_lang = i18n::lang::load();
+            if stored_lang != self.lang {
+                self.lang = stored_lang;
+                i18n::set_lang(stored_lang);
+                winrust_ui::theme::apply(ctx, &self.appearance);
+            }
+        }
         if self.appearance_dirty {
             self.appearance = self.appearance.sanitized();
             winrust_ui::theme::apply(ctx, &self.appearance);
