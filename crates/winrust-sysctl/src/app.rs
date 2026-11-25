@@ -100,6 +100,8 @@ pub struct SysCtlApp {
     /// Shared theme and transparency settings, polled from the registry.
     appearance: winrust_core::i18n::Appearance,
     appearance_dirty: bool,
+    /// When the shared settings were last read from the registry.
+    appearance_checked_at: std::time::Instant,
 }
 
 impl SysCtlApp {
@@ -125,6 +127,7 @@ impl SysCtlApp {
             last_net: std::time::Instant::now() - Duration::from_secs(10),
             appearance,
             appearance_dirty: false,
+            appearance_checked_at: std::time::Instant::now(),
         };
         app.reload_env();
         app.reload_startup();
@@ -717,7 +720,13 @@ impl eframe::App for SysCtlApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // Follow the shared appearance: the launcher writes the registry and the
         // other windows pick the change up within a second, like the language.
-        if self.appearance_dirty || ctx.input(|i| i.time) as u64 % 1 == 0 {
+        // Poll the registry once a second, the same cadence the other windows
+        // use for the language switch.  `i.time` is a float, so the interval is
+        // measured against a stored instant rather than with a modulo.
+        if self.appearance_dirty
+            || self.appearance_checked_at.elapsed() >= std::time::Duration::from_secs(1)
+        {
+            self.appearance_checked_at = std::time::Instant::now();
             let latest = winrust_core::i18n::settings::load();
             if latest != self.appearance {
                 self.appearance = latest;

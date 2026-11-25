@@ -727,11 +727,6 @@ impl ExplorerApp {
     }
 }
 
-/// Palette triple -> egui colour.  Kept next to hand-drawn widgets.
-fn c32(c: (u8, u8, u8)) -> Color32 {
-    Color32::from_rgb(c.0, c.1, c.2)
-}
-
 /// Install a UI font that covers Cyrillic and CJK, falling back to the bundled
 /// fonts when the system font cannot be read.
 fn install_fonts(ctx: &egui::Context) {

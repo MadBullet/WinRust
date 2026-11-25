@@ -1331,8 +1331,8 @@ impl TaskManagerApp {
                 .collect();
             let mut apps_collapsed = self.apps_collapsed;
             let mut bg_collapsed = self.background_collapsed;
-            group_header(ui, &ts("Apps"), &apps, &mut apps_collapsed);
-            group_header(ui, &ts("Background processes"), &bg, &mut bg_collapsed);
+            group_header(ui, ts("Apps"), &apps, &mut apps_collapsed);
+            group_header(ui, ts("Background processes"), &bg, &mut bg_collapsed);
             self.apps_collapsed = apps_collapsed;
             self.background_collapsed = bg_collapsed;
             ui.add_space(2.0);
