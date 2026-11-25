@@ -1330,7 +1330,7 @@ impl LauncherApp {
                             .weak(),
                     );
                     ui.label(
-                        RichText::new(tf!("IFEO key: HKLM\\{}", t.ifeo_path))
+                        RichText::new(tf!("IFEO key: HKLM\\{}", &t.ifeo_path))
                             .small()
                             .weak(),
                     );
