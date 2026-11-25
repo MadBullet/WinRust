@@ -7,39 +7,39 @@
       Adding windows-sys v0.59.0 (available: v0.61.2)
  Downloading crates ...
   Downloaded itoa v1.0.19
-  Downloaded quote v1.0.47
   Downloaded windows-targets v0.52.6
   Downloaded thiserror v1.0.69
-  Downloaded thiserror-impl v1.0.69
+  Downloaded quote v1.0.47
   Downloaded zmij v1.0.23
+  Downloaded log v0.4.35
   Downloaded proc-macro2 v1.0.107
+  Downloaded thiserror-impl v1.0.69
   Downloaded unicode-ident v1.0.27
   Downloaded serde_derive v1.0.229
-  Downloaded log v0.4.35
   Downloaded serde_core v1.0.229
   Downloaded serde v1.0.229
   Downloaded memchr v2.8.3
   Downloaded serde_json v1.0.154
-  Downloaded syn v2.0.119
   Downloaded syn v3.0.10
+  Downloaded syn v2.0.119
   Downloaded windows_x86_64_msvc v0.52.6
   Downloaded windows-sys v0.59.0
    Compiling proc-macro2 v1.0.107
    Compiling quote v1.0.47
    Compiling unicode-ident v1.0.27
-   Compiling windows_x86_64_msvc v0.52.6
    Compiling serde_core v1.0.229
+   Compiling windows_x86_64_msvc v0.52.6
    Compiling zmij v1.0.23
-   Compiling syn v2.0.119
    Compiling syn v3.0.10
-   Compiling thiserror v1.0.69
+   Compiling syn v2.0.119
    Compiling serde_json v1.0.154
+   Compiling thiserror v1.0.69
    Compiling serde v1.0.229
-   Compiling thiserror-impl v1.0.69
-   Compiling serde_derive v1.0.229
    Compiling windows-targets v0.52.6
-   Compiling memchr v2.8.3
+   Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v1.0.69
    Compiling itoa v1.0.19
+   Compiling memchr v2.8.3
    Compiling windows-sys v0.59.0
    Compiling log v0.4.35
    Compiling winrust-core v0.6.0 (D:\a\WinRust\WinRust\crates\winrust-core)
@@ -65,7 +65,7 @@ warning: unnecessary `unsafe` block
 
 warning: `winrust-core` (lib test) generated 2 warnings (2 duplicates)
 warning: `winrust-core` (lib) generated 2 warnings
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.93s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 38.09s
      Running unittests src\lib.rs (target\debug\build\winrust-core/ec288ea229934c6e\out\winrust_core-ec288ea229934c6e.exe)
 
 running 22 tests
@@ -79,8 +79,8 @@ test i18n::settings::tests::opacity_is_clamped ... ok
 test i18n::settings::tests::defaults_are_opaque ... ok
 test i18n::settings::tests::theme_round_trips_through_registry_values ... ok
 test i18n::shorten::tests::cyrillic_is_never_split ... ok
-test i18n::shorten::tests::head_is_char_safe ... ok
 test i18n::shorten::tests::emoji_survives ... ok
+test i18n::shorten::tests::head_is_char_safe ... ok
 test i18n::shorten::tests::short_strings_are_untouched ... ok
 test i18n::shorten::tests::wrap_keeps_all_words ... ok
 test i18n::tests::english_is_identity ... ok
