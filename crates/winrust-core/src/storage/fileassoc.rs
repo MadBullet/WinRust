@@ -14,8 +14,8 @@
 //! The registry is 64-bit view (`KEY_WOW64_64KEY`), which is what Explorer
 //! uses for the shell namespace.
 
-use crate::i18n::ts;
 use super::registry::{Key, Root};
+use crate::i18n::ts;
 
 /// One entry of the "New" submenu.
 #[derive(Debug, Clone, PartialEq, Eq)]
