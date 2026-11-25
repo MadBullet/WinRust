@@ -124,11 +124,6 @@ impl TrayState {
     pub fn open(&mut self, which: Flyout) {
         self.flyout = which;
     }
-    pub fn close_if_open(&mut self, which: Flyout) {
-        if self.flyout == which {
-            self.flyout = Flyout::None;
-        }
-    }
 
     /// Mute or unmute, ignoring the request when there is no audio device.
     pub fn set_muted(&mut self, muted: bool) -> bool {
@@ -154,13 +149,12 @@ impl TrayState {
         switch_layout(tag);
         self.lang = tag.to_string();
     }
-    /// The user changed the layout with the OS shortcut (`Alt+Shift`, the
-    /// language bar): record what the system now reports.  Polled from the
-    /// shell's tick, which is why it is a verb rather than a setter.
-    pub fn note_layout(&mut self, tag: String) {
-        if self.lang != tag {
-            self.lang = tag;
-        }
+    /// Post a notification to the centre.  The shell has nothing to post yet
+    /// (Windows toasts are a separate API), so nothing calls this - but the
+    /// notification centre would be untestable without a way to fill it.
+    #[allow(dead_code)]
+    pub fn post(&mut self, note: Notification) {
+        self.notifications.insert(0, note);
     }
     pub fn clear_notifications(&mut self) {
         self.notifications.clear();
@@ -169,9 +163,6 @@ impl TrayState {
         for n in &mut self.notifications {
             n.read = true;
         }
-    }
-    pub fn post(&mut self, note: Notification) {
-        self.notifications.insert(0, note);
     }
 
     /// One pass of the audio/network/layout poll, on the tray's own cadence.
@@ -467,8 +458,8 @@ fn network_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         ui.label(RichText::new("🌐").size(22.0));
         ui.vertical(|ui| {
             let name = app
-                .network
-                .as_ref()
+                .tray
+                .network()
                 .filter(|n| n.connected)
                 .map(|n| {
                     if n.wireless {
@@ -752,7 +743,6 @@ fn notifications_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
                         ui.label(RichText::new(&n.title).size(12.0));
                         ui.label(RichText::new(&n.body).small().weak());
                     });
-                    n.read = true;
                     ui.add_space(6.0);
                 }
             });

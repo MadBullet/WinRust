@@ -485,8 +485,8 @@ impl eframe::App for DesktopApp {
         if self.lang_checked_at.elapsed() >= Duration::from_secs(1) {
             self.lang_checked_at = Instant::now();
             let stored_lang = i18n::lang::load();
-            if stored_lang != self.tray.language() {
-                self.tray.note_layout(stored_lang.clone());
+            if stored_lang != self.lang {
+                self.lang = stored_lang;
                 i18n::set_lang(stored_lang);
                 winrust_ui::theme::apply(ctx, &self.appearance);
             }
