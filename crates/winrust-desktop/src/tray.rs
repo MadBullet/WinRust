@@ -524,7 +524,7 @@ fn volume_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
                 egui::Button::new(
                     RichText::new(if app.tray.is_muted() { "🔇" } else { "🔊" }).size(16.0),
                 )
-                    .frame(false),
+                .frame(false),
             )
             .on_hover_text(t("Mute"));
         if mute.clicked() {

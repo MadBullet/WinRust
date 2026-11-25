@@ -518,7 +518,11 @@ impl eframe::App for DesktopApp {
         self.start_anim = ease(self.start_anim, if self.start_open { 1.0 } else { 0.0 }, dt);
         self.flyout_anim = ease(
             self.flyout_anim,
-            if self.tray.flyout().is_open() { 1.0 } else { 0.0 },
+            if self.tray.flyout().is_open() {
+                1.0
+            } else {
+                0.0
+            },
             dt,
         );
 
