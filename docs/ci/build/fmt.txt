@@ -1,23 +1,262 @@
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\main.rs:518:
-         self.start_anim = ease(self.start_anim, if self.start_open { 1.0 } else { 0.0 }, dt);
-         self.flyout_anim = ease(
-             self.flyout_anim,
-[31m-            if self.tray.flyout().is_open() { 1.0 } else { 0.0 },
-[0m[32m+            if self.tray.flyout().is_open() {
-[0m[32m+                1.0
-[0m[32m+            } else {
-[0m[32m+                0.0
-[0m[32m+            },
-[0m             dt,
-         );
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\commands.rs:1:
+ //! File verbs - open, copy, cut, paste, delete, rename, new folder - shared
+ //! by the context menus and the keyboard, so both always agree.
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\tray.rs:524:
-                 egui::Button::new(
-                     RichText::new(if app.tray.is_muted() { "🔇" } else { "🔊" }).size(16.0),
-                 )
-[31m-                    .frame(false),
-[0m[32m+                .frame(false),
-[0m             )
-             .on_hover_text(t("Mute"));
-         if mute.clicked() {
+[31m-use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[31m-use winrust_core::shell;
+[0m[31m-use winrust_core::shell::KnownFolder;
+[0m[32m+use super::state::{ExplorerApp, FileClipboard, JobUpdate};
+[0m[32m+use super::tabs::{file_name_of, FileJob, Tab};
+[0m use eframe::egui;
+[32m+use std::collections::HashSet;
+[0m use std::path::Path;
+ use std::path::PathBuf;
+[31m-use std::collections::HashSet;
+[0m use std::sync::atomic::AtomicBool;
+ use std::sync::atomic::Ordering;
+ use std::sync::Arc;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\commands.rs:14:
+[31m-use super::state::{ExplorerApp, FileClipboard, JobUpdate};
+[0m[31m-use super::tabs::{FileJob, Tab, file_name_of};
+[0m[32m+use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[32m+use winrust_core::shell;
+[0m[32m+use winrust_core::shell::KnownFolder;
+[0m 
+ // Not `Copy`: `OpenWithProgram` carries a command line and a path, and every
+ // use site either moves or matches by reference.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\keyboard.rs:1:
+ //! Keyboard handling, the modal dialogs, and the window's own loop: what a
+ //! key does, what confirms a delete, and what happens on exit.
+ 
+[32m+use super::commands::Command;
+[0m[32m+use super::state::ExplorerApp;
+[0m[32m+use super::tabs::{file_name_of, new_file_in, Tab};
+[0m[32m+use super::viewmode::{save_state, PersistedState, SortKeySerde, ViewMode};
+[0m use eframe::egui;
+ use egui::{Color32, RichText};
+ use std::path::PathBuf;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\keyboard.rs:9:
+ use winrust_core::shell;
+ use winrust_core::t;
+ use winrust_core::ts;
+[31m-use super::commands::Command;
+[0m[31m-use super::state::ExplorerApp;
+[0m[31m-use super::tabs::{Tab, file_name_of, new_file_in};
+[0m[31m-use super::viewmode::{PersistedState, SortKeySerde, ViewMode, save_state};
+[0m[31m-
+[0m 
+ // ---------------------------------------------------------------------------
+ // Drag ghost and mouse navigation
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\panels.rs:1:
+ //! The chrome around the file area: the tab strip, the command bar and the
+ //! navigation pane.
+ 
+[32m+use super::commands::Command;
+[0m[32m+use super::state::{truncate_middle, ExplorerApp, FileClipboard};
+[0m[32m+use super::tabs::{file_name_of, Tab};
+[0m[32m+use super::viewmode::{SortKeySerde, ViewMode};
+[0m[32m+use eframe::egui;
+[0m[32m+use egui::Color32;
+[0m[32m+use egui::RichText;
+[0m[32m+use std::path::Path;
+[0m[32m+use std::path::PathBuf;
+[0m use winrust_core::disk::{self, DirEntry, SortKey};
+ use winrust_core::shell;
+ use winrust_core::shell::KnownFolder;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\panels.rs:7:
+ use winrust_core::t;
+ use winrust_core::tf;
+ use winrust_core::ts;
+[31m-use egui::Color32;
+[0m[31m-use egui::RichText;
+[0m[31m-use eframe::egui;
+[0m[31m-use std::path::Path;
+[0m[31m-use std::path::PathBuf;
+[0m[31m-use super::commands::Command;
+[0m[31m-use super::state::{truncate_middle, ExplorerApp, FileClipboard};
+[0m[31m-use super::tabs::{Tab, file_name_of};
+[0m[31m-use super::viewmode::{SortKeySerde, ViewMode};
+[0m 
+ impl ExplorerApp {
+     /// Explorer's tab strip (Win11 style) with a "+" button.
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\preview.rs:1:
+ //! The preview pane and the status bar along the bottom edge.
+ 
+[31m-use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[31m-use winrust_core::shell;
+[0m[31m-use winrust_core::t;
+[0m[31m-use egui::RichText;
+[0m[31m-use eframe::egui;
+[0m[31m-use std::path::Path;
+[0m use super::state::{truncate_middle, ExplorerApp};
+ use super::tabs::file_name_of;
+ use super::viewmode::ViewMode;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\preview.rs:12:
+[32m+use eframe::egui;
+[0m[32m+use egui::RichText;
+[0m[32m+use std::path::Path;
+[0m[32m+use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[32m+use winrust_core::shell;
+[0m[32m+use winrust_core::t;
+[0m 
+ impl ExplorerApp {
+     pub(super) fn preview_pane(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\sidebar.rs:1:
+ //! The navigation pane's two sections: This PC's drives, and the folders
+ //! the user pinned.
+ 
+[32m+use super::state::ExplorerApp;
+[0m[32m+use eframe::egui;
+[0m[32m+use egui::Color32;
+[0m[32m+use egui::RichText;
+[0m[32m+use std::path::Path;
+[0m[32m+use std::path::PathBuf;
+[0m use winrust_core::disk::{self, DirEntry, SortKey};
+[32m+use winrust_core::i18n::{self, Lang};
+[0m use winrust_core::shell;
+ use winrust_core::shell::KnownFolder;
+ use winrust_core::t;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\sidebar.rs:8:
+ use winrust_core::tf;
+ use winrust_core::ts;
+[31m-use winrust_core::i18n::{self, Lang};
+[0m[31m-use egui::Color32;
+[0m[31m-use egui::RichText;
+[0m[31m-use eframe::egui;
+[0m[31m-use std::path::Path;
+[0m[31m-use std::path::PathBuf;
+[0m[31m-use super::state::ExplorerApp;
+[0m 
+ impl ExplorerApp {
+     pub(super) fn drives_section(&mut self, ui: &mut egui::Ui) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\state.rs:1:
+ //! The window itself: [`ExplorerApp`], its construction, navigation verbs,
+ //! and the caches that make a directory listing cheap to draw twice.
+ 
+[31m-use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[31m-use winrust_core::shell;
+[0m[31m-use winrust_core::shell::KnownFolder;
+[0m[31m-use winrust_core::i18n::{self, Lang};
+[0m[32m+use super::tabs::{file_name_of, FileJob, Listing, Tab};
+[0m[32m+use super::viewmode::{load_state, FolderPrefs, SortKeySerde};
+[0m use eframe::egui;
+[31m-use std::path::PathBuf;
+[0m use std::collections::HashMap;
+[32m+use std::path::PathBuf;
+[0m use std::sync::mpsc::channel;
+[31m-use std::sync::mpsc::Sender;
+[0m use std::sync::mpsc::Receiver;
+[31m-use super::tabs::{FileJob, Listing, Tab, file_name_of};
+[0m[31m-use super::viewmode::{FolderPrefs, SortKeySerde, load_state};
+[0m[32m+use std::sync::mpsc::Sender;
+[0m[32m+use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[32m+use winrust_core::i18n::{self, Lang};
+[0m[32m+use winrust_core::shell;
+[0m[32m+use winrust_core::shell::KnownFolder;
+[0m 
+ pub struct ExplorerApp {
+     pub(super) tabs: Vec<Tab>,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\tabs.rs:1:
+ //! One browser tab: its path, history, listing and selection, plus the
+ //! messages the worker thread sends back.
+ 
+[31m-use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[31m-use winrust_core::ts;
+[0m use std::path::Path;
+ use std::path::PathBuf;
+ use std::sync::atomic::AtomicBool;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\tabs.rs:9:
+ use std::sync::Arc;
+[32m+use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[32m+use winrust_core::ts;
+[0m 
+ pub(super) struct Tab {
+     pub(super) path: PathBuf,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\viewmode.rs:1:
+ //! View modes, sort orders and the per-folder preferences that the
+ //! explorer window remembers between runs (`%APPDATA%\WinRust`).
+ 
+[32m+use std::collections::HashMap;
+[0m[32m+use std::path::PathBuf;
+[0m use winrust_core::disk::{self, DirEntry, SortKey};
+ use winrust_core::ts;
+[31m-use std::path::PathBuf;
+[0m[31m-use std::collections::HashMap;
+[0m 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+ pub(super) enum ViewMode {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\views.rs:1:
+ //! The four file views - details, list, tiles, content - and the drop
+ //! handling they share.
+ 
+[31m-use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[31m-use winrust_core::shell::KnownFolder;
+[0m[31m-use winrust_core::t;
+[0m[31m-use winrust_core::tf;
+[0m[32m+use super::commands::Command;
+[0m[32m+use super::state::{truncate_middle, ExplorerApp};
+[0m[32m+use super::tabs::file_name_of;
+[0m[32m+use super::viewmode::{SortKeySerde, ViewMode};
+[0m[32m+use eframe::egui;
+[0m use egui::Color32;
+ use egui::RichText;
+[31m-use egui_extras::TableBuilder;
+[0m use egui_extras::Column;
+[31m-use eframe::egui;
+[0m[32m+use egui_extras::TableBuilder;
+[0m use std::path::Path;
+ use std::path::PathBuf;
+[31m-use super::commands::Command;
+[0m[31m-use super::state::{truncate_middle, ExplorerApp};
+[0m[31m-use super::viewmode::{SortKeySerde, ViewMode};
+[0m[31m-use super::tabs::file_name_of;
+[0m[32m+use winrust_core::disk::{self, DirEntry, SortKey};
+[0m[32m+use winrust_core::shell::KnownFolder;
+[0m[32m+use winrust_core::t;
+[0m[32m+use winrust_core::tf;
+[0m 
+ impl ExplorerApp {
+     pub(super) fn file_area(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\views.rs:195:
+             .unwrap_or_default();
+     }
+ 
+[31m-    pub(super) fn details_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+[0m[32m+    pub(super) fn details_view(
+[0m[32m+        &mut self,
+[0m[32m+        ui: &mut egui::Ui,
+[0m[32m+        ctx: &egui::Context,
+[0m[32m+        entries: &[DirEntry],
+[0m[32m+    ) {
+[0m         let app_list = self.open_with.clone();
+         let sort_key = self.current().sort_key;
+         let sort_asc = self.current().sort_asc;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\views.rs:367:
+         self.finish_drag_and_commands(ctx, entries, commands);
+     }
+ 
+[31m-    pub(super) fn list_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+[0m[32m+    pub(super) fn list_view(
+[0m[32m+        &mut self,
+[0m[32m+        ui: &mut egui::Ui,
+[0m[32m+        ctx: &egui::Context,
+[0m[32m+        entries: &[DirEntry],
+[0m[32m+    ) {
+[0m         let app_list = self.open_with.clone();
+         let mut clicked: Option<(usize, PathBuf)> = None;
+         let mut opened: Option<DirEntry> = None;
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\views.rs:589:
+     }
+ 
+     /// Explorer's "Content" view: rows with a larger icon, name, and metadata.
+[31m-    pub(super) fn content_view(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, entries: &[DirEntry]) {
+[0m[32m+    pub(super) fn content_view(
+[0m[32m+        &mut self,
+[0m[32m+        ui: &mut egui::Ui,
+[0m[32m+        ctx: &egui::Context,
+[0m[32m+        entries: &[DirEntry],
+[0m[32m+    ) {
+[0m         let app_list = self.open_with.clone();
+         let mut clicked: Option<(usize, PathBuf)> = None;
+         let mut opened: Option<DirEntry> = None;
 exit=False
