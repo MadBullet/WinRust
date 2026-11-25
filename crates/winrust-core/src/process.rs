@@ -19,13 +19,12 @@ use windows_sys::Win32::System::ProcessStatus::{
 use windows_sys::Win32::System::RemoteDesktop::ProcessIdToSessionId;
 use windows_sys::Win32::System::Threading::{
     GetExitCodeProcess, GetPriorityClass, GetProcessHandleCount, GetProcessIoCounters,
-    GetProcessTimes, OpenProcess, OpenThread, QueryFullProcessImageNameW,
-    ResumeThread, SetPriorityClass, SetProcessAffinityMask, SuspendThread,
-    ABOVE_NORMAL_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS,
-    IDLE_PRIORITY_CLASS, IO_COUNTERS, NORMAL_PRIORITY_CLASS, PROCESS_NAME_WIN32,
-    PROCESS_QUERY_INFORMATION, PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SET_INFORMATION,
-    PROCESS_SUSPEND_RESUME, PROCESS_TERMINATE, PROCESS_VM_READ, REALTIME_PRIORITY_CLASS,
-    THREAD_SUSPEND_RESUME,
+    GetProcessTimes, OpenProcess, OpenThread, QueryFullProcessImageNameW, ResumeThread,
+    SetPriorityClass, SetProcessAffinityMask, SuspendThread, ABOVE_NORMAL_PRIORITY_CLASS,
+    BELOW_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, IDLE_PRIORITY_CLASS, IO_COUNTERS,
+    NORMAL_PRIORITY_CLASS, PROCESS_NAME_WIN32, PROCESS_QUERY_INFORMATION,
+    PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SET_INFORMATION, PROCESS_SUSPEND_RESUME,
+    PROCESS_TERMINATE, PROCESS_VM_READ, REALTIME_PRIORITY_CLASS, THREAD_SUSPEND_RESUME,
 };
 
 /// One row of the Task Manager process list, as far as Task Manager shows it.
