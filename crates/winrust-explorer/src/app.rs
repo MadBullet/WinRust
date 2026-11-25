@@ -2931,9 +2931,12 @@ impl ExplorerApp {
         let icon_side = 40.0 * scale.max(0.55);
         let icon_center = ghost.pos - egui::vec2(0.0, 22.0 * scale);
         let icon_rect = egui::Rect::from_center_size(icon_center, egui::vec2(icon_side, icon_side));
-        let tex = self
-            .drag_paths
-            .first()
+        // `icon_for_path` takes `&mut self`, so the path has to leave the
+        // borrow of `drag_paths` first - the closure would otherwise hold a
+        // shared borrow of the same field the call needs exclusively.
+        let dragged = self.drag_paths.first().cloned();
+        let tex = dragged
+            .as_ref()
             .and_then(|p| self.icon_for_path(ctx, p, 48));
         match tex {
             Some(id) => {
@@ -3355,7 +3358,7 @@ impl eframe::App for ExplorerApp {
                     ui.set_min_width(240.0);
                     let mut gap = self.current().spacing;
                     if ui
-                        .add(egui::Slider::new(&mut gap, 0..=180).text(t("pixels")))
+                        .add(egui::Slider::new(&mut gap, 0.0..=180.0).text(t("pixels")))
                         .changed()
                     {
                         self.current_mut().spacing = gap;
