@@ -496,8 +496,8 @@ fn preview(
         match tex_id {
             Some(id) if size.x > 0.0 && size.y > 0.0 => {
                 // Letterbox inside the card so odd window shapes stay centred.
-                let scale = (CARD.x / size.x).min(CARD.y / size.y);
-                let draw = egui::Rect::from_center_size(CARD.center(), size * scale);
+                let scale = (card.width() / size.x).min(card.height() / size.y);
+                let draw = egui::Rect::from_center_size(card.center(), size * scale);
                 painter.image(
                     id,
                     draw,
@@ -506,9 +506,9 @@ fn preview(
                 );
             }
             None => {
-                painter.rect_filled(CARD, 4.0, Color32::from_rgb(30, 33, 42));
+                painter.rect_filled(card, 4.0, Color32::from_rgb(30, 33, 42));
                 painter.text(
-                    CARD.center(),
+                    card.center(),
                     egui::Align2::CENTER_CENTER,
                     glyph_for_title(&w.title),
                     egui::FontId::proportional(28.0),
@@ -539,7 +539,7 @@ fn preview(
             .order(egui::Order::Tooltip)
             .fixed_pos(card.left_top())
             .show(ctx, |ui| {
-                ui.allocate_exact_size(CARD.size(), egui::Sense::click()).1
+                ui.allocate_exact_size(CARD, egui::Sense::click()).1
             })
             .inner;
         if resp.clicked() {

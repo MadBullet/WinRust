@@ -105,15 +105,20 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
         let time_galley = p.layout_no_wrap(time.clone(), time_font, text);
         let date_galley = p.layout_no_wrap(date.clone(), date_font, weak);
         let block_h = time_galley.size().y + date_galley.size().y;
+        // Sizes are read before the galleys are handed to the painter: `galley`
+        // takes them by value, so `time_galley.size()` afterwards would be a
+        // use-after-move.
+        let time_size = time_galley.size();
+        let date_size = date_galley.size();
         let mut y = clock_rect.center().y - block_h / 2.0;
         p.galley(
-            egui::pos2(clock_rect.center().x - time_galley.size().x / 2.0, y),
+            egui::pos2(clock_rect.center().x - time_size.x / 2.0, y),
             time_galley,
             text,
         );
-        y += time_galley.size().y;
+        y += time_size.y;
         p.galley(
-            egui::pos2(clock_rect.center().x - date_galley.size().x / 2.0, y),
+            egui::pos2(clock_rect.center().x - date_size.x / 2.0, y),
             date_galley,
             weak,
         );

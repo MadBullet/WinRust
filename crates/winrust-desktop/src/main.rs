@@ -24,7 +24,7 @@ mod tray;
 use eframe::egui;
 use std::time::{Duration, Instant};
 use winrust_core::i18n::{self, Lang};
-use winrust_core::tf;
+use winrust_core::{t, tf};
 
 /// What the shell is doing with the mouse, across frames.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
