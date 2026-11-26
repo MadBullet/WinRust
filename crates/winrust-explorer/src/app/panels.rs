@@ -2,7 +2,7 @@
 //! navigation pane.
 
 use super::state::{truncate_middle, ExplorerApp, FileClipboard};
-use super::tabs::{file_name_of, Tab};
+use super::tabs::{file_name_of, Special, Tab};
 use super::viewmode::{SortKeySerde, ViewMode};
 use eframe::egui;
 use egui::Color32;
@@ -128,6 +128,13 @@ impl ExplorerApp {
                     .max_width(addr_w)
                     .show(ui, |ui| {
                         ui.horizontal(|ui| {
+                            // A virtual folder has no components worth
+                            // showing: its `shell:` string would appear as
+                            // one opaque crumb, so it names itself.
+                            if let Some(special) = self.current().special {
+                                ui.label(RichText::new(ts(special.title())).size(13.0));
+                                return;
+                            }
                             let path = self.current().path.clone();
                             let mut acc = PathBuf::new();
                             for (idx, comp) in path.components().enumerate() {
@@ -364,6 +371,7 @@ impl ExplorerApp {
             .collect();
         let mut nav_selected = self.nav_selected;
         let mut status_msg: Option<String> = None;
+        let mut nav_special: Option<Special> = None;
         let mut background_cmd: Option<Command> = None;
         let drives = self.drives.clone();
         // The pane's own background, so a right-click in the empty strip above
@@ -416,7 +424,10 @@ impl ExplorerApp {
                         nav_selected = Some(*folder);
                         match path {
                             Some(p) => nav = Some(p),
-                            None => status_msg = Some(tf!("{} is a virtual folder", label)),
+                            // This PC, Network and the Recycle Bin have no
+                            // path; the tab shows them as a virtual folder
+                            // instead of a status-bar complaint.
+                            None => nav_special = Special::of(*folder),
                         }
                     }
                 }
@@ -486,6 +497,9 @@ impl ExplorerApp {
         }
         if let Some(p) = nav {
             self.navigate(p);
+        }
+        if let Some(special) = nav_special {
+            self.navigate_special(special);
         }
         // The context menu only records intent: `self` is borrowed by the
         // tree drawing above, and these three actions all need `&mut self`.

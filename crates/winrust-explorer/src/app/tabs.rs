@@ -6,12 +6,19 @@ use std::path::PathBuf;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 use winrust_core::disk::DirEntry;
+use winrust_core::shell::KnownFolder;
 use winrust_core::ts;
 
 use super::viewmode::{SortKeySerde, ViewMode};
 
 pub(super) struct Tab {
     pub(super) path: PathBuf,
+    /// Set when the tab shows a *virtual* shell folder (This PC, Network, the
+    /// Recycle Bin) rather than a directory.  Such a folder has no filesystem
+    /// path: `path` then carries the `shell:` namespace string so history,
+    /// the address bar and the tab strip have something stable to show, and
+    /// `start_load` skips the directory read.
+    pub(super) special: Option<Special>,
     pub(super) history: Vec<PathBuf>,
     pub(super) history_pos: usize,
     pub(super) entries: Vec<DirEntry>,
@@ -37,10 +44,58 @@ pub(super) struct Tab {
     pub(super) icon_px: u32,
 }
 
+/// The virtual shell folders the Explorer can show.
+///
+/// They exist only inside the shell namespace: `SHGetKnownFolderPath` returns
+/// a real directory for `FOLDERID_ComputerFolder` (the profile on most
+/// machines), which is why comparing paths alone cannot tell "This PC" from
+/// the profile folder - the earlier code did exactly that and turned a drive
+/// double-click into the same drive grid.  A tab now says which of them it
+/// shows, and the Explorer Home layout keys off that.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum Special {
+    Computer,
+    Network,
+    RecycleBin,
+}
+
+impl Special {
+    /// The namespace string kept in [`Tab::path`] while the tab shows this
+    /// folder.  It is what the address bar prints and what a reopened tab
+    /// matches on.
+    pub(super) fn shell_path(self) -> &'static str {
+        match self {
+            Special::Computer => "shell:MyComputerFolder",
+            Special::Network => "shell:NetworkPlacesFolder",
+            Special::RecycleBin => "shell:RecycleBinFolder",
+        }
+    }
+
+    /// The tab title.
+    pub(super) fn title(self) -> &'static str {
+        match self {
+            Special::Computer => "This PC",
+            Special::Network => "Network",
+            Special::RecycleBin => "Recycle Bin",
+        }
+    }
+
+    /// The tab for `folder`, if it is a virtual one.
+    pub(super) fn of(folder: KnownFolder) -> Option<Self> {
+        match folder {
+            KnownFolder::Computer => Some(Special::Computer),
+            KnownFolder::Network => Some(Special::Network),
+            KnownFolder::RecycleBin => Some(Special::RecycleBin),
+            _ => None,
+        }
+    }
+}
+
 impl Tab {
     pub(super) fn new(path: PathBuf) -> Self {
         Self {
             path: path.clone(),
+            special: None,
             history: vec![path],
             history_pos: 0,
             entries: Vec::new(),
@@ -62,6 +117,11 @@ impl Tab {
     }
 
     pub(super) fn title(&self) -> String {
+        // A virtual folder's `path` is a `shell:` namespace string, which
+        // `file_name_of` would print verbatim; its own name is the title.
+        if let Some(special) = self.special {
+            return ts(special.title()).to_string();
+        }
         file_name_of(&self.path)
     }
 

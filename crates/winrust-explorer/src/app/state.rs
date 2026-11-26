@@ -204,10 +204,19 @@ impl ExplorerApp {
     /// Kick off an async directory read for a tab.  Old results are discarded by
     /// comparing `request_id`, so rapid navigation never shows stale files.
     pub(super) fn start_load(&mut self, tab_index: usize) {
-        let (path, show_hidden) = {
+        let (path, show_hidden, special) = {
             let tab = &self.tabs[tab_index];
-            (tab.path.clone(), tab.show_hidden)
+            (tab.path.clone(), tab.show_hidden, tab.special)
         };
+        // A virtual folder has no directory to read: the view draws its own
+        // contents (drive tiles, network shares, recycled items) and the tab
+        // must not sit in a permanent "Loading".
+        if special.is_some() {
+            self.tabs[tab_index].loading = false;
+            self.tabs[tab_index].error = None;
+            self.tabs[tab_index].entries.clear();
+            return;
+        }
         self.next_request += 1;
         let request_id = self.next_request;
         self.tabs[tab_index].request_id = request_id;
@@ -243,6 +252,32 @@ impl ExplorerApp {
         });
     }
 
+    /// Navigate the active tab to a virtual shell folder.
+    ///
+    /// Separate from [`Self::navigate`] because there is no path to read:
+    /// the tab keeps the `shell:` string for its address and title, and the
+    /// view draws the folder's own layout.
+    pub(super) fn navigate_special(&mut self, special: super::tabs::Special) {
+        let path = PathBuf::from(special.shell_path());
+        {
+            let tab = self.current_mut();
+            tab.history.truncate(tab.history_pos + 1);
+            tab.history.push(path.clone());
+            tab.history_pos = tab.history.len() - 1;
+            tab.path = path;
+            tab.special = Some(special);
+            tab.entries.clear();
+            tab.loading = false;
+            tab.error = None;
+            tab.selection.clear();
+            tab.anchor = None;
+            tab.filter.clear();
+            tab.scroll_to_top = true;
+        }
+        self.search_results = None;
+        self.remember_prefs();
+    }
+
     pub(super) fn navigate(&mut self, path: PathBuf) {
         if path.is_file() {
             self.select_in_parent(path);
@@ -258,6 +293,8 @@ impl ExplorerApp {
             tab.history.push(path.clone());
             tab.history_pos = tab.history.len() - 1;
             tab.path = path.clone();
+            // Navigating to a real path leaves the virtual folder behind.
+            tab.special = None;
             tab.selection.clear();
             tab.anchor = None;
             tab.filter.clear();

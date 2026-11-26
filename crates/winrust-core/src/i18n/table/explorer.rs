@@ -90,6 +90,11 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Selected {}", "Выбрано: {}"),
     ("Extract failed: {}", "Не удалось извлечь: {}"),
     ("Open failed: {}", "Не удалось открыть: {}"),
+    (
+        "This folder is shown by Windows itself.",
+        "Эту папку показывает сам Windows.",
+    ),
+    ("Open in Windows Explorer", "Открыть в проводнике Windows"),
     ("Edit failed: {}", "Не удалось изменить: {}"),
     ("Open with failed: {}", "Не удалось открыть с помощью: {}"),
     (

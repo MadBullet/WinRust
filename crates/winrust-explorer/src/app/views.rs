@@ -3,7 +3,7 @@
 
 use super::commands::Command;
 use super::state::{truncate_middle, ExplorerApp};
-use super::tabs::file_name_of;
+use super::tabs::{file_name_of, Special};
 use super::viewmode::{SortKeySerde, ViewMode};
 use eframe::egui;
 use egui::Color32;
@@ -13,8 +13,8 @@ use egui_extras::TableBuilder;
 use std::path::Path;
 use std::path::PathBuf;
 use winrust_core::disk::{self, DirEntry};
-use winrust_core::shell::KnownFolder;
 use winrust_core::t;
+use winrust_core::ts;
 use winrust_core::tf;
 
 impl ExplorerApp {
@@ -96,6 +96,33 @@ impl ExplorerApp {
             ui.separator();
         }
 
+        // Network and the Recycle Bin have no listing of their own yet: the
+        // shell namespace that holds them is only reachable through
+        // `ShellExecute`, so the tab shows what it is and hands the folder to
+        // the system view instead of pretending to be an empty directory.
+        if let Some(special) = self.current().special {
+            if special != Special::Computer {
+                ui.add_space(30.0);
+                ui.vertical_centered(|ui| {
+                    ui.label(RichText::new(ts(special.title())).size(17.0).strong());
+                    ui.add_space(6.0);
+                    ui.label(
+                        RichText::new(t("This folder is shown by Windows itself."))
+                            .size(13.0)
+                            .weak(),
+                    );
+                    ui.add_space(10.0);
+                    if ui.button(t("Open in Windows Explorer")).clicked() {
+                        if let Err(e) = winrust_core::shell::open_shell_path(special.shell_path())
+                        {
+                            self.status = format!("{}: {e}", t("Open failed"));
+                        }
+                    }
+                });
+                return;
+            }
+        }
+
         // "This PC" gets the Explorer home layout: folder tiles on top, then
         // Devices and drives with usage bars and the free-of-total text.
         if self.is_computer_view() && self.current().filter.is_empty() {
@@ -139,28 +166,15 @@ impl ExplorerApp {
 
     /// Is the active tab showing "This PC"?
     ///
-    /// This used to also answer "yes" for a bare drive root (`C:\`), which is
-    /// the 0.9.0 bug the review found: opening a drive navigated the tab to
-    /// `C:\`, the view recognised that as "This PC" again, and the same grid
-    /// of drive tiles came back - so a double-click on a drive looked like it
-    /// did nothing.
-    ///
-    /// The shell's `FOLDERID_ComputerFolder` is a *virtual* folder with no
-    /// filesystem path of its own; `SHGetKnownFolderPath` resolves it to the
-    /// user's profile directory on most systems.  Comparing the tab's path
-    /// with that would therefore label the profile directory - and, on a
-    /// machine where it resolves to `C:\`, the system drive - as "This PC"
-    /// again.  So the name of the drive root is checked first: a path that is
-    /// exactly a volume root is never the Computer view.
+    /// The tab says so itself (see [`Special`]); it is not inferred from the
+    /// path.  Inferring it from the path was the 0.9.0 bug the review found:
+    /// opening a drive navigated the tab to `C:\`, the view recognised the
+    /// drive root as "This PC", and the same grid of drive tiles came back -
+    /// so a double-click on a drive looked like it did nothing.  A virtual
+    /// folder has no path of its own, so a marker on the tab is the only
+    /// reliable answer.
     pub(super) fn is_computer_view(&self) -> bool {
-        let p = &self.current().path;
-        if is_volume_root(p) {
-            return false;
-        }
-        match KnownFolder::Computer.path() {
-            Some(computer) => !is_volume_root(&computer) && p == &computer,
-            None => false,
-        }
+        self.current().special == Some(Special::Computer)
     }
 
     /// Shared selection logic: plain click replaces, Ctrl toggles, Shift extends.
@@ -871,19 +885,3 @@ impl ExplorerApp {
     }
 }
 
-/// `true` for `C:\`, `D:\` and a UNC share root - paths that name a volume,
-/// not a folder inside one.
-fn is_volume_root(path: &Path) -> bool {
-    let s = path.to_string_lossy();
-    let bytes = s.as_bytes();
-    // "X:\" and "X:" (no trailing separator) are both volume roots.
-    if bytes.len() <= 3 && bytes.len() >= 2 && bytes[1] == b':' {
-        return bytes[0].is_ascii_alphabetic();
-    }
-    // A bare UNC root: "\\server\share" with nothing after the share.
-    if s.starts_with("\\") {
-        let rest = s.trim_start_matches('\\').trim_end_matches('\\');
-        return rest.matches('\\').count() == 1;
-    }
-    false
-}
