@@ -233,6 +233,21 @@ impl ExplorerApp {
         let sort_asc = self.current().sort_asc;
         let clicked_cell = std::cell::Cell::new(None::<SortKeySerde>);
 
+        // Rubber-band selection.  The background is claimed *before* the table
+        // so the rows stack above it: a press that lands on a row belongs to
+        // the row, and only a press on the empty strip below the last entry
+        // reaches this.
+        let band_rect = ui.available_rect_before_wrap();
+        let bg = ui.interact(
+            band_rect,
+            ui.id().with("explorer_band_bg_details"),
+            egui::Sense::click_and_drag(),
+        );
+        let band_pressed = bg.hovered() && ctx.input(|i| i.pointer.primary_pressed());
+        if band_pressed && !self.drag_active {
+            self.band_start = ctx.input(|i| i.pointer.interact_pos());
+        }
+
         let table = TableBuilder::new(ui)
             .striped(true)
             .resizable(true)
@@ -283,21 +298,6 @@ impl ExplorerApp {
                 });
             }
         });
-
-        // Rubber-band selection.  The background is claimed *before* the table
-        // so the rows stack above it: a press that lands on a row belongs to
-        // the row, and only a press on the empty strip below the last entry
-        // reaches this.
-        let band_rect = ui.available_rect_before_wrap();
-        let bg = ui.interact(
-            band_rect,
-            ui.id().with("explorer_band_bg_details"),
-            egui::Sense::click_and_drag(),
-        );
-        let band_pressed = bg.hovered() && ctx.input(|i| i.pointer.primary_pressed());
-        if band_pressed && !self.drag_active {
-            self.band_start = ctx.input(|i| i.pointer.interact_pos());
-        }
 
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;

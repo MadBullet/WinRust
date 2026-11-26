@@ -363,7 +363,6 @@ impl ExplorerApp {
         // Snapshot what the pane needs so `self` is not borrowed inside the
         // closure while it is also mutated by click handling.
         let mut nav_selected = self.nav_selected;
-        let mut status_msg: Option<String> = None;
         let mut nav_special: Option<Special> = None;
         let mut background_cmd: Option<Command> = None;
         let drives = self.drives.clone();
@@ -562,9 +561,6 @@ impl ExplorerApp {
             });
         let _ = ctx;
         self.nav_selected = nav_selected;
-        if let Some(msg) = status_msg {
-            self.status = msg;
-        }
         if let Some(p) = unpin_now {
             self.pinned.retain(|x| x != &p);
             self.status = format!("{}: {}", t("Unpinned"), p.display());
