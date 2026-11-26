@@ -154,13 +154,13 @@ struct MenuOutput {
     open_settings: bool,
     switch_user: bool,
     switched_window: bool,
-    search: String,
 }
 
 impl MenuOutput {
+    /// Applies the intent recorded while drawing.  The search text is *not*
+    /// part of this: it is live state of the text box, and the shell writes it
+    /// back before calling here.
     fn apply(self, app: &mut DesktopApp) {
-        app.session.search_mut().clear();
-        app.session.search_mut().push_str(&self.search);
         if let Some(path) = self.launch {
             app.session.close();
             app.open_path(&path);

@@ -520,9 +520,11 @@ impl DesktopApp {
             screen.center().x - width / 2.0,
             (screen.bottom() - crate::taskbar::HEIGHT - 8.0 - 320.0).max(screen.top() + 40.0),
         );
-        // The history is copied into plain strings first.  `Frame::show` boxes
-        // its content closure (`show_dyn`), so the closure may not hold
-        // `&mut self` - the same restriction that shapes `start_menu`.
+        // The history is copied into plain strings first, because
+        // `entries()` borrows the history while the closure below needs
+        // `&mut self` for `picked`/`clear` and the click handling.  (The
+        // closure *may* borrow `self`: `Frame::show` boxes it with an inferred
+        // lifetime, so a snapshot is a convenience here, not a requirement.)
         let entries: Vec<String> = self
             .clipboard
             .entries()
