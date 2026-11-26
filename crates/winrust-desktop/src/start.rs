@@ -322,7 +322,14 @@ impl DesktopApp {
                         });
                         ui.add_space(4.0);
                         ui.separator();
-                        footer(ui, &open_windows, &user, &mut output);
+                        footer(
+                            ui,
+                            &open_windows,
+                            &user,
+                            app_session_power_open,
+                            app_session_user_open,
+                            &mut output,
+                        );
                     });
             })
             .response;
@@ -655,6 +662,10 @@ fn footer(
     ui: &mut egui::Ui,
     open_windows: &[crate::taskbar::WindowEntry],
     user: &str,
+    // Whether the session already has each nested list open.  Read in `draw`
+    // and passed in, because the two lists are drawn here in the footer.
+    power_open: bool,
+    user_open: bool,
     out: &mut MenuOutput,
 ) {
     ui.horizontal(|ui| {
@@ -665,7 +676,7 @@ fn footer(
         if user_resp.clicked() {
             out.toggle_user_menu = true;
         }
-        if app_session_user_open {
+        if user_open {
             let screen = ui.ctx().screen_rect();
             winrust_ui::anchored_above(
                 ui.ctx(),
@@ -704,7 +715,7 @@ fn footer(
                 out.toggle_power_menu = true;
             }
             out.power_menu_button = Some(power_resp.rect);
-            if app_session_power_open {
+            if power_open {
                 // The list is its own area pinned above the *screen's* bar, not
                 // an egui submenu: a submenu is positioned by the cursor and
                 // ran off the bottom of the screen - "меню завершения работы

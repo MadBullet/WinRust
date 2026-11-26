@@ -382,8 +382,6 @@ impl DesktopApp {
         id
     }
 
-    /// Persist the View-menu switches if anything changed.
-
     /// Delete / Shift+Delete on the wallpaper, plus Ctrl+A and Escape.
     ///
     /// Explorer deletes whatever is selected when the key is pressed; the same

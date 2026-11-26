@@ -10,6 +10,7 @@
 use std::path::PathBuf;
 use winrust_core::t;
 
+#[derive(Debug, Clone)]
 pub struct AppEntry {
     pub name: String,
     pub path: PathBuf,
