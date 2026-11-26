@@ -220,7 +220,10 @@ impl DesktopApp {
             // A program that was just started must get its button at once, so
             // the list is rebuilt when its shape changes, not only on the tick.
             if next.len() != self.open_windows.len()
-                || next.iter().map(|w| w.pid).ne(self.open_windows.iter().map(|w| w.pid))
+                || next
+                    .iter()
+                    .map(|w| w.pid)
+                    .ne(self.open_windows.iter().map(|w| w.pid))
             {
                 self.windows_at = Instant::now();
             }

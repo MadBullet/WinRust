@@ -862,10 +862,8 @@ fn overflow_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         // tiles: a faint fill plus an accent outline under the pointer, and
         // the buttons themselves stay frameless so the row does not get a
         // permanent box.
-        let (rect, resp) = ui.allocate_exact_size(
-            egui::vec2(ui.available_width(), 26.0),
-            egui::Sense::click(),
-        );
+        let (rect, resp) =
+            ui.allocate_exact_size(egui::vec2(ui.available_width(), 26.0), egui::Sense::click());
         let hovered = resp.hovered();
         if hovered {
             ui.painter().rect_filled(

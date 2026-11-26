@@ -388,7 +388,8 @@ impl DesktopApp {
             // onto it, `hovered_any` is false for a frame, and rebuilding only
             // on `rested()` dropped the strip before the hit test could run.
             // `preview` itself reports whether the pointer is on it.
-            if !group.is_empty() && (hovered_any || self.hover.rested() || self.hovered_group.is_some())
+            if !group.is_empty()
+                && (hovered_any || self.hover.rested() || self.hovered_group.is_some())
             {
                 // Read the anchor before `self` is lent to `preview`; with the
                 // pointer already on the strip the anchor is stale, which is

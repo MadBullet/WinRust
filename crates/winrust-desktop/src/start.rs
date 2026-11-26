@@ -557,8 +557,7 @@ fn pinned_grid(
                         }
                         // Target highlight: the slot under the pointer while a
                         // drag is live, whether or not it already holds a tile.
-                        let is_target = resp.hovered()
-                            && dragged.is_some_and(|from| from != index);
+                        let is_target = resp.hovered() && dragged.is_some_and(|from| from != index);
                         match pin {
                             Some((app, icon)) => {
                                 let fill = if resp.hovered() && dragged.is_none() {
@@ -570,10 +569,7 @@ fn pinned_grid(
                                     )
                                 } else {
                                     Color32::from_rgba_unmultiplied(
-                                        pal.tile.0,
-                                        pal.tile.1,
-                                        pal.tile.2,
-                                        255,
+                                        pal.tile.0, pal.tile.1, pal.tile.2, 255,
                                     )
                                 };
                                 // The tile being dragged is drawn faint, which
@@ -585,10 +581,7 @@ fn pinned_grid(
                                     8.0,
                                     if is_source {
                                         Color32::from_rgba_unmultiplied(
-                                            pal.tile.0,
-                                            pal.tile.1,
-                                            pal.tile.2,
-                                            90,
+                                            pal.tile.0, pal.tile.1, pal.tile.2, 90,
                                         )
                                     } else {
                                         fill
@@ -685,10 +678,7 @@ fn pinned_grid(
                                     egui::Stroke::new(
                                         1.0_f32,
                                         Color32::from_rgba_unmultiplied(
-                                            pal.line.0,
-                                            pal.line.1,
-                                            pal.line.2,
-                                            120,
+                                            pal.line.0, pal.line.1, pal.line.2, 120,
                                         ),
                                     ),
                                 );
@@ -710,10 +700,7 @@ fn pinned_grid(
             }
         });
 
-    if let (Some(from), Some(to)) = (
-        ui.ctx().data(|d| d.get_temp::<usize>(drag_id)),
-        drop_slot,
-    ) {
+    if let (Some(from), Some(to)) = (ui.ctx().data(|d| d.get_temp::<usize>(drag_id)), drop_slot) {
         if from != to {
             out.pin_move = Some((from, to));
         }
@@ -827,25 +814,25 @@ fn footer(
                             .rounding(10.0)
                             .inner_margin(egui::Margin::same(10.0))
                             .show(ui, |ui| {
-                        ui.set_min_width(200.0);
-                        for action in PowerAction::ALL {
-                            let enabled = action != PowerAction::Hibernate
-                                || winrust_core::shell::hibernate_allowed();
-                            if ui
-                                .add_enabled(
-                                    enabled,
-                                    egui::Button::new(format!(
-                                        "{}  {}",
-                                        action.glyph(),
-                                        action.label()
-                                    )),
-                                )
-                                .clicked()
-                            {
-                                out.ask_power = Some(action);
-                                out.close_power_menu = true;
-                            }
-                        }
+                                ui.set_min_width(200.0);
+                                for action in PowerAction::ALL {
+                                    let enabled = action != PowerAction::Hibernate
+                                        || winrust_core::shell::hibernate_allowed();
+                                    if ui
+                                        .add_enabled(
+                                            enabled,
+                                            egui::Button::new(format!(
+                                                "{}  {}",
+                                                action.glyph(),
+                                                action.label()
+                                            )),
+                                        )
+                                        .clicked()
+                                    {
+                                        out.ask_power = Some(action);
+                                        out.close_power_menu = true;
+                                    }
+                                }
                             });
                     },
                 );
