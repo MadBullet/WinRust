@@ -454,7 +454,9 @@ impl LauncherApp {
             // The account may still be an administrator: then the right answer
             // is a button, not an error.  `can_elevate` is exactly that case.
             let msg = if self.user.privilege.can_elevate {
-                ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
+                ts(
+                    "Install needs the full administrator token. Use \"Restart as administrator\" in the header.",
+                )
             } else {
                 ts("Administrator rights are required to install. Sign in as an administrator.")
             };

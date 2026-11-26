@@ -80,7 +80,7 @@ mod win {
                     if item.szName.is_null() {
                         continue;
                     }
-                    let name = unsafe { from_wide_ptr(item.szName) };
+                    let name = from_wide_ptr(item.szName);
                     if name.is_empty() {
                         continue;
                     }

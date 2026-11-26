@@ -162,21 +162,10 @@ impl Session {
         self.pending = None;
     }
 
-    pub fn toggle(&mut self) {
-        if self.open {
-            self.close();
-        } else {
-            self.open();
-        }
-    }
 
     // ---- the clipboard panel (Win+V) -------------------------------------
     pub fn clipboard_open(&self) -> bool {
         self.clipboard_open
-    }
-    pub fn show_clipboard(&mut self) {
-        self.clipboard_open = true;
-        self.clipboard_chord_seen = true;
     }
     pub fn hide_clipboard(&mut self) {
         self.clipboard_open = false;

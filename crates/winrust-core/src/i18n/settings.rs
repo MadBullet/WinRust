@@ -167,7 +167,7 @@ mod tests {
             ..Appearance::default()
         }
         .sanitized();
-        assert!(a.blur_active() == false);
+        assert!(!a.blur_active());
     }
 
     #[test]

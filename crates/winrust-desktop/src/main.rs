@@ -358,12 +358,6 @@ impl DesktopApp {
     }
 
     /// Persist the View-menu switches if anything changed.
-    pub(crate) fn flush_desktop_settings(&mut self) {
-        if self.settings_dirty {
-            self.settings.save();
-            self.settings_dirty = false;
-        }
-    }
 
     /// Delete / Shift+Delete on the wallpaper, plus Ctrl+A and Escape.
     ///
@@ -619,7 +613,11 @@ impl DesktopApp {
 impl eframe::App for DesktopApp {
     /// Save the View settings when the shell shuts down.
     fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
-        self.settings.save();
+        // `settings_dirty` is set by the View menu; an untouched shell has
+        // nothing to write, so shutting down costs no registry writes.
+        if self.settings_dirty {
+            self.settings.save();
+        }
         desktop::save_positions(&self.icons);
     }
 
