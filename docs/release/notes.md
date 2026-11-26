@@ -1,102 +1,172 @@
-Windows 10/11 system components rewritten in Rust. Release 0.9.2 answers a
-second review of 0.9.1: four groups of reports, fixed at their causes.
+> **Language note: the English changelog comes first.** It ends at the `---`
+> separator, after which the same changelog is repeated in Russian.
+> From 0.9.3 on, every WinRust release is published in both languages:
+> English first, then Russian.
 
-## 1. Explorer
+Windows 10/11 system components rewritten in Rust. Release 0.9.3 answers a
+third review: eight reports against 0.9.2, fixed at their causes.
 
-* **A drag is a move.** Dropping a folder into another folder copied it - the
-  drop passed `cut = false` unconditionally - while the file job it started was
-  labelled "Copying" and left the source in place. A drag now moves (copy then
-  delete across volumes) and holding Ctrl copies, which is what the same
-  gesture does in Windows.
-* **You can see where it will land.** The hovered folder's whole row is filled
-  and outlined during the drag; before, only a hairline around the name cell
-  hinted at it, and only in the details view.
-* **The window opens on "This PC"**, so the drives are the first thing on
-  screen. A virtual folder is a tab that carries the marker itself, so opening
-  a drive no longer falls back to the drive grid.
-* **The left pane is the user's now.** The "folders in this view" list merely
-  repeated the right pane; it is gone, and in its place is a favourites list
-  filled by dragging folders onto it. Right-click an entry to unpin it. The
-  list survives a restart.
-* **Rubber-band selection in all four views.** Press on empty space, drag a
-  box, release: everything the box touched is selected, and Ctrl adds to an
-  existing selection instead of replacing it. The box tests the rows' real
-  screen rectangles, recorded by each view as it draws, so it cannot drift from
-  what is on screen.
+## 1. Start, taskbar and the tray
 
-## 2. Start, taskbar and the tray
+* **The volume slider works, in both directions.**
+  `IID_IAudioEndpointVolume` was `5CDF2B5A-4B4C-4E9C-A714-79CE8D5C9E3E`,
+  which is not an interface at all. Every `IMMDevice::Activate` failed with
+  `E_NOINTERFACE`, so the getter and the setter both returned `None`: the tray
+  could only show its fallback, and dragging the slider snapped straight back.
+  The real IID is `5CDF2C82-841E-4546-9722-0CF74078229A`.
+* **Every popup hangs from the taskbar's top edge now.**
+  `popup_rect_above` / `anchored_above` in `winrust-ui` measure a panel and
+  place its *bottom* edge on the bar and its right edge on its button, clamped
+  to the screen - so the tray flyouts, the hidden-icons panel, the power list
+  and the account list all line up. Every earlier version guessed a height per
+  panel and positioned by the top-left corner, which is what dropped them off
+  the bottom of the screen.
+* **The power and account lists are no longer egui submenus**, which follow the
+  cursor and ran off-screen; they are anchored areas like the flyouts.
+* **The taskbar icons are centred.** They were drawn inside a nested
+  `ui.horizontal`, which starts a Ui only as tall as its tallest child and
+  aligns it to the parent's top - so the whole row sat low and the active
+  highlight was hard to see. They are laid out in the bar itself and share its
+  centre line with the Start button.
 
-* **The Start button no longer closes what it just opened.** The taskbar draws
-  before the Start menu, so the click that opened the menu was still "a click
-  outside it" when the menu's own outside-click test ran later in the same
-  frame. The session stamps the frame it opened on, and that frame is exempt.
-* **The button is the Windows mark**, four painted panes, not `⊞` (U+229E,
-  "squared plus"), which read as a plus in a box on every font.
-* **Start > Settings is Windows Settings.** It opened the launcher's own
-  options; it opens `ms-settings:`, the same thing `Win+I` does - and `Win+I`
-  was not implemented at all, now it is.
-* **Flyouts sit on the bar.** They hung from the bar's top edge downward, so
-  they covered the taskbar and their lower rows ran off the screen. Their
-  bottom edge now sits on the bar's top edge and they grow upward. The overflow
-  chevron points up over the panel it opens.
-* **The volume slider works.** `with_device()` created its own `ComGuard`, so
-  `CoUninitialize` ran while the caller still held the `IMMDevice`; every query
-  on it failed and `master_volume()` was always `None`. The guard belongs to
-  the function that owns the objects. An unknown level shows "—", never a
-  false zero.
-* **The running indicator is an underline** pinned to the bar's bottom edge and
-  wider for a process with several windows, in place of a dash inside the
-  button.
-* **Clicking a thumbnail peeks.** Resting the pointer on a taskbar preview
-  raises a full-screen peek - the screen dims, that window is shown large -
-  and moving off it lowers the peek. A window that closes takes its peek with
-  it. Hovering the preview no longer opens it, which is what made the old
-  "hover" feel like a jump.
+## 2. Desktop
 
-## 3. Task Manager
+* **A long caption fits its icon.** `i18n::wrap_capped` breaks over-long words,
+  caps the line count and ellipsises what it drops, and the caption is clipped
+  to the icon's cell. A long name used to sprawl out of the selection square.
+* **"Personalize" opens Windows Settings** (`ms-settings:personalization`)
+  instead of the display control panel.
+* **"New" is the machine's own list.** It reads the shell's `ShellNew`
+  registrations from both hives and draws each entry with the icon of the
+  program that owns the extension, instead of eight hard-coded extensions that
+  were mostly absent from the machine.
+* **"Align icons to grid" is a real toggle**, in "Sort by" next to the sort
+  order. Switched off, an icon stays exactly where it is dropped (its place is
+  saved as fractional cell coordinates); switched on, the desktop is tidied.
+  The setting was saved before but never consulted, so icons always snapped.
 
-* **Sorting starts in the direction the column reads.** Every column started
-  descending, so the first click on "Name" looked like nothing had happened;
-  text columns now start A-Z and numeric columns biggest-first, and a second
-  click reverses.
-* **The group headers are checkboxes.** "Приложения" and "Фоновые процессы"
-  had a bare chevron, which said nothing about whether the group was part of
-  the view; a ticked box means shown, and clicking the box or the caption
-  toggles it.
-* **Update speed is a setting**: 1 s by default, 3 s, 5 s and instant, offered
-  by a right-click on the process list. The sampler keeps sampling at its own
-  rate; the view adopts a sample when the chosen interval allows it, so a
-  slower speed does not starve the graphs.
+## 3. Start menu
 
-## 4. Services
+* **Pinned entries are editable.** They live in the session and are saved to
+  `%APPDATA%\WinRust\start-pins.json`. Right-clicking a pin gives Open, File
+  location, Unpin from Start and Properties - in that order; right-clicking any
+  app in the list offers Pin to Start.
 
-* **Right-clicking a service opens a menu**: Start, Stop, Pause, Resume,
-  Restart, Properties. Restart is stop, wait, then start, and a service that
-  refuses to stop reports that instead of leaving the machine half-restarted.
-  The menu acts on the row it was opened on, and opening it selects that row.
+## 4. Taskbar previews
+
+* **The preview stays up while you look at it.** The miniature strip is drawn
+  outside the button loop, so moving onto a card left the button's hover and
+  cleared the preview. A card now counts as still being on the group, and the
+  full-screen peek follows the card you are on.
+
+## 5. Explorer
+
+* **Rows are 26 px instead of 22**, so there is a real gap between two names to
+  press in and start a rubber-band selection. The empty strip is a rubber-band
+  surface in the details view too.
+* **The drop target lights up.** The test is geometric against the row's band,
+  not `Response::hovered()` on the name cell, so dragging over any column of a
+  folder's row highlights it - and it works on the frame the drag begins, when
+  `drag_active` has not been set yet.
 
 ## Where the new state lives
 
-The same seams the linter pointed at in 0.9.1, extended rather than duplicated:
-
-| new in 0.9.2 | owner |
+| new in 0.9.3 | owner |
 | --- | --- |
-| the frame a menu was opened on, and the `Win+I` latch | `session::Session` (`opened_at`, `note_opened`, `settings_chord_seen`) |
-| how often the view adopts a sample | `app::UpdateInterval`, with `hold()` as the only place its meaning is spelled out |
-| which folders the left pane shows | `ExplorerApp::pinned`, saved in `PersistedState` alongside the tab list |
-| the rows a rubber band can touch | `ExplorerApp::row_rects`, refilled by each view as it draws |
-| a generic key probe | `shell::window::key_down(vk)`, with `win_key_down` / `v_key_down` / `i_key_down` as thin names for it |
+| how a popup is placed above the bar | `winrust_ui::popup_rect_above`, `anchored_above` |
+| whether a Start entry is pinned | `session::Session::pins`, `%APPDATA%\WinRust\start-pins.json` |
+| where an icon sits when the grid is off | `DesktopIcon::free`, saved as `SavedPos.free` |
+| a caption that has to fit a cell | `i18n::wrap_capped` |
 
-`shell::window::key_down` replaces the two near-copies of the
-`GetAsyncKeyState` read, so a fourth chord is now a one-line wrapper rather
-than a third implementation.
+`cargo fmt --all` and `cargo clippy` are clean on every crate; the release,
+build, fmt, clippy and test jobs are green on the tagged commit.
 
-The structure drawing - before and after - is in `docs/architecture.svg`.
+---
 
-## Everything else
+> **Примечание о языке: ниже та же самая версия списка изменений на русском.**
+> Начиная с 0.9.3 заметки к каждому релизу WinRust публикуются на двух языках:
+> сначала английский, затем русский. Английская часть заканчивается
+> разделителем `---` выше.
 
-* `cargo fmt --all` and `cargo clippy` are clean on every crate; the release,
-  build, fmt, clippy and test jobs are green on the tagged commit.
-* The volume fix also removes the last `ComGuard` inside `with_device()`, so
-  the rule "one COM apartment per top-level operation" now holds everywhere in
-  `devices::audio`.
+Компоненты Windows 10/11, переписанные на Rust. Релиз 0.9.3 отвечает на третье
+ревью: восемь замечаний по 0.9.2, исправленных по причинам, а не по симптомам.
+
+## 1. Пуск, панель задач и трей
+
+* **Ползунок громкости работает в обе стороны.**
+  `IID_IAudioEndpointVolume` был `5CDF2B5A-4B4C-4E9C-A714-79CE8D5C9E3E` —
+  это вообще не интерфейс. Каждый вызов `IMMDevice::Activate` падал с
+  `E_NOINTERFACE`, поэтому и чтение, и запись возвращали `None`: трей мог
+  показать только заглушку, а ползунок при перетаскивании отскакивал обратно.
+  Настоящий IID — `5CDF2C82-841E-4546-9722-0CF74078229A`.
+* **Все всплывающие панели теперь висят на верхней кромке панели задач.**
+  `popup_rect_above` / `anchored_above` в `winrust-ui` измеряют панель и ставят
+  её *нижнюю* кромку на панель задач, а правую — по кнопке, с прижатием к
+  экрану. Поэтому флайауты трея, панель скрытых значков, меню завершения работы
+  и меню пользователя встают ровно. Все прежние версии угадывали высоту
+  каждой панели и позиционировали по левому верхнему углу — именно поэтому
+  они уезжали за нижний край экрана.
+* **Меню завершения работы и меню пользователя больше не подменю egui**:
+  подменю идёт за курсором и уходило за экран. Теперь это такие же
+  привязанные панели, как остальные флайауты.
+* **Значки панели задач выровнены по центру.** Они рисовались внутри
+  вложенного `ui.horizontal`, который создаёт Ui высотой по самому высокому
+  ребёнку и выравнивает по верху родителя — вся строка сидела низко, и
+  подсветка активного окна терялась. Теперь раскладка идёт прямо в панели
+  задач и делит её центральную линию с кнопкой «Пуск».
+
+## 2. Рабочий стол
+
+* **Длинная подпись помещается в свой значок.** `i18n::wrap_capped` ломает
+  слишком длинные слова, ограничивает число строк и ставит многоточие на
+  отброшенном, а подпись обрезается по ячейке значка. Раньше длинное имя
+  расползалось за квадрат выделения.
+* **«Персонализация» открывает Параметры Windows**
+  (`ms-settings:personalization`), а не панель управления экраном.
+* **«Создать» — это собственный список машины.** Он читает регистрации
+  оболочки `ShellNew` из обоих кустов реестра и рисует каждый пункт значком
+  той программы, которой принадлежит расширение, вместо восьми
+  захардкоженных расширений, которых на машине чаще всего нет.
+* **«Выровнять значки по сетке» — настоящий переключатель**, в «Сортировке»
+  рядом с порядком сортировки. Если выключить, значок остаётся ровно там, где
+  его отпустили (место сохраняется в дробных координатах ячейки); если
+  включить — рабочий стол приводится в порядок. Раньше настройка
+  сохранялась, но нигде не проверялась, поэтому значки всегда прилипали.
+
+## 3. Меню «Пуск»
+
+* **Закреплённые записи можно править.** Они живут в сессии и сохраняются в
+  `%APPDATA%\WinRust\start-pins.json`. Правый клик по закреплённой записи
+  даёт «Открыть», «Расположение файла», «Удалить закрепление» и «Свойства»
+  именно в этом порядке; правый клик по любому приложению в списке
+  предлагает «Закрепить в меню Пуск».
+
+## 4. Предпросмотр на панели задач
+
+* **Предпросмотр остаётся на экране, пока вы на него смотрите.** Полоса
+  миниатюр рисуется вне цикла кнопок, поэтому при переходе на карточку
+  пропадал hover кнопки и вместе с ним предпросмотр. Теперь карточка
+  считается частью группы, и полноэкранный просмотр следует за той
+  карточкой, на которой находится указатель.
+
+## 5. Проводник
+
+* **Строки по 26 px вместо 22**, поэтому между двумя именами появился
+  реальный зазор, в который можно нажать и начать выделение рамкой. Пустая
+  полоса в режиме «Таблица» тоже стала поверхностью для рамки.
+* **Папка-цель подсвечивается.** Проверка геометрическая, по полосе строки, а
+  не `Response::hovered()` на ячейке имени, поэтому подсветка срабатывает при
+  перетаскивании над любым столбцом строки папки — и уже в кадре начала
+  перетаскивания, когда `drag_active` ещё не выставлен.
+
+## Где живёт новое состояние
+
+| новое в 0.9.3 | владелец |
+| --- | --- |
+| как панель ставится над панелью задач | `winrust_ui::popup_rect_above`, `anchored_above` |
+| закреплён ли пункт меню «Пуск» | `session::Session::pins`, `%APPDATA%\WinRust\start-pins.json` |
+| где стоит значок при выключенной сетке | `DesktopIcon::free`, сохраняется как `SavedPos.free` |
+| подпись, которая обязана влезть в ячейку | `i18n::wrap_capped` |
+
+`cargo fmt --all` и `cargo clippy` чисты во всех крейтах; задачи release,
+build, fmt, clippy и test зелёные на коммите с тегом.
