@@ -1,4 +1,4 @@
-exit=101
+exit=0
 [1m[92m    Updating[0m crates.io index
 [1m[92m     Locking[0m 341 packages to highest compatible versions
 [1m[92m      Adding[0m eframe v0.29.1 [1m[93m(available: v0.37.0)[0m
@@ -7,19 +7,19 @@ exit=101
 [1m[92m      Adding[0m thiserror v1.0.69 [1m[93m(available: v2.0.21)[0m
 [1m[92m      Adding[0m windows-sys v0.59.0 [1m[93m(available: v0.61.2)[0m
 [1m[92m Downloading[0m crates ...
+[1m[92m  Downloaded[0m serde_core v1.0.229
+[1m[92m  Downloaded[0m log v0.4.35
 [1m[92m  Downloaded[0m itoa v1.0.19
+[1m[92m  Downloaded[0m memchr v2.8.3
+[1m[92m  Downloaded[0m serde_derive v1.0.229
+[1m[92m  Downloaded[0m proc-macro2 v1.0.107
+[1m[92m  Downloaded[0m thiserror-impl v1.0.69
 [1m[92m  Downloaded[0m windows-targets v0.52.6
 [1m[92m  Downloaded[0m thiserror v1.0.69
-[1m[92m  Downloaded[0m zmij v1.0.23
-[1m[92m  Downloaded[0m thiserror-impl v1.0.69
 [1m[92m  Downloaded[0m quote v1.0.47
 [1m[92m  Downloaded[0m unicode-ident v1.0.27
-[1m[92m  Downloaded[0m log v0.4.35
-[1m[92m  Downloaded[0m proc-macro2 v1.0.107
-[1m[92m  Downloaded[0m serde_core v1.0.229
-[1m[92m  Downloaded[0m serde_derive v1.0.229
+[1m[92m  Downloaded[0m zmij v1.0.23
 [1m[92m  Downloaded[0m serde v1.0.229
-[1m[92m  Downloaded[0m memchr v2.8.3
 [1m[92m  Downloaded[0m serde_json v1.0.154
 [1m[92m  Downloaded[0m syn v3.0.10
 [1m[92m  Downloaded[0m syn v2.0.119
@@ -31,26 +31,26 @@ exit=101
 [1m[92m   Compiling[0m windows_x86_64_msvc v0.52.6
 [1m[92m   Compiling[0m serde_core v1.0.229
 [1m[92m   Compiling[0m zmij v1.0.23
-[1m[92m   Compiling[0m thiserror v1.0.69
-[1m[92m   Compiling[0m serde_json v1.0.154
 [1m[92m   Compiling[0m serde v1.0.229
+[1m[92m   Compiling[0m serde_json v1.0.154
+[1m[92m   Compiling[0m thiserror v1.0.69
 [1m[92m   Compiling[0m windows-targets v0.52.6
-[1m[92m   Compiling[0m itoa v1.0.19
 [1m[92m   Compiling[0m memchr v2.8.3
-[1m[92m   Compiling[0m windows-sys v0.59.0
+[1m[92m   Compiling[0m itoa v1.0.19
 [1m[92m   Compiling[0m syn v2.0.119
 [1m[92m   Compiling[0m syn v3.0.10
+[1m[92m   Compiling[0m windows-sys v0.59.0
 [1m[92m   Compiling[0m log v0.4.35
-[1m[92m   Compiling[0m thiserror-impl v1.0.69
 [1m[92m   Compiling[0m serde_derive v1.0.229
+[1m[92m   Compiling[0m thiserror-impl v1.0.69
 [1m[92m   Compiling[0m winrust-core v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-core)
-[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 32.85s
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 32.00s
 [1m[92m     Running[0m unittests src\lib.rs (target\debug\build\winrust-core/460c8238c718aedd\out\winrust_core-460c8238c718aedd.exe)
 
 running 29 tests
-test i18n::settings::tests::defaults_are_opaque ... ok
-test i18n::settings::tests::blur_requires_transparency ... ok
 test i18n::settings::tests::alpha_follows_opacity_when_transparent ... ok
+test i18n::settings::tests::blur_requires_transparency ... ok
+test i18n::settings::tests::defaults_are_opaque ... ok
 test i18n::settings::tests::opacity_is_clamped ... ok
 test i18n::settings::tests::theme_round_trips_through_registry_values ... ok
 test i18n::shorten::tests::cyrillic_is_never_split ... ok
@@ -62,8 +62,8 @@ test i18n::tests::english_is_identity ... ok
 test i18n::tests::fill_replaces_in_order ... ok
 test i18n::tests::every_translation_has_the_same_placeholders ... ok
 test storage::disk::tests::civil_dates ... ok
-test i18n::tests::no_duplicate_source_strings ... FAILED
 test storage::disk::tests::extensions ... ok
+test i18n::tests::no_duplicate_source_strings ... ok
 test storage::disk::tests::local_time_roundtrip ... ok
 test i18n::tests::russian_translates_known_and_keeps_unknown ... ok
 test storage::disk::tests::size_formatting ... ok
@@ -78,21 +78,8 @@ test wide::tests::stops_at_nul ... ok
 test devices::audio::tests::volume_round_trips ... ok
 test storage::fileassoc::tests::slash_free_extensions_only ... ok
 
-failures:
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
 
----- i18n::tests::no_duplicate_source_strings stdout ----
-
-thread 'i18n::tests::no_duplicate_source_strings' (9784) panicked at crates\winrust-core\src\i18n\mod.rs:283:17:
-duplicate translation key: High
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-
-failures:
-    i18n::tests::no_duplicate_source_strings
-
-test result: FAILED. 28 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
-
-[1m[91merror[0m: test failed, to rerun pass `-p winrust-core --lib`
 [1m[92m   Doc-tests[0m winrust_core
 
 running 1 test
@@ -100,5 +87,3 @@ test crates\winrust-core\src\i18n\shorten.rs - i18n::shorten (line 5) ... ignore
 
 test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-[1m[91merror[0m: 1 target failed:
-    `-p winrust-core --lib`
