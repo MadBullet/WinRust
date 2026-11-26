@@ -13,100 +13,70 @@
 //! [`Session::ask_power`], [`Session::cancel_power`]).  Closing the menu also
 //! drops the pending confirmation, so the invariant holds by construction.
 
+use crate::model::{default_pins, AppEntry};
 use std::path::PathBuf;
 use std::time::Instant;
 
-/// A power action the user asked for and has not confirmed yet.
+// The two types used to live here.  They are re-exported so the paths that
+// already name `session::PowerAction` keep working, while the definition sits
+// in the bottom layer both modules can depend on.
+pub use crate::model::PowerAction;
+
+
+/// The `Win+V` clipboard panel's own state.
 ///
-/// Every one of them is confirmed - a Start menu is two clicks away from
-/// losing unsaved work, and the stock menu asks too.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PowerAction {
-    ShutDown,
-    Restart,
-    Sleep,
-    Hibernate,
-    SignOut,
+/// It was two fields on [`Session`] plus three methods, which meant a panel
+/// that has nothing to do with the Start menu could be opened and closed
+/// through it.  A separate owner keeps the panel's invariant (closed means
+/// closed) next to the panel.
+#[derive(Debug, Default)]
+pub struct ClipboardPanel {
+    open: bool,
 }
 
-impl PowerAction {
-    /// Every entry of the power list, in the order it is drawn.
-    pub const ALL: [PowerAction; 5] = [
-        PowerAction::ShutDown,
-        PowerAction::Restart,
-        PowerAction::Sleep,
-        PowerAction::Hibernate,
-        PowerAction::SignOut,
-    ];
-
-    /// The menu label, already translated.
-    pub fn label(self) -> &'static str {
-        use winrust_core::i18n::ts;
-        match self {
-            PowerAction::ShutDown => ts("Shut down"),
-            PowerAction::Restart => ts("Restart"),
-            PowerAction::Sleep => ts("Sleep"),
-            PowerAction::Hibernate => ts("Hibernate"),
-            PowerAction::SignOut => ts("Sign out"),
-        }
+impl ClipboardPanel {
+    pub fn is_open(&self) -> bool {
+        self.open
     }
 
-    /// The glyph in front of the label.
-    pub fn glyph(self) -> &'static str {
-        match self {
-            PowerAction::ShutDown => "⏻",
-            PowerAction::Restart => "⟳",
-            PowerAction::Sleep => "☾",
-            PowerAction::Hibernate => "⏾",
-            PowerAction::SignOut => "⇥",
-        }
+    pub fn hide(&mut self) {
+        self.open = false;
     }
 
-    /// The confirmation question, with the action's name in it.
-    ///
-    /// Built by concatenation rather than a `tf!` template: `tf!` takes a
-    /// literal key, and the action's name is already translated by
-    /// [`Self::label`], so a template would translate it twice.
-    pub fn question(self) -> String {
-        use winrust_core::i18n::ts;
-        format!("{} {}", self.label(), ts("now?"))
-    }
-
-    /// Carry it out.  Called only after the user confirms.
-    pub fn run(self) {
-        use winrust_core::shell;
-        match self {
-            PowerAction::ShutDown => shell::shutdown(),
-            PowerAction::Restart => shell::restart(),
-            PowerAction::Sleep => shell::sleep(),
-            // `hibernate()` reports whether the machine accepted it; the
-            // power menu has already refused the action where hibernation is
-            // disabled, so there is nothing useful to do with the answer here.
-            PowerAction::Hibernate => {
-                let _ = shell::hibernate();
-            }
-            PowerAction::SignOut => shell::sign_out(),
-        }
+    pub fn toggle(&mut self) {
+        self.open = !self.open;
     }
 }
 
-/// One installed application as the Start menu lists it.
-#[derive(Debug, Clone)]
-pub struct AppEntry {
-    pub name: String,
-    pub path: PathBuf,
+/// An edge detector for a two-key chord, on the frame the chord goes down.
+///
+/// `Win+V` and `Win+I` each need one, and each needs its own "already seen"
+/// latch: pressing one while the other is open must not be swallowed.  The
+/// type is the latch, so a caller cannot forget to reset it.
+#[derive(Debug, Default)]
+pub struct Chord {
+    seen: bool,
+}
+
+impl Chord {
+    /// `true` on the frame `a && b` first holds, `false` until they separate.
+    pub fn pressed(&mut self, a: bool, b: bool) -> bool {
+        let down = a && b;
+        if !down {
+            self.seen = false;
+            return false;
+        }
+        if self.seen {
+            return false;
+        }
+        self.seen = true;
+        true
+    }
 }
 
 /// The Start menu: open/closed, the search box, the app list, the animation.
 #[derive(Debug, Default)]
 pub struct Session {
-    /// The `Win+V` clipboard panel: open?
-    clipboard_open: bool,
-    /// True while `Win` is held and `V` was already seen, so one press opens
-    /// the panel once instead of once per frame.
-    clipboard_chord_seen: bool,
-    /// The same latch for `Win+I`.
-    settings_chord_seen: bool,
     open: bool,
     /// The search box's contents; cleared on every close.
     search: String,
@@ -120,12 +90,13 @@ pub struct Session {
     apps_at: Option<Instant>,
     /// The power action waiting for its "yes".
     pending: Option<PowerAction>,
-    /// The Start menu's nested menus.  They are drawn as areas pinned above the
-    /// taskbar rather than as egui submenus, because a submenu is positioned by
-    /// the cursor and ran off the bottom of the screen.
-    pub power_menu_open: bool,
-    /// The account list in the Start menu's footer, same rule.
-    pub user_menu_open: bool,
+    /// The Start menu's two nested lists.  They are drawn as areas pinned above
+    /// the taskbar rather than as egui submenus, because a submenu is
+    /// positioned by the cursor and ran off the bottom of the screen.  Both
+    /// were `pub` fields, which let any module open a list the session did not
+    /// know about; the verbs below are the only way in now.
+    power_menu_open: bool,
+    user_menu_open: bool,
     /// The frame the menu was opened on.
     ///
     /// The Start button toggles the menu inside the taskbar pass, but the
@@ -192,38 +163,6 @@ impl Session {
         self.pending = None;
     }
 
-    // ---- the clipboard panel (Win+V) -------------------------------------
-    pub fn clipboard_open(&self) -> bool {
-        self.clipboard_open
-    }
-    pub fn hide_clipboard(&mut self) {
-        self.clipboard_open = false;
-    }
-    pub fn toggle_clipboard(&mut self) {
-        self.clipboard_open = !self.clipboard_open;
-    }
-
-    /// The `Win+V` edge detector.
-    ///
-    /// Returns `true` on the frame the chord goes down, and `false` for every
-    /// frame after it until `Win` or `V` is released - so holding the keys
-    /// cannot flicker the panel.  The shell calls this once per frame; the
-    /// poll runs even when another program has the focus, which is the whole
-    /// point (WinRust replaces `explorer.exe`, and the stock history lives
-    /// there).
-    pub fn win_v_pressed(&mut self, win: bool, v: bool) -> bool {
-        let chord = win && v;
-        if !chord {
-            self.clipboard_chord_seen = false;
-            return false;
-        }
-        if self.clipboard_chord_seen {
-            return false;
-        }
-        self.clipboard_chord_seen = true;
-        true
-    }
-
     pub fn apps(&self) -> &[AppEntry] {
         &self.apps
     }
@@ -240,7 +179,7 @@ impl Session {
     /// through localisation on every load, and two programs can share one.
     pub fn pins(&self) -> Vec<AppEntry> {
         if self.pins.is_empty() {
-            return crate::start::default_pins();
+            return default_pins();
         }
         self.pins
             .iter()
@@ -259,7 +198,7 @@ impl Session {
         // Materialise the defaults first: pinning into an "empty" set must not
         // silently replace the whole default list with that one pin.
         if self.pins.is_empty() {
-            self.pins = crate::start::default_pins()
+            self.pins = default_pins()
                 .into_iter()
                 .map(|a| a.path)
                 .collect();
@@ -270,9 +209,25 @@ impl Session {
         }
     }
 
+    /// Move a pin from one position to another, which is what a drag in the
+    /// pinned grid does.  The order is the user's, so it is saved.
+    pub fn move_pin(&mut self, from: usize, to: usize) {
+        if self.pins.is_empty() {
+            self.pins = default_pins()
+                .into_iter()
+                .map(|a| a.path)
+                .collect();
+        }
+        if from < self.pins.len() && to < self.pins.len() && from != to {
+            let moved = self.pins.remove(from);
+            self.pins.insert(to, moved);
+            self.save_pins();
+        }
+    }
+
     pub fn unpin(&mut self, path: &std::path::Path) {
         if self.pins.is_empty() {
-            self.pins = crate::start::default_pins()
+            self.pins = default_pins()
                 .into_iter()
                 .map(|a| a.path)
                 .collect();
@@ -307,22 +262,39 @@ impl Session {
         }
     }
 
-    /// The `Win+I` edge detector: `true` on the frame the chord goes down.
-    ///
-    /// Separate from [`Self::win_v_pressed`] because the two chords have
-    /// independent "already seen" state - pressing `Win+I` while the
-    /// clipboard panel is open must not be swallowed by the `V` detector.
-    pub fn win_i_pressed(&mut self, win: bool, i: bool) -> bool {
-        let chord = win && i;
-        if !chord {
-            self.settings_chord_seen = false;
-            return false;
+    // ---- the two nested lists -------------------------------------------
+
+    pub fn power_menu_open(&self) -> bool {
+        self.power_menu_open
+    }
+
+    /// Flip the power list; opening it closes the account list, so the two can
+    /// never be open over each other - the invariant a `pub` field allowed
+    /// callers to break.
+    pub fn toggle_power_menu(&mut self) {
+        self.power_menu_open = !self.power_menu_open;
+        if self.power_menu_open {
+            self.user_menu_open = false;
         }
-        if self.settings_chord_seen {
-            return false;
+    }
+
+    pub fn close_power_menu(&mut self) {
+        self.power_menu_open = false;
+    }
+
+    pub fn user_menu_open(&self) -> bool {
+        self.user_menu_open
+    }
+
+    pub fn toggle_user_menu(&mut self) {
+        self.user_menu_open = !self.user_menu_open;
+        if self.user_menu_open {
+            self.power_menu_open = false;
         }
-        self.settings_chord_seen = true;
-        true
+    }
+
+    pub fn close_user_menu(&mut self) {
+        self.user_menu_open = false;
     }
 
     /// True when the list is old enough to be worth rescanning.

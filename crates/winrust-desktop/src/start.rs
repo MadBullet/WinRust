@@ -29,7 +29,7 @@ use std::path::PathBuf;
 use winrust_core::i18n::ts;
 use winrust_core::{t, tf};
 
-use crate::session::{AppEntry, PowerAction};
+use crate::model::{AppEntry, PowerAction};
 use crate::DesktopApp;
 
 /// Installed applications: Start Menu shortcuts (`*.lnk`) from both the user
@@ -100,38 +100,6 @@ fn walk(dir: &std::path::Path, out: &mut Vec<AppEntry>, depth: usize) {
     }
 }
 
-/// The applications the pinned grid shows.
-///
-/// Windows pins what its vendors install; a bare install has no pin database
-/// we can read without COM, so the shell pins its own programs plus the
-/// handful of things Windows always ships.  The point of the grid is to be
-/// clickable without reading, so only paths that exist are kept.
-pub(crate) fn default_pins() -> Vec<AppEntry> {
-    let mut pins: Vec<AppEntry> = Vec::new();
-    for (name, exe) in [
-        ("WinRust Explorer", "winrust-explorer.exe"),
-        ("WinRust Task Manager", "winrust-taskmgr.exe"),
-        ("WinRust Services", "winrust-services.exe"),
-        ("WinRust System Control", "winrust-sysctl.exe"),
-        ("WinRust Launcher", "WinRust.exe"),
-        ("Notepad", "notepad.exe"),
-        ("Paint", "mspaint.exe"),
-        ("Calculator", "calc.exe"),
-        ("Command Prompt", "cmd.exe"),
-        ("Control Panel", "control.exe"),
-        ("Task Manager", "taskmgr.exe"),
-        ("File Explorer", "explorer.exe"),
-    ] {
-        if let Some(path) = winrust_core::install::find_binary(exe) {
-            pins.push(AppEntry {
-                name: t(name),
-                path,
-            });
-        }
-    }
-    pins
-}
-
 /// The icon bytes for a Start-menu entry: an `.exe` has its own icon, every
 /// other shortcut goes through the shell, which resolves `.lnk` targets.
 fn shortcut_icon(path: &std::path::Path) -> Option<Vec<u8>> {
@@ -154,19 +122,25 @@ struct MenuOutput {
     open_settings: bool,
     switch_user: bool,
     switched_window: bool,
-    /// The power list's own open state, written back to the session.
-    power_menu_open: bool,
     /// Where the power button was drawn, so the list can hang above the bar.
     power_menu_button: Option<egui::Rect>,
-    /// The account list's own open state.
-    user_menu_open: bool,
     /// The pin whose menu asked to open its folder / properties, or to be
     /// removed.  Applied after the menu closes, when `&mut self` is free.
     reveal: Option<PathBuf>,
     props: Option<PathBuf>,
     unpin: Option<PathBuf>,
+    /// The two nested lists: whether the frame opened or closed one.
+    toggle_power_menu: bool,
+    toggle_user_menu: bool,
+    /// Set when an entry of either list was picked, so the list closes.
+    close_power_menu: bool,
+    close_user_menu: bool,
     /// An app-list entry asking to be pinned.
     pin: Option<PathBuf>,
+    /// Pin reordering, completed: the tile that was dragged and the slot it
+    /// was dropped on.  The in-flight state lives in egui's memory, because a
+    /// drag spans frames and `MenuOutput` is rebuilt from scratch each one.
+    pin_move: Option<(usize, usize)>,
 }
 
 impl MenuOutput {
@@ -201,8 +175,6 @@ impl MenuOutput {
         if self.switched_window {
             app.session.close();
         }
-        app.session.power_menu_open = self.power_menu_open;
-        app.session.user_menu_open = self.user_menu_open;
         if let Some(path) = self.reveal {
             if let Some(dir) = path.parent() {
                 let _ = winrust_core::shell::open(dir);
@@ -216,6 +188,24 @@ impl MenuOutput {
         }
         if let Some(path) = self.pin {
             app.session.pin(&path);
+        }
+        if self.toggle_power_menu {
+            app.session.toggle_power_menu();
+        }
+        if self.toggle_user_menu {
+            app.session.toggle_user_menu();
+        }
+        if self.close_power_menu {
+            app.session.close_power_menu();
+        }
+        if self.close_user_menu {
+            app.session.close_user_menu();
+        }
+        // A completed pin drag: move the dragged entry to where it was dropped.
+        if let Some((from, to)) = self.pin_move {
+            if from != to {
+                app.session.move_pin(from, to);
+            }
         }
     }
 }
@@ -237,9 +227,11 @@ impl DesktopApp {
         let max_height =
             (screen.bottom() - crate::taskbar::HEIGHT - 16.0 - screen.top()).max(280.0);
         let height = 560.0_f32.min(max_height);
+        // Pinned to the left edge, above the Start button, the way the Windows
+        // 10 menu is - it used to be centred on the screen.
         let rect = egui::Rect::from_min_size(
             egui::pos2(
-                (screen.center().x - width / 2.0).max(screen.left() + 8.0),
+                screen.left() + 8.0,
                 screen.bottom() - crate::taskbar::HEIGHT - 8.0 - height,
             ),
             egui::vec2(width, height),
@@ -272,14 +264,16 @@ impl DesktopApp {
         let pal = winrust_ui::theme::pal(&self.appearance);
         let open_windows = self.open_windows.clone();
         let user = winrust_core::system::user_display_name();
+        // The two nested lists live in the session across frames; the menu's
+        // output only carries the click that changes them.
+        let app_session_power_open = self.session.power_menu_open();
+        let app_session_user_open = self.session.user_menu_open();
         // Rise 10 px and fade in, like the tray flyouts.
         let slide = (1.0 - anim) * 10.0;
         let alpha = (anim * 250.0) as u8;
         let mut output = MenuOutput {
             // The power list's state lives in the session across frames; the
             // struct is rebuilt every frame.
-            power_menu_open: self.session.power_menu_open,
-            user_menu_open: self.session.user_menu_open,
             ..MenuOutput::default()
         };
         // The search text is a local copy for the frame.  `TextEdit` needs
@@ -526,11 +520,52 @@ fn pinned_grid(
                 let end = (start + per_row).min(pins.len());
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing.x = gap;
-                    for (app, icon) in &pins[start..end] {
+                    for (pos, (app, icon)) in pins[start..end].iter().enumerate() {
+                        let global_index = start + pos;
                         let (rect, resp) = ui.allocate_exact_size(
                             egui::vec2(tile, tile + 18.0),
-                            egui::Sense::click(),
+                            egui::Sense::click_and_drag(),
                         );
+                        // Pins can be reordered by dragging one tile onto
+                        // another: the grid is the user's, and the order they
+                        // choose is the order that is saved.  `drag_started`
+                        // is true for a single frame and `primary_released`
+                        // arrives on a later one, so the tile being dragged
+                        // has to be remembered in egui's own memory for the
+                        // duration of the gesture.
+                        let drag_id = egui::Id::new("start_pin_drag");
+                        if resp.drag_started() {
+                            ui.ctx()
+                                .data_mut(|d| d.insert_temp(drag_id, global_index));
+                        }
+                        let dragging_from: Option<usize> =
+                            ui.ctx().data(|d| d.get_temp(drag_id));
+                        if resp.hovered() && dragging_from.is_some() {
+                            // Outline the tile the pointer is over - that is
+                            // where the dragged pin will land.
+                            if dragging_from != Some(global_index) {
+                                ui.painter().rect_stroke(
+                                    resp.rect.shrink(1.0),
+                                    8.0,
+                                    egui::Stroke::new(2.0_f32, Color32::from_rgb(0x60, 0xa8, 0xff)),
+                                );
+                            }
+                            if ui.ctx().input(|i| i.pointer.primary_released()) {
+                                if let Some(from) = dragging_from {
+                                    out.pin_move = Some((from, global_index));
+                                }
+                            }
+                        }
+                        if resp.dragged() {
+                            ui.painter().rect_stroke(
+                                resp.rect.shrink(2.0),
+                                8.0,
+                                egui::Stroke::new(
+                                    1.5_f32,
+                                    Color32::from_rgb(0x60, 0xa8, 0xff),
+                                ),
+                            );
+                        }
                         let square = egui::Rect::from_min_size(rect.min, egui::vec2(tile, tile));
                         let fill = if resp.hovered() {
                             Color32::from_rgba_unmultiplied(
@@ -611,6 +646,13 @@ fn pinned_grid(
                 start = end;
             }
         });
+    // The gesture is over: drop the remembered tile *after* every tile had a
+    // chance to read it, otherwise the first tile in the list would clear the
+    // state before the tile under the pointer could commit the drop.
+    if ui.ctx().input(|i| i.pointer.primary_released()) {
+        ui.ctx()
+            .data_mut(|d| d.remove_temp::<usize>(egui::Id::new("start_pin_drag")));
+    }
 }
 
 /// The bottom row: the account, Settings, the running-window list and power.
@@ -626,9 +668,9 @@ fn footer(
         // and hung off the bottom of the screen.
         let user_resp = ui.button(RichText::new(format!("👤 {user}")).size(13.0));
         if user_resp.clicked() {
-            out.user_menu_open = !out.user_menu_open;
+            out.toggle_user_menu = true;
         }
-        if out.user_menu_open {
+        if app_session_user_open {
             let screen = ui.ctx().screen_rect();
             winrust_ui::anchored_above(
                 ui.ctx(),
@@ -643,15 +685,14 @@ fn footer(
                             "rundll32.exe",
                             "shell32.dll,Control_RunDLL userpasswords",
                         );
-                        out.user_menu_open = false;
                     }
                     if ui.button(t("Switch user")).clicked() {
                         out.switch_user = true;
-                        out.user_menu_open = false;
+                        out.close_user_menu = true;
                     }
                     if ui.button(t("Lock")).clicked() {
                         winrust_core::shell::lock_workstation();
-                        out.user_menu_open = false;
+                        out.close_user_menu = true;
                     }
                 },
             );
@@ -665,10 +706,10 @@ fn footer(
             // for confirmation.
             let power_resp = ui.button(format!("⏻ {}", t("Power")));
             if power_resp.clicked() {
-                out.power_menu_open = !out.power_menu_open;
+                out.toggle_power_menu = true;
             }
             out.power_menu_button = Some(power_resp.rect);
-            if out.power_menu_open {
+            if app_session_power_open {
                 // The list is its own area pinned above the *screen's* bar, not
                 // an egui submenu: a submenu is positioned by the cursor and
                 // ran off the bottom of the screen - "меню завершения работы
@@ -699,7 +740,7 @@ fn footer(
                                 .clicked()
                             {
                                 out.ask_power = Some(action);
-                                out.power_menu_open = false;
+                                out.close_power_menu = true;
                             }
                         }
                     },

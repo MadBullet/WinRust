@@ -17,6 +17,7 @@
 //! everything else (`always_on_bottom`), which is exactly how a shell behaves.
 
 mod desktop;
+mod model;
 mod session;
 mod start;
 mod taskbar;
@@ -43,9 +44,13 @@ pub struct DesktopApp {
     /// Desktop entries, refreshed on a timer and after any file operation.
     pub(crate) icons: Vec<desktop::DesktopIcon>,
     pub(crate) icons_at: Instant,
-    pub(crate) selected: Option<usize>,
     /// The Start menu's own state (open, search text, app list, animation).
     pub(crate) session: session::Session,
+    /// `Win+V`'s panel, which is not part of the Start menu.
+    pub(crate) clipboard_panel: session::ClipboardPanel,
+    /// Edge detectors for the two chords the shell owns.
+    pub(crate) win_i_chord: session::Chord,
+    pub(crate) win_v_chord: session::Chord,
     /// Frames drawn by this shell; the Start menu stamps itself with it so an
     /// opening click cannot also count as a click outside.
     pub(crate) frame_no: u64,
@@ -129,7 +134,6 @@ impl DesktopApp {
             now: Instant::now(),
             icons: Vec::new(),
             icons_at: Instant::now() - Duration::from_secs(30),
-            selected: None,
             session: {
                 // Read the user's pin set before the first frame, so the Start
                 // menu opens with it instead of the defaults for one frame.
@@ -137,6 +141,9 @@ impl DesktopApp {
                 session.load_pins();
                 session
             },
+            clipboard_panel: session::ClipboardPanel::default(),
+            win_i_chord: session::Chord::default(),
+            win_v_chord: session::Chord::default(),
             frame_no: 0,
             peek_hwnd: None,
             peek_tex: None,
@@ -249,7 +256,6 @@ impl DesktopApp {
                 if let Some(idx) = self.icons.iter().position(|i| i.path == target) {
                     self.selection.clear();
                     self.selection.insert(idx);
-                    self.selected = Some(idx);
                 }
             }
             Err(e) => self.status = tf!("Cannot create the folder: {}", e),
@@ -268,7 +274,6 @@ impl DesktopApp {
                 if let Some(idx) = self.icons.iter().position(|i| i.path == target) {
                     self.selection.clear();
                     self.selection.insert(idx);
-                    self.selected = Some(idx);
                 }
             }
             Err(e) => self.status = tf!("Cannot create the folder: {}", e),
@@ -392,7 +397,6 @@ impl DesktopApp {
         let (del, shift) = ctx.input(|i| (i.key_pressed(egui::Key::Delete), i.modifiers.shift));
         if ctx.input(|i| i.key_pressed(egui::Key::A) && i.modifiers.ctrl) {
             self.selection = (0..self.icons.len()).collect();
-            self.selected = self.selection.iter().next().copied();
         }
         if !del || self.selection.is_empty() {
             return;
@@ -464,7 +468,6 @@ impl DesktopApp {
                 let report = winrust_core::files::delete(&paths, permanent);
                 self.delete_confirm.clear();
                 self.selection.clear();
-                self.selected = None;
                 self.reload_icons();
                 self.status = if report.ok() {
                     if permanent {
@@ -525,7 +528,7 @@ impl DesktopApp {
     /// taskbar - and closes on a click outside or `Esc`.  The list itself is
     /// [`winrust_core::shell::ClipboardHistory`]; this function only draws it.
     pub(crate) fn clipboard_panel(&mut self, ctx: &egui::Context) {
-        if !self.session.clipboard_open() {
+        if !self.clipboard_panel.is_open() {
             return;
         }
         let screen = ctx.screen_rect();
@@ -612,7 +615,7 @@ impl DesktopApp {
 
         if let Some(i) = picked {
             if self.clipboard_history.pick(i) {
-                self.session.hide_clipboard();
+                self.clipboard_panel.hide();
                 self.status = ts("Copied back to the clipboard").to_string();
             }
         }
@@ -626,7 +629,7 @@ impl DesktopApp {
                 .map(|p| !response.rect.contains(p))
                 .unwrap_or(false);
         if escape || outside {
-            self.session.hide_clipboard();
+            self.clipboard_panel.hide();
         }
     }
 }
@@ -733,13 +736,13 @@ impl eframe::App for DesktopApp {
         // `Win+I`: the Windows settings app, as on a stock system.  The
         // session does the edge detection so holding the keys opens it once.
         let i_down = winrust_core::window::i_key_down();
-        if self.session.win_i_pressed(win_down, i_down) {
+        if self.win_i_chord.pressed(win_down, i_down) {
             let _ = winrust_core::shell::open_shell_path("ms-settings:");
         }
         let v_down = winrust_core::window::v_key_down();
-        if self.session.win_v_pressed(win_down, v_down) {
+        if self.win_v_chord.pressed(win_down, v_down) {
             winrust_core::window::focus_window(self.hwnd);
-            self.session.toggle_clipboard();
+            self.clipboard_panel.toggle();
             self.tray.close();
         }
         self.win_key_was_down = win_down;
@@ -768,7 +771,7 @@ impl eframe::App for DesktopApp {
         // clock only needs seconds).
         let hot = self.session.is_open()
             || self.session.pending_power().is_some()
-            || self.session.clipboard_open()
+            || self.clipboard_panel.is_open()
             || self.tray.flyout().is_open()
             || !self.hover.is_empty()
             || !self.delete_confirm.is_empty();

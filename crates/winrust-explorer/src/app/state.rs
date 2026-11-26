@@ -17,8 +17,13 @@ use winrust_core::shell::KnownFolder;
 pub struct ExplorerApp {
     pub(super) tabs: Vec<Tab>,
     pub(super) active: usize,
-    pub(super) rx: Receiver<Listing>,
-    pub(super) tx: Sender<Listing>,
+    /// Every background channel the window owns, behind verbs.  These used to
+    /// be eight public fields (`rx`, `tx`, `job_rx`, `job_tx`, `search_rx`,
+    /// `search_tx`, `folder_size_rx`, `folder_size_tx`) that only
+    /// `pump_workers` and the two `spawn` sites ever touched - a textbook
+    /// field leak: the wiring was visible to the whole module and nothing
+    /// stopped a third site from reading a half-applied queue.
+    pub(super) workers: Workers,
     pub(super) next_request: u64,
     pub(super) folders: HashMap<String, FolderPrefs>,
     pub(super) status: String,
@@ -29,8 +34,6 @@ pub struct ExplorerApp {
     /// Folder sizes for the status bar, filled by a background worker.
     pub(super) folder_size: Option<(PathBuf, u64, u64)>,
     pub(super) folder_size_pending: Option<PathBuf>,
-    pub(super) folder_size_rx: Receiver<(PathBuf, u64, u64)>,
-    pub(super) folder_size_tx: Sender<(PathBuf, u64, u64)>,
     pub(super) nav_selected: Option<KnownFolder>,
     /// Folders pinned to the left pane's favourites list.  Explorer has no
     /// "quick access" of its own here, so this *is* that list: the user drags a
@@ -51,18 +54,16 @@ pub struct ExplorerApp {
     /// Folder hovered during a drag (drop target highlight).
     pub(super) drop_target: Option<PathBuf>,
     pub(super) job: Option<FileJob>,
-    pub(super) job_rx: Receiver<JobUpdate>,
-    pub(super) job_tx: Sender<JobUpdate>,
     pub(super) preview_open: bool,
     pub(super) sidebar_width: f32,
     /// Address-bar search results (whole-subtree name match).
     pub(super) search_path: PathBuf,
     pub(super) search_results: Option<Vec<DirEntry>>,
-    pub(super) search_rx: Receiver<(PathBuf, Vec<DirEntry>)>,
-    pub(super) search_tx: Sender<(PathBuf, Vec<DirEntry>)>,
     pub(super) last_search: std::time::Instant,
     /// Ghost card that follows the cursor while dragging, by animation.
     pub(super) drag_ghost: Option<DragGhost>,
+    /// Drag image style, see [`PersistedState::minimal_drag_image`].
+    pub(super) minimal_drag_image: bool,
     /// Where a rubber-band selection started, in screen coordinates.  Set on a
     /// press over empty space in the file area, cleared on release.
     pub(super) band_start: Option<egui::Pos2>,
@@ -87,6 +88,83 @@ pub struct ExplorerApp {
 
 /// The floating label shown under the cursor during a drag & drop.
 #[derive(Debug, Clone)]
+/// The window's background workers, behind one narrow interface.
+///
+/// A directory read, a folder-size tally and a recursive search each run on
+/// their own thread and report back over a channel; a file job streams its
+/// progress the same way.  Nothing outside this type needs to know that, so
+/// nothing outside this type can see a `Receiver`: the four queues are
+/// private, and the shell drains them with the `take_*` verbs.
+pub(super) struct Workers {
+    listing_tx: Sender<Listing>,
+    listing_rx: Receiver<Listing>,
+    job_tx: Sender<JobUpdate>,
+    job_rx: Receiver<JobUpdate>,
+    folder_size_tx: Sender<(PathBuf, u64, u64)>,
+    folder_size_rx: Receiver<(PathBuf, u64, u64)>,
+    search_tx: Sender<(PathBuf, Vec<DirEntry>)>,
+    search_rx: Receiver<(PathBuf, Vec<DirEntry>)>,
+}
+
+impl Workers {
+    fn new() -> Self {
+        let (listing_tx, listing_rx) = channel();
+        let (job_tx, job_rx) = channel();
+        let (folder_size_tx, folder_size_rx) = channel();
+        let (search_tx, search_rx) = channel();
+        Self {
+            listing_tx,
+            listing_rx,
+            job_tx,
+            job_rx,
+            folder_size_tx,
+            folder_size_rx,
+            search_tx,
+            search_rx,
+        }
+    }
+
+    // --- Senders handed to a worker thread -------------------------------
+
+    pub(super) fn listing_sender(&self) -> Sender<Listing> {
+        self.listing_tx.clone()
+    }
+
+    pub(super) fn folder_size_sender(&self) -> Sender<(PathBuf, u64, u64)> {
+        self.folder_size_tx.clone()
+    }
+
+    pub(super) fn job_sender(&self) -> Sender<JobUpdate> {
+        self.job_tx.clone()
+    }
+
+    pub(super) fn search_sender(&self) -> Sender<(PathBuf, Vec<DirEntry>)> {
+        self.search_tx.clone()
+    }
+
+    // --- Receivers, drained by the shell ---------------------------------
+
+    /// Listings that finished since the last frame.
+    pub(super) fn take_listings(&self) -> Vec<Listing> {
+        self.listing_rx.try_iter().collect()
+    }
+
+    /// Folder-size tallies that finished since the last frame.
+    pub(super) fn take_folder_sizes(&self) -> Vec<(PathBuf, u64, u64)> {
+        self.folder_size_rx.try_iter().collect()
+    }
+
+    /// File-job progress that arrived since the last frame.
+    pub(super) fn take_job_updates(&self) -> Vec<JobUpdate> {
+        self.job_rx.try_iter().collect()
+    }
+
+    /// Search results that arrived since the last frame.
+    pub(super) fn take_search_results(&self) -> Vec<(PathBuf, Vec<DirEntry>)> {
+        self.search_rx.try_iter().collect()
+    }
+}
+
 pub(super) struct DragGhost {
     pub(super) label: String,
     /// Short display name (mid-truncated, extension preserved) shown on the card.
@@ -142,15 +220,12 @@ impl ExplorerApp {
         };
         let active = persisted.active_tab.min(tabs.len().saturating_sub(1));
         let pinned = persisted.pinned.clone();
-        let (tx, rx) = channel();
-        let (job_tx, job_rx) = channel();
-        let (folder_size_tx, folder_size_rx) = channel();
-        let (search_tx, search_rx) = channel();
+        // Four channel pairs, one owner: `Workers`.
+        let workers = Workers::new();
         let mut app = Self {
             tabs,
             active,
-            rx,
-            tx,
+            workers,
             next_request: 1,
             folders: persisted.folders,
             status: String::new(),
@@ -158,8 +233,6 @@ impl ExplorerApp {
             type_names: HashMap::new(),
             folder_size: None,
             folder_size_pending: None,
-            folder_size_rx,
-            folder_size_tx,
             nav_selected: Some(KnownFolder::Computer),
             pinned,
             drives: disk::volumes(),
@@ -174,8 +247,6 @@ impl ExplorerApp {
             drag_active: false,
             drop_target: None,
             job: None,
-            job_rx,
-            job_tx,
             preview_open: persisted.preview_open,
             sidebar_width: if persisted.sidebar_width > 0.0 {
                 persisted.sidebar_width
@@ -184,10 +255,9 @@ impl ExplorerApp {
             },
             search_path: PathBuf::new(),
             search_results: None,
-            search_rx,
-            search_tx,
             last_search: std::time::Instant::now(),
             drag_ghost: None,
+            minimal_drag_image: persisted.minimal_drag_image,
             band_start: None,
             row_rects: Vec::new(),
             appearance,
@@ -237,7 +307,7 @@ impl ExplorerApp {
         self.tabs[tab_index].loading = true;
         self.tabs[tab_index].error = None;
 
-        let tx = self.tx.clone();
+        let tx = self.workers.listing_sender();
         let read_path = path.clone();
         std::thread::spawn(move || {
             let result = disk::read_dir(&read_path, show_hidden).map_err(|e| e.to_string());
@@ -258,7 +328,7 @@ impl ExplorerApp {
             return;
         }
         self.folder_size_pending = Some(path.clone());
-        let tx = self.folder_size_tx.clone();
+        let tx = self.workers.folder_size_sender();
         std::thread::spawn(move || {
             let mut budget = 20_000u32;
             let (bytes, count) = disk::folder_stats(&path, &mut budget, show_hidden);

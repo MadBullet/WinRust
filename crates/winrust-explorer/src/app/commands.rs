@@ -246,7 +246,7 @@ impl ExplorerApp {
             finished: false,
             refresh_tab: tab,
         });
-        let tx = self.job_tx.clone();
+        let tx = self.workers.job_sender();
         std::thread::spawn(move || {
             let mut done = 0usize;
             let mut errors = Vec::new();
@@ -280,7 +280,7 @@ impl ExplorerApp {
 
     pub(super) fn pump_workers(&mut self, ctx: &egui::Context) {
         // Directory listings
-        while let Ok(listing) = self.rx.try_recv() {
+        for listing in self.workers.take_listings() {
             if let Some(tab) = self.tabs.get_mut(listing.tab_index) {
                 if tab.request_id == listing.request_id {
                     tab.loading = false;
@@ -317,7 +317,7 @@ impl ExplorerApp {
         }
 
         // Folder aggregate sizes
-        while let Ok((path, bytes, count)) = self.folder_size_rx.try_recv() {
+        for (path, bytes, count) in self.workers.take_folder_sizes() {
             if self.folder_size_pending.as_ref() == Some(&path) {
                 self.folder_size = Some((path.clone(), bytes, count));
                 self.folder_size_pending = None;
@@ -325,7 +325,7 @@ impl ExplorerApp {
         }
 
         // File jobs
-        while let Ok(update) = self.job_rx.try_recv() {
+        for update in self.workers.take_job_updates() {
             if let Some(job) = &mut self.job {
                 job.done = update.done;
                 job.errors = update.errors;
@@ -363,7 +363,7 @@ impl ExplorerApp {
         }
 
         // Search results
-        while let Ok((path, results)) = self.search_rx.try_recv() {
+        for (path, results) in self.workers.take_search_results() {
             if self.search_path == path {
                 self.search_results = Some(results);
             }
@@ -384,7 +384,7 @@ impl ExplorerApp {
         self.last_search = std::time::Instant::now();
         let root = self.current().path.clone();
         self.search_path = root.clone();
-        let tx = self.search_tx.clone();
+        let tx = self.workers.search_sender();
         let show_hidden = self.current().show_hidden;
         std::thread::spawn(move || {
             let mut out = Vec::new();

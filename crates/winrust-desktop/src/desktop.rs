@@ -600,11 +600,30 @@ impl DesktopApp {
             // showed a ragged paragraph under one icon ("текст ярлыка не
             // скрывается").  The caption is also clipped to the cell, which
             // catches the case where even two wrapped lines are too wide.
-            let caption = winrust_core::i18n::wrap_capped(&icon.name, 13, 2);
-            let clip = painter.with_clip_rect(egui::Rect::from_min_max(
-                egui::pos2(rect.left() - 2.0, rect.bottom() - 26.0),
-                egui::pos2(rect.right() + 2.0, rect.bottom() + 2.0),
-            ));
+            // A selected icon shows its whole name - a short caption is fine
+            // when it is one of many, but once the user has picked this one
+            // they need to read what they selected.  Clicking empty space
+            // clears the selection and the short form comes back.
+            let caption = if selected {
+                icon.name.clone()
+            } else {
+                winrust_core::i18n::wrap_capped(&icon.name, 13, 2)
+            };
+            // Selected: allow the caption to use the full cell width and a
+            // couple of extra lines; unselected: exactly the cell, so a long
+            // name cannot spill into its neighbours.
+            let clip_rect = if selected {
+                egui::Rect::from_min_max(
+                    egui::pos2(rect.left() - 8.0, rect.bottom() - 26.0),
+                    egui::pos2(rect.right() + 8.0, rect.bottom() + 34.0),
+                )
+            } else {
+                egui::Rect::from_min_max(
+                    egui::pos2(rect.left() - 2.0, rect.bottom() - 26.0),
+                    egui::pos2(rect.right() + 2.0, rect.bottom() + 2.0),
+                )
+            };
+            let clip = painter.with_clip_rect(clip_rect);
             clip.text(
                 egui::pos2(rect.center().x, rect.bottom() - 24.0),
                 egui::Align2::CENTER_TOP,
@@ -622,7 +641,6 @@ impl DesktopApp {
             }
             if resp.drag_started() {
                 self.mode = crate::ShellMode::DraggingIcon(idx);
-                self.selected = Some(idx);
             }
             if let crate::ShellMode::DraggingIcon(drag_idx) = self.mode {
                 if drag_idx == idx {
@@ -828,12 +846,8 @@ impl DesktopApp {
                                 self.selection.insert(idx);
                             }
                         }
-                        // Keep the legacy single-selection field in step so
-                        // rename/properties act on the band's first icon.
-                        self.selected = self.selection.iter().next().copied();
                     } else if bg.clicked() && !mods.ctrl {
                         self.selection.clear();
-                        self.selected = None;
                     }
                 }
             }
@@ -841,7 +855,6 @@ impl DesktopApp {
         if bg.clicked() && self.band_start.is_none() {
             if !mods.ctrl && !mods.command {
                 self.selection.clear();
-                self.selected = None;
             }
             self.close_start();
         }
@@ -854,9 +867,6 @@ impl DesktopApp {
                 self.selection.clear();
                 self.selection.insert(idx);
             }
-            // Keep the old single-selection field in step for the code that
-            // still reads it (drag, rename, properties).
-            self.selected = self.selection.iter().next().copied();
         }
         // Dropping a file from Explorer onto the wallpaper: paste if we have
         // something on the clipboard, which is how Explorer behaves.
