@@ -426,12 +426,7 @@ pub(super) fn is_app_row(r: &Row) -> bool {
 /// a whole list with it, and the grouped view calls it as the tie-breaker
 /// inside each group, so enabling grouping cannot change the order the user
 /// asked for.
-pub(super) fn compare_rows(
-    a: &Row,
-    b: &Row,
-    by: SortBy,
-    desc: bool,
-) -> std::cmp::Ordering {
+pub(super) fn compare_rows(a: &Row, b: &Row, by: SortBy, desc: bool) -> std::cmp::Ordering {
     let ord = match by {
         SortBy::Name => a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase()),
         SortBy::Cpu => a

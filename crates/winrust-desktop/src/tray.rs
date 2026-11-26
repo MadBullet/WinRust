@@ -433,7 +433,9 @@ fn flyout(
     let slide = (1.0 - anim) * 8.0;
     // Right edge under the button, kept on screen; the panel's lower edge is
     // allowed to be as tall as the content wants.
-    let right = anchor.button_right.clamp(screen.left() + width + 8.0, screen.right() - 8.0);
+    let right = anchor
+        .button_right
+        .clamp(screen.left() + width + 8.0, screen.right() - 8.0);
     let left = (right - width).max(screen.left() + 8.0);
     let top = anchor.bar_top + slide;
     let pos = egui::pos2(left, top);
