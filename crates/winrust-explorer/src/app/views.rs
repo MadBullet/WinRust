@@ -456,7 +456,7 @@ impl ExplorerApp {
         entries: &[DirEntry],
     ) {
         let app_list = self.open_with.clone();
-        
+
         let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
         // Rubber-band selection.  The background is claimed *before* the table
         // so the rows stack above it: a press that lands on a row belongs to
@@ -572,7 +572,7 @@ impl ExplorerApp {
         icon: u32,
     ) {
         let app_list = self.open_with.clone();
-        
+
         let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
         // Rubber-band selection.  The background is claimed *before* the table
         // so the rows stack above it: a press that lands on a row belongs to
@@ -720,7 +720,7 @@ impl ExplorerApp {
         entries: &[DirEntry],
     ) {
         let app_list = self.open_with.clone();
-        
+
         let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
         // Rubber-band selection.  The background is claimed *before* the table
         // so the rows stack above it: a press that lands on a row belongs to

@@ -581,11 +581,7 @@ impl TaskManagerApp {
         // easier to hit and harmless, because rows install their own menu on
         // top of this one and win the click.
         let list_area = ui.available_rect_before_wrap();
-        let list_resp = ui.interact(
-            list_area,
-            ui.id().with("tm_list_bg"),
-            egui::Sense::click(),
-        );
+        let list_resp = ui.interact(list_area, ui.id().with("tm_list_bg"), egui::Sense::click());
         list_resp.context_menu(|ui| {
             ui.label(RichText::new(ts("Update speed")).strong());
             ui.separator();

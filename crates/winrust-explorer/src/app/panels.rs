@@ -527,7 +527,12 @@ impl ExplorerApp {
                     ui.painter().rect_filled(
                         drop_rect,
                         3.0,
-                        Color32::from_rgba_unmultiplied(0, 120, 215, if hovering { 56 } else { 20 }),
+                        Color32::from_rgba_unmultiplied(
+                            0,
+                            120,
+                            215,
+                            if hovering { 56 } else { 20 },
+                        ),
                     );
                     ui.painter().rect_stroke(
                         drop_rect,

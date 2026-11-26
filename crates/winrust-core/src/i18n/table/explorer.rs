@@ -2,7 +2,10 @@
 
 pub static ENTRIES: &[(&str, &str)] = &[
     ("FAVOURITES", "ИЗБРАННОЕ"),
-    ("   drag a folder here to pin it", "   перетащите папку сюда, чтобы закрепить"),
+    (
+        "   drag a folder here to pin it",
+        "   перетащите папку сюда, чтобы закрепить",
+    ),
     ("Drop to pin", "Отпустите, чтобы закрепить"),
     ("Right-click to unpin", "Правый клик — открепить"),
     ("Unpinned", "Откреплено"),
