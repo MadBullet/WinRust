@@ -124,7 +124,11 @@ impl AltTab {
     ///
     /// `frame` is the shell's own window: it must never appear in its own
     /// switcher, because it *is* the desktop.
-    pub(crate) fn tick(&mut self, frame_hwnd: isize, list: &[crate::taskbar::WindowEntry]) -> Option<isize> {
+    pub(crate) fn tick(
+        &mut self,
+        frame_hwnd: isize,
+        list: &[crate::taskbar::WindowEntry],
+    ) -> Option<isize> {
         let alt = winrust_core::window::key_down(VK_MENU);
         let tab = winrust_core::window::key_down(VK_TAB);
         let shift = winrust_core::window::key_down(VK_SHIFT);
@@ -223,8 +227,8 @@ impl DesktopApp {
                         &t.rgba,
                     )
                 });
-                let handle = image
-                    .map(|img| ctx.load_texture("alt_tab", img, egui::TextureOptions::LINEAR));
+                let handle =
+                    image.map(|img| ctx.load_texture("alt_tab", img, egui::TextureOptions::LINEAR));
                 self.thumbs.insert(c.cache_key(), handle);
             }
         }
@@ -311,7 +315,8 @@ impl DesktopApp {
             .fixed_pos(rect.left_top())
             .show(ctx, |ui| {
                 let resp = ui.allocate_exact_size(rect.size(), egui::Sense::click()).1;
-                resp.clicked().then(|| ui.input(|i| i.pointer.interact_pos()))
+                resp.clicked()
+                    .then(|| ui.input(|i| i.pointer.interact_pos()))
             })
             .inner
             .flatten();
