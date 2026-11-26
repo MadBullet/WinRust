@@ -371,7 +371,7 @@ impl ExplorerApp {
         let mut pin_now: Vec<PathBuf> = Vec::new();
         // Reordering the favourites list by drag: which row is being dragged
         // and which row it was dropped on.
-        let mut fav_drag: Option<(usize, PathBuf)> = None;
+        let mut fav_drag: Option<usize> = None;
         let mut fav_drop: Option<usize> = None;
         // Dropping a folder on the favourites area pins it.  `drag_paths` is the
         // snapshot the right pane filled in when the drag started.
@@ -511,13 +511,13 @@ impl ExplorerApp {
                         // A favourites row is not a file drag: `drag_active`
                         // stays false so the ghost and the drop zones in the
                         // right pane do not engage.
-                        fav_drag = Some((idx, path.clone()));
+                        fav_drag = Some(idx);
                         ui.ctx().request_repaint();
                     }
                     if resp.hovered() && fav_drag.is_some() {
                         // Paint the insertion marker: the row the pointer is
                         // over receives the dragged favourite in its place.
-                        let line_y = if fav_drag.map(|(f, _)| f) < Some(idx) {
+                        let line_y = if fav_drag < Some(idx) {
                             resp.rect.bottom()
                         } else {
                             resp.rect.top()
@@ -597,7 +597,7 @@ impl ExplorerApp {
         self.nav_selected = nav_selected;
         if let Some(to) = fav_drop {
             // Reorder in place; the saved order is the user's order.
-            if let Some(from) = fav_drag.as_ref().map(|(i, _)| *i) {
+            if let Some(from) = fav_drag {
                 if from < self.pinned.len() && to < self.pinned.len() && from != to {
                     let moved = self.pinned.remove(from);
                     self.pinned.insert(to, moved);

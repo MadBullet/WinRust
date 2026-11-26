@@ -88,6 +88,17 @@ pub struct ExplorerApp {
 
 /// The floating label shown under the cursor during a drag & drop.
 #[derive(Debug, Clone)]
+pub(super) struct DragGhost {
+    pub(super) label: String,
+    /// Short display name (mid-truncated, extension preserved) shown on the card.
+    pub(super) short: String,
+    pub(super) count: usize,
+    /// Smoothed cursor position — the animation is this easing towards the
+    /// real pointer, which is what makes the ghost feel attached to the hand.
+    pub(super) pos: egui::Pos2,
+    pub(super) spawned: std::time::Instant,
+}
+
 /// The window's background workers, behind one narrow interface.
 ///
 /// A directory read, a folder-size tally and a recursive search each run on
@@ -163,17 +174,6 @@ impl Workers {
     pub(super) fn take_search_results(&self) -> Vec<(PathBuf, Vec<DirEntry>)> {
         self.search_rx.try_iter().collect()
     }
-}
-
-pub(super) struct DragGhost {
-    pub(super) label: String,
-    /// Short display name (mid-truncated, extension preserved) shown on the card.
-    pub(super) short: String,
-    pub(super) count: usize,
-    /// Smoothed cursor position — the animation is this easing towards the
-    /// real pointer, which is what makes the ghost feel attached to the hand.
-    pub(super) pos: egui::Pos2,
-    pub(super) spawned: std::time::Instant,
 }
 
 pub(super) struct JobUpdate {
