@@ -560,20 +560,6 @@ impl TaskManagerApp {
         headers.push((ts("Status").to_string(), SortBy::Status));
         headers.push((ts("Priority").to_string(), SortBy::Priority));
 
-        let mut table = TableBuilder::new(ui)
-            .striped(true)
-            .resizable(true)
-            .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
-            .column(Column::initial(240.0).at_least(140.0).clip(true));
-        // Metric columns: narrow, heat-coloured, the same six as the strip.
-        for _ in Metric::ALL {
-            table = table.column(Column::initial(84.0).at_least(56.0).clip(true));
-        }
-        table = table
-            .column(Column::initial(96.0).at_least(60.0).clip(true))
-            .column(Column::initial(80.0).at_least(60.0).clip(true))
-            .column(Column::remainder().at_least(60.0).clip(true));
-
         let mut interval_clicked: Option<UpdateInterval> = None;
 
         // The right-click target for "update speed".  Windows puts it on the
@@ -594,6 +580,20 @@ impl TaskManagerApp {
                 }
             }
         });
+
+        let mut table = TableBuilder::new(ui)
+            .striped(true)
+            .resizable(true)
+            .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+            .column(Column::initial(240.0).at_least(140.0).clip(true));
+        // Metric columns: narrow, heat-coloured, the same six as the strip.
+        for _ in Metric::ALL {
+            table = table.column(Column::initial(84.0).at_least(56.0).clip(true));
+        }
+        table = table
+            .column(Column::initial(96.0).at_least(60.0).clip(true))
+            .column(Column::initial(80.0).at_least(60.0).clip(true))
+            .column(Column::remainder().at_least(60.0).clip(true));
 
         let table = table.header(22.0, |mut header| {
             for (title, key) in &headers {
