@@ -1,7 +1,8 @@
--rwxr-xr-x 2 runneradmin 197121 4267008 Nov 26 06:26 target/release/WinRust.exe
--rwxr-xr-x 2 runneradmin 197121 4333056 Nov 26 06:26 target/release/winrust-desktop.exe
--rwxr-xr-x 2 runneradmin 197121  946688 Nov 26 06:26 target/release/winrust-driver.exe
--rwxr-xr-x 2 runneradmin 197121 4156416 Nov 26 06:27 target/release/winrust-services.exe
--rwxr-xr-x 2 runneradmin 197121 4176384 Nov 26 06:27 target/release/winrust-sysctl.exe
--rwxr-xr-x 2 runneradmin 197121 4300288 Nov 26 06:27 target/release/winrust-taskmgr.exe
-1.9G	target
+-rwxr-xr-x 2 runneradmin 197121 4267008 Nov 26 06:34 target/release/WinRust.exe
+-rwxr-xr-x 2 runneradmin 197121 4333056 Nov 26 06:34 target/release/winrust-desktop.exe
+-rwxr-xr-x 2 runneradmin 197121  946688 Nov 26 06:33 target/release/winrust-driver.exe
+-rwxr-xr-x 2 runneradmin 197121 4442112 Nov 26 06:34 target/release/winrust-explorer.exe
+-rwxr-xr-x 2 runneradmin 197121 4156416 Nov 26 06:34 target/release/winrust-services.exe
+-rwxr-xr-x 2 runneradmin 197121 4176384 Nov 26 06:34 target/release/winrust-sysctl.exe
+-rwxr-xr-x 2 runneradmin 197121 4300288 Nov 26 06:34 target/release/winrust-taskmgr.exe
+2.4G	target

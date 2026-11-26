@@ -114,7 +114,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\tray.rs:433:
 [0m     let left = (right - width).max(screen.left() + 8.0);
      let top = anchor.bar_top + slide;
      let pos = egui::pos2(left, top);
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\panels.rs:378:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\panels.rs:379:
          // the folder list opens the same context menu the file area has - the
          // review's "there is nowhere to right-click in the left pane".  The
          // strip is allocated first so it exists even when the tree is short.
