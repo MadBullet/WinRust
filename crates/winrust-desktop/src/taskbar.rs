@@ -518,7 +518,7 @@ impl DesktopApp {
         };
         // A window that closed while its peek was up must not leave the screen
         // dimmed with a stale picture in the middle of it.
-        let Some(size) = winrust_core::window::window_size(hwnd) else {
+        let Some(size) = winrust_core::thumb::window_size(hwnd) else {
             self.peek_hwnd = None;
             return;
         };

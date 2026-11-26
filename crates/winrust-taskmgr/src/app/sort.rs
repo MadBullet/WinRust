@@ -55,10 +55,10 @@ impl UpdateInterval {
     /// The menu label, already translated.
     pub fn label(self) -> &'static str {
         match self {
-            UpdateInterval::Instant => winrust_core::i18n::ts("High"),
-            UpdateInterval::OneSecond => winrust_core::i18n::ts("Normal (1 s)"),
-            UpdateInterval::ThreeSeconds => winrust_core::i18n::ts("Low (3 s)"),
-            UpdateInterval::FiveSeconds => winrust_core::i18n::ts("Paused (5 s)"),
+            UpdateInterval::Instant => winrust_core::i18n::ts("Update instantly"),
+            UpdateInterval::OneSecond => winrust_core::i18n::ts("Update every 1 s"),
+            UpdateInterval::ThreeSeconds => winrust_core::i18n::ts("Update every 3 s"),
+            UpdateInterval::FiveSeconds => winrust_core::i18n::ts("Update every 5 s"),
         }
     }
 

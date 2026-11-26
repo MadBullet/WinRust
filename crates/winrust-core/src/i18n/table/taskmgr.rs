@@ -9,10 +9,10 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("Hide captions", "Скрыть подписи"),
     // Update speed (right-click on the process list)
     ("Update speed", "Скорость обновления"),
-    ("High", "Высокая"),
-    ("Normal (1 s)", "Обычная (1 с)"),
-    ("Low (3 s)", "Низкая (3 с)"),
-    ("Paused (5 s)", "Приостановлена (5 с)"),
+    ("Update instantly", "Обновлять мгновенно"),
+    ("Update every 1 s", "Обновлять каждую 1 с"),
+    ("Update every 3 s", "Обновлять каждые 3 с"),
+    ("Update every 5 s", "Обновлять каждые 5 с"),
     // Processes
     ("Apps", "Приложения"),
     ("Background processes", "Фоновые процессы"),
