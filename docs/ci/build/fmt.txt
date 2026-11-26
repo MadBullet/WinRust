@@ -1,13 +1,1 @@
-exit=1
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\desktop.rs:450:
-                 // switched off, an icon stays exactly where it is dropped
-                 // instead of snapping to the nearest cell.
-                 let mut snap = self.settings.snap_to_grid;
-[31m-                if ui
-[0m[31m-                    .checkbox(&mut snap, t("Align icons to grid"))
-[0m[31m-                    .changed()
-[0m[31m-                {
-[0m[32m+                if ui.checkbox(&mut snap, t("Align icons to grid")).changed() {
-[0m                     self.settings.snap_to_grid = snap;
-                     if snap {
-                         // Turning it back on tidies what is already scattered,
+exit=0
