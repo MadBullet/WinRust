@@ -450,10 +450,7 @@ impl DesktopApp {
                 // switched off, an icon stays exactly where it is dropped
                 // instead of snapping to the nearest cell.
                 let mut snap = self.settings.snap_to_grid;
-                if ui
-                    .checkbox(&mut snap, t("Align icons to grid"))
-                    .changed()
-                {
+                if ui.checkbox(&mut snap, t("Align icons to grid")).changed() {
                     self.settings.snap_to_grid = snap;
                     if snap {
                         // Turning it back on tidies what is already scattered,
