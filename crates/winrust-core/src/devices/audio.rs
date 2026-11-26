@@ -11,19 +11,26 @@
 
 use crate::icon::ComGuard;
 
-/// `IMMDeviceEnumerator` (CLSID_MMDeviceEnumerator) - devices.
+/// `CLSID_MMDeviceEnumerator` - `BCDE0395-E52F-467C-8E3D-C4579291692E`.
+///
+/// This was wrong too, and it is the one that mattered most: a wrong CLSID
+/// makes `CoCreateInstance` fail before any interface is looked up, so the
+/// enumerator was never created and *every* call in this module returned
+/// `None`.  Fixing the IIDs alone would not have helped, which is why the
+/// volume stayed dead after the previous attempt.  Taken from
+/// `mmdeviceapi.rdl` in windows-rs (`const MMDeviceEnumerator`).
 const CLSID_MM_DEVICE_ENUMERATOR: windows_sys::core::GUID = windows_sys::core::GUID {
-    data1: 0xBCDE_039C,
-    data2: 0xE1E5,
-    data3: 0x4E2A,
-    data4: [0xA2, 0x42, 0x82, 0xBA, 0xA4, 0x35, 0x52, 0x61],
+    data1: 0xBCDE_0395,
+    data2: 0xE52F,
+    data3: 0x467C,
+    data4: [0x8E, 0x3D, 0xC4, 0x57, 0x92, 0x91, 0x69, 0x2E],
 };
-/// `IID_IMMDeviceEnumerator`.
+/// `IID_IMMDeviceEnumerator` - `A95664D2-9614-4F35-A746-DE8DB63617E6`.
 const IID_IMM_DEVICE_ENUMERATOR: windows_sys::core::GUID = windows_sys::core::GUID {
-    data1: 0xA956_64C2,
-    data2: 0x0F4B,
-    data3: 0x4815,
-    data4: [0xB5, 0x11, 0xCE, 0x57, 0x22, 0x5C, 0x24, 0x58],
+    data1: 0xA956_64D2,
+    data2: 0x9614,
+    data3: 0x4F35,
+    data4: [0xA7, 0x46, 0xDE, 0x8D, 0xB6, 0x36, 0x17, 0xE6],
 };
 /// `IID_IAudioEndpointVolume` - `5CDF2C82-841E-4546-9722-0CF74078229A`.
 ///

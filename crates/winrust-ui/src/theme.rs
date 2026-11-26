@@ -195,10 +195,18 @@ pub fn apply(ctx: &egui::Context, a: &Appearance) {
     visuals.widgets.noninteractive.fg_stroke = egui::Stroke::new(1.0_f32, c(p.text));
     visuals.widgets.inactive.bg_fill = ca(p.surface_high, alpha);
     visuals.widgets.inactive.fg_stroke = egui::Stroke::new(1.0_f32, c(p.text));
+    // Buttons need an outline, not just a fill.  Only `noninteractive` used to
+    // get a stroke, so every ordinary button drew as frameless text on the
+    // panel and the Start menu's bottom row read as "the buttons lost their
+    // frames".  The line colour is the same one panels use, so the outline is
+    // visible against both the panel and the widget fill.
+    visuals.widgets.inactive.bg_stroke = egui::Stroke::new(1.0_f32, c(p.line));
     visuals.widgets.hovered.bg_fill = ca(p.hover, (alpha * 1.25).clamp(0.0, 1.0));
     visuals.widgets.hovered.fg_stroke = egui::Stroke::new(1.0_f32, c(p.text));
+    visuals.widgets.hovered.bg_stroke = egui::Stroke::new(1.0_f32, c(p.accent));
     visuals.widgets.active.bg_fill = ca(p.active, (alpha * 1.25).clamp(0.0, 1.0));
     visuals.widgets.active.fg_stroke = egui::Stroke::new(1.5_f32, c(p.text));
+    visuals.widgets.active.bg_stroke = egui::Stroke::new(1.0_f32, c(p.accent));
     visuals.selection.bg_fill = ca(p.selection, (alpha * 1.4).clamp(0.0, 1.0));
     visuals.selection.stroke = egui::Stroke::new(1.0_f32, c(p.accent));
 

@@ -127,6 +127,12 @@ impl ExplorerApp {
         // Devices and drives with usage bars and the free-of-total text.
         if self.is_computer_view() && self.current().filter.is_empty() {
             egui::ScrollArea::vertical()
+            // Dragging with the left button is a *selection* gesture here.
+            // `drag_to_scroll` would otherwise pan the list when the pointer
+            // starts on empty space between rows, which is exactly where a
+            // rubber band has to start - the "мешает листать список зажатой
+            // ЛКМ" report.  Wheel scrolling is untouched.
+            .drag_to_scroll(false)
                 .id_salt("computer_home")
                 .auto_shrink([false, false])
                 .show(ui, |ui| {
@@ -153,14 +159,73 @@ impl ExplorerApp {
             return;
         }
 
-        match self.current().view {
-            ViewMode::Details => self.details_view(ui, ctx, &entries),
-            ViewMode::List => self.list_view(ui, ctx, &entries),
-            ViewMode::Tiles => {
-                let px = self.current().icon_px;
-                self.tiles_view(ui, ctx, &entries, px)
+        let before = self.current().selection.len();
+        // Rows start at the pane's left edge, so on a long list there is
+        // nowhere to put the pointer down that is not on a row - and a band
+        // that starts on a row is a row drag, not a selection.  A narrow
+        // gutter down the left edge is dead space where a band may start; the
+        // views are laid out to the right of it.
+        let view_mode = self.current().view;
+        let gutter_w = if view_mode == ViewMode::Tiles { 0.0 } else { 14.0 };
+        ui.horizontal_top(|ui| {
+            if gutter_w > 0.0 {
+                let (_gutter, gutter_resp) = ui.allocate_exact_size(
+                    egui::vec2(gutter_w, ui.available_height()),
+                    egui::Sense::click_and_drag(),
+                );
+                if gutter_resp.hovered() {
+                    // A hint, so the strip reads as "you may start here"
+                    // rather than as a stray two-pixel gap.
+                    ui.painter().rect_filled(
+                        gutter_resp.rect,
+                        3.0,
+                        Color32::from_rgba_unmultiplied(0, 120, 215, 40),
+                    );
+                }
+                if gutter_resp.hovered()
+                    && ctx.input(|i| i.pointer.primary_pressed())
+                    && !self.drag_active
+                {
+                    // Seeds the band just like a press below the last row; the
+                    // ride-along logic lives in `finish_drag_and_commands`.
+                    self.band_start = ctx.input(|i| i.pointer.interact_pos());
+                }
             }
-            ViewMode::Content => self.content_view(ui, ctx, &entries),
+            ui.vertical(|ui| match view_mode {
+                ViewMode::Details => self.details_view(ui, ctx, &entries),
+                ViewMode::List => self.list_view(ui, ctx, &entries),
+                ViewMode::Tiles => {
+                    let px = self.current().icon_px;
+                    self.tiles_view(ui, ctx, &entries, px)
+                }
+                ViewMode::Content => self.content_view(ui, ctx, &entries),
+            });
+        });
+        // A plain click anywhere that did not land on a row clears the
+        // selection - including a click in the left pane, on the command bar,
+        // or in the gap between two rows.  Windows behaves this way, and the
+        // review asked for it: the selection used to survive a click on empty
+        // space, so the old highlight looked stuck.
+        //
+        // This cannot live inside a view: each one claims only its own rect,
+        // and a click outside it is invisible there.  It also must not fire on
+        // the click that *created* a selection, so it only clears when the
+        // selection is unchanged since the frame began.
+        if self.current().selection.len() == before && before > 0 {
+            if ctx.input(|i| i.pointer.primary_clicked()) {
+                let pointer = ctx.input(|i| i.pointer.interact_pos());
+                let on_row = pointer
+                    .map(|p| {
+                        self.row_rects
+                            .iter()
+                            .any(|(_, r)| r.expand(1.0).contains(p))
+                    })
+                    .unwrap_or(false);
+                if !on_row {
+                    self.current_mut().selection.clear();
+                    self.current_mut().anchor = None;
+                }
+            }
         }
     }
 
@@ -511,6 +576,12 @@ impl ExplorerApp {
         let mut drag_hover: Option<PathBuf> = None;
         let pointer_released = ctx.input(|i| i.pointer.primary_released());
         egui::ScrollArea::both()
+            // Dragging with the left button is a *selection* gesture here.
+            // `drag_to_scroll` would otherwise pan the list when the pointer
+            // starts on empty space between rows, which is exactly where a
+            // rubber band has to start - the "мешает листать список зажатой
+            // ЛКМ" report.  Wheel scrolling is untouched.
+            .drag_to_scroll(false)
             .id_salt("listview")
             .auto_shrink([false, false])
             .show(ui, |ui| {
@@ -633,6 +704,12 @@ impl ExplorerApp {
         let cell_w = 116.0 + gap;
         let cell_h = icon as f32 + 34.0 + gap * 0.35;
         egui::ScrollArea::vertical()
+            // Dragging with the left button is a *selection* gesture here.
+            // `drag_to_scroll` would otherwise pan the list when the pointer
+            // starts on empty space between rows, which is exactly where a
+            // rubber band has to start - the "мешает листать список зажатой
+            // ЛКМ" report.  Wheel scrolling is untouched.
+            .drag_to_scroll(false)
             .id_salt("tiles")
             .auto_shrink([false, false])
             .show(ui, |ui| {
@@ -770,6 +847,12 @@ impl ExplorerApp {
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
         egui::ScrollArea::vertical()
+            // Dragging with the left button is a *selection* gesture here.
+            // `drag_to_scroll` would otherwise pan the list when the pointer
+            // starts on empty space between rows, which is exactly where a
+            // rubber band has to start - the "мешает листать список зажатой
+            // ЛКМ" report.  Wheel scrolling is untouched.
+            .drag_to_scroll(false)
             .id_salt("content")
             .auto_shrink([false, false])
             .show(ui, |ui| {

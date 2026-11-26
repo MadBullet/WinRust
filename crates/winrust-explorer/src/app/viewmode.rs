@@ -117,6 +117,11 @@ pub(super) struct PersistedState {
     /// Folders the user pinned into the left pane's favourites list.
     #[serde(default)]
     pub(super) pinned: Vec<PathBuf>,
+    /// Which drag image to show while moving files: `true` draws the small
+    /// translucent icon only, `false` the icon plus the name card.  Windows
+    /// offers the choice; this is the Explorer-side setting for it.
+    #[serde(default)]
+    pub(super) minimal_drag_image: bool,
 }
 
 pub(super) fn state_path() -> Option<PathBuf> {

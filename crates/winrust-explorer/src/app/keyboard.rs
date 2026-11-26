@@ -108,6 +108,11 @@ impl ExplorerApp {
             }
         }
 
+        // Settings > drag image: the minimal style is the translucent icon
+        // alone, the default is the icon plus the name card below.
+        if self.minimal_drag_image {
+            return;
+        }
         let size = egui::vec2(190.0, 26.0) * scale;
         let rect = egui::Rect::from_min_size(ghost.pos + egui::vec2(14.0, 12.0), size);
         painter.rect_filled(
@@ -572,6 +577,17 @@ impl eframe::App for ExplorerApp {
                         ui.close_menu();
                     }
                 });
+                // Drag image: the second variant from the screenshot, a
+                // setting rather than a hard choice.  Windows calls it
+                // "Show drag image" and lets the user drop the name card.
+                if ui
+                    .selectable_label(self.minimal_drag_image, t("Icon-only drag image"))
+                    .clicked()
+                {
+                    self.minimal_drag_image = !self.minimal_drag_image;
+                    ui.close_menu();
+                }
+                ui.separator();
                 // Tile spacing: Explorer never let the user set this, but the
                 // request explicitly asks for it, so it lives here as a slider.
                 ui.menu_button(t("Icon spacing"), |ui| {
@@ -674,6 +690,7 @@ impl eframe::App for ExplorerApp {
             preview_open: self.preview_open,
             sidebar_width: self.sidebar_width,
             pinned: self.pinned.clone(),
+            minimal_drag_image: self.minimal_drag_image,
         };
         save_state(&state);
     }

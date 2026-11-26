@@ -196,10 +196,17 @@ impl DesktopApp {
         // One button per window, grouped by process so two windows of the same
         // program share one button, like the real taskbar.
         let windows_list: Vec<WindowEntry> = self.open_windows.clone();
-        let mut order: Vec<u32> = Vec::new();
+        // Group by *program*, not by process id.  Two Explorer windows are two
+        // `explorer.exe` processes, and a program that opens a new process per
+        // window (browsers, Office) would otherwise get a separate button for
+        // every window - which is the "программы одного типа не группируются"
+        // report.  Windows groups by the application, so the key is the
+        // executable's file name; a window with no path falls back to its pid.
+        let mut order: Vec<String> = Vec::new();
         for w in &windows_list {
-            if !order.contains(&w.pid) {
-                order.push(w.pid);
+            let key = app_key(w);
+            if !order.contains(&key) {
+                order.push(key);
             }
         }
         let button_w = 40.0;
@@ -228,10 +235,10 @@ impl DesktopApp {
         // axis the Start button uses.
         {
             let ui = &mut apps_ui;
-            for pid in order {
-                let first = windows_list.iter().find(|w| w.pid == pid);
+            for key in &order {
+                let first = windows_list.iter().find(|w| &app_key(w) == key);
                 let Some(first) = first else { continue };
-                let count = windows_list.iter().filter(|w| w.pid == pid).count();
+                let count = windows_list.iter().filter(|w| &app_key(w) == key).count();
                 let icon = self.window_icon(ctx, first);
                 let (rect, resp) =
                     ui.allocate_exact_size(egui::vec2(button_w, 38.0), egui::Sense::click());
@@ -240,7 +247,14 @@ impl DesktopApp {
                 //   * running  -> a short blue line under the icon, always;
                 //   * active   -> a soft translucent fill behind the button.
                 // Hover is a third, weaker fill, so it never masks "active".
-                let selected = self.active_pid == Some(pid);
+                // Active means "one of this group's windows is in front", not
+                // just the first one: with grouping by program, the active
+                // window is rarely the group's first entry.
+                let group_active: Vec<&WindowEntry> =
+                    windows_list.iter().filter(|w| &app_key(w) == key).collect();
+                let selected = group_active
+                    .iter()
+                    .any(|w| self.active_pid == Some(w.pid));
                 if selected {
                     ui.painter().rect_filled(
                         rect.shrink(1.0),
@@ -299,13 +313,16 @@ impl DesktopApp {
                     1.5,
                     blue,
                 );
+                // The group's own pid; with one window per process this is what
+                // the preview and the click act on.
+                let group_pid = first.pid;
                 if resp.hovered() {
                     hovered_any = true;
-                    self.hover.enter(pid, rect);
+                    self.hover.enter(group_pid, rect);
                 }
                 if resp.clicked() {
-                    self.active_pid = Some(pid);
-                    winrust_core::window::activate_window(pid);
+                    self.active_pid = Some(group_pid);
+                    winrust_core::window::activate_window(group_pid);
                 }
                 let hover = if count > 1 {
                     format!("{}\n{}", first.title, tf!("{} windows", count))
@@ -334,10 +351,19 @@ impl DesktopApp {
                 // about but that is minimised to the tray, or that has been
                 // destroyed since the last scan, must not get a card full of
                 // "no picture" - the preview is thumbnail-first.
+                // The whole *program's* windows, not just the clicked
+                // process's: grouping made one button stand for several
+                // processes, so the preview has to list all of them.
+                let group_key = self
+                    .open_windows
+                    .iter()
+                    .find(|w| w.pid == pid)
+                    .map(|w| app_key(w))
+                    .unwrap_or_default();
                 let group: Vec<WindowEntry> = self
                     .open_windows
                     .iter()
-                    .filter(|w| w.pid == pid)
+                    .filter(|w| app_key(w) == group_key)
                     .filter(|w| winrust_core::thumb::window_size(w.hwnd).is_some())
                     .cloned()
                     .collect();
@@ -401,6 +427,24 @@ impl DesktopApp {
         let id = texture.as_ref().map(|t| t.id());
         self.window_icons.insert(w.pid, texture);
         id
+    }
+}
+
+/// The key that groups a window's taskbar button: the program it belongs to.
+///
+/// Two Explorer windows are two `explorer.exe` processes, and a program that
+/// opens a new process per window would otherwise get one button per window.
+/// Windows groups by application, so the key is the executable's file name; a
+/// window with no path falls back to its process id so it still gets a button.
+pub(crate) fn app_key(w: &WindowEntry) -> String {
+    let exe = std::path::Path::new(&w.exe)
+        .file_name()
+        .map(|n| n.to_string_lossy().to_lowercase())
+        .unwrap_or_default();
+    if exe.is_empty() {
+        format!("pid:{}", w.pid)
+    } else {
+        exe
     }
 }
 

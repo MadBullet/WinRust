@@ -369,6 +369,10 @@ impl ExplorerApp {
         let pinned = self.pinned.clone();
         let mut unpin_now: Option<PathBuf> = None;
         let mut pin_now: Vec<PathBuf> = Vec::new();
+        // Reordering the favourites list by drag: which row is being dragged
+        // and which row it was dropped on.
+        let mut fav_drag: Option<(usize, PathBuf)> = None;
+        let mut fav_drop: Option<usize> = None;
         // Dropping a folder on the favourites area pins it.  `drag_paths` is the
         // snapshot the right pane filled in when the drag started.
         let dragged: Vec<PathBuf> = self.drag_paths.clone();
@@ -484,18 +488,49 @@ impl ExplorerApp {
                     );
                 }
                 let mut unpin: Option<PathBuf> = None;
-                for path in &pinned {
+                for (idx, path) in pinned.iter().enumerate() {
                     let name = path
                         .file_name()
                         .map(|n| n.to_string_lossy().to_string())
                         .unwrap_or_else(|| path.display().to_string());
                     let here = *path == cur_path;
-                    let resp = ui.add(
-                        egui::Button::new(RichText::new(format!("📌  {name}")).size(12.0))
-                            .frame(here),
-                    );
+                    // A favourites row is a drag source *within its own list*:
+                    // dragging it onto another row reorders the list, which is
+                    // what "перетаскивать закреплённое" asks for.  Dragging a
+                    // folder in from the right pane is a different gesture and
+                    // still pins, see the drop zone below.
+                    let resp = ui
+                        .add(
+                            egui::Button::new(RichText::new(format!("📌  {name}")).size(12.0))
+                                .frame(here)
+                                .sense(egui::Sense::click_and_drag()),
+                        );
                     if resp.clicked() {
                         nav = Some(path.clone());
+                    }
+                    if resp.drag_started() {
+                        // A favourites row is not a file drag: `drag_active`
+                        // stays false so the ghost and the drop zones in the
+                        // right pane do not engage.
+                        fav_drag = Some((idx, path.clone()));
+                        ui.ctx().request_repaint();
+                    }
+                    if resp.hovered() && fav_drag.is_some() {
+                        // Paint the insertion marker: the row the pointer is
+                        // over receives the dragged favourite in its place.
+                        let line_y = if fav_drag.map(|(f, _)| f) < Some(idx) {
+                            resp.rect.bottom()
+                        } else {
+                            resp.rect.top()
+                        };
+                        ui.painter().hline(
+                            resp.rect.x_range(),
+                            line_y,
+                            egui::Stroke::new(2.0_f32, Color32::from_rgb(96, 176, 255)),
+                        );
+                        if ui.ctx().input(|i| i.pointer.primary_released()) {
+                            fav_drop = Some(idx);
+                        }
                     }
                     if resp.secondary_clicked() {
                         unpin = Some(path.clone());
@@ -561,6 +596,15 @@ impl ExplorerApp {
             });
         let _ = ctx;
         self.nav_selected = nav_selected;
+        if let Some(to) = fav_drop {
+            // Reorder in place; the saved order is the user's order.
+            if let Some(from) = fav_drag.as_ref().map(|(i, _)| *i) {
+                if from < self.pinned.len() && to < self.pinned.len() && from != to {
+                    let moved = self.pinned.remove(from);
+                    self.pinned.insert(to, moved);
+                }
+            }
+        }
         if let Some(p) = unpin_now {
             self.pinned.retain(|x| x != &p);
             self.status = format!("{}: {}", t("Unpinned"), p.display());
