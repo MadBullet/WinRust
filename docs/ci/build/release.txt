@@ -1,90 +1,90 @@
    Compiling proc-macro2 v1.0.107
-   Compiling quote v1.0.47
    Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
    Compiling cfg-if v1.0.5
    Compiling log v0.4.35
-   Compiling windows-link v0.2.1
    Compiling stable_deref_trait v1.2.1
+   Compiling windows-link v0.2.1
    Compiling smallvec v1.16.6
    Compiling simd-adler32 v0.3.10
-   Compiling crc32fast v1.5.6
-   Compiling windows_x86_64_msvc v0.52.6
    Compiling adler2 v2.0.1
-   Compiling once_cell v1.21.4
+   Compiling windows_x86_64_msvc v0.52.6
+   Compiling crc32fast v1.5.6
    Compiling utf_types v1.0.0
-   Compiling litemap v0.8.3
+   Compiling once_cell v1.21.4
    Compiling writeable v0.6.4
-   Compiling utf8_iter v1.1.0
    Compiling syn v3.0.10
+   Compiling litemap v0.8.3
+   Compiling utf8_iter v1.1.0
    Compiling miniz_oxide v0.9.1
    Compiling icu_normalizer_data v2.4.0
-   Compiling khronos_api v3.1.0
    Compiling icu_properties_data v2.4.0
+   Compiling khronos_api v3.1.0
    Compiling flate2 v1.1.11
    Compiling windows-targets v0.52.6
-   Compiling autocfg v1.5.1
    Compiling cfg_aliases v0.2.2
+   Compiling autocfg v1.5.1
    Compiling parking_lot_core v0.9.12
-   Compiling xml-rs v0.8.29
-   Compiling version_check v0.9.5
    Compiling zerocopy v0.8.66
+   Compiling version_check v0.9.5
+   Compiling xml-rs v0.8.29
    Compiling ahash v0.8.14
-   Compiling gl_generator v0.14.0
-   Compiling serde_core v1.0.229
-   Compiling scopeguard v1.2.0
    Compiling ttf-parser v0.25.1
+   Compiling serde_core v1.0.229
    Compiling synstructure v0.14.0
+   Compiling gl_generator v0.14.0
    Compiling memchr v2.8.3
+   Compiling scopeguard v1.2.0
    Compiling lock_api v0.4.14
-   Compiling syn v2.0.119
    Compiling zerofrom-derive v0.1.8
-   Compiling zerofrom v0.1.8
    Compiling yoke-derive v0.8.4
-   Compiling yoke v0.8.4
    Compiling bytemuck_derive v1.12.1
+   Compiling zerofrom v0.1.8
    Compiling zerovec-derive v0.11.7
+   Compiling yoke v0.8.4
    Compiling displaydoc v0.2.7
    Compiling bytemuck v1.25.2
    Compiling emath v0.29.1
    Compiling zerovec v0.11.9
    Compiling zerotrie v0.2.5
    Compiling owned_ttf_parser v0.25.1
-   Compiling windows-sys v0.61.2
-   Compiling percent-encoding v2.3.2
-   Compiling ab_glyph_rasterizer v0.1.10
    Compiling tinystr v0.8.5
    Compiling potential_utf v0.1.6
-   Compiling bitflags v2.13.2
    Compiling icu_locale_core v2.4.0
    Compiling icu_collections v2.4.0
-   Compiling shlex v2.0.1
-   Compiling find-msvc-tools v0.1.15
-   Compiling ab_glyph v0.2.32
+   Compiling syn v2.0.119
+   Compiling windows-sys v0.61.2
    Compiling icu_provider v2.4.0
-   Compiling cc v1.11.3
    Compiling icu_normalizer v2.4.0
    Compiling icu_properties v2.4.0
-   Compiling form_urlencoded v1.2.3
-   Compiling ecolor v0.29.1
-   Compiling parking_lot v0.12.5
-   Compiling miniz_oxide v0.8.9
+   Compiling percent-encoding v2.3.2
+   Compiling bitflags v2.13.2
+   Compiling find-msvc-tools v0.1.15
+   Compiling shlex v2.0.1
+   Compiling ab_glyph_rasterizer v0.1.10
+   Compiling ab_glyph v0.2.32
+   Compiling cc v1.11.3
    Compiling idna_adapter v1.2.2
    Compiling idna v1.1.0
+   Compiling form_urlencoded v1.2.3
+   Compiling parking_lot v0.12.5
+   Compiling ecolor v0.29.1
+   Compiling miniz_oxide v0.8.9
    Compiling fdeflate v0.3.7
    Compiling nohash-hasher v0.2.0
-   Compiling serde v1.0.229
    Compiling epaint_default_fonts v0.29.1
+   Compiling serde v1.0.229
    Compiling epaint v0.29.1
-   Compiling url v2.5.9
    Compiling ring v0.17.14
+   Compiling url v2.5.9
    Compiling serde_derive v1.0.229
    Compiling num-traits v0.2.19
    Compiling windows-sys v0.52.0
    Compiling zeroize v1.9.2
-   Compiling arrayvec v0.7.8
    Compiling raw-window-handle v0.6.2
    Compiling float-cmp v0.9.0
    Compiling zmij v1.0.23
+   Compiling arrayvec v0.7.8
    Compiling strict-num v0.1.1
    Compiling rustls-pki-types v1.16.0
    Compiling egui v0.29.1
@@ -92,194 +92,175 @@
    Compiling glutin_egl_sys v0.7.1
    Compiling glutin_wgl_sys v0.6.1
    Compiling winit v0.30.13
-   Compiling pin-project-lite v0.2.18
-   Compiling thiserror v1.0.69
-   Compiling regex-syntax v0.8.12
    Compiling arrayref v0.3.9
-   Compiling serde_json v1.0.154
+   Compiling pin-project-lite v0.2.18
    Compiling tracing-core v0.1.36
+   Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.154
+   Compiling regex-syntax v0.8.12
    Compiling tracing v0.1.44
    Compiling tiny-skia-path v0.11.4
    Compiling regex-automata v0.4.19
    Compiling kurbo v0.9.5
    Compiling thiserror-impl v1.0.69
-   Compiling glutin v0.32.3
    Compiling memoffset v0.9.1
+   Compiling glutin v0.32.3
    Compiling getrandom v0.2.17
-   Compiling cursor-icon v1.2.0
-   Compiling dpi v0.1.2
-   Compiling color_quant v1.1.0
-   Compiling anstyle v1.0.14
-   Compiling weezl v0.1.12
-   Compiling unicode-segmentation v1.13.3
-   Compiling utf8parse v0.2.2
-   Compiling itoa v1.0.19
-   Compiling pxfm v0.1.30
    Compiling litrs v1.1.0
-   Compiling untrusted v0.9.0
-   Compiling smol_str v0.2.2
-   Compiling siphasher v1.0.4
-   Compiling unicase v2.10.0
-   Compiling once_cell_polyfill v1.70.2
-   Compiling siphasher v0.3.11
+   Compiling dpi v0.1.2
    Compiling error-code v3.4.0
-   Compiling clipboard-win v5.4.3
+   Compiling once_cell_polyfill v1.70.2
+   Compiling color_quant v1.1.0
+   Compiling smol_str v0.2.2
+   Compiling anstyle v1.0.14
+   Compiling siphasher v0.3.11
+   Compiling unicode-segmentation v1.13.3
+   Compiling weezl v0.1.12
+   Compiling pxfm v0.1.30
+   Compiling siphasher v1.0.4
+   Compiling cursor-icon v1.2.0
+   Compiling utf8parse v0.2.2
+   Compiling untrusted v0.9.0
+   Compiling itoa v1.0.19
+   Compiling unicase v2.10.0
+   Compiling phf_shared v0.11.3
+   Compiling anstyle-parse v1.0.0
+   Compiling moxcms v0.8.1
+   Compiling gif v0.14.2
    Compiling svgtypes v0.13.0
    Compiling anstyle-wincon v3.0.11
-   Compiling phf_shared v0.11.3
-   Compiling moxcms v0.8.1
    Compiling document-features v0.2.12
-   Compiling anstyle-parse v1.0.0
-   Compiling gif v0.14.2
+   Compiling clipboard-win v5.4.3
    Compiling regex v1.13.2
    Compiling png v0.18.1
    Compiling anstyle-query v1.1.5
    Compiling glutin-winit v0.5.0
    Compiling windows-sys v0.59.0
    Compiling libloading v0.8.9
-   Compiling is_terminal_polyfill v1.70.2
+   Compiling colorchoice v1.0.5
    Compiling jiff-core v1.0.2
    Compiling rctree v0.5.0
-   Compiling colorchoice v1.0.5
-   Compiling winapi v0.3.9
    Compiling rustls v0.23.46
+   Compiling winapi v0.3.9
+   Compiling is_terminal_polyfill v1.70.2
    Compiling byteorder-lite v0.1.0
-   Compiling anstream v1.0.0
    Compiling image v0.25.10
+   Compiling anstream v1.0.0
    Compiling usvg-tree v0.37.0
    Compiling jiff v1.0.3
    Compiling winrust-core v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-core)
    Compiling env_filter v2.1.0
-warning: unnecessary `unsafe` block
-  --> crates\winrust-core\src\system\gpu.rs:83:32
-   |
-47 |             unsafe {
-   |             ------ because it's nested under this `unsafe` block
-...
-83 |                     let name = unsafe { from_wide_ptr(item.szName) };
-   |                                ^^^^^^ unnecessary `unsafe` block
-   |
-   = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
-
+   Compiling arboard v3.7.0
    Compiling rustls-webpki v0.103.17
    Compiling phf v0.11.3
-   Compiling arboard v3.7.0
    Compiling webpki-roots v1.0.12
    Compiling webbrowser v1.2.7
    Compiling simplecss v0.2.2
+   Compiling roxmltree v0.19.0
    Compiling bitflags v1.3.2
    Compiling web-time v1.1.0
-   Compiling glow v0.14.2
    Compiling subtle v2.6.1
+   Compiling glow v0.14.2
    Compiling data-url v0.3.2
    Compiling imagesize v0.12.0
-   Compiling roxmltree v0.19.0
-warning: `winrust-core` (lib) generated 1 warning
+   Compiling usvg-parser v0.37.0
    Compiling egui-winit v0.29.1
    Compiling egui_glow v0.29.1
-   Compiling usvg-parser v0.37.0
    Compiling png v0.17.16
    Compiling webpki-roots v0.26.11
    Compiling mime_guess2 v2.3.1
    Compiling env_logger v0.11.12
-   Compiling base64 v0.22.1
-   Compiling base64 v0.21.7
-   Compiling pico-args v0.5.0
    Compiling static_assertions v1.1.0
+   Compiling pico-args v0.5.0
+   Compiling base64 v0.21.7
    Compiling xmlwriter v0.1.0
-   Compiling eframe v0.29.1
+   Compiling base64 v0.22.1
    Compiling usvg v0.37.0
    Compiling ureq v2.12.1
+   Compiling eframe v0.29.1
    Compiling tiny-skia v0.11.4
    Compiling winrust-ui v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-ui)
-   Compiling rgb v0.8.53
    Compiling enum-map-derive v0.17.0
+   Compiling rgb v0.8.53
    Compiling mime v0.3.18
-   Compiling enum-map v2.7.3
    Compiling resvg v0.37.0
+   Compiling enum-map v2.7.3
    Compiling ehttp v0.5.0
    Compiling egui_extras v0.29.1
    Compiling winrust-kernel-abi v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-   Compiling winrust-desktop v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-desktop)
    Compiling winrust-kernel-control v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-warning: method `flush_desktop_settings` is never used
-   --> crates\winrust-desktop\src\main.rs:361:19
-    |
-112 | impl DesktopApp {
-    | --------------- method in this implementation
-...
-361 |     pub(crate) fn flush_desktop_settings(&mut self) {
-    |                   ^^^^^^^^^^^^^^^^^^^^^^
-    |
-    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
-
-warning: methods `toggle` and `show_clipboard` are never used
-   --> crates\winrust-desktop\src\session.rs:165:12
-    |
-120 | impl Session {
-    | ------------ methods in this implementation
-...
-165 |     pub fn toggle(&mut self) {
-    |            ^^^^^^
-...
-177 |     pub fn show_clipboard(&mut self) {
-    |            ^^^^^^^^^^^^^^
-
+   Compiling winrust-desktop v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-desktop)
    Compiling winrust-launcher v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-launcher)
-error: prefix `administrator` is unknown
-   --> crates\winrust-launcher\src\main.rs:457:81
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
-    |                                                                                 ^^^^^^^^^^^^^ unknown prefix
-    |
-    = note: prefixed identifiers and literals are reserved since Rust 2021
-help: consider inserting whitespace here
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator " in the header.")
-    |                                                                                              +
-
-error: expected one of `!`, `(`, `)`, `,`, `.`, `::`, `<`, or `?`, found `" in the header."`
-   --> crates\winrust-launcher\src\main.rs:457:94
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
-    |                                                                                              -^^^^^^^^^^^^^^^^
-    |                                                                                              |
-    |                                                                                              expected one of 8 possible tokens
-    |                                                                                              help: missing `,`
-
-error[E0425]: cannot find type `administrator` in this scope
-   --> crates\winrust-launcher\src\main.rs:457:81
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
-    |                                                                                 ^^^^^^^^^^^^^ not found in this scope
-
-error: suffixes on string literals are invalid
-   --> crates\winrust-launcher\src\main.rs:457:20
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
-    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ invalid suffix `Restart`
-
-error[E0061]: this function takes 1 argument but 2 arguments were supplied
-   --> crates\winrust-launcher\src\main.rs:457:17
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
-    |                 ^^ -------------------------------------------------------------------------- unexpected argument #1
-    |
-note: function defined here
-   --> crates\winrust-core\src\i18n\mod.rs:81:8
-    |
- 81 | pub fn ts(en: &'static str) -> &'static str {
-    |        ^^
-help: remove the extra argument
-    |
-457 -                 ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
-457 +                 ts(" in the header.")
-    |
-
    Compiling winrust-services v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-services)
-Some errors have detailed explanations: E0061, E0425.
-For more information about an error, try `rustc --explain E0061`.
-error: could not compile `winrust-launcher` (bin "WinRust") due to 5 previous errors
+   Compiling winrust-sysctl v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
+   Compiling winrust-taskmgr v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
+warning: type `Sampler` is more private than the item `TaskManagerApp::sampler`
+   --> crates\winrust-taskmgr\src\app.rs:55:5
+    |
+ 55 |     pub(super) sampler: Sampler,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ field `TaskManagerApp::sampler` is reachable at visibility `pub(crate)`
+    |
+note: but type `Sampler` is only usable at visibility `pub(in crate::app)`
+   --> crates\winrust-taskmgr\src\app\model.rs:142:1
+    |
+142 | pub(super) struct Sampler {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: `#[warn(private_interfaces)]` on by default
+
+warning: type `Snapshot` is more private than the item `TaskManagerApp::snapshot`
+   --> crates\winrust-taskmgr\src\app.rs:56:5
+    |
+ 56 |     pub(super) snapshot: Snapshot,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ field `TaskManagerApp::snapshot` is reachable at visibility `pub(crate)`
+    |
+note: but type `Snapshot` is only usable at visibility `pub(in crate::app)`
+   --> crates\winrust-taskmgr\src\app\model.rs:132:1
+    |
+132 | pub(super) struct Snapshot {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: type `StartupItem` is more private than the item `TaskManagerApp::startup`
+  --> crates\winrust-taskmgr\src\app.rs:78:5
+   |
+78 |     pub(super) startup: Vec<StartupItem>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ field `TaskManagerApp::startup` is reachable at visibility `pub(crate)`
+   |
+note: but type `StartupItem` is only usable at visibility `pub(in crate::app)`
+  --> crates\winrust-taskmgr\src\app\startup.rs:15:1
+   |
+15 | pub(super) struct StartupItem {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling winrust-explorer v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-explorer)
+error[E0425]: cannot find type `Command` in this scope
+   --> crates\winrust-explorer\src\app\panels.rs:375:40
+    |
+375 |         let mut background_cmd: Option<Command> = None;
+    |                                        ^^^^^^^ not found in this scope
+    |
+help: consider importing one of these items
+    |
+  4 + use crate::app::commands::Command;
+    |
+  4 + use std::process::Command;
+    |
+
+error[E0433]: cannot find type `Command` in this scope
+   --> crates\winrust-explorer\src\app\panels.rs:397:39
+    |
+397 |                 background_cmd = Some(Command::Paste);
+    |                                       ^^^^^^^ use of undeclared type `Command`
+    |
+help: consider importing one of these items
+    |
+  4 + use crate::app::commands::Command;
+    |
+  4 + use std::process::Command;
+    |
+
+Some errors have detailed explanations: E0425, E0433.
+For more information about an error, try `rustc --explain E0425`.
+error: could not compile `winrust-explorer` (bin "winrust-explorer") due to 2 previous errors
 warning: build failed, waiting for other jobs to finish...
-warning: `winrust-desktop` (bin "winrust-desktop") generated 2 warnings
+warning: `winrust-taskmgr` (bin "winrust-taskmgr") generated 3 warnings
 exit=False

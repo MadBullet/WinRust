@@ -21,7 +21,7 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\main.rs:25:
 [0m use winrust_core::{t, tf};
  
  /// What the shell is doing with the mouse, across frames.
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\main.rs:684:
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\main.rs:682:
          };
          let anim = ease(self.session.anim(), start_target, start_rate, dt);
          self.session.set_anim(anim);
@@ -34,6 +34,14 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\main.rs:684:
 [0m         let flyout_rate = if flyout_target > self.flyout_anim {
              22.0
          } else {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\session.rs:162:
+         self.pending = None;
+     }
+ 
+[31m-
+[0m     // ---- the clipboard panel (Win+V) -------------------------------------
+     pub fn clipboard_open(&self) -> bool {
+         self.clipboard_open
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\start.rs:448:
      ui.add_space(6.0);
      let tile = 74.0;
@@ -135,27 +143,6 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\views.rs:884:
  }
 [31m-
 [0m 
-error: prefix `administrator` is unknown
-   --> \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:457:81
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
-    |                                                                                 ^^^^^^^^^^^^^ unknown prefix
-    |
-    = note: prefixed identifiers and literals are reserved since Rust 2021
-help: consider inserting whitespace here
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator " in the header.")
-    |                                                                                              +
-
-error: expected one of `!`, `(`, `)`, `,`, `.`, `::`, `<`, or `?`, found `" in the header."`
-   --> \\?\D:\a\WinRust\WinRust\crates\winrust-launcher\src\main.rs:457:94
-    |
-457 |                 ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
-    |                                                                                              -^^^^^^^^^^^^^^^^
-    |                                                                                              |
-    |                                                                                              expected one of 8 possible tokens
-    |                                                                                              help: missing `,`
-
 Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app\model.rs:426:
  /// a whole list with it, and the grouped view calls it as the tie-breaker
  /// inside each group, so enabling grouping cannot change the order the user
