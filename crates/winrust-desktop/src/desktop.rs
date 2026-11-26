@@ -450,7 +450,10 @@ impl DesktopApp {
                 // switched off, an icon stays exactly where it is dropped
                 // instead of snapping to the nearest cell.
                 let mut snap = self.settings.snap_to_grid;
-                if ui.checkbox(&mut snap, t("Align icons to grid")).changed() {
+                if ui
+                    .checkbox(&mut snap, t("Align icons to grid"))
+                    .changed()
+                {
                     self.settings.snap_to_grid = snap;
                     if snap {
                         // Turning it back on tidies what is already scattered,
@@ -486,8 +489,14 @@ impl DesktopApp {
                 for (item, icon) in &new_items {
                     let resp = match icon {
                         Some(id) => ui.add(
-                            egui::Button::image_and_text((id, egui::vec2(16.0, 16.0)), &item.label)
-                                .frame(false),
+                            egui::Button::image_and_text(
+                                egui::Image::new(egui::load::SizedTexture::new(
+                                    *id,
+                                    egui::vec2(16.0, 16.0),
+                                )),
+                                &item.label,
+                            )
+                            .frame(false),
                         ),
                         None => ui.add(egui::Button::new(&item.label).frame(false)),
                     };

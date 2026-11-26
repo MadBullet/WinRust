@@ -209,7 +209,7 @@ impl MenuOutput {
             }
         }
         if let Some(path) = self.props {
-            let _ = winrust_core::shell::show_properties(&path.to_string_lossy());
+            let _ = winrust_core::shell::show_properties(&path);
         }
         if let Some(path) = self.unpin {
             app.session.unpin(&path);

@@ -17,6 +17,7 @@ winrust-ui.workspace = true
 eframe.workspace = true
 egui.workspace = true
 env_logger.workspace = true
+serde.workspace = true
 serde_json.workspace = true
 
 [target.'cfg(windows)'.dependencies]
