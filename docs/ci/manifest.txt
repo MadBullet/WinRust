@@ -1,6 +1,7 @@
 egui.txt: 30009
 features.txt: 3138
 layout.txt: 3504
+manifest.txt: 866
 rs-files.txt: 14384
 win-appinstall.txt: 168950
 win-authorization.txt: 65475
@@ -15,6 +16,7 @@ win-foundation.txt: 804615
 win-gdi.txt: 169241
 win-globalization.txt: 353036
 win-input.txt: 29389
+win-io.txt: 3252
 win-iphelper.txt: 96419
 win-jobs.txt: 19816
 win-libraryloader.txt: 11543
