@@ -55,7 +55,23 @@ fifth review: six reports against 0.9.4, fixed at their causes.
   list is reordered on release, with the insertion line drawn where the row
   will land.
 
-## 4. The hidden-icons flyout
+## 4. Alt+Tab
+
+* **The window switcher is ours now.** Windows keeps it inside
+  `explorer.exe`, so replacing the shell took it away. Hold `Alt`, tap `Tab`,
+  and a panel lists every open window with its picture, most recently used
+  first; `Tab` walks the selection, `Shift+Tab` walks it back, releasing
+  `Alt` raises the window you stopped on, a click on a card switches to that
+  card directly, and `Esc` dismisses the panel without switching.
+* `Alt+Tab` is a reserved shell chord - the system swallows it before any
+  window sees a key event - so it is polled with `GetAsyncKeyState`, the same
+  way `Win+V` and `Win+I` already work from an unfocused window.
+* The shell window is `always_on_bottom` by design, so it is raised to
+  `AlwaysOnTop` for as long as the panel is up and dropped back afterwards.
+  Without that the switcher would be covered by the very windows it switches
+  between.
+
+## 5. The hidden-icons flyout
 
 * **Every row has hover feedback.** The rows were frameless buttons, and an
   egui button without a frame has no visual state at all, so the pointer
@@ -70,6 +86,7 @@ fifth review: six reports against 0.9.4, fixed at their causes.
 | how long the preview may survive a gap | `DesktopApp::preview_at` |
 | the window in front, for the active button | `DesktopApp::active_hwnd` |
 | the favourite being dragged | egui memory, `Id::new("explorer_fav_drag")` |
+| the Alt+Tab panel's whole state | `alttab::AltTab` |
 | the surface of the two footer lists | `start::popup_surface`, `popup_line` |
 
 `cargo fmt --all` and `cargo clippy` are clean on every crate; the release,
@@ -134,7 +151,24 @@ build, fmt, clippy and test jobs are green on the tagged commit.
   переставляется при отпускании; линия вставки рисуется там, куда строка
   попадёт.
 
-## 4. Панель скрытых значков
+## 4. Alt+Tab
+
+* **Переключатель окон теперь наш.** Windows держит его внутри
+  `explorer.exe`, поэтому замена оболочки унесла его с собой. Зажмите `Alt`,
+  нажмите `Tab` — появится панель со всеми открытыми окнами и их снимками,
+  последние использованные первыми; `Tab` ведёт выделение вперёд, `Shift+Tab`
+  назад, отпускание `Alt` поднимает выбранное окно, щелчок по карточке
+  переключает сразу на неё, `Esc` закрывает панель без переключения.
+* `Alt+Tab` — зарезервированное системное сочетание: система перехватывает его
+  раньше, чем какое-либо окно получит событие клавиши, поэтому оно
+  опрашивается через `GetAsyncKeyState` — так же, как уже работают `Win+V` и
+  `Win+I` из окна без фокуса.
+* Окно оболочки по замыслу `always_on_bottom`, поэтому на время показа панели
+  оно поднимается в `AlwaysOnTop` и возвращается обратно после. Без этого
+  переключатель был бы закрыт теми самыми окнами, между которыми он
+  переключает.
+
+## 5. Панель скрытых значков
 
 * **У каждой строки есть отклик на наведение.** Строки были кнопками без рамки,
   а кнопка egui без рамки не имеет визуальных состояний вовсе — до щелчка
@@ -149,6 +183,7 @@ build, fmt, clippy and test jobs are green on the tagged commit.
 | сколько превью может пережить разрыв | `DesktopApp::preview_at` |
 | окно впереди, для активной кнопки | `DesktopApp::active_hwnd` |
 | перетаскиваемая строка «Избранного» | память egui, `Id::new("explorer_fav_drag")` |
+| всё состояние панели Alt+Tab | `alttab::AltTab` |
 | фон двух нижних списков «Пуска» | `start::popup_surface`, `popup_line` |
 
 `cargo fmt --all` и `cargo clippy` чисты во всех крейтах; задачи release,
