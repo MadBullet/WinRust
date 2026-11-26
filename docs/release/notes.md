@@ -3,103 +3,74 @@
 > From 0.9.3 on, every WinRust release is published in both languages:
 > English first, then Russian.
 
-Windows 10/11 system components rewritten in Rust. Release 0.9.4 answers a
-fourth review: ten reports against 0.9.3, fixed at their causes, plus the
-structural work the review asked for before any of the fixes went in.
+Windows 10/11 system components rewritten in Rust. Release 0.9.5 answers a
+fifth review: six reports against 0.9.4, fixed at their causes.
 
 ## 1. Start menu
 
-* **The footer buttons have their frames back.** The theme set a fill for
-  the inactive, hovered and active widget states but only ever a stroke for
-  `noninteractive`, so an ordinary button drew as frameless text on the
-  panel. All three states now carry an outline - the same rule every window
-  in the shell follows, so this was fixed in `winrust-ui::theme`, not by
-  patching the one menu that showed it.
-* **The menu is anchored to the left edge**, eight pixels in, at the height
-  it already had. It was centred.
-* **Pinned tiles can be dragged onto each other** to reorder the grid, and
-  the order is saved. A drag spans frames, so the tile being dragged is held
-  in egui's own memory rather than in the per-frame output struct; the tile
-  under the pointer is outlined while the drag is live.
+* **The account and power lists have a surface and an outline.** Both were
+  bare `Area`s: the buttons painted straight onto whatever was behind the
+  menu, so the list read as a loose column of labels with no panel around
+  it. They now use the same `Frame::popup` the tray's flyouts use - same
+  fill, same 1 px line, same 10 px rounding.
+* **The pinned grid is free-form.** Empty slots used to be nothing at all,
+  so a tile could only be dropped on a tile and the grid could never be
+  rearranged the way Windows 11 allows. A spare row of dimmed placeholder
+  slots is drawn, every slot is a drop target, and the destination is
+  clamped to "one past the last tile" instead of being rejected.
+* **A drag has a ghost.** The tile being dragged is drawn at 40 % opacity in
+  place, and the slot under the pointer is outlined in blue, so it is
+  visible both where the tile came from and where it will land.
 
 ## 2. Taskbar
 
-* **Buttons group by program.** The key is the lower-cased executable name
-  (`pid:<n>` when the name is not available), so three Explorer windows are
-  one button, exactly as screen 9 of the review showed.
-* **A group lights up while one of its windows has the focus**, and the
-  thumbnail preview lists the whole group instead of drawing a separate
-  button per window.
-* The volume slider was still stuck at 50 %. The real cause was the device
-  enumerator: `CoCreateInstance` was called with the wrong CLSID and the
-  wrong IID, so it failed before any `Activate` call and the slider never
-  saw a device. Both GUIDs are corrected -
-  `BCDE0395-E52F-467C-8E3D-C4579291692E` and
-  `A95664D2-9614-4F35-A746-DE8DB63617E6`. Neither reading nor setting the
-  level needs elevation.
+* **Only real program windows get a button.** The window list filtered on
+  "visible with a title", which still includes helper windows programs
+  create for their own use. Owned windows, tool windows and windows that
+  refuse activation are excluded now, the way the shell excludes them.
+* **The active button is chosen by window, not by process.** Grouping is by
+  program, and a program with several windows only has one of them in front;
+  comparing process ids marked every window of a multi-process program as
+  active at once. The foreground handle is sampled every frame and matched
+  against the group's handles.
+* **Icons come from the program's own path.** Three sources, cheapest first:
+  the window's icon, the executable's icon, and - when the window list could
+  not read the image path - the process's own path asked again at drawing
+  time, then the shell's own shortcut for that program name.
+* **Clicking a grouped button raises the window you actually used.** It
+  raised whichever window the process owned, which is not necessarily the
+  one that was in front.
+* **The preview no longer disappears on the way to it.** The group being
+  previewed is remembered for a short grace period instead of being derived
+  from "is the pointer on a button", so crossing the six-pixel gap between
+  the button and the strip does not dismiss it. The strip is rebuilt
+  whenever the pointer is still around, so the hit test can run on it.
 
-## 3. Desktop
+## 3. Explorer
 
-* **A selected icon shows its whole name.** The caption was capped at two
-  short lines even while the icon was selected, which is when the name
-  matters most. The clip rectangle widens for the selected icon and returns
-  to the cell when the selection is cleared by a click on empty space.
+* **Favourites can be reordered by dragging.** The dragged row was a local
+  variable, `drag_started` is true for exactly one frame, and the release
+  arrives several frames later - the two could never meet. The row index is
+  now remembered in egui's memory for the duration of the gesture, and the
+  list is reordered on release, with the insertion line drawn where the row
+  will land.
 
-## 4. Explorer
+## 4. The hidden-icons flyout
 
-* **Any left press that does not land on a row clears the selection** - the
-  left pane, the command bar, the gap between rows, the empty strip. It does
-  not fire on the click that made the selection, because it only clears when
-  the selection is unchanged since the frame began.
-* **Left-dragging no longer scrolls the file views.** `drag_to_scroll` was
-  on, so a drag that started between rows panned the list instead of drawing
-  a band. Wheel scrolling is untouched, and the four views (details, list,
-  tiles, content) all opt out.
-* **A gutter down the left edge** gives a rubber band a place to start in a
-  long folder: rows begin at the pane's edge, so before this there was no
-  pixel to press that was not on a row.
-* **New "Icon-only drag image" switch** in the background View menu - the
-  second variant from the screenshot. It persists next to the other Explorer
-  preferences.
-* **Favourite folders can be reordered** by dragging one row of the left
-  pane's list onto another; the saved order is the order you chose.
-
-## 5. Structure
-
-The review asked for the deslop findings to be fixed from first principles
-before the bug fixes, with a decision about which module belongs at which
-layer. `docs/structure-0.9.4.md` holds the before/after diagram.
-
-* **The `session` <-> `start` cycle is gone.** The two modules referred to
-  each other: the view wanted two types from the state owner, the state
-  owner wanted one function from the view. The shared vocabulary
-  (`AppEntry`, `PowerAction`, `default_pins`) moved to a new bottom layer,
-  `model`, which both depend on downwards.
-* **`Session` was three things in one.** The `Win+V` panel is now
-  `ClipboardPanel`; each of the two chords is a `Chord`, and the "already
-  seen" latch is the type, so a caller cannot forget to reset it.
-* **Two public fields became verbs.** `power_menu_open` and
-  `user_menu_open` made a round trip through the per-frame output and were
-  never read as state. They are private now, and toggling one closes the
-  other - an invariant the public field let callers break.
-* **`DesktopApp::selected` was deleted.** It was written in eight places and
-  read in none: a second copy of `selection`.
-* **`ExplorerApp`'s eight channel fields are one `Workers`.** They were
-  `rx`/`tx`/`job_rx`/`job_tx`/`search_rx`/`search_tx`/`folder_size_rx`/
-  `folder_size_tx`, all public, and all only touched by `pump_workers` and
-  the two spawn sites. The shell can now hand out a sender or drain a
-  receiver, and cannot see a channel.
+* **Every row has hover feedback.** The rows were frameless buttons, and an
+  egui button without a frame has no visual state at all, so the pointer
+  gave nothing back before the click. A row now paints a soft fill and an
+  accent outline while it is under the pointer.
 
 ## Where the new state lives
 
-| new in 0.9.4 | owner |
+| new in 0.9.5 | owner |
 | --- | --- |
-| the order of the pinned tiles | `model::default_pins`, `session::Session::move_pin` |
-| who owns the in-flight pin drag | egui memory, `Id::new("start_pin_drag")` |
-| which drag image Explorer draws | `PersistedState::minimal_drag_image` |
-| the order of the favourite folders | `ExplorerApp::pinned` |
-| the four background queues | `app::state::Workers` |
-| the Start menu's shared types | `model` (new bottom layer) |
+| the program being previewed | `DesktopApp::hovered_group` |
+| how long the preview may survive a gap | `DesktopApp::preview_at` |
+| the window in front, for the active button | `DesktopApp::active_hwnd` |
+| the favourite being dragged | egui memory, `Id::new("explorer_fav_drag")` |
+| the surface of the two footer lists | `start::popup_surface`, `popup_line` |
 
 `cargo fmt --all` and `cargo clippy` are clean on every crate; the release,
 build, fmt, clippy and test jobs are green on the tagged commit.
@@ -111,104 +82,74 @@ build, fmt, clippy and test jobs are green on the tagged commit.
 > сначала английский, затем русский. Английская часть заканчивается
 > разделителем `---` выше.
 
-Компоненты Windows 10/11, переписанные на Rust. Релиз 0.9.4 отвечает на
-четвёртое ревью: десять замечаний по 0.9.3, исправленных по причинам, плюс
-структурная работа, которую ревью требовало сделать до самих исправлений.
+Компоненты Windows 10/11, переписанные на Rust. Релиз 0.9.5 отвечает на
+пятое ревью: шесть замечаний по 0.9.4, исправленных по причинам.
 
 ## 1. Меню «Пуск»
 
-* **У нижних кнопок вернулись рамки.** Тема задавала заливку для состояний
-  `inactive`, `hovered` и `active`, а обводку — только для `noninteractive`,
-  поэтому обычная кнопка рисовалась как текст без рамки прямо на панели.
-  Теперь обводка есть у всех трёх состояний. Правило общее для всех окон
-  оболочки, поэтому исправлено в `winrust-ui::theme`, а не заплаткой в одном
-  меню, где это было видно.
-* **Меню прижато к левому краю** с отступом восемь пикселей, высота прежняя.
-  Раньше оно стояло по центру.
-* **Плитки закреплённых приложений перетаскиваются друг на друга** и меняют
-  порядок в сетке; порядок сохраняется. Перетаскивание длится несколько
-  кадров, поэтому перетаскиваемая плитка хранится в памяти egui, а не в
-  структуре, которая пересобирается каждый кадр; плитка под курсором
-  обводится, пока идёт перетаскивание.
+* **У списков пользователя и завершения работы есть фон и обводка.** Оба были
+  голыми `Area`: кнопки рисовались прямо поверх того, что было за меню,
+  поэтому список читался как рыхлая колонка подписей без панели вокруг. Теперь
+  они используют тот же `Frame::popup`, что и флайауты трея — та же заливка,
+  та же линия в 1 px, то же скругление 10 px.
+* **Сетка закреплённых стала свободной.** Пустых ячеек раньше не было вовсе,
+  поэтому плитку можно было бросить только на плитку, и переставить сетку так,
+  как это позволяет Windows 11, было нельзя. Теперь рисуется запасной ряд
+  приглушённых пустых ячеек, каждая ячейка принимает сброс, а место вставки
+  прижимается к «сразу за последней плиткой» вместо отказа.
+* **У перетаскивания есть призрак.** Перетаскиваемая плитка рисуется на месте
+  с прозрачностью 40 %, а ячейка под курсором обводится синим — видно и
+  откуда плитка, и куда она попадёт.
 
 ## 2. Панель задач
 
-* **Кнопки группируются по программе.** Ключ — имя исполняемого файла в
-  нижнем регистре (`pid:<n>`, если имени нет), поэтому три окна проводника —
-  это одна кнопка, ровно как на девятом снимке ревью.
-* **Группа подсвечивается, пока фокус у одного из её окон**, а предпросмотр
-  перечисляет всю группу, а не рисует отдельную кнопку на каждое окно.
-* Ползунок громкости всё ещё застревал на 50 %. Настоящая причина —
-  перечислитель устройств: `CoCreateInstance` вызывался с неверным CLSID и
-  неверным IID, поэтому падал ещё до вызова `Activate`, и ползунок не видел
-  устройство. Оба GUID исправлены —
-  `BCDE0395-E52F-467C-8E3D-C4579291692E` и
-  `A95664D2-9614-4F35-A746-DE8DB63617E6`. Ни чтение, ни установка уровня
-  прав администратора не требуют.
+* **Кнопку получают только настоящие окна программ.** Список окон фильтровался
+  по «видимо и с заголовком», а под это попадают и служебные окна, которые
+  программы создают для себя. Теперь окна с владельцем, инструментальные окна
+  и окна, отказывающиеся от активации, исключены — так же, как это делает
+  оболочка Windows.
+* **Активная кнопка выбирается по окну, а не по процессу.** Группировка идёт по
+  программе, а у программы с несколькими окнами впереди только одно; сравнение
+  идентификаторов процессов помечало активными все окна такой программы сразу.
+  Хэндл переднего окна снимается каждый кадр и сверяется с хэндлами группы.
+* **Значки берутся из пути самой программы.** Три источника, от дешёвого:
+  значок окна, значок исполняемого файла и — когда список окон не смог прочитать
+  путь образа — повторный запрос пути у процесса в момент отрисовки, а затем
+  ярлык этой программы из поставки оболочки.
+* **Нажатие на сгруппированную кнопку поднимает то окно, которым вы
+  пользовались.** Раньше поднималось то окно процесса, которое попалось, — не
+  обязательно то, что было впереди.
+* **Превью больше не пропадает по дороге к нему.** Показываемая группа
+  запоминается на короткий льготный период вместо того, чтобы выводиться из
+  «курсор на кнопке», поэтому переход через шестипиксельный зазор между кнопкой
+  и полосой не закрывает превью. Полоса перестраивается, пока курсор рядом, —
+  значит, проверка попадания по ней успевает сработать.
 
-## 3. Рабочий стол
+## 3. Проводник
 
-* **Выделенный значок показывает имя целиком.** Подпись обрезалась до двух
-  коротких строк даже у выделенного значка, а именно тогда имя и важно.
-  Область обрезки расширяется для выделенного значка и возвращается к ячейке,
-  когда выделение снимается щелчком по пустому месту.
+* **«Избранное» переставляется перетаскиванием.** Перетаскиваемая строка была
+  локальной переменной, `drag_started` истинно ровно один кадр, а отпускание
+  приходит несколькими кадрами позже — эти два события не могли встретиться.
+  Теперь номер строки на время жеста хранится в памяти egui, а список
+  переставляется при отпускании; линия вставки рисуется там, куда строка
+  попадёт.
 
-## 4. Проводник
+## 4. Панель скрытых значков
 
-* **Любое нажатие левой кнопки мимо строки снимает выделение** — левая
-  панель, панель команд, промежуток между строками, пустая полоса. Оно не
-  срабатывает на щелчке, которым выделение и создано: снимается только
-  тогда, когда выделение не изменилось с начала кадра.
-* **Перетаскивание левой кнопкой больше не прокручивает список файлов.**
-  `drag_to_scroll` был включён, поэтому перетаскивание, начатое между
-  строками, прокручивало список вместо рамки выделения. Прокрутка колесом не
-  затронута; отказ включают все четыре вида (таблица, список, плитки,
-  содержимое).
-* **Полоса вдоль левого края** даёт рамке выделения место для старта в длинной
-  папке: строки начинаются от края панели, поэтому раньше не было пикселя,
-  нажатие на который не попадало бы в строку.
-* **Новый переключатель «Перетаскивать только значок»** в меню «Вид» фонового
-  контекстного меню — второй вариант со снимка. Он сохраняется рядом с
-  остальными настройками проводника.
-* **Папки в «Избранном» можно переставлять**, перетаскивая одну строку списка
-  левой панели на другую; сохранённый порядок — это выбранный вами порядок.
-
-## 5. Структура
-
-Ревью требовало исправить находки deslop по причинам, а не по симптомам, и до
-исправления ошибок — с решением, какой модуль к какому слою относится.
-Диаграмма «до/после» лежит в `docs/structure-0.9.4.md`.
-
-* **Цикл `session` <-> `start` разорван.** Два модуля ссылались друг на
-  друга: вид брал два типа у владельца состояния, владелец состояния — одну
-  функцию у вида. Общий словарь (`AppEntry`, `PowerAction`,
-  `default_pins`) переехал в новый нижний слой `model`, от которого оба
-  зависят сверху вниз.
-* **`Session` был тремя вещами в одной.** Панель `Win+V` теперь
-  `ClipboardPanel`; каждое из двух сочетаний клавиш — `Chord`, и защёлка
-  «уже видели» является типом, поэтому забыть её сбросить нельзя.
-* **Два публичных поля стали глаголами.** `power_menu_open` и
-  `user_menu_open` ходили туда-обратно через вывод кадра и ни разу не
-  читались как состояние. Теперь они приватные, и открытие одного закрывает
-  другое — инвариант, который публичное поле позволяло нарушить.
-* **`DesktopApp::selected` удалено.** Оно записывалось в восьми местах и не
-  читалось ни в одном: вторая копия `selection`.
-* **Восемь полей-каналов `ExplorerApp` — один `Workers`.** Это были
-  `rx`/`tx`/`job_rx`/`job_tx`/`search_rx`/`search_tx`/`folder_size_rx`/
-  `folder_size_tx`, все публичные, и все нужные только `pump_workers` и двум
-  местам запуска потоков. Теперь оболочка может выдать отправителя или
-  опустошить получателя, но не увидеть канал.
+* **У каждой строки есть отклик на наведение.** Строки были кнопками без рамки,
+  а кнопка egui без рамки не имеет визуальных состояний вовсе — до щелчка
+  курсор ничего не сообщал. Теперь строка под курсором получает мягкую заливку
+  и обводку цветом акцента.
 
 ## Где живёт новое состояние
 
-| новое в 0.9.4 | владелец |
+| новое в 0.9.5 | владелец |
 | --- | --- |
-| порядок закреплённых плиток | `model::default_pins`, `session::Session::move_pin` |
-| кто владеет текущим перетаскиванием плитки | память egui, `Id::new("start_pin_drag")` |
-| какой образ перетаскивания рисует проводник | `PersistedState::minimal_drag_image` |
-| порядок папок в «Избранном» | `ExplorerApp::pinned` |
-| четыре фоновые очереди | `app::state::Workers` |
-| общие типы меню «Пуск» | `model` (новый нижний слой) |
+| программа, чьё превью показывается | `DesktopApp::hovered_group` |
+| сколько превью может пережить разрыв | `DesktopApp::preview_at` |
+| окно впереди, для активной кнопки | `DesktopApp::active_hwnd` |
+| перетаскиваемая строка «Избранного» | память egui, `Id::new("explorer_fav_drag")` |
+| фон двух нижних списков «Пуска» | `start::popup_surface`, `popup_line` |
 
 `cargo fmt --all` и `cargo clippy` чисты во всех крейтах; задачи release,
 build, fmt, clippy и test зелёные на коммите с тегом.
