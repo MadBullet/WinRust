@@ -401,7 +401,12 @@ fn draw_windows_mark(p: &egui::Painter, rect: egui::Rect, color: (u8, u8, u8)) {
     let gap = 1.5_f32;
     let total = pane * 2.0 + gap;
     let origin = rect.center() - egui::vec2(total / 2.0, total / 2.0);
-    for (dx, dy) in [(0.0, 0.0), (pane + gap, 0.0), (0.0, pane + gap), (pane + gap, pane + gap)] {
+    for (dx, dy) in [
+        (0.0, 0.0),
+        (pane + gap, 0.0),
+        (0.0, pane + gap),
+        (pane + gap, pane + gap),
+    ] {
         p.rect_filled(
             egui::Rect::from_min_size(origin + egui::vec2(dx, dy), egui::vec2(pane, pane)),
             0.5,
@@ -531,9 +536,8 @@ impl DesktopApp {
                     &t.rgba,
                 )
             });
-            self.peek_tex = image.map(|img| {
-                ctx.load_texture("peek_window", img, egui::TextureOptions::LINEAR)
-            });
+            self.peek_tex =
+                image.map(|img| ctx.load_texture("peek_window", img, egui::TextureOptions::LINEAR));
             self.peek_at = Some(hwnd);
         }
 
@@ -544,13 +548,11 @@ impl DesktopApp {
         // The dim: everything behind the peeked window is hidden, which is the
         // effect the request asked for ("all windows hidden, only the hovered
         // one shown").
-        painter.rect_filled(
-            screen,
-            0.0,
-            Color32::from_rgba_unmultiplied(0, 0, 0, 190),
-        );
+        painter.rect_filled(screen, 0.0, Color32::from_rgba_unmultiplied(0, 0, 0, 190));
         let (w, h) = (size.0 as f32, size.1 as f32);
-        let scale = ((screen.width() * 0.86) / w).min((screen.height() * 0.86) / h).min(1.0);
+        let scale = ((screen.width() * 0.86) / w)
+            .min((screen.height() * 0.86) / h)
+            .min(1.0);
         let target = egui::Rect::from_center_size(screen.center(), egui::vec2(w, h) * scale);
         match &self.peek_tex {
             Some(tex) => {
@@ -568,7 +570,10 @@ impl DesktopApp {
         painter.rect_stroke(
             target,
             6.0,
-            egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
+            egui::Stroke::new(
+                1.0_f32,
+                Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
+            ),
         );
     }
 }
