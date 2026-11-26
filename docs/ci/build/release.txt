@@ -1,42 +1,43 @@
-exit=101
+exit=0
 [1m[92m   Compiling[0m proc-macro2 v1.0.107
 [1m[92m   Compiling[0m unicode-ident v1.0.27
 [1m[92m   Compiling[0m quote v1.0.47
 [1m[92m   Compiling[0m cfg-if v1.0.5
 [1m[92m   Compiling[0m log v0.4.35
-[1m[92m   Compiling[0m stable_deref_trait v1.2.1
 [1m[92m   Compiling[0m windows-link v0.2.1
+[1m[92m   Compiling[0m stable_deref_trait v1.2.1
 [1m[92m   Compiling[0m smallvec v1.16.6
 [1m[92m   Compiling[0m simd-adler32 v0.3.10
 [1m[92m   Compiling[0m adler2 v2.0.1
-[1m[92m   Compiling[0m crc32fast v1.5.6
 [1m[92m   Compiling[0m windows_x86_64_msvc v0.52.6
-[1m[92m   Compiling[0m utf_types v1.0.0
-[1m[92m   Compiling[0m litemap v0.8.3
+[1m[92m   Compiling[0m crc32fast v1.5.6
 [1m[92m   Compiling[0m writeable v0.6.4
+[1m[92m   Compiling[0m litemap v0.8.3
+[1m[92m   Compiling[0m utf_types v1.0.0
 [1m[92m   Compiling[0m once_cell v1.21.4
 [1m[92m   Compiling[0m utf8_iter v1.1.0
-[1m[92m   Compiling[0m syn v3.0.10
 [1m[92m   Compiling[0m miniz_oxide v0.9.1
-[1m[92m   Compiling[0m khronos_api v3.1.0
 [1m[92m   Compiling[0m icu_normalizer_data v2.4.0
 [1m[92m   Compiling[0m icu_properties_data v2.4.0
+[1m[92m   Compiling[0m syn v3.0.10
+[1m[92m   Compiling[0m khronos_api v3.1.0
 [1m[92m   Compiling[0m windows-targets v0.52.6
-[1m[92m   Compiling[0m cfg_aliases v0.2.2
 [1m[92m   Compiling[0m autocfg v1.5.1
+[1m[92m   Compiling[0m cfg_aliases v0.2.2
 [1m[92m   Compiling[0m flate2 v1.1.11
 [1m[92m   Compiling[0m zerocopy v0.8.66
+[1m[92m   Compiling[0m parking_lot_core v0.9.12
 [1m[92m   Compiling[0m xml-rs v0.8.29
 [1m[92m   Compiling[0m version_check v0.9.5
-[1m[92m   Compiling[0m parking_lot_core v0.9.12
-[1m[92m   Compiling[0m ahash v0.8.14
-[1m[92m   Compiling[0m serde_core v1.0.229
-[1m[92m   Compiling[0m gl_generator v0.14.0
-[1m[92m   Compiling[0m scopeguard v1.2.0
 [1m[92m   Compiling[0m ttf-parser v0.25.1
+[1m[92m   Compiling[0m ahash v0.8.14
+[1m[92m   Compiling[0m gl_generator v0.14.0
 [1m[92m   Compiling[0m memchr v2.8.3
-[1m[92m   Compiling[0m lock_api v0.4.14
+[1m[92m   Compiling[0m serde_core v1.0.229
 [1m[92m   Compiling[0m synstructure v0.14.0
+[1m[92m   Compiling[0m scopeguard v1.2.0
+[1m[92m   Compiling[0m lock_api v0.4.14
+[1m[92m   Compiling[0m owned_ttf_parser v0.25.1
 [1m[92m   Compiling[0m syn v2.0.119
 [1m[92m   Compiling[0m zerofrom-derive v0.1.8
 [1m[92m   Compiling[0m zerofrom v0.1.8
@@ -46,124 +47,123 @@ exit=101
 [1m[92m   Compiling[0m zerovec-derive v0.11.7
 [1m[92m   Compiling[0m displaydoc v0.2.7
 [1m[92m   Compiling[0m bytemuck v1.25.2
-[1m[92m   Compiling[0m emath v0.29.1
-[1m[92m   Compiling[0m zerotrie v0.2.5
-[1m[92m   Compiling[0m owned_ttf_parser v0.25.1
 [1m[92m   Compiling[0m zerovec v0.11.9
+[1m[92m   Compiling[0m zerotrie v0.2.5
+[1m[92m   Compiling[0m emath v0.29.1
 [1m[92m   Compiling[0m windows-sys v0.61.2
-[1m[92m   Compiling[0m shlex v2.0.1
-[1m[92m   Compiling[0m find-msvc-tools v0.1.15
-[1m[92m   Compiling[0m bitflags v2.13.2
+[1m[92m   Compiling[0m percent-encoding v2.3.2
 [1m[92m   Compiling[0m tinystr v0.8.5
 [1m[92m   Compiling[0m potential_utf v0.1.6
-[1m[92m   Compiling[0m icu_locale_core v2.4.0
+[1m[92m   Compiling[0m shlex v2.0.1
 [1m[92m   Compiling[0m icu_collections v2.4.0
+[1m[92m   Compiling[0m icu_locale_core v2.4.0
+[1m[92m   Compiling[0m find-msvc-tools v0.1.15
 [1m[92m   Compiling[0m ab_glyph_rasterizer v0.1.10
-[1m[92m   Compiling[0m percent-encoding v2.3.2
-[1m[92m   Compiling[0m form_urlencoded v1.2.3
-[1m[92m   Compiling[0m ab_glyph v0.2.32
-[1m[92m   Compiling[0m cc v1.11.3
+[1m[92m   Compiling[0m bitflags v2.13.2
 [1m[92m   Compiling[0m icu_provider v2.4.0
-[1m[92m   Compiling[0m ecolor v0.29.1
-[1m[92m   Compiling[0m icu_properties v2.4.0
+[1m[92m   Compiling[0m ab_glyph v0.2.32
 [1m[92m   Compiling[0m icu_normalizer v2.4.0
+[1m[92m   Compiling[0m icu_properties v2.4.0
+[1m[92m   Compiling[0m cc v1.11.3
+[1m[92m   Compiling[0m form_urlencoded v1.2.3
+[1m[92m   Compiling[0m ecolor v0.29.1
 [1m[92m   Compiling[0m parking_lot v0.12.5
-[1m[92m   Compiling[0m miniz_oxide v0.8.9
-[1m[92m   Compiling[0m fdeflate v0.3.7
 [1m[92m   Compiling[0m idna_adapter v1.2.2
 [1m[92m   Compiling[0m idna v1.1.0
-[1m[92m   Compiling[0m epaint_default_fonts v0.29.1
+[1m[92m   Compiling[0m miniz_oxide v0.8.9
+[1m[92m   Compiling[0m fdeflate v0.3.7
 [1m[92m   Compiling[0m serde v1.0.229
 [1m[92m   Compiling[0m nohash-hasher v0.2.0
+[1m[92m   Compiling[0m epaint_default_fonts v0.29.1
+[1m[92m   Compiling[0m ring v0.17.14
 [1m[92m   Compiling[0m epaint v0.29.1
 [1m[92m   Compiling[0m url v2.5.9
-[1m[92m   Compiling[0m ring v0.17.14
 [1m[92m   Compiling[0m serde_derive v1.0.229
 [1m[92m   Compiling[0m num-traits v0.2.19
 [1m[92m   Compiling[0m windows-sys v0.52.0
-[1m[92m   Compiling[0m zmij v1.0.23
-[1m[92m   Compiling[0m float-cmp v0.9.0
-[1m[92m   Compiling[0m raw-window-handle v0.6.2
 [1m[92m   Compiling[0m arrayvec v0.7.8
+[1m[92m   Compiling[0m zmij v1.0.23
+[1m[92m   Compiling[0m raw-window-handle v0.6.2
 [1m[92m   Compiling[0m zeroize v1.9.2
-[1m[92m   Compiling[0m rustls-pki-types v1.16.0
+[1m[92m   Compiling[0m float-cmp v0.9.0
 [1m[92m   Compiling[0m strict-num v0.1.1
+[1m[92m   Compiling[0m rustls-pki-types v1.16.0
 [1m[92m   Compiling[0m egui v0.29.1
 [1m[92m   Compiling[0m aho-corasick v1.1.5
-[1m[92m   Compiling[0m glutin_egl_sys v0.7.1
 [1m[92m   Compiling[0m glutin_wgl_sys v0.6.1
+[1m[92m   Compiling[0m glutin_egl_sys v0.7.1
 [1m[92m   Compiling[0m winit v0.30.13
+[1m[92m   Compiling[0m arrayref v0.3.9
+[1m[92m   Compiling[0m tracing-core v0.1.36
 [1m[92m   Compiling[0m thiserror v1.0.69
 [1m[92m   Compiling[0m pin-project-lite v0.2.18
-[1m[92m   Compiling[0m tracing-core v0.1.36
 [1m[92m   Compiling[0m serde_json v1.0.154
 [1m[92m   Compiling[0m regex-syntax v0.8.12
-[1m[92m   Compiling[0m arrayref v0.3.9
+[1m[92m   Compiling[0m tracing v0.1.44
 [1m[92m   Compiling[0m tiny-skia-path v0.11.4
 [1m[92m   Compiling[0m regex-automata v0.4.19
-[1m[92m   Compiling[0m tracing v0.1.44
 [1m[92m   Compiling[0m kurbo v0.9.5
 [1m[92m   Compiling[0m thiserror-impl v1.0.69
 [1m[92m   Compiling[0m memoffset v0.9.1
 [1m[92m   Compiling[0m glutin v0.32.3
 [1m[92m   Compiling[0m getrandom v0.2.17
+[1m[92m   Compiling[0m anstyle v1.0.14
+[1m[92m   Compiling[0m error-code v3.4.0
+[1m[92m   Compiling[0m dpi v0.1.2
 [1m[92m   Compiling[0m siphasher v0.3.11
 [1m[92m   Compiling[0m siphasher v1.0.4
-[1m[92m   Compiling[0m anstyle v1.0.14
+[1m[92m   Compiling[0m utf8parse v0.2.2
+[1m[92m   Compiling[0m unicase v2.10.0
+[1m[92m   Compiling[0m smol_str v0.2.2
+[1m[92m   Compiling[0m weezl v0.1.12
+[1m[92m   Compiling[0m once_cell_polyfill v1.70.2
+[1m[92m   Compiling[0m pxfm v0.1.30
 [1m[92m   Compiling[0m itoa v1.0.19
 [1m[92m   Compiling[0m color_quant v1.1.0
-[1m[92m   Compiling[0m once_cell_polyfill v1.70.2
-[1m[92m   Compiling[0m litrs v1.1.0
-[1m[92m   Compiling[0m utf8parse v0.2.2
-[1m[92m   Compiling[0m smol_str v0.2.2
 [1m[92m   Compiling[0m untrusted v0.9.0
-[1m[92m   Compiling[0m dpi v0.1.2
-[1m[92m   Compiling[0m weezl v0.1.12
-[1m[92m   Compiling[0m unicase v2.10.0
-[1m[92m   Compiling[0m error-code v3.4.0
-[1m[92m   Compiling[0m cursor-icon v1.2.0
-[1m[92m   Compiling[0m pxfm v0.1.30
 [1m[92m   Compiling[0m unicode-segmentation v1.13.3
-[1m[92m   Compiling[0m gif v0.14.2
-[1m[92m   Compiling[0m clipboard-win v5.4.3
-[1m[92m   Compiling[0m phf_shared v0.11.3
+[1m[92m   Compiling[0m cursor-icon v1.2.0
+[1m[92m   Compiling[0m litrs v1.1.0
 [1m[92m   Compiling[0m document-features v0.2.12
 [1m[92m   Compiling[0m moxcms v0.8.1
-[1m[92m   Compiling[0m anstyle-parse v1.0.0
+[1m[92m   Compiling[0m gif v0.14.2
 [1m[92m   Compiling[0m anstyle-wincon v3.0.11
+[1m[92m   Compiling[0m phf_shared v0.11.3
+[1m[92m   Compiling[0m anstyle-parse v1.0.0
 [1m[92m   Compiling[0m svgtypes v0.13.0
+[1m[92m   Compiling[0m clipboard-win v5.4.3
 [1m[92m   Compiling[0m regex v1.13.2
 [1m[92m   Compiling[0m png v0.18.1
 [1m[92m   Compiling[0m anstyle-query v1.1.5
 [1m[92m   Compiling[0m glutin-winit v0.5.0
 [1m[92m   Compiling[0m windows-sys v0.59.0
 [1m[92m   Compiling[0m libloading v0.8.9
+[1m[92m   Compiling[0m jiff-core v1.0.2
 [1m[92m   Compiling[0m rustls v0.23.46
+[1m[92m   Compiling[0m colorchoice v1.0.5
+[1m[92m   Compiling[0m winapi v0.3.9
 [1m[92m   Compiling[0m byteorder-lite v0.1.0
 [1m[92m   Compiling[0m rctree v0.5.0
 [1m[92m   Compiling[0m is_terminal_polyfill v1.70.2
-[1m[92m   Compiling[0m colorchoice v1.0.5
-[1m[92m   Compiling[0m winapi v0.3.9
-[1m[92m   Compiling[0m jiff-core v1.0.2
-[1m[92m   Compiling[0m anstream v1.0.0
 [1m[92m   Compiling[0m usvg-tree v0.37.0
-[1m[92m   Compiling[0m jiff v1.0.3
+[1m[92m   Compiling[0m anstream v1.0.0
 [1m[92m   Compiling[0m image v0.25.10
+[1m[92m   Compiling[0m jiff v1.0.3
 [1m[92m   Compiling[0m winrust-core v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-core)
 [1m[92m   Compiling[0m env_filter v2.1.0
-[1m[92m   Compiling[0m rustls-webpki v0.103.17
-[1m[92m   Compiling[0m phf v0.11.3
 [1m[92m   Compiling[0m arboard v3.7.0
+[1m[92m   Compiling[0m phf v0.11.3
+[1m[92m   Compiling[0m rustls-webpki v0.103.17
 [1m[92m   Compiling[0m webpki-roots v1.0.12
 [1m[92m   Compiling[0m webbrowser v1.2.7
 [1m[92m   Compiling[0m simplecss v0.2.2
-[1m[92m   Compiling[0m data-url v0.3.2
 [1m[92m   Compiling[0m web-time v1.1.0
-[1m[92m   Compiling[0m subtle v2.6.1
-[1m[92m   Compiling[0m bitflags v1.3.2
 [1m[92m   Compiling[0m roxmltree v0.19.0
-[1m[92m   Compiling[0m glow v0.14.2
+[1m[92m   Compiling[0m data-url v0.3.2
+[1m[92m   Compiling[0m subtle v2.6.1
 [1m[92m   Compiling[0m imagesize v0.12.0
+[1m[92m   Compiling[0m bitflags v1.3.2
+[1m[92m   Compiling[0m glow v0.14.2
 [1m[92m   Compiling[0m png v0.17.16
 [1m[92m   Compiling[0m usvg-parser v0.37.0
 [1m[92m   Compiling[0m egui_glow v0.29.1
@@ -171,15 +171,15 @@ exit=101
 [1m[92m   Compiling[0m webpki-roots v0.26.11
 [1m[92m   Compiling[0m mime_guess2 v2.3.1
 [1m[92m   Compiling[0m env_logger v0.11.12
-[1m[92m   Compiling[0m xmlwriter v0.1.0
-[1m[92m   Compiling[0m base64 v0.22.1
-[1m[92m   Compiling[0m pico-args v0.5.0
 [1m[92m   Compiling[0m static_assertions v1.1.0
+[1m[92m   Compiling[0m pico-args v0.5.0
+[1m[92m   Compiling[0m xmlwriter v0.1.0
 [1m[92m   Compiling[0m base64 v0.21.7
-[1m[92m   Compiling[0m tiny-skia v0.11.4
+[1m[92m   Compiling[0m base64 v0.22.1
+[1m[92m   Compiling[0m ureq v2.12.1
 [1m[92m   Compiling[0m usvg v0.37.0
 [1m[92m   Compiling[0m eframe v0.29.1
-[1m[92m   Compiling[0m ureq v2.12.1
+[1m[92m   Compiling[0m tiny-skia v0.11.4
 [1m[92m   Compiling[0m winrust-ui v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-ui)
 [1m[92m   Compiling[0m rgb v0.8.53
 [1m[92m   Compiling[0m enum-map-derive v0.17.0
@@ -188,143 +188,62 @@ exit=101
 [1m[92m   Compiling[0m resvg v0.37.0
 [1m[92m   Compiling[0m ehttp v0.5.0
 [1m[92m   Compiling[0m winrust-kernel-abi v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-[1m[92m   Compiling[0m winrust-launcher v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-launcher)
 [1m[92m   Compiling[0m egui_extras v0.29.1
 [1m[92m   Compiling[0m winrust-kernel-control v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
+[1m[92m   Compiling[0m winrust-launcher v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-launcher)
 [1m[92m   Compiling[0m winrust-desktop v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-desktop)
-[1m[91merror[E0433][0m[1m[97m: cannot find module or crate `serde` in this scope[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:157:30
+[1m[92m   Compiling[0m winrust-taskmgr v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
+[1m[93mwarning[0m[1m[97m: type `Sampler` is more private than the item `TaskManagerApp::sampler`[0m
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:55:5
     [1m[96m|[0m
-[1m[96m157[0m [1m[96m|[0m #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
-    [1m[96m|[0m                              [1m[91m^^^^^[0m [1m[91muse of unresolved module or unlinked crate `serde`[0m
+[1m[96m 55[0m [1m[96m|[0m     pub(super) sampler: Sampler,
+    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `TaskManagerApp::sampler` is reachable at visibility `pub(crate)`[0m
+    [1m[96m|[0m
+[1m[92mnote[0m: but type `Sampler` is only usable at visibility `pub(in crate::app)`
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:142:1
+    [1m[96m|[0m
+[1m[96m142[0m [1m[96m|[0m pub(super) struct Sampler {
+    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(private_interfaces)]` on by default
 
-[1m[91merror[E0433][0m[1m[97m: cannot find module or crate `serde` in this scope[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:157:48
+[1m[93mwarning[0m[1m[97m: type `Snapshot` is more private than the item `TaskManagerApp::snapshot`[0m
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:56:5
     [1m[96m|[0m
-[1m[96m157[0m [1m[96m|[0m #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
-    [1m[96m|[0m                                                [1m[91m^^^^^[0m [1m[91muse of unresolved module or unlinked crate `serde`[0m
+[1m[96m 56[0m [1m[96m|[0m     pub(super) snapshot: Snapshot,
+    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `TaskManagerApp::snapshot` is reachable at visibility `pub(crate)`[0m
+    [1m[96m|[0m
+[1m[92mnote[0m: but type `Snapshot` is only usable at visibility `pub(in crate::app)`
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:132:1
+    [1m[96m|[0m
+[1m[96m132[0m [1m[96m|[0m pub(super) struct Snapshot {
+    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
 
-[1m[91merror[0m[1m[97m: cannot find attribute `serde` in this scope[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:160:7
+[1m[93mwarning[0m[1m[97m: type `Snapshot` is more private than the item `TaskManagerApp::pending_snapshot`[0m
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:84:5
     [1m[96m|[0m
-[1m[96m160[0m [1m[96m|[0m     #[serde(default)]
-    [1m[96m|[0m       [1m[91m^^^^^[0m
+[1m[96m 84[0m [1m[96m|[0m     pub(super) pending_snapshot: Option<Snapshot>,
+    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `TaskManagerApp::pending_snapshot` is reachable at visibility `pub(crate)`[0m
     [1m[96m|[0m
-    [1m[96m= [0m[1m[97mnote[0m: `serde` is an attribute that can be used by the derive macros `Deserialize` and `Serialize`, you might be missing a `derive` attribute
+[1m[92mnote[0m: but type `Snapshot` is only usable at visibility `pub(in crate::app)`
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:132:1
+    [1m[96m|[0m
+[1m[96m132[0m [1m[96m|[0m pub(super) struct Snapshot {
+    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
 
-[1m[91merror[E0277][0m[1m[97m: the trait bound `SavedPos: serde::de::DeserializeOwned` is not satisfied[0m
-    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:176:51
-     [1m[96m|[0m
-[1m[96m 176[0m [1m[96m|[0m         if let Ok(pos) = serde_json::from_value::<SavedPos>(value.clone()) {
-     [1m[96m|[0m                                                   [1m[91m^^^^^^^^[0m [1m[91munsatisfied trait bound[0m
-     [1m[96m|[0m
-[1m[96mhelp[0m: the trait `for<'de> serde_core::de::Deserialize<'de>` is not implemented for `SavedPos`
-    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:158:1
-     [1m[96m|[0m
-[1m[96m 158[0m [1m[96m|[0m struct SavedPos {
-     [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^[0m
-     [1m[96m= [0m[1m[97mhelp[0m: the following other types implement trait `serde_core::de::Deserialize<'de>`:
-               `&'a [u8]` implements `serde_core::de::Deserialize<'de>`
-               `&'a std::path::Path` implements `serde_core::de::Deserialize<'de>`
-               `&'a str` implements `serde_core::de::Deserialize<'de>`
-               `()` implements `serde_core::de::Deserialize<'de>`
-               `(T,)` implements `serde_core::de::Deserialize<'de>`
-               `(T0, T1)` implements `serde_core::de::Deserialize<'de>`
-               `(T0, T1, T2)` implements `serde_core::de::Deserialize<'de>`
-               `(T0, T1, T2, T3)` implements `serde_core::de::Deserialize<'de>`
-             and 163 others
-     [1m[96m= [0m[1m[97mnote[0m: required for `SavedPos` to implement `serde_core::de::DeserializeOwned`
-[1m[92mnote[0m: required by a bound in `from_value`
-    [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_json-1.0.154\src\value\mod.rs:1039:8
-     [1m[96m|[0m
-[1m[96m1037[0m [1m[96m|[0m pub fn from_value<T>(value: Value) -> Result<T, Error>
-[1m[96m1038[0m [1m[96m|[0m where
-[1m[96m1039[0m [1m[96m|[0m     T: DeserializeOwned,
-     [1m[96m|[0m        [1m[92m^^^^^^^^^^^^^^^^[0m [1m[92mrequired by this bound in `from_value`[0m
+[1m[93mwarning[0m[1m[97m: type `StartupItem` is more private than the item `TaskManagerApp::startup`[0m
+  [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:87:5
+   [1m[96m|[0m
+[1m[96m87[0m [1m[96m|[0m     pub(super) startup: Vec<StartupItem>,
+   [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `TaskManagerApp::startup` is reachable at visibility `pub(crate)`[0m
+   [1m[96m|[0m
+[1m[92mnote[0m: but type `StartupItem` is only usable at visibility `pub(in crate::app)`
+  [1m[96m--> [0mcrates\winrust-taskmgr\src\app\startup.rs:15:1
+   [1m[96m|[0m
+[1m[96m15[0m [1m[96m|[0m pub(super) struct StartupItem {
+   [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
 
-[1m[91merror[E0277][0m[1m[97m: the trait bound `SavedPos: serde::Serialize` is not satisfied[0m
-    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:204:52
-     [1m[96m|[0m
-[1m[96m 204[0m [1m[96m|[0m     if let Ok(text) = serde_json::to_string_pretty(&map) {
-     [1m[96m|[0m                       [1m[96m----------------------------[0m [1m[91m^^^^[0m [1m[91munsatisfied trait bound[0m
-     [1m[96m|[0m                       [1m[96m|[0m
-     [1m[96m|[0m                       [1m[96mrequired by a bound introduced by this call[0m
-     [1m[96m|[0m
-[1m[96mhelp[0m: the trait `serde_core::ser::Serialize` is not implemented for `SavedPos`
-    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:158:1
-     [1m[96m|[0m
-[1m[96m 158[0m [1m[96m|[0m struct SavedPos {
-     [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^[0m
-     [1m[96m= [0m[1m[97mnote[0m: for local types consider adding `#[derive(serde::Serialize)]` to your `SavedPos` type
-     [1m[96m= [0m[1m[97mnote[0m: for types from other crates check whether the crate offers a `serde` feature flag
-     [1m[96m= [0m[1m[97mhelp[0m: the following other types implement trait `serde_core::ser::Serialize`:
-               &'a T
-               &'a mut T
-               ()
-               (T,)
-               (T0, T1)
-               (T0, T1, T2)
-               (T0, T1, T2, T3)
-               (T0, T1, T2, T3, T4)
-             and 151 others
-     [1m[96m= [0m[1m[97mnote[0m: required for `HashMap<&str, SavedPos>` to implement `serde_core::ser::Serialize`
-[1m[92mnote[0m: required by a bound in `to_string_pretty`
-    [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_json-1.0.154\src\ser.rs:2266:17
-     [1m[96m|[0m
-[1m[96m2264[0m [1m[96m|[0m pub fn to_string_pretty<T>(value: &T) -> Result<String>
-[1m[96m2265[0m [1m[96m|[0m where
-[1m[96m2266[0m [1m[96m|[0m     T: ?Sized + Serialize,
-     [1m[96m|[0m                 [1m[92m^^^^^^^^^[0m [1m[92mrequired by this bound in `to_string_pretty`[0m
-
-[1m[91merror[E0277][0m[1m[97m: the trait bound `SizedTexture: From<(&TextureId, Vec2)>` is not satisfied[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:493:33
-    [1m[96m|[0m
-[1m[96m492[0m [1m[96m|[0m [1m[96m...[0m                   egui::Button::image_and_text(
-    [1m[96m|[0m                       [1m[96m----------------------------[0m [1m[96mrequired by a bound introduced by this call[0m
-[1m[96m493[0m [1m[96m|[0m [1m[96m...[0m                       (id, egui::vec2(16.0, 16.0)),
-    [1m[96m|[0m                           [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `From<(&TextureId, Vec2)>` is not implemented for `SizedTexture`[0m
-    [1m[96m|[0m
-[1m[96mhelp[0m: `SizedTexture` implements trait `From<T>`
-   [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\src\load.rs:406:1
-    [1m[96m|[0m
-[1m[96m406[0m [1m[96m|[0m impl From<(TextureId, Vec2)> for SizedTexture {
-    [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[96m`From<(TextureId, Vec2)>`[0m
-[1m[96m...[0m
-[1m[96m413[0m [1m[96m|[0m impl<'a> From<&'a TextureHandle> for SizedTexture {
-    [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[96m`From<&TextureHandle>`[0m
-    [1m[96m= [0m[1m[97mnote[0m: required for `(&TextureId, Vec2)` to implement `Into<SizedTexture>`
-    [1m[96m= [0m[1m[97mnote[0m: required for `ImageSource<'_>` to implement `From<(&TextureId, Vec2)>`
-    [1m[96m= [0m[1m[97mnote[0m: 3 redundant requirements hidden
-    [1m[96m= [0m[1m[97mnote[0m: required for `(&TextureId, Vec2)` to implement `Into<Image<'_>>`
-[1m[92mnote[0m: required by a bound in `eframe::egui::Button::<'a>::image_and_text`
-   [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\src\widgets\button.rs:55:39
-    [1m[96m|[0m
-[1m[96m 42[0m [1m[96m|[0m impl<'a> Button<'a> {
-[1m[96m...[0m
-[1m[96m 55[0m [1m[96m|[0m     pub fn image_and_text(image: impl Into<Image<'a>>, text: impl Into<WidgetText>) -> Self {
-    [1m[96m|[0m                                       [1m[92m^^^^^^^^^^^^^^^[0m [1m[92mrequired by this bound in `Button::<'a>::image_and_text`[0m
-
-[1m[91merror[E0277][0m[1m[97m: the trait bound `Cow<'_, str>: AsRef<std::path::Path>` is not satisfied[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\start.rs:212:59
-    [1m[96m|[0m
-[1m[96m212[0m [1m[96m|[0m             let _ = winrust_core::shell::show_properties(&path.to_string_lossy());
-    [1m[96m|[0m                     [1m[96m------------------------------------[0m  [1m[91m^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `AsRef<std::path::Path>` is not implemented for `Cow<'_, str>`[0m
-    [1m[96m|[0m                     [1m[96m|[0m
-    [1m[96m|[0m                     [1m[96mrequired by a bound introduced by this call[0m
-    [1m[96m|[0m
-    [1m[96m= [0m[1m[97mnote[0m: required for `&Cow<'_, str>` to implement `AsRef<std::path::Path>`
-[1m[92mnote[0m: required by a bound in `show_properties`
-   [1m[96m--> [0mcrates\winrust-core\src\shell\shell.rs:186:35
-    [1m[96m|[0m
-[1m[96m186[0m [1m[96m|[0m pub fn show_properties(path: impl AsRef<Path>) -> Result<()> {
-    [1m[96m|[0m                                   [1m[92m^^^^^^^^^^^[0m [1m[92mrequired by this bound in `show_properties`[0m
-[1m[96mhelp[0m: consider dereferencing here
-    [1m[96m|[0m
-[1m[96m212[0m [1m[96m| [0m            let _ = winrust_core::shell::show_properties(&[92m*[0mpath.to_string_lossy());
-    [1m[96m|[0m                                                           [92m+[0m
-
+[1m[92m   Compiling[0m winrust-sysctl v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
+[1m[92m   Compiling[0m winrust-explorer v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-explorer)
 [1m[92m   Compiling[0m winrust-services v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-services)
-[1m[97mSome errors have detailed explanations: E0277, E0433.[0m
-[1m[97mFor more information about an error, try `rustc --explain E0277`.[0m
-[1m[91merror[0m: could not compile `winrust-desktop` (bin "winrust-desktop") due to 7 previous errors
-[1m[93mwarning[0m: build failed, waiting for other jobs to finish...
+[1m[93mwarning[0m: `winrust-taskmgr` (bin "winrust-taskmgr") generated 4 warnings
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 3m 09s

@@ -11,26 +11,3 @@ Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\desktop.rs:450:
 [0m                     self.settings.snap_to_grid = snap;
                      if snap {
                          // Turning it back on tidies what is already scattered,
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\desktop.rs:489:
-                 for (item, icon) in &new_items {
-                     let resp = match icon {
-                         Some(id) => ui.add(
-[31m-                            egui::Button::image_and_text(
-[0m[31m-                                (id, egui::vec2(16.0, 16.0)),
-[0m[31m-                                &item.label,
-[0m[31m-                            )
-[0m[31m-                            .frame(false),
-[0m[32m+                            egui::Button::image_and_text((id, egui::vec2(16.0, 16.0)), &item.label)
-[0m[32m+                                .frame(false),
-[0m                         ),
-                         None => ui.add(egui::Button::new(&item.label).frame(false)),
-                     };
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\tray.rs:466:
-                 });
-         },
-     )
-[31m-        .response;
-[0m[32m+    .response;
-[0m 
-     // Clicking elsewhere closes it, exactly like the real flyouts.
-     if ctx.input(|i| i.pointer.any_click()) {
