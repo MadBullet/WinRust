@@ -378,6 +378,7 @@ impl ExplorerApp {
         // runs while `self` is borrowed for drawing, and `run(..)` needs
         // `&mut self`.
         let mut refresh_now = false;
+        let mut new_folder = false;
         strip.context_menu(|ui| {
             ui.set_min_width(220.0);
             if ui.button(t("Refresh")).clicked() {
@@ -391,8 +392,7 @@ impl ExplorerApp {
             if ui.button(t("New folder")).clicked() {
                 // The same flag the "+ New > Folder" button sets; the file
                 // area draws the inline name field for it.
-                self.creating_folder = true;
-                self.new_folder_buffer = t("New folder");
+                new_folder = true;
                 ui.close_menu();
             }
         });
@@ -486,6 +486,12 @@ impl ExplorerApp {
         }
         if let Some(p) = nav {
             self.navigate(p);
+        }
+        // The context menu only records intent: `self` is borrowed by the
+        // tree drawing above, and these three actions all need `&mut self`.
+        if new_folder {
+            self.creating_folder = true;
+            self.new_folder_buffer = t("New folder");
         }
         if refresh_now {
             self.refresh();

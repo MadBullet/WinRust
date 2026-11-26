@@ -137,17 +137,28 @@ impl ExplorerApp {
         }
     }
 
-    /// Is the active tab showing "This PC" - the Computer known folder?
+    /// Is the active tab showing "This PC"?
     ///
     /// This used to also answer "yes" for a bare drive root (`C:\`), which is
     /// the 0.9.0 bug the review found: opening a drive navigated the tab to
     /// `C:\`, the view recognised that as "This PC" again, and the same grid
     /// of drive tiles came back - so a double-click on a drive looked like it
-    /// did nothing.  A drive root is a folder to list, not the Computer view.
+    /// did nothing.
+    ///
+    /// The shell's `FOLDERID_ComputerFolder` is a *virtual* folder with no
+    /// filesystem path of its own; `SHGetKnownFolderPath` resolves it to the
+    /// user's profile directory on most systems.  Comparing the tab's path
+    /// with that would therefore label the profile directory - and, on a
+    /// machine where it resolves to `C:\`, the system drive - as "This PC"
+    /// again.  So the name of the drive root is checked first: a path that is
+    /// exactly a volume root is never the Computer view.
     pub(super) fn is_computer_view(&self) -> bool {
         let p = &self.current().path;
+        if is_volume_root(p) {
+            return false;
+        }
         match KnownFolder::Computer.path() {
-            Some(computer) => p == &computer,
+            Some(computer) => !is_volume_root(&computer) && p == &computer,
             None => false,
         }
     }
@@ -857,4 +868,21 @@ impl ExplorerApp {
             ctx.request_repaint_after(std::time::Duration::from_millis(80));
         }
     }
+}
+
+/// `true` for `C:\`, `D:\` and a UNC share root - paths that name a volume,
+/// not a folder inside one.
+fn is_volume_root(path: &Path) -> bool {
+    let s = path.to_string_lossy();
+    let bytes = s.as_bytes();
+    // "X:\" and "X:" (no trailing separator) are both volume roots.
+    if bytes.len() <= 3 && bytes.len() >= 2 && bytes[1] == b':' {
+        return bytes[0].is_ascii_alphabetic();
+    }
+    // A bare UNC root: "\\server\share" with nothing after the share.
+    if s.starts_with("\\") {
+        let rest = s.trim_start_matches('\\').trim_end_matches('\\');
+        return rest.matches('\\').count() == 1;
+    }
+    false
 }
