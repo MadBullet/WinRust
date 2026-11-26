@@ -100,27 +100,27 @@ impl ExplorerApp {
         // shell namespace that holds them is only reachable through
         // `ShellExecute`, so the tab shows what it is and hands the folder to
         // the system view instead of pretending to be an empty directory.
-        if let Some(special) = self.current().special {
-            if special != Special::Computer {
-                ui.add_space(30.0);
-                ui.vertical_centered(|ui| {
-                    ui.label(RichText::new(ts(special.title())).size(17.0).strong());
-                    ui.add_space(6.0);
-                    ui.label(
-                        RichText::new(t("This folder is shown by Windows itself."))
-                            .size(13.0)
-                            .weak(),
-                    );
-                    ui.add_space(10.0);
-                    if ui.button(t("Open in Windows Explorer")).clicked() {
-                        if let Err(e) = winrust_core::shell::open_shell_path(special.shell_path())
-                        {
-                            self.status = format!("{}: {e}", t("Open failed"));
-                        }
+        // Copied out of the tab: the borrow of `self.current()` would
+        // otherwise live through the closure, which writes `self.status`.
+        let special = self.current().special;
+        if let Some(special @ (Special::Network | Special::RecycleBin)) = special {
+            ui.add_space(30.0);
+            ui.vertical_centered(|ui| {
+                ui.label(RichText::new(ts(special.title())).size(17.0).strong());
+                ui.add_space(6.0);
+                ui.label(
+                    RichText::new(t("This folder is shown by Windows itself."))
+                        .size(13.0)
+                        .weak(),
+                );
+                ui.add_space(10.0);
+                if ui.button(t("Open in Windows Explorer")).clicked() {
+                    if let Err(e) = winrust_core::shell::open_shell_path(special.shell_path()) {
+                        self.status = format!("{}: {e}", t("Open failed"));
                     }
-                });
-                return;
-            }
+                }
+            });
+            return;
         }
 
         // "This PC" gets the Explorer home layout: folder tiles on top, then
