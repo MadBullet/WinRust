@@ -27,25 +27,63 @@ jobs:
           rustc -V
           cargo -V
 
+      # Each check writes its own report and then keeps the job alive, so one
+      # run tells the whole story: a compile error does not hide the clippy or
+      # release results behind it.  The last step reads the reports and fails
+      # the run.  Before this, every check was `continue-on-error: true` and
+      # the job reported success while `build.txt` said the build had failed,
+      # which is how a missing import sat in a "green" run.
+      #
+      # `shell: bash` is load-bearing.  Under the default pwsh, `$?` is
+      # `True`/`False` instead of an exit code, so the reports used to read
+      # `exit=False` and nothing machine-readable knew the code.
+      #
+      # `code=0 ... || code=$?` rather than `cmd; code=$?`: the runner starts
+      # bash with `-e`, which would abort the step before the assignment.
       - name: cargo fmt --check
         continue-on-error: true
-        run: cargo fmt --all -- --check > fmt.txt 2>&1; echo "exit=$?" >> fmt.txt
+        shell: bash
+        run: |
+          code=0
+          cargo fmt --all -- --check > fmt.txt 2>&1 || code=$?
+          echo "$code" > fmt.code
+          exit "$code"
 
       - name: cargo test (core)
         continue-on-error: true
-        run: cargo test -p winrust-core --no-fail-fast > test.txt 2>&1; echo "exit=$?" >> test.txt
+        shell: bash
+        run: |
+          code=0
+          cargo test -p winrust-core --no-fail-fast > test.txt 2>&1 || code=$?
+          echo "$code" > test.code
+          exit "$code"
 
       - name: cargo build (debug)
         continue-on-error: true
-        run: cargo build --workspace > build.txt 2>&1; echo "exit=$?" >> build.txt
+        shell: bash
+        run: |
+          code=0
+          cargo build --workspace > build.txt 2>&1 || code=$?
+          echo "$code" > build.code
+          exit "$code"
 
       - name: cargo clippy
         continue-on-error: true
-        run: cargo clippy --workspace --all-targets > clippy.txt 2>&1; echo "exit=$?" >> clippy.txt
+        shell: bash
+        run: |
+          code=0
+          cargo clippy --workspace --all-targets > clippy.txt 2>&1 || code=$?
+          echo "$code" > clippy.code
+          exit "$code"
 
       - name: cargo build (release binaries)
         continue-on-error: true
-        run: cargo build --workspace --release > release.txt 2>&1; echo "exit=$?" >> release.txt
+        shell: bash
+        run: |
+          code=0
+          cargo build --workspace --release > release.txt 2>&1 || code=$?
+          echo "$code" > release.code
+          exit "$code"
 
       - name: collect diagnostics
         if: always()
@@ -53,10 +91,19 @@ jobs:
         run: |
           mkdir -p docs/ci/build
           for f in fmt test build clippy release; do
-            if [ -f "$f.txt" ]; then
-              # trim to the parts that matter for the agent round-trip
-              head -c 200000 "$f.txt" > "docs/ci/build/$f.txt" || true
-            fi
+            code=missing
+            # Keep digits only: PowerShell may hand the code over with a BOM
+            # or a CR, and a byte comparison against "0" must not trip on that.
+            if [ -f "$f.code" ]; then code=$(tr -cd '0-9' < "$f.code"); fi
+            if [ -z "$code" ]; then code=missing; fi
+            # The marker goes first.  It used to be appended to the end of the
+            # log and the copy below keeps only the first 200 KB, so a check
+            # that printed more than that lost the one line that said it had
+            # failed.
+            {
+              echo "exit=$code"
+              if [ -f "$f.txt" ]; then head -c 200000 "$f.txt"; fi
+            } > "docs/ci/build/$f.txt"
           done
           ls -la target/release/*.exe 2>/dev/null > docs/ci/build/binaries.txt || true
           du -sh target 2>/dev/null >> docs/ci/build/binaries.txt || true
@@ -102,3 +149,28 @@ jobs:
             target/release/winrust-desktop.exe
             target/release/WinRust.exe
           if-no-files-found: ignore
+
+      # The one step that decides the run.  It goes last so the reports are
+      # already committed: a failed run still leaves its diagnostics on the
+      # branch, and the job status finally matches what the reports say.
+      - name: fail the run if a check failed
+        if: always()
+        shell: bash
+        run: |
+          failed=""
+          for f in fmt test build clippy release; do
+            report="docs/ci/build/$f.txt"
+            if [ ! -f "$report" ]; then
+              failed="$failed $f(no report)"
+              continue
+            fi
+            code=$(head -1 "$report" | sed 's/^exit=//')
+            if [ "$code" != "0" ]; then
+              failed="$failed $f($code)"
+            fi
+          done
+          if [ -n "$failed" ]; then
+            echo "::error::failed checks:$failed"
+            exit 1
+          fi
+          echo "all checks passed"

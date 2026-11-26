@@ -93,19 +93,33 @@ jobs:
           Write-Host "--- km/crt check ---"
           Get-ChildItem "$wdk\c\Include\$sdkVersion.0\km\crt" -ErrorAction SilentlyContinue | Select-Object -First 3 | ForEach-Object { $_.Name }
 
+      # Same contract as build.yml: each check records its real exit code in a
+      # `.code` file and the job is judged at the end, so a failure is visible
+      # in the run status instead of only inside a committed log.
+      #
+      # `shell: bash` matters: under pwsh `$?` is `True`/`False`, and
+      # `code=0 ... || code=$?` survives the `-e` the runner enables (a bare
+      # `cmd; code=$?` would abort the step before the assignment).
       - name: cargo fmt --check (kernel crates)
         continue-on-error: true
         shell: bash
         run: |
           # `winrust-kernel` is a separate workspace, so it is formatted on its
           # own; the ABI crate and the client belong to the root workspace.
-          cargo fmt -p winrust-kernel-abi -p winrust-kernel-control --check > fmt.txt 2>&1
-          echo "exit=$?" >> fmt.txt
-          ( cd crates/winrust-kernel && cargo fmt --check >> ../../fmt.txt 2>&1; echo "exit=$?" >> ../../fmt.txt )
+          code=0
+          cargo fmt -p winrust-kernel-abi -p winrust-kernel-control --check > fmt.txt 2>&1 || code=$?
+          ( cd crates/winrust-kernel && cargo fmt --check >> ../../fmt.txt 2>&1 || echo "kernel workspace: $?" >> ../../fmt.txt )
+          echo "$code" > fmt.code
+          exit "$code"
 
       - name: build the user-mode client
         continue-on-error: true
-        run: cargo build -p winrust-kernel-control --release > control.txt 2>&1; echo "exit=$?" >> control.txt
+        shell: bash
+        run: |
+          code=0
+          cargo build -p winrust-kernel-control --release > control.txt 2>&1 || code=$?
+          echo "$code" > control.code
+          exit "$code"
 
       # `wdk-build` locates the WDK content root through the WDK's own
       # environment, which the VS Developer Prompt sets up.  Using the
@@ -121,8 +135,13 @@ jobs:
           # its artifacts under crates/winrust-kernel/target.
           Push-Location crates/winrust-kernel
           cargo build --release --target x86_64-pc-windows-msvc *>&1 | Tee-Object -FilePath ../../driver.txt
-          "exit=$LASTEXITCODE" | Out-File -Append -Encoding utf8 ../../driver.txt
+          $code = $LASTEXITCODE
           Pop-Location
+          # $LASTEXITCODE is the real code; the report keeps the log alone and
+          # the code goes in its own file, which collect-diagnostics turns into
+          # the `exit=` line the summary step reads.
+          "$code" | Out-File -Encoding utf8 driver.code
+          exit $code
 
       - name: collect diagnostics
         if: always()
@@ -130,9 +149,15 @@ jobs:
         run: |
           mkdir -p docs/ci/build
           for f in fmt control driver; do
-            if [ -f "$f.txt" ]; then
-              head -c 200000 "$f.txt" > "docs/ci/build/kernel-$f.txt" || true
-            fi
+            code=missing
+            # Keep digits only: PowerShell may hand the code over with a BOM
+            # or a CR, and a byte comparison against "0" must not trip on that.
+            if [ -f "$f.code" ]; then code=$(tr -cd '0-9' < "$f.code"); fi
+            if [ -z "$code" ]; then code=missing; fi
+            {
+              echo "exit=$code"
+              if [ -f "$f.txt" ]; then head -c 200000 "$f.txt"; fi
+            } > "docs/ci/build/kernel-$f.txt"
           done
           ls -la crates/winrust-kernel/target/x86_64-pc-windows-msvc/release/*.dll \
             target/release/winrust-driver.exe 2>/dev/null \
@@ -169,3 +194,27 @@ jobs:
             target/release/winrust-driver.exe
             crates/winrust-kernel/WinRustKernel.inx
           if-no-files-found: ignore
+
+      # Judge the run from the reports, last, so a failure still commits its
+      # diagnostics first.
+      - name: fail the run if a check failed
+        if: always()
+        shell: bash
+        run: |
+          failed=""
+          for f in fmt control driver; do
+            report="docs/ci/build/kernel-$f.txt"
+            if [ ! -f "$report" ]; then
+              failed="$failed $f(no report)"
+              continue
+            fi
+            code=$(head -1 "$report" | sed 's/^exit=//')
+            if [ "$code" != "0" ]; then
+              failed="$failed $f($code)"
+            fi
+          done
+          if [ -n "$failed" ]; then
+            echo "::error::failed checks:$failed"
+            exit 1
+          fi
+          echo "all kernel checks passed"

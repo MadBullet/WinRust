@@ -1,0 +1,3 @@
+
+# per-check exit codes written by the CI workflows (build.yml, kernel.yml)
+/*.code
