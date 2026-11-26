@@ -79,7 +79,12 @@ impl PowerAction {
             PowerAction::ShutDown => shell::shutdown(),
             PowerAction::Restart => shell::restart(),
             PowerAction::Sleep => shell::sleep(),
-            PowerAction::Hibernate => shell::hibernate(),
+            // `hibernate()` reports whether the machine accepted it; the
+            // power menu has already refused the action where hibernation is
+            // disabled, so there is nothing useful to do with the answer here.
+            PowerAction::Hibernate => {
+                let _ = shell::hibernate();
+            }
             PowerAction::SignOut => shell::sign_out(),
         }
     }

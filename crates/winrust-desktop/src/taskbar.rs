@@ -479,7 +479,10 @@ fn preview(
     const PAD: f32 = 6.0;
     const CAPTION: f32 = 18.0;
 
-    let refresh = app.thumbs_at.map(|t| t.elapsed() > std::time::Duration::from_secs(2)).unwrap_or(true);
+    let refresh = app
+        .thumbs_at
+        .map(|t| t.elapsed() > std::time::Duration::from_secs(2))
+        .unwrap_or(true);
     if refresh {
         app.thumbs_at = Some(Instant::now());
         // Forget pictures of windows that are gone; otherwise the texture map
@@ -520,7 +523,10 @@ fn preview(
     for w in windows.iter() {
         if refresh || !app.thumbs.contains_key(&w.hwnd) {
             let image = winrust_core::thumb::window_thumbnail(w.hwnd, want, want).map(|t| {
-                egui::ColorImage::from_rgba_unmultiplied([t.width as usize, t.height as usize], &t.rgba)
+                egui::ColorImage::from_rgba_unmultiplied(
+                    [t.width as usize, t.height as usize],
+                    &t.rgba,
+                )
             });
             let handle = image.map(|img| {
                 ctx.load_texture(format!("thumb_{}", w.hwnd), img, egui::TextureOptions::LINEAR)

@@ -852,8 +852,9 @@ impl ExplorerApp {
         }
         // A drag ends when the button comes up, wherever the pointer is.  Without
         // this, releasing outside a folder left `drag_active` set for ever: the
-        // ghost kept following the cursor and the next click was swallowed as a
-        // drop, which is exactly the "перетаскивание залипает" the report saw.
+        // ghost kept following the cursor and the next click was swallowed as
+        // a drop, which is exactly the "перетаскивание залипает" the report
+        // saw.
         if ctx.input(|i| i.pointer.primary_released()) && self.drag_active {
             self.drag_active = false;
             self.drag_paths.clear();

@@ -159,7 +159,11 @@ impl ProcessToken {
         }
         let mut member = 0;
         let ok = unsafe {
-            CheckTokenMembership(self.raw(), sid.as_mut_ptr() as *mut core::ffi::c_void, &mut member)
+            CheckTokenMembership(
+                self.raw(),
+                sid.as_mut_ptr() as *mut core::ffi::c_void,
+                &mut member,
+            )
         };
         if ok == 0 {
             return Err(WinError::from_last_error("CheckTokenMembership"));
