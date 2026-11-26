@@ -11,7 +11,7 @@ pub mod shorten;
 
 pub use lang::Lang;
 pub use settings::{Appearance, Theme};
-pub use shorten::{end, head, middle, wrap};
+pub use shorten::{end, head, middle, wrap, wrap_capped};
 
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicU8, Ordering};

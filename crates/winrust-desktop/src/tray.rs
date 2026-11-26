@@ -229,22 +229,6 @@ impl Flyout {
     }
 
     /// The panel width this flyout wants.
-    /// A planning height for the panel, used only to place its top edge above
-    /// the bar.  The real height comes from the content; this is an upper
-    /// bound, and an over-estimate just moves the panel up, which is the safe
-    /// direction on a short screen.
-    fn height_hint(self) -> f32 {
-        match self {
-            Flyout::Calendar => 340.0,
-            Flyout::Notifications => 400.0,
-            Flyout::Network => 240.0,
-            Flyout::Volume => 190.0,
-            Flyout::Language => 260.0,
-            Flyout::Overflow => 220.0,
-            Flyout::None => 0.0,
-        }
-    }
-
     fn width(self) -> f32 {
         match self {
             Flyout::Calendar => 340.0,
@@ -256,14 +240,11 @@ impl Flyout {
     }
 }
 
-/// Where the open flyout's button is, so the panel can hang under it.
+/// Where the open flyout's button is, so the panel can hang **above** it.
 ///
-/// The 0.9.0 flyout was placed by subtracting a *guessed* panel height
-/// (`height_hint`) from the bar's bottom, and the panel was usually shorter
-/// than the guess - so the calendar floated up to 60 px above the bar while
-/// the short flyouts sat far too low.  That is the "flyouts slide up too much"
-/// defect.  A flyout is anchored by its **top** at the bar and grows
-/// downwards, the only direction with room above a taskbar.
+/// Placement itself lives in [`winrust_ui::anchored_above`], which measures the
+/// panel instead of guessing: every version of this file that guessed a height
+/// put the panel's lower rows behind the bar or floated it too high.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct FlyoutAnchor {
     /// Right edge of the button that opened the panel.
@@ -445,41 +426,33 @@ fn flyout(
     inner: egui::Rect,
     pal: winrust_ui::theme::Palette,
 ) {
-    // Panels hang from the bar, under the button that opened them, and grow
-    // *upwards*: their bottom edge sits on the bar's top edge.  An `Area` is
-    // placed by its top-left corner, so the top has to be derived from a
-    // height - `height_hint` is that estimate.  Guessing high only moves the
-    // panel further up, which is the safe direction on a short screen.
+    // Panels hang above the bar: their **bottom** edge rests on the bar's top
+    // edge and they grow upward, and their right edge lines up with the button
+    // that opened them.  `anchored_above` measures the panel and places it on
+    // that rule; the old code guessed a height, positioned by the top-left
+    // corner and so dropped the panel's lower rows over the taskbar - the
+    // "выпадающие списки съехали" report.
     let width = app.tray.flyout().width();
     let anchor = app.tray.anchor();
-    let screen = ctx.screen_rect();
-    // Slide in from the bar: 8 px down.
+    // Slide in from the bar: the panel starts 8 px lower and rises.
     let anim = app.flyout_anim.clamp(0.0, 1.0);
     let slide = (1.0 - anim) * 8.0;
-    // Right edge under the button, kept on screen; the panel's lower edge is
-    // allowed to be as tall as the content wants.
-    let right = anchor
-        .button_right
-        .clamp(screen.left() + width + 8.0, screen.right() - 8.0);
-    let left = (right - width).max(screen.left() + 8.0);
-    // The panel's *bottom* edge sits on the bar's top edge, so it hangs above
-    // the bar the way the Windows flyouts do.  It used to start at
-    // `anchor.bar_top`, i.e. its top edge level with the bar's top - which put
-    // the whole panel over the taskbar and made the row slide off the bottom
-    // of the screen, which is the "съехали раскрывающие пункты" report.
-    let height_hint = app.tray.flyout().height_hint();
-    let bottom = anchor.bar_top - 6.0 + slide;
-    let top = (bottom - height_hint).max(screen.top() + 8.0);
-    let pos = egui::pos2(left, top);
     let alpha = (anim * 252.0) as u8;
     let surface =
         Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, alpha);
     let line = Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2);
+    let button = egui::Rect::from_min_max(
+        egui::pos2(anchor.button_right - 34.0, anchor.bar_top - 40.0),
+        egui::pos2(anchor.button_right, anchor.bar_top),
+    );
 
-    let response = egui::Area::new(egui::Id::new("tray_flyout"))
-        .order(egui::Order::Tooltip)
-        .fixed_pos(pos)
-        .show(ctx, |ui| {
+    let response = winrust_ui::anchored_above(
+        ctx,
+        egui::Id::new("tray_flyout"),
+        button,
+        anchor.bar_top,
+        6.0 + slide,
+        |ui| {
             egui::Frame::popup(ui.style())
                 .fill(surface)
                 .stroke(egui::Stroke::new(1.0_f32, line))
@@ -491,7 +464,8 @@ fn flyout(
                     let kind = app.tray.flyout();
                     panel_body(app, kind, ui);
                 });
-        })
+        },
+    )
         .response;
 
     // Clicking elsewhere closes it, exactly like the real flyouts.

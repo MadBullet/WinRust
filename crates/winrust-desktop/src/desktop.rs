@@ -28,6 +28,13 @@ pub struct DesktopIcon {
     pub is_dir: bool,
     /// Grid position `(column, row)`.
     pub cell: (usize, usize),
+    /// Free position in *cells*, used when "Align icons to grid" is off.
+    ///
+    /// With the grid on, an icon lives on `cell`; with it off, it lives exactly
+    /// where it was dropped, and `free` records that as fractional cell
+    /// coordinates so it survives a restart and a view-size change in the same
+    /// units as the grid.  `None` means "never placed by hand".
+    pub free: Option<(f32, f32)>,
     /// `shell:` namespace path for a virtual entry (Recycle Bin, This PC).
     /// `path` alone cannot express them: the Recycle Bin's filesystem path is
     /// `C:\$Recycle.Bin\<SID>`, which is not the same thing the user sees.
@@ -140,19 +147,60 @@ fn positions_path() -> Option<PathBuf> {
     Some(dir.join("desktop.json"))
 }
 
-fn load_positions() -> HashMap<String, (usize, usize)> {
-    positions_path()
-        .and_then(|p| std::fs::read_to_string(p).ok())
-        .and_then(|s| serde_json::from_str(&s).ok())
-        .unwrap_or_default()
+/// One icon's saved place: its grid cell, and the exact place it was dropped
+/// when the grid was off.
+///
+/// The file used to be `{name: [col, row]}`.  That cannot express "this icon is
+/// where the user put it, not on the lattice", so switching the grid off left
+/// nothing to restore and the icon jumped back.  `free` is optional and older
+/// files still load, because a missing field defaults to `None`.
+#[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
+struct SavedPos {
+    cell: (usize, usize),
+    #[serde(default)]
+    free: Option<(f32, f32)>,
+}
+
+/// Positions as read from disk.  Accepts both the old array form and the new
+/// object form, so an upgrade does not lose the layout.
+fn load_positions() -> HashMap<String, SavedPos> {
+    let Some(text) = positions_path().and_then(|p| std::fs::read_to_string(p).ok()) else {
+        return HashMap::new();
+    };
+    let Ok(raw) = serde_json::from_str::<HashMap<String, serde_json::Value>>(&text) else {
+        return HashMap::new();
+    };
+    let mut out = HashMap::new();
+    for (name, value) in raw {
+        // New form.
+        if let Ok(pos) = serde_json::from_value::<SavedPos>(value.clone()) {
+            out.insert(name, pos);
+            continue;
+        }
+        // Old form: a two-element array.
+        if let Ok(cell) = serde_json::from_value::<(usize, usize)>(value) {
+            out.insert(name, SavedPos { cell, free: None });
+        }
+    }
+    out
 }
 
 pub fn save_positions(icons: &[DesktopIcon]) {
     let Some(path) = positions_path() else {
         return;
     };
-    let map: HashMap<&str, (usize, usize)> =
-        icons.iter().map(|i| (i.name.as_str(), i.cell)).collect();
+    let map: HashMap<&str, SavedPos> = icons
+        .iter()
+        .map(|i| {
+            (
+                i.name.as_str(),
+                SavedPos {
+                    cell: i.cell,
+                    free: i.free,
+                },
+            )
+        })
+        .collect();
     if let Ok(text) = serde_json::to_string_pretty(&map) {
         let _ = std::fs::write(path, text);
     }
@@ -170,6 +218,7 @@ pub fn scan(order: SortOrder, descending: bool) -> Vec<DesktopIcon> {
             .unwrap_or_else(|| PathBuf::from("C:\\")),
         is_dir: true,
         cell: (0, 0),
+        free: None,
         shell_path: winrust_core::shell::shell_path_of(KnownFolder::Computer),
     });
     out.push(DesktopIcon {
@@ -179,6 +228,7 @@ pub fn scan(order: SortOrder, descending: bool) -> Vec<DesktopIcon> {
             .unwrap_or_else(|| PathBuf::from("C:\\")),
         is_dir: true,
         cell: (0, 1),
+        free: None,
         shell_path: winrust_core::shell::shell_path_of(KnownFolder::RecycleBin),
     });
 
@@ -196,6 +246,7 @@ pub fn scan(order: SortOrder, descending: bool) -> Vec<DesktopIcon> {
                     name,
                     is_dir,
                     cell: (0, 0),
+                    free: None,
                     shell_path: None,
                 });
             }
@@ -211,9 +262,10 @@ pub fn scan(order: SortOrder, descending: bool) -> Vec<DesktopIcon> {
     // Restore saved positions, then fill the remaining cells column by column.
     let mut taken: std::collections::HashSet<(usize, usize)> = std::collections::HashSet::new();
     for (idx, icon) in out.iter_mut().enumerate() {
-        if let Some(cell) = positions.get(&icon.name) {
-            if taken.insert(*cell) {
-                icon.cell = *cell;
+        if let Some(pos) = positions.get(&icon.name) {
+            if taken.insert(pos.cell) {
+                icon.cell = pos.cell;
+                icon.free = pos.free;
                 continue;
             }
         }
@@ -265,11 +317,15 @@ pub fn sort_icons(icons: &mut [DesktopIcon], order: SortOrder) {
 #[derive(Default)]
 struct FrameActions {
     open: Option<DesktopIcon>,
-    moved: Option<(String, (usize, usize))>,
+    moved: Option<(String, (usize, usize), Option<(f32, f32)>)>,
+    /// "Align icons to grid" was switched back on: tidy what is scattered.
+    snap_now: bool,
     clicked: Option<(usize, bool, bool)>,
     new_folder: bool,
-    /// New -> <kind>: an empty file with that extension on the Desktop.
-    new_file: Option<&'static str>,
+    /// New -> <kind>: an empty file with that extension on the Desktop.  A
+    /// `String` because the template list comes from the registry at run time,
+    /// not from a fixed set of extensions.
+    new_file: Option<String>,
     refresh: bool,
     sort: Option<SortOrder>,
     order_toggled: bool,
@@ -312,6 +368,23 @@ impl DesktopApp {
 
         let mut act = FrameActions::default();
         let mut drop_off_cell: Option<(usize, usize)> = None;
+        // The "New" submenu's real contents, read once per frame: the shell's
+        // `ShellNew` registrations for this machine, both hives.
+        // Icons are loaded before the menu is drawn: the menu closure borrows
+        // `self` mutably for the whole `context_menu`, so
+        // `file_icon_texture` cannot be called inside it.
+        let new_items: Vec<(winrust_core::fileassoc::NewItem, Option<egui::TextureId>)> =
+            winrust_core::fileassoc::new_items()
+                .into_iter()
+                .map(|item| {
+                    let slot = format!("new|{}", item.extension);
+                    let probe = std::path::PathBuf::from(format!("new.{}", item.extension));
+                    let id = self.file_icon_texture(ctx, slot, || {
+                        winrust_core::shell::file_info_sized(&probe, 16).icon_rgba
+                    });
+                    (item, id)
+                })
+                .collect();
         let draw_icons = self.settings.show_icons;
         let cell = self.cell_size();
         let pal = winrust_ui::theme::pal(&self.appearance);
@@ -342,14 +415,6 @@ impl DesktopApp {
                 }
                 ui.separator();
                 if ui
-                    .selectable_label(self.settings.snap_to_grid, t("Align icons to grid"))
-                    .clicked()
-                {
-                    self.settings.snap_to_grid = !self.settings.snap_to_grid;
-                    self.settings_dirty = true;
-                    ui.close_menu();
-                }
-                if ui
                     .selectable_label(self.settings.show_icons, t("Show desktop icons"))
                     .clicked()
                 {
@@ -379,6 +444,24 @@ impl DesktopApp {
                     act.order_toggled = true;
                     ui.close_menu();
                 }
+                ui.separator();
+                // "Align icons to grid" belongs with the *arrangement* of the
+                // icons, next to the sort order, and it has to be a toggle:
+                // switched off, an icon stays exactly where it is dropped
+                // instead of snapping to the nearest cell.
+                let mut snap = self.settings.snap_to_grid;
+                if ui
+                    .checkbox(&mut snap, t("Align icons to grid"))
+                    .changed()
+                {
+                    self.settings.snap_to_grid = snap;
+                    if snap {
+                        // Turning it back on tidies what is already scattered,
+                        // which is what the user expects from a grid.
+                        act.snap_now = true;
+                    }
+                    self.settings_dirty = true;
+                }
             });
             if ui.button(t("Refresh")).clicked() {
                 act.refresh = true;
@@ -397,33 +480,27 @@ impl DesktopApp {
                     ui.close_menu();
                 }
                 ui.separator();
-                if ui.button(t("Bitmap image")).clicked() {
-                    act.new_file = Some("bmp");
-                    ui.close_menu();
-                }
-                if ui.button(t("Text document")).clicked() {
-                    act.new_file = Some("txt");
-                    ui.close_menu();
-                }
-                if ui.button(t("Word document")).clicked() {
-                    act.new_file = Some("docx");
-                    ui.close_menu();
-                }
-                if ui.button(t("Excel worksheet")).clicked() {
-                    act.new_file = Some("xlsx");
-                    ui.close_menu();
-                }
-                if ui.button(t("PowerPoint presentation")).clicked() {
-                    act.new_file = Some("pptx");
-                    ui.close_menu();
-                }
-                if ui.button(t("ZIP archive")).clicked() {
-                    act.new_file = Some("zip");
-                    ui.close_menu();
-                }
-                if ui.button(t("WinRAR archive")).clicked() {
-                    act.new_file = Some("rar");
-                    ui.close_menu();
+                // The file templates are the ones *this machine* registered
+                // under `ShellNew`, not a hard-coded list: a hard-coded one
+                // showed Word, Excel, PowerPoint, ZIP and WinRAR on machines
+                // that have none of them and hid everything that was really
+                // installed.  Each entry carries its program's own icon, read
+                // through the association of its extension.
+                for (item, icon) in &new_items {
+                    let resp = match icon {
+                        Some(id) => ui.add(
+                            egui::Button::image_and_text(
+                                (id, egui::vec2(16.0, 16.0)),
+                                &item.label,
+                            )
+                            .frame(false),
+                        ),
+                        None => ui.add(egui::Button::new(&item.label).frame(false)),
+                    };
+                    if resp.clicked() {
+                        act.new_file = Some(item.extension.clone());
+                        ui.close_menu();
+                    }
                 }
             });
             ui.separator();
@@ -435,10 +512,10 @@ impl DesktopApp {
                 ui.close_menu();
             }
             if ui.button(t("Personalize")).clicked() {
-                let _ = winrust_core::shell::launch(
-                    "rundll32.exe",
-                    "shell32.dll,Control_RunDLL desk.cpl,,0",
-                );
+                // "Персонализация" means the Settings page, not the *display*
+                // control panel: `desk.cpl,,0` opens background settings for a
+                // moment and is the wrong app entirely on Windows 10/11.
+                let _ = winrust_core::shell::open_shell_path("ms-settings:personalization");
                 ui.close_menu();
             }
         });
@@ -460,8 +537,15 @@ impl DesktopApp {
         });
 
         for (idx, icon) in icons.iter().enumerate() {
-            let pos = area.left_top()
-                + egui::vec2(icon.cell.0 as f32 * cell.x, icon.cell.1 as f32 * cell.y);
+            // With the grid on, the icon sits on its cell; with it off, an icon
+            // the user has placed sits exactly where it was dropped.  `free`
+            // holds fractional cell coordinates, so both survive a restart.
+            let (gx, gy) = match (self.settings.snap_to_grid, icon.free) {
+                (true, _) => (icon.cell.0 as f32, icon.cell.1 as f32),
+                (false, Some(free)) => free,
+                (false, None) => (icon.cell.0 as f32, icon.cell.1 as f32),
+            };
+            let pos = area.left_top() + egui::vec2(gx * cell.x, gy * cell.y);
             let rect = egui::Rect::from_min_size(pos, egui::vec2(cell.x - 6.0, cell.y - 8.0));
             let resp = ui.interact(
                 rect,
@@ -510,10 +594,21 @@ impl DesktopApp {
                     );
                 }
             }
-            painter.text(
+            // Two lines, never more, with a real ellipsis on the second: a
+            // caption longer than the icon's cell used to be wrapped without a
+            // limit and spilled out of the selection square, so the desktop
+            // showed a ragged paragraph under one icon ("текст ярлыка не
+            // скрывается").  The caption is also clipped to the cell, which
+            // catches the case where even two wrapped lines are too wide.
+            let caption = winrust_core::i18n::wrap_capped(&icon.name, 13, 2);
+            let clip = painter.with_clip_rect(egui::Rect::from_min_max(
+                egui::pos2(rect.left() - 2.0, rect.bottom() - 26.0),
+                egui::pos2(rect.right() + 2.0, rect.bottom() + 2.0),
+            ));
+            clip.text(
                 egui::pos2(rect.center().x, rect.bottom() - 24.0),
                 egui::Align2::CENTER_TOP,
-                winrust_core::i18n::wrap(&icon.name, 13).join("\n"),
+                caption,
                 egui::FontId::proportional(11.5),
                 Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
             );
@@ -597,16 +692,28 @@ impl DesktopApp {
                         );
                     }
                     if drag_stopped {
-                        if let (Some(_p), Some(c)) = (pointer, drop_off_cell) {
-                            // A cell can only hold one icon: say so instead of
-                            // dropping the icon on top of its neighbour.
-                            let taken = icons
-                                .iter()
-                                .any(|other| other.cell == c && other.name != icon.name);
-                            if taken {
-                                self.status = occupied_note(&icon.name);
+                        if let (Some(p), Some(c)) = (pointer, drop_off_cell) {
+                            if self.settings.snap_to_grid {
+                                // A cell can only hold one icon: say so instead
+                                // of dropping the icon on top of its neighbour.
+                                let taken = icons
+                                    .iter()
+                                    .any(|other| other.cell == c && other.name != icon.name);
+                                if taken {
+                                    self.status = occupied_note(&icon.name);
+                                } else {
+                                    act.moved = Some((icon.name.clone(), c, None));
+                                }
                             } else {
-                                act.moved = Some((icon.name.clone(), c));
+                                // Free placement: the icon stays exactly where
+                                // it was let go.  `cell` is still updated, so
+                                // turning the grid back on puts it in a sane
+                                // place rather than wherever it started.
+                                let free = (
+                                    ((p.x - area.left()) / cell.x).max(0.0),
+                                    ((p.y - area.top()) / cell.y).max(0.0),
+                                );
+                                act.moved = Some((icon.name.clone(), c, Some(free)));
                             }
                         }
                         self.mode = crate::ShellMode::Idle;
@@ -769,9 +876,41 @@ impl DesktopApp {
                 None => self.open_path(&icon.path),
             }
         }
-        if let Some((name, c)) = act.moved {
+        if act.snap_now {
+            // Switching the grid back on tidies the desktop: every icon whose
+            // free position was recorded moves to the nearest cell.  Doing it
+            // here, once, is better than snapping every frame, because a
+            // user-placed icon must stay put while the grid is off.
+            let mut used: std::collections::HashSet<(usize, usize)> =
+                std::collections::HashSet::new();
+            for icon in self.icons.iter_mut() {
+                let want = match icon.free {
+                    Some((fx, fy)) => (fx.round() as usize, fy.round() as usize),
+                    None => icon.cell,
+                };
+                let mut slot = want;
+                // Find the nearest free cell in the same column, then walk on.
+                let mut guard = 0;
+                while used.contains(&slot) && guard < 4096 {
+                    slot.1 += 1;
+                    if slot.1 > 40 {
+                        slot.1 = 0;
+                        slot.0 += 1;
+                    }
+                    guard += 1;
+                }
+                used.insert(slot);
+                icon.cell = slot;
+                icon.free = None;
+            }
+            save_positions(&self.icons);
+        }
+        if let Some((name, c, free)) = act.moved {
             if let Some(icon) = self.icons.iter_mut().find(|i| i.name == name) {
                 icon.cell = c;
+                if free.is_some() {
+                    icon.free = free;
+                }
             }
             save_positions(&self.icons);
         }
@@ -790,7 +929,7 @@ impl DesktopApp {
             self.create_desktop_folder();
         }
         if let Some(ext) = act.new_file {
-            self.create_desktop_file(ext);
+            self.create_desktop_file(&ext);
         }
         if act.refresh {
             self.reload_icons();

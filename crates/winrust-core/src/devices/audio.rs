@@ -25,12 +25,21 @@ const IID_IMM_DEVICE_ENUMERATOR: windows_sys::core::GUID = windows_sys::core::GU
     data3: 0x4815,
     data4: [0xB5, 0x11, 0xCE, 0x57, 0x22, 0x5C, 0x24, 0x58],
 };
-/// `IID_IAudioEndpointVolume`.
+/// `IID_IAudioEndpointVolume` - `5CDF2C82-841E-4546-9722-0CF74078229A`.
+///
+/// This constant was wrong.  It read `5CDF2B5A-4B4C-4E9C-A714-79CE8D5C9E3E`,
+/// which is not any interface at all, so `IMMDevice::Activate` failed with
+/// `E_NOINTERFACE` every time and both the getter and the setter returned
+/// `None`.  The tray then had nothing to show but its "unknown" fallback, and
+/// because writing the level also failed it never took: dragging the slider
+/// snapped back, which is the "застряло на 50 и не меняется" report.  The value
+/// below is taken from `endpointvolume.rdl` in windows-rs, the same metadata
+/// that generates the official bindings.
 const IID_IAUDIO_ENDPOINT_VOLUME: windows_sys::core::GUID = windows_sys::core::GUID {
-    data1: 0x5CDF_2B5A,
-    data2: 0x4B4C,
-    data3: 0x4E9C,
-    data4: [0xA7, 0x14, 0x79, 0xCE, 0x8D, 0x5C, 0x9E, 0x3E],
+    data1: 0x5CDF_2C82,
+    data2: 0x841E,
+    data3: 0x4546,
+    data4: [0x97, 0x22, 0x0C, 0xF7, 0x40, 0x78, 0x22, 0x9A],
 };
 /// `EDataFlow::eRender`, `ERole::eMultimedia`.
 const E_RENDER: i32 = 0;

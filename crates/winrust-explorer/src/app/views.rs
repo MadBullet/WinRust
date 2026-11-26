@@ -314,7 +314,13 @@ impl ExplorerApp {
         let pointer_released = ctx.input(|i| i.pointer.primary_released());
 
         table.body(|body| {
-            body.rows(22.0, entries.len(), |mut row| {
+            // 26 px rows, not 22: a 16 px icon in a 22 px row leaves a 3 px
+            // band between neighbours, which is too thin to aim at with the
+            // mouse - and with the row gap filled by the selection background
+            // there was nowhere at all to press between two names and start a
+            // rubber band.  The extra height is the "небольшой отступ папок"
+            // the review asked for.
+            body.rows(26.0, entries.len(), |mut row| {
                 let idx = row.index();
                 let entry = &entries[idx];
                 let selected = self.current().is_selected(&entry.path);
@@ -362,7 +368,28 @@ impl ExplorerApp {
                     // old code armed the target on hover, so letting go anywhere
                     // could still drop into whatever folder happened to be under
                     // the pointer a moment earlier.
-                    if entry.is_dir && resp.hovered() && self.drag_active {
+                    // The target test is geometric, not `resp.hovered()`: the
+                    // response above covers only the *name cell*, so dragging
+                    // over a row's size or date column reported "not hovered"
+                    // and the folder never lit up - the "нет выделения папки,
+                    // в которую собираюсь переместить" report.  It also has to
+                    // accept the frame the drag starts on, when `drag_active`
+                    // is still false because it is set after the loop.
+                    // The row's own band: the name cell grown to the table's
+                    // width and to the full row height, so anywhere on the row
+                    // counts as "over this folder".
+                    let over_row = ctx
+                        .input(|i| i.pointer.latest_pos())
+                        .map(|p| {
+                            egui::Rect::from_min_max(
+                                egui::pos2(table_left, resp.rect.top() - 2.0),
+                                egui::pos2(table_right, resp.rect.bottom() + 2.0),
+                            )
+                            .contains(p)
+                        })
+                        .unwrap_or(false);
+                    let dragging_now = self.drag_active || drag_started.is_some();
+                    if entry.is_dir && over_row && dragging_now {
                         drag_hover = Some(entry.path.clone());
                         // A 1.5 px outline around the name cell was too quiet to
                         // answer "where will this land?".  Paint the whole row

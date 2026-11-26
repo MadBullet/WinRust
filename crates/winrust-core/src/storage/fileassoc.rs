@@ -47,8 +47,21 @@ const SKIP_EXT: &[&str] = &[
 /// when the current folder is read-only, but the plain "Folder" and "Shortcut"
 /// entries always come from the caller).
 pub fn new_items() -> Vec<NewItem> {
+    let mut out = new_items_from(Root::LocalMachine);
+    // Per-user registrations (`HKCU\Software\Classes`) are where a program
+    // installed for one account puts its template, and Explorer shows both.
+    // Only the machine hive was read before, so those entries were missing from
+    // the "Создать" submenu.
+    out.extend(new_items_from(Root::CurrentUser));
+    out.sort_by(|a, b| a.label.to_lowercase().cmp(&b.label.to_lowercase()));
+    out.dedup_by(|a, b| a.extension == b.extension);
+    out
+}
+
+/// The `ShellNew` entries of one hive.
+fn new_items_from(hive: Root) -> Vec<NewItem> {
     let mut out: Vec<NewItem> = Vec::new();
-    let Ok(root) = Key::open(Root::LocalMachine, "SOFTWARE\\Classes") else {
+    let Ok(root) = Key::open(hive, "SOFTWARE\\Classes") else {
         return out;
     };
     for name in root.subkeys() {
@@ -59,10 +72,7 @@ pub fn new_items() -> Vec<NewItem> {
         if SKIP_EXT.contains(&ext.as_str()) {
             continue;
         }
-        let Ok(key) = Key::open(
-            Root::LocalMachine,
-            &format!("SOFTWARE\\Classes\\{name}\\ShellNew"),
-        ) else {
+        let Ok(key) = Key::open(hive, &format!("SOFTWARE\\Classes\\{name}\\ShellNew")) else {
             continue;
         };
         // A `ShellNew` key can exist for other reasons (e.g. only a
@@ -80,8 +90,6 @@ pub fn new_items() -> Vec<NewItem> {
             extension: ext,
         });
     }
-    out.sort_by(|a, b| a.label.to_lowercase().cmp(&b.label.to_lowercase()));
-    out.dedup_by(|a, b| a.extension == b.extension);
     out
 }
 

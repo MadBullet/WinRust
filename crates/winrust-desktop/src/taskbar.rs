@@ -219,7 +219,15 @@ impl DesktopApp {
         );
         apps_ui.spacing_mut().item_spacing.x = gap;
         let mut hovered_any = false;
-        apps_ui.horizontal(|ui| {
+        // No `ui.horizontal` here on purpose.  `apps_ui` is already laid out
+        // `left_to_right(Center)` over the bar's full height, but a nested
+        // `horizontal` starts a new Ui that is only as tall as its tallest
+        // child and is aligned to the *parent's* top, so every button sat
+        // `(bar_height - 38) / 2` px too low - the "значки съехали вниз" report.
+        // Drawing straight into `apps_ui` centres them on the bar, the same
+        // axis the Start button uses.
+        {
+            let ui = &mut apps_ui;
             for pid in order {
                 let first = windows_list.iter().find(|w| w.pid == pid);
                 let Some(first) = first else { continue };
@@ -312,7 +320,7 @@ impl DesktopApp {
                     Color32::from_rgb(pal.text_weak.0, pal.text_weak.1, pal.text_weak.2),
                 ));
             }
-        });
+        }
 
         // Hover preview: a strip of miniatures, one per window of the group,
         // drawn above the button after a short rest - the same behaviour as the
@@ -336,12 +344,22 @@ impl DesktopApp {
                 if !group.is_empty() {
                     // Read the anchor before `self` is lent to `preview`.
                     let anchor = self.hover.anchor();
-                    preview(self, ctx, bar, pal, &group, anchor);
+                    let on_card = preview(self, ctx, bar, pal, &group, anchor);
+                    // The miniature is drawn *outside* the button loop, so the
+                    // pointer leaves the button the moment it moves onto a
+                    // card.  That cleared `hovered_any`, which cleared the
+                    // peek - so the preview vanished exactly when the user
+                    // tried to look at it ("при наведении на миниатюру она
+                    // сразу пропадает").  A card counts as still being on the
+                    // group.
+                    if on_card {
+                        hovered_any = true;
+                    }
                 }
             }
         }
-        // Leaving the buttons drops the preview immediately, like the bar does,
-        // and takes the full-screen peek with it.
+        // Leaving the buttons *and* the cards drops the preview, like the bar
+        // does, and takes the full-screen peek with it.
         if !hovered_any {
             self.hover.clear();
             self.peek_hwnd = None;
@@ -585,7 +603,7 @@ fn preview(
     pal: winrust_ui::theme::Palette,
     windows: &[WindowEntry],
     anchor: egui::Rect,
-) {
+) -> bool {
     const GAP: f32 = 6.0;
     const PAD: f32 = 6.0;
     const CAPTION: f32 = 18.0;
@@ -611,6 +629,9 @@ fn preview(
         .unwrap_or(16.0 / 10.0);
     let (card_w, card_h) = card_for(shape);
     let card = egui::vec2(card_w, card_h);
+    // Whether the pointer is on any card; reported back so the caller keeps the
+    // strip (and the peek) alive while the user is on it.
+    let mut hovered_card = false;
 
     let count = windows.len() as f32;
     let width = count * card.x + (count - 1.0) * GAP + PAD * 2.0;
@@ -751,6 +772,7 @@ fn preview(
         // be peeked at a time and it goes away the moment the pointer leaves.
         if resp.hovered() {
             app.peek_hwnd = Some(w.hwnd);
+            hovered_card = true;
         }
     }
 
@@ -762,6 +784,13 @@ fn preview(
         // preview must go away rather than linger until the next repaint.
         app.thumbs_at = None;
     }
+    // Report whether the pointer is on the strip *or* on any one card, so the
+    // caller can keep the preview alive while the user is looking at it.
+    let on_strip = ctx
+        .input(|i| i.pointer.latest_pos())
+        .map(|p| rect.expand(GAP).contains(p))
+        .unwrap_or(false);
+    on_strip || hovered_card
 }
 
 /// The card size for a window's aspect ratio: landscape stays wide, a square

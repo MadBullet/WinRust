@@ -73,6 +73,75 @@ pub fn wrap(s: &str, width: usize) -> Vec<String> {
     lines
 }
 
+/// Wrap a desktop icon's caption into at most `lines` lines of `width` chars.
+///
+/// [`wrap`] alone is not enough for an icon: a caption may be longer than the
+/// cell, and a single word longer than `width` cannot be broken by the word
+/// loop at all, so it stayed one enormous line and spilled out of the icon's
+/// selection square - the "текст ярлыка не скрывается" report.  This breaks
+/// over-long words, caps the line count and puts an ellipsis on the last line
+/// when something was dropped, so the caption always fits its cell.
+pub fn wrap_capped(s: &str, width: usize, lines: usize) -> String {
+    let width = width.max(4);
+    let lines = lines.max(1);
+    let mut out: Vec<String> = Vec::new();
+    let mut cur = String::new();
+    for word in s.split_whitespace() {
+        let mut word = word.to_string();
+        loop {
+            // How much room is left on the current line.
+            let room = width.saturating_sub(if cur.is_empty() {
+                0
+            } else {
+                cur.chars().count() + 1
+            });
+            if word.chars().count() <= room {
+                if !cur.is_empty() {
+                    cur.push(' ');
+                }
+                cur.push_str(&word);
+                break;
+            }
+            if room >= 4 {
+                // Fill the rest of this line with as much of the word as fits.
+                if !cur.is_empty() {
+                    cur.push(' ');
+                }
+                let head: String = word.chars().take(room).collect();
+                cur.push_str(&head);
+                word = word.chars().skip(room).collect();
+            }
+            out.push(std::mem::take(&mut cur));
+            if out.len() >= lines {
+                break;
+            }
+        }
+        if out.len() >= lines {
+            break;
+        }
+    }
+    if !cur.is_empty() && out.len() < lines {
+        out.push(cur);
+    }
+    if out.is_empty() {
+        return String::new();
+    }
+    // Anything left over - more words, or a word still being broken - needs the
+    // ellipsis, otherwise a truncated caption reads like a complete one.
+    let consumed: usize = out.iter().map(|l| l.chars().count()).sum();
+    let truncated = consumed < s.chars().filter(|c| !c.is_whitespace()).count();
+    if truncated {
+        if let Some(last) = out.last_mut() {
+            let keep = width.saturating_sub(1);
+            let mut t: String = last.chars().take(keep).collect();
+            t.push('…');
+            *last = t;
+        }
+    }
+    out.truncate(lines);
+    out.join("\n")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

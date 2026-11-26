@@ -130,7 +130,13 @@ impl DesktopApp {
             icons: Vec::new(),
             icons_at: Instant::now() - Duration::from_secs(30),
             selected: None,
-            session: session::Session::new(),
+            session: {
+                // Read the user's pin set before the first frame, so the Start
+                // menu opens with it instead of the defaults for one frame.
+                let mut session = session::Session::new();
+                session.load_pins();
+                session
+            },
             frame_no: 0,
             peek_hwnd: None,
             peek_tex: None,

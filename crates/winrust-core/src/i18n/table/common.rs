@@ -1,6 +1,9 @@
 //! Strings shared by every WinRust program.
 
 pub static ENTRIES: &[(&str, &str)] = &[
+    ("File location", "Расположение файла"),
+    ("Unpin from Start", "Удалить закрепление"),
+    ("Pin to Start", "Закрепить в меню Пуск"),
     // Buttons and verbs
     ("Cancel", "Отмена"),
     ("OK", "ОК"),

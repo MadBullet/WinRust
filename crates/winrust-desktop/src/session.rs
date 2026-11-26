@@ -114,9 +114,18 @@ pub struct Session {
     anim: f32,
     /// Installed applications, rescanned on a slow timer.
     apps: Vec<AppEntry>,
+    /// The user's pins.  Empty means "never edited", and the defaults apply, so
+    /// an existing install keeps the original set until the user changes it.
+    pins: Vec<PathBuf>,
     apps_at: Option<Instant>,
     /// The power action waiting for its "yes".
     pending: Option<PowerAction>,
+    /// The Start menu's nested menus.  They are drawn as areas pinned above the
+    /// taskbar rather than as egui submenus, because a submenu is positioned by
+    /// the cursor and ran off the bottom of the screen.
+    pub power_menu_open: bool,
+    /// The account list in the Start menu's footer, same rule.
+    pub user_menu_open: bool,
     /// The frame the menu was opened on.
     ///
     /// The Start button toggles the menu inside the taskbar pass, but the
@@ -223,6 +232,79 @@ impl Session {
     pub fn set_apps(&mut self, apps: Vec<AppEntry>) {
         self.apps = apps;
         self.apps_at = Some(Instant::now());
+    }
+
+    /// The pinned entries, resolved against the current app list.
+    ///
+    /// A pin stores a *path*, not a name: a name would have to be re-resolved
+    /// through localisation on every load, and two programs can share one.
+    pub fn pins(&self) -> Vec<AppEntry> {
+        if self.pins.is_empty() {
+            return crate::start::default_pins();
+        }
+        self.pins
+            .iter()
+            .filter(|p| p.exists())
+            .map(|p| AppEntry {
+                name: p
+                    .file_stem()
+                    .map(|s| s.to_string_lossy().to_string())
+                    .unwrap_or_else(|| p.display().to_string()),
+                path: p.clone(),
+            })
+            .collect()
+    }
+
+    pub fn pin(&mut self, path: &std::path::Path) {
+        // Materialise the defaults first: pinning into an "empty" set must not
+        // silently replace the whole default list with that one pin.
+        if self.pins.is_empty() {
+            self.pins = crate::start::default_pins()
+                .into_iter()
+                .map(|a| a.path)
+                .collect();
+        }
+        if !self.pins.iter().any(|p| p == path) {
+            self.pins.push(path.to_path_buf());
+            self.save_pins();
+        }
+    }
+
+    pub fn unpin(&mut self, path: &std::path::Path) {
+        if self.pins.is_empty() {
+            self.pins = crate::start::default_pins()
+                .into_iter()
+                .map(|a| a.path)
+                .collect();
+        }
+        self.pins.retain(|p| p != path);
+        self.save_pins();
+    }
+
+    fn pins_path() -> Option<PathBuf> {
+        let base = std::env::var_os("APPDATA")?;
+        let dir = PathBuf::from(base).join("WinRust");
+        let _ = std::fs::create_dir_all(&dir);
+        Some(dir.join("start-pins.json"))
+    }
+
+    fn save_pins(&self) {
+        if let Some(path) = Self::pins_path() {
+            if let Ok(text) = serde_json::to_string_pretty(&self.pins) {
+                let _ = std::fs::write(path, text);
+            }
+        }
+    }
+
+    /// Read the saved pins at startup.
+    pub fn load_pins(&mut self) {
+        if let Some(path) = Self::pins_path() {
+            if let Ok(text) = std::fs::read_to_string(path) {
+                if let Ok(pins) = serde_json::from_str::<Vec<PathBuf>>(&text) {
+                    self.pins = pins;
+                }
+            }
+        }
     }
 
     /// The `Win+I` edge detector: `true` on the frame the chord goes down.

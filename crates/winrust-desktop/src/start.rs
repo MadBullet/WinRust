@@ -106,7 +106,7 @@ fn walk(dir: &std::path::Path, out: &mut Vec<AppEntry>, depth: usize) {
 /// we can read without COM, so the shell pins its own programs plus the
 /// handful of things Windows always ships.  The point of the grid is to be
 /// clickable without reading, so only paths that exist are kept.
-fn default_pins() -> Vec<AppEntry> {
+pub(crate) fn default_pins() -> Vec<AppEntry> {
     let mut pins: Vec<AppEntry> = Vec::new();
     for (name, exe) in [
         ("WinRust Explorer", "winrust-explorer.exe"),
@@ -154,6 +154,19 @@ struct MenuOutput {
     open_settings: bool,
     switch_user: bool,
     switched_window: bool,
+    /// The power list's own open state, written back to the session.
+    power_menu_open: bool,
+    /// Where the power button was drawn, so the list can hang above the bar.
+    power_menu_button: Option<egui::Rect>,
+    /// The account list's own open state.
+    user_menu_open: bool,
+    /// The pin whose menu asked to open its folder / properties, or to be
+    /// removed.  Applied after the menu closes, when `&mut self` is free.
+    reveal: Option<PathBuf>,
+    props: Option<PathBuf>,
+    unpin: Option<PathBuf>,
+    /// An app-list entry asking to be pinned.
+    pin: Option<PathBuf>,
 }
 
 impl MenuOutput {
@@ -188,6 +201,22 @@ impl MenuOutput {
         if self.switched_window {
             app.session.close();
         }
+        app.session.power_menu_open = self.power_menu_open;
+        app.session.user_menu_open = self.user_menu_open;
+        if let Some(path) = self.reveal {
+            if let Some(dir) = path.parent() {
+                let _ = winrust_core::shell::open(dir);
+            }
+        }
+        if let Some(path) = self.props {
+            let _ = winrust_core::shell::show_properties(&path.to_string_lossy());
+        }
+        if let Some(path) = self.unpin {
+            app.session.unpin(&path);
+        }
+        if let Some(path) = self.pin {
+            app.session.pin(&path);
+        }
     }
 }
 
@@ -219,7 +248,9 @@ impl DesktopApp {
         // Icons are loaded here, before the drawing: `file_icon_texture` needs
         // `&mut self`, and doing it mid-frame would borrow the shell twice.
         let apps = self.session.apps().to_vec();
-        let pins = default_pins();
+        // Pinned entries come from the session, so the user's set survives a
+        // restart.  The defaults are only used until the user edits them.
+        let pins = self.session.pins();
         let apps: Vec<(AppEntry, Option<egui::TextureId>)> = apps
             .into_iter()
             .map(|a| {
@@ -244,7 +275,13 @@ impl DesktopApp {
         // Rise 10 px and fade in, like the tray flyouts.
         let slide = (1.0 - anim) * 10.0;
         let alpha = (anim * 250.0) as u8;
-        let mut output = MenuOutput::default();
+        let mut output = MenuOutput {
+            // The power list's state lives in the session across frames; the
+            // struct is rebuilt every frame.
+            power_menu_open: self.session.power_menu_open,
+            user_menu_open: self.session.user_menu_open,
+            ..MenuOutput::default()
+        };
         // The search text is a local copy for the frame.  `TextEdit` needs
         // `&mut String` for the whole frame, and the session must stay
         // borrowable after the drawing closures end, so the two accessors
@@ -430,6 +467,28 @@ fn app_list(
                 if resp.clicked() {
                     out.launch = Some(app.path.clone());
                 }
+                // The other half of "add and remove pins": any app in the full
+                // list can be pinned from its own menu.
+                resp.context_menu(|ui| {
+                    ui.set_min_width(210.0);
+                    if ui.button(t("Open")).clicked() {
+                        out.launch = Some(app.path.clone());
+                        ui.close_menu();
+                    }
+                    if ui.button(t("File location")).clicked() {
+                        out.reveal = Some(app.path.clone());
+                        ui.close_menu();
+                    }
+                    ui.separator();
+                    if ui.button(t("Pin to Start")).clicked() {
+                        out.pin = Some(app.path.clone());
+                        ui.close_menu();
+                    }
+                    if ui.button(t("Properties")).clicked() {
+                        out.props = Some(app.path.clone());
+                        ui.close_menu();
+                    }
+                });
                 resp.on_hover_text(app.path.display().to_string());
             }
             if shown == 0 {
@@ -522,6 +581,30 @@ fn pinned_grid(
                         if resp.clicked() {
                             out.launch = Some(app.path.clone());
                         }
+                        // The pin's own context menu, in the order the review
+                        // asked for: Open, file location, Unpin, Properties.
+                        // "Pin to Start" lives on the app list's menu, so the
+                        // set is editable from both sides.
+                        resp.context_menu(|ui| {
+                            ui.set_min_width(210.0);
+                            if ui.button(t("Open")).clicked() {
+                                out.launch = Some(app.path.clone());
+                                ui.close_menu();
+                            }
+                            if ui.button(t("File location")).clicked() {
+                                out.reveal = Some(app.path.clone());
+                                ui.close_menu();
+                            }
+                            ui.separator();
+                            if ui.button(t("Unpin from Start")).clicked() {
+                                out.unpin = Some(app.path.clone());
+                                ui.close_menu();
+                            }
+                            if ui.button(t("Properties")).clicked() {
+                                out.props = Some(app.path.clone());
+                                ui.close_menu();
+                            }
+                        });
                         resp.on_hover_text(app.path.display().to_string());
                     }
                 });
@@ -538,25 +621,41 @@ fn footer(
     out: &mut MenuOutput,
 ) {
     ui.horizontal(|ui| {
-        // Left: the account, with the switch-user action in its menu.
-        ui.menu_button(RichText::new(format!("👤 {user}")).size(13.0), |ui| {
-            ui.set_min_width(220.0);
-            if ui.button(t("Access to the machine")).clicked() {
-                let _ = winrust_core::shell::launch(
-                    "rundll32.exe",
-                    "shell32.dll,Control_RunDLL userpasswords",
-                );
-                ui.close_menu();
-            }
-            if ui.button(t("Switch user")).clicked() {
-                out.switch_user = true;
-                ui.close_menu();
-            }
-            if ui.button(t("Lock")).clicked() {
-                winrust_core::shell::lock_workstation();
-                ui.close_menu();
-            }
-        });
+        // Left: the account.  Its list is an area pinned above the taskbar, for
+        // the same reason as the power list: an egui submenu follows the cursor
+        // and hung off the bottom of the screen.
+        let user_resp = ui.button(RichText::new(format!("👤 {user}")).size(13.0));
+        if user_resp.clicked() {
+            out.user_menu_open = !out.user_menu_open;
+        }
+        if out.user_menu_open {
+            let screen = ui.ctx().screen_rect();
+            winrust_ui::anchored_above(
+                ui.ctx(),
+                egui::Id::new("start_user_menu"),
+                user_resp.rect,
+                screen.bottom() - crate::taskbar::HEIGHT,
+                6.0,
+                |ui| {
+                    ui.set_min_width(200.0);
+                    if ui.button(t("Access to the machine")).clicked() {
+                        let _ = winrust_core::shell::launch(
+                            "rundll32.exe",
+                            "shell32.dll,Control_RunDLL userpasswords",
+                        );
+                        out.user_menu_open = false;
+                    }
+                    if ui.button(t("Switch user")).clicked() {
+                        out.switch_user = true;
+                        out.user_menu_open = false;
+                    }
+                    if ui.button(t("Lock")).clicked() {
+                        winrust_core::shell::lock_workstation();
+                        out.user_menu_open = false;
+                    }
+                },
+            );
+        }
         ui.separator();
         if ui.button(format!("⚙ {}", t("Settings"))).clicked() {
             out.open_settings = true;
@@ -564,25 +663,48 @@ fn footer(
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             // Right: the power button, opening a list whose every entry asks
             // for confirmation.
-            ui.menu_button(format!("⏻ {}", t("Power")), |ui| {
-                ui.set_min_width(220.0);
-                for action in PowerAction::ALL {
-                    // Hibernation is greyed out where the machine forbids it,
-                    // instead of being a button that does nothing.
-                    let enabled = action != PowerAction::Hibernate
-                        || winrust_core::shell::hibernate_allowed();
-                    if ui
-                        .add_enabled(
-                            enabled,
-                            egui::Button::new(format!("{}  {}", action.glyph(), action.label())),
-                        )
-                        .clicked()
-                    {
-                        out.ask_power = Some(action);
-                        ui.close_menu();
-                    }
-                }
-            });
+            let power_resp = ui.button(format!("⏻ {}", t("Power")));
+            if power_resp.clicked() {
+                out.power_menu_open = !out.power_menu_open;
+            }
+            out.power_menu_button = Some(power_resp.rect);
+            if out.power_menu_open {
+                // The list is its own area pinned above the *screen's* bar, not
+                // an egui submenu: a submenu is positioned by the cursor and
+                // ran off the bottom of the screen - "меню завершения работы
+                // съезжает вниз".  `anchored_above` puts its bottom edge on the
+                // taskbar's top edge, the way Windows does.
+                let button = power_resp.rect;
+                let screen = ui.ctx().screen_rect();
+                winrust_ui::anchored_above(
+                    ui.ctx(),
+                    egui::Id::new("start_power_menu"),
+                    button,
+                    screen.bottom() - crate::taskbar::HEIGHT,
+                    6.0,
+                    |ui| {
+                        ui.set_min_width(200.0);
+                        for action in PowerAction::ALL {
+                            let enabled = action != PowerAction::Hibernate
+                                || winrust_core::shell::hibernate_allowed();
+                            if ui
+                                .add_enabled(
+                                    enabled,
+                                    egui::Button::new(format!(
+                                        "{}  {}",
+                                        action.glyph(),
+                                        action.label()
+                                    )),
+                                )
+                                .clicked()
+                            {
+                                out.ask_power = Some(action);
+                                out.power_menu_open = false;
+                            }
+                        }
+                    },
+                );
+            }
             ui.separator();
             // The running-window switcher: the one part of the old menu the
             // review did not ask to remove, kept as a single compact line.
