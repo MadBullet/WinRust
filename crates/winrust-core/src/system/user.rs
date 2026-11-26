@@ -2,10 +2,11 @@
 
 use crate::error::{check, Result, WinError};
 use crate::handle::Handle;
+use crate::system::privilege::Privilege;
 use crate::wide::from_wide;
 use windows_sys::Win32::Security::{
-    GetTokenInformation, LookupAccountSidW, TokenElevation, TokenIntegrityLevel, TokenUser,
-    SID_AND_ATTRIBUTES, TOKEN_ELEVATION, TOKEN_QUERY, TOKEN_USER,
+    GetTokenInformation, LookupAccountSidW, TokenIntegrityLevel, TokenUser, SID_AND_ATTRIBUTES,
+    TOKEN_QUERY, TOKEN_USER,
 };
 use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
 
@@ -14,7 +15,12 @@ pub struct UserInfo {
     pub account: String,
     pub domain: String,
     pub sid: String,
+    /// Kept for the call sites that only need the boolean; it is
+    /// `privilege.elevated`.
     pub elevated: bool,
+    /// Who the account is and what this token may do - the single answer the
+    /// UI is allowed to make permission decisions on.
+    pub privilege: Privilege,
     /// `Untrusted` / `Low` / `Medium` / `High` / `System`.
     pub integrity: &'static str,
 }
@@ -31,55 +37,6 @@ impl Token {
         Handle::new(h)
             .map(Token)
             .ok_or_else(|| WinError::Other("null token".into()))
-    }
-
-    fn query<T: Copy>(&self, class: i32) -> Result<T> {
-        let mut buf = vec![0u8; std::mem::size_of::<T>() + 64];
-        let mut needed = 0u32;
-        let ok = unsafe {
-            GetTokenInformation(
-                self.0.raw(),
-                class,
-                buf.as_mut_ptr() as *mut _,
-                buf.len() as u32,
-                &mut needed,
-            )
-        };
-        if ok == 0 {
-            // grow once for variable-size classes
-            let mut big = vec![0u8; needed.max(1024) as usize];
-            let ok = unsafe {
-                GetTokenInformation(
-                    self.0.raw(),
-                    class,
-                    big.as_mut_ptr() as *mut _,
-                    big.len() as u32,
-                    &mut needed,
-                )
-            };
-            if ok == 0 {
-                return Err(WinError::from_last_error("GetTokenInformation"));
-            }
-            if big.len() < std::mem::size_of::<T>() {
-                return Err(WinError::Buffer {
-                    context: "GetTokenInformation",
-                });
-            }
-            return Ok(unsafe { std::ptr::read_unaligned(big.as_ptr() as *const T) });
-        }
-        if buf.len() < std::mem::size_of::<T>() {
-            return Err(WinError::Buffer {
-                context: "GetTokenInformation",
-            });
-        }
-        Ok(unsafe { std::ptr::read_unaligned(buf.as_ptr() as *const T) })
-    }
-
-    pub fn elevated(&self) -> bool {
-        match self.query::<TOKEN_ELEVATION>(TokenElevation) {
-            Ok(e) => e.TokenIsElevated != 0,
-            Err(_) => false,
-        }
     }
 
     /// Copy of the user SID, owned by the caller.
@@ -232,8 +189,11 @@ impl OwnedSid {
 /// One call that gathers everything the title bar needs.
 pub fn current_user() -> UserInfo {
     let mut info = UserInfo::default();
+    // One token inspection decides every permission question in the shell;
+    // the `elevated` field is a copy so old call sites keep compiling.
+    info.privilege = Privilege::current();
+    info.elevated = info.privilege.elevated;
     if let Ok(token) = Token::current() {
-        info.elevated = token.elevated();
         info.integrity = token.integrity();
         if let Some((account, domain)) = token.account() {
             info.account = account;
@@ -248,7 +208,7 @@ pub fn current_user() -> UserInfo {
 
 /// Is the current process running elevated?  (Single-call helper.)
 pub fn is_elevated() -> bool {
-    Token::current().map(|t| t.elevated()).unwrap_or(false)
+    Privilege::current().elevated
 }
 
 #[allow(dead_code)]

@@ -364,7 +364,38 @@ impl ExplorerApp {
             .collect();
         let mut nav_selected = self.nav_selected;
         let mut status_msg: Option<String> = None;
+        let mut background_cmd: Option<Command> = None;
         let drives = self.drives.clone();
+        // The pane's own background, so a right-click in the empty strip above
+        // the folder list opens the same context menu the file area has - the
+        // review's "there is nowhere to right-click in the left pane".  The
+        // strip is allocated first so it exists even when the tree is short.
+        let strip = ui.allocate_response(
+            egui::vec2(ui.available_width(), 10.0),
+            egui::Sense::click(),
+        );
+        // `refresh_now` is set instead of pushing a `Command`: the context menu
+        // runs while `self` is borrowed for drawing, and `run(..)` needs
+        // `&mut self`.
+        let mut refresh_now = false;
+        strip.context_menu(|ui| {
+            ui.set_min_width(220.0);
+            if ui.button(t("Refresh")).clicked() {
+                refresh_now = true;
+                ui.close_menu();
+            }
+            if ui.button(t("Paste")).clicked() {
+                background_cmd = Some(Command::Paste);
+                ui.close_menu();
+            }
+            if ui.button(t("New folder")).clicked() {
+                // The same flag the "+ New > Folder" button sets; the file
+                // area draws the inline name field for it.
+                self.creating_folder = true;
+                self.new_folder_buffer = t("New folder");
+                ui.close_menu();
+            }
+        });
 
         egui::ScrollArea::vertical()
             .auto_shrink([false, false])
@@ -455,6 +486,13 @@ impl ExplorerApp {
         }
         if let Some(p) = nav {
             self.navigate(p);
+        }
+        if refresh_now {
+            self.refresh();
+        }
+        if let Some(cmd) = background_cmd {
+            let here = self.current().path.clone();
+            self.run(here, cmd);
         }
     }
 }

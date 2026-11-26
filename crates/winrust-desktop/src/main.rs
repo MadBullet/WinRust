@@ -17,13 +17,15 @@
 //! everything else (`always_on_bottom`), which is exactly how a shell behaves.
 
 mod desktop;
+mod session;
 mod start;
 mod taskbar;
 mod tray;
 
 use eframe::egui;
+use egui::{Color32, RichText};
 use std::time::{Duration, Instant};
-use winrust_core::i18n::{self, Lang};
+use winrust_core::i18n::{self, Lang, ts};
 use winrust_core::{t, tf};
 
 /// What the shell is doing with the mouse, across frames.
@@ -42,11 +44,12 @@ pub struct DesktopApp {
     pub(crate) icons: Vec<desktop::DesktopIcon>,
     pub(crate) icons_at: Instant,
     pub(crate) selected: Option<usize>,
-    pub(crate) start_open: bool,
-    /// True when the menu was opened from the tray power button, so it lands on
-    /// the power section instead of the app list.
-    pub(crate) start_power_menu: bool,
-    pub(crate) start_search: String,
+    /// The Start menu's own state (open, search text, app list, animation).
+    pub(crate) session: session::Session,
+    /// `Win+V` clipboard history.  The list lives in the core; the shell owns
+    /// one instance and polls the system clipboard on a slow timer.
+    pub(crate) clipboard: winrust_core::shell::ClipboardHistory,
+    pub(crate) clipboard_at: Instant,
     pub(crate) open_windows: Vec<taskbar::WindowEntry>,
     pub(crate) windows_at: Instant,
     pub(crate) clock: String,
@@ -64,8 +67,6 @@ pub struct DesktopApp {
     /// Last copied/cut desktop item, for the Paste command.
     pub(crate) clipboard: Option<std::path::PathBuf>,
     pub(crate) clipboard_cut: bool,
-    pub(crate) apps: Vec<start::AppEntry>,
-    pub(crate) apps_at: Instant,
     pub(crate) lang: Lang,
     /// When the registry was last polled for a language change.
     pub(crate) lang_checked_at: Instant,
@@ -97,14 +98,12 @@ pub struct DesktopApp {
     /// whether Shift was held (skip the Recycle Bin).
     pub(crate) delete_confirm: Vec<std::path::PathBuf>,
     pub(crate) delete_permanent: bool,
-    /// 0..=1 animation of the Start menu (fade + rise), advanced every frame.
-    pub(crate) start_anim: f32,
     /// 0..=1 animation of the open tray flyout.
     pub(crate) flyout_anim: f32,
-    /// Which taskbar button the pointer is resting on, and since when: the
-    /// preview appears after a short delay, like the real bar.
-    pub(crate) hover_pid: Option<u32>,
-    pub(crate) hover_since: Option<Instant>,
+    /// Which taskbar button the pointer is resting on, since when, and where
+    /// that button is: the preview appears after a short delay, over the
+    /// button.
+    pub(crate) hover: taskbar::Hover,
     /// Cached window pictures for the hover preview, keyed by hwnd.
     pub(crate) thumbs: std::collections::HashMap<isize, Option<egui::TextureHandle>>,
     pub(crate) thumbs_at: Option<Instant>,
@@ -121,9 +120,9 @@ impl DesktopApp {
             icons: Vec::new(),
             icons_at: Instant::now() - Duration::from_secs(30),
             selected: None,
-            start_open: false,
-            start_power_menu: false,
-            start_search: String::new(),
+            session: session::Session::new(),
+            clipboard: winrust_core::shell::ClipboardHistory::new(),
+            clipboard_at: Instant::now() - Duration::from_secs(30),
             open_windows: Vec::new(),
             windows_at: Instant::now() - Duration::from_secs(30),
             clock: String::new(),
@@ -136,8 +135,6 @@ impl DesktopApp {
             icon_cache: std::collections::HashMap::new(),
             clipboard: None,
             clipboard_cut: false,
-            apps: Vec::new(),
-            apps_at: Instant::now() - Duration::from_secs(300),
             lang: i18n::current(),
             lang_checked_at: Instant::now(),
             hwnd: 0,
@@ -154,10 +151,8 @@ impl DesktopApp {
             active_pid: None,
             delete_confirm: Vec::new(),
             delete_permanent: false,
-            start_anim: 0.0,
             flyout_anim: 0.0,
-            hover_pid: None,
-            hover_since: None,
+            hover: taskbar::Hover::default(),
             thumbs: std::collections::HashMap::new(),
             thumbs_at: None,
         }
@@ -177,9 +172,15 @@ impl DesktopApp {
             self.active_pid = winrust_core::window::foreground_pid();
             self.windows_at = Instant::now();
         }
-        if self.apps_at.elapsed() >= Duration::from_secs(120) {
-            self.apps = start::installed_apps();
-            self.apps_at = Instant::now();
+        if self.session.apps_stale() {
+            self.session.set_apps(start::installed_apps());
+        }
+        // Two polls: one to *record* copies (every 700 ms is soon enough for a
+        // history panel) and a slower one to notice text copied by the other
+        // program before the panel is opened.
+        if self.clipboard_at.elapsed() >= Duration::from_millis(700) {
+            self.clipboard.observe();
+            self.clipboard_at = Instant::now();
         }
         self.clock = crate::tray::clock_text();
         // The tray polls its own readouts on its own cadence.
@@ -322,6 +323,40 @@ impl DesktopApp {
         id
     }
 
+    /// The icon for an arbitrary file (a Start-menu shortcut, a pinned app),
+    /// cached in the same map the desktop icons use.
+    ///
+    /// `slot` is the cache key; the loader is only called on a miss, so a menu
+    /// that shows sixty rows uploads sixty textures once, not every frame.
+    pub(crate) fn file_icon_texture(
+        &mut self,
+        ctx: &egui::Context,
+        slot: String,
+        load: impl FnOnce() -> Option<Vec<u8>>,
+    ) -> Option<egui::TextureId> {
+        if let Some(hit) = self.icon_cache.get(&slot) {
+            return hit.as_ref().map(|t| t.id());
+        }
+        let texture = load().and_then(|rgba| {
+            let px = match rgba.len() / 4 {
+                n if n >= (256 * 256) => 256,
+                n if n >= (48 * 48) => 48,
+                n if n >= (32 * 32) => 32,
+                n if n >= (16 * 16) => 16,
+                _ => return None,
+            };
+            let expected = px * px * 4;
+            if rgba.len() < expected {
+                return None;
+            }
+            let image = egui::ColorImage::from_rgba_unmultiplied([px, px], &rgba[..expected]);
+            Some(ctx.load_texture(slot.clone(), image, egui::TextureOptions::LINEAR))
+        });
+        let id = texture.as_ref().map(|t| t.id());
+        self.icon_cache.insert(slot, texture);
+        id
+    }
+
     /// Persist the View-menu switches if anything changed.
     pub(crate) fn flush_desktop_settings(&mut self) {
         if self.settings_dirty {
@@ -436,19 +471,13 @@ impl DesktopApp {
     /// already floating in the tray closes, because only one panel is open.
     pub(crate) fn show_start(&mut self) {
         winrust_core::window::focus_window(self.hwnd);
-        self.start_open = true;
+        self.session.open();
         self.tray.close();
-    }
-
-    /// Show Start with the power-user list already expanded (`Win+X`).
-    pub(crate) fn show_start_power(&mut self) {
-        self.show_start();
-        self.start_power_menu = true;
     }
 
     /// The taskbar Start button: open, or close if it is already open.
     pub(crate) fn toggle_start(&mut self) {
-        if self.start_open {
+        if self.session.is_open() {
             self.close_start();
         } else {
             self.show_start();
@@ -456,8 +485,126 @@ impl DesktopApp {
     }
 
     pub(crate) fn close_start(&mut self) {
-        self.start_open = false;
-        self.start_search.clear();
+        self.session.close();
+    }
+
+    /// Ask the user to confirm a power action (the Start menu's power list and
+    /// the Win+X menu both end up here, so neither can act unconfirmed).
+    pub(crate) fn ask_power(&mut self, action: crate::session::PowerAction) {
+        self.session.close();
+        self.session.ask_power(action);
+    }
+
+    /// Is the menu open?  (The taskbar button's highlight and the repaint
+    /// cadence both ask this.)
+    pub(crate) fn start_open(&self) -> bool {
+        self.session.is_open()
+    }
+}
+
+impl DesktopApp {
+    /// The `Win+V` history panel: the newest entries, top-down, each one a
+    /// click away from being pasted back.
+    ///
+    /// It is positioned where Windows puts it - centred, a little above the
+    /// taskbar - and closes on a click outside or `Esc`.  The list itself is
+    /// [`winrust_core::shell::ClipboardHistory`]; this function only draws it.
+    pub(crate) fn clipboard_panel(&mut self, ctx: &egui::Context) {
+        if !self.session.clipboard_open() {
+            return;
+        }
+        let screen = ctx.screen_rect();
+        let pal = winrust_ui::theme::pal(&self.appearance);
+        let width = 380.0_f32.min(screen.width() - 40.0);
+        let pos = egui::pos2(
+            screen.center().x - width / 2.0,
+            (screen.bottom() - crate::taskbar::HEIGHT - 8.0 - 320.0).max(screen.top() + 40.0),
+        );
+        let mut picked: Option<usize> = None;
+        let mut clear = false;
+        let response = egui::Area::new(egui::Id::new("clipboard_panel"))
+            .order(egui::Order::Foreground)
+            .fixed_pos(pos)
+            .show(ctx, |ui| {
+                egui::Frame::popup(ui.style())
+                    .fill(Color32::from_rgba_unmultiplied(
+                        pal.surface.0,
+                        pal.surface.1,
+                        pal.surface.2,
+                        252,
+                    ))
+                    .stroke(egui::Stroke::new(
+                        1.0_f32,
+                        Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
+                    ))
+                    .rounding(10.0)
+                    .inner_margin(egui::Margin::same(12.0))
+                    .show(ui, |ui| {
+                        ui.set_width(width - 24.0);
+                        ui.horizontal(|ui| {
+                            ui.label(RichText::new(t("Clipboard history")).strong());
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    if ui.small_button(t("Clear")).clicked() {
+                                        clear = true;
+                                    }
+                                },
+                            );
+                        });
+                        ui.add_space(6.0);
+                        if self.clipboard.is_empty() {
+                            ui.label(
+                                RichText::new(ts("Copy something and it will appear here"))
+                                    .small()
+                                    .weak(),
+                            );
+                            return;
+                        }
+                        egui::ScrollArea::vertical()
+                            .id_salt("clipboard_list")
+                            .auto_shrink([false, false])
+                            .max_height(260.0)
+                            .show(ui, |ui| {
+                                for (i, entry) in self.clipboard.entries().iter().enumerate() {
+                                    let one_line: String = entry
+                                        .text
+                                        .split_whitespace()
+                                        .collect::<Vec<_>>()
+                                        .join(" ");
+                                    let label = winrust_core::i18n::end(&one_line, 60);
+                                    let resp = ui.add_sized(
+                                        [ui.available_width(), 26.0],
+                                        egui::Button::new(RichText::new(label).size(12.5))
+                                            .frame(false),
+                                    );
+                                    if resp.clicked() {
+                                        picked = Some(i);
+                                    }
+                                }
+                            });
+                    });
+            })
+            .response;
+
+        if let Some(i) = picked {
+            if self.clipboard.pick(i) {
+                self.session.hide_clipboard();
+                self.status = ts("Copied back to the clipboard").to_string();
+            }
+        }
+        if clear {
+            self.clipboard.clear();
+        }
+        let escape = ctx.input(|i| i.key_pressed(egui::Key::Escape));
+        let outside = ctx.input(|i| i.pointer.any_click())
+            && ctx
+                .input(|i| i.pointer.latest_pos())
+                .map(|p| !response.rect.contains(p))
+                .unwrap_or(false);
+        if escape || outside {
+            self.session.hide_clipboard();
+        }
     }
 }
 
@@ -510,21 +657,32 @@ impl eframe::App for DesktopApp {
         // Ease both panels towards their target.  `dt` comes from egui so the
         // speed is frame-rate independent; the curve is a plain ease-out, which
         // is what Windows uses for menus.
+        //
+        // Speed matters as much as the curve: the 0.9.0 easing used one rate
+        // (14/s) for both directions, which needed ~7 frames to *close* - the
+        // "the Start menu closes very slowly" defect.  Closing is now nearly
+        // instant (45/s, ~3 frames) and opening is still soft (22/s), which is
+        // the asymmetry Windows uses: dismissal must feel immediate.
         let dt = ctx.input(|i| i.stable_dt).clamp(0.0, 0.1);
-        let ease = |value: f32, target: f32, dt: f32| {
-            let rate = (dt * 14.0).min(1.0);
-            value + (target - value) * rate
+        let ease = |value: f32, target: f32, rate: f32, dt: f32| {
+            let step = (dt * rate).min(1.0);
+            value + (target - value) * step
         };
-        self.start_anim = ease(self.start_anim, if self.start_open { 1.0 } else { 0.0 }, dt);
-        self.flyout_anim = ease(
-            self.flyout_anim,
-            if self.tray.flyout().is_open() {
-                1.0
-            } else {
-                0.0
-            },
-            dt,
-        );
+        let start_target = if self.session.is_open() { 1.0 } else { 0.0 };
+        let start_rate = if start_target > self.session.anim() {
+            22.0
+        } else {
+            45.0
+        };
+        let anim = ease(self.session.anim(), start_target, start_rate, dt);
+        self.session.set_anim(anim);
+        let flyout_target = if self.tray.flyout().is_open() { 1.0 } else { 0.0 };
+        let flyout_rate = if flyout_target > self.flyout_anim {
+            22.0
+        } else {
+            45.0
+        };
+        self.flyout_anim = ease(self.flyout_anim, flyout_target, flyout_rate, dt);
 
         self.handle_desktop_keys(ctx);
         self.delete_dialog(ctx);
@@ -536,15 +694,27 @@ impl eframe::App for DesktopApp {
         if win_down && !self.win_key_was_down {
             self.toggle_start();
         }
+        // `Win+V`: our own clipboard history, because Windows' lives inside
+        // explorer.exe and stops working when the stock shell is replaced.
+        let v_down = winrust_core::window::v_key_down();
+        if self.session.win_v_pressed(win_down, v_down) {
+            winrust_core::window::focus_window(self.hwnd);
+            self.session.toggle_clipboard();
+            self.tray.close();
+        }
         self.win_key_was_down = win_down;
 
         // Start menu and taskbar are painted as panels; the icon grid fills
         // whatever is left.
         self.taskbar(ctx);
         self.start_menu(ctx);
+        // The confirmation is a window of its own: it outlives the menu, which
+        // closes as soon as the user picks a power action.
+        self.power_confirmation(ctx);
+        self.clipboard_panel(ctx);
         self.desktop_area(ctx);
 
-        if self.start_open {
+        if self.session.is_open() {
             // The Start menu must react to clicks that close it.
             if ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
                 self.close_start();
@@ -553,9 +723,11 @@ impl eframe::App for DesktopApp {
         // The shell must react to `Win` quickly, so it is polled at 8 Hz while
         // the menu is open or a preview is pending, and at 2 Hz otherwise (the
         // clock only needs seconds).
-        let hot = self.start_open
+        let hot = self.session.is_open()
+            || self.session.pending_power().is_some()
+            || self.session.clipboard_open()
             || self.tray.flyout().is_open()
-            || self.hover_pid.is_some()
+            || !self.hover.is_empty()
             || !self.delete_confirm.is_empty();
         ctx.request_repaint_after(Duration::from_millis(if hot { 120 } else { 500 }));
     }

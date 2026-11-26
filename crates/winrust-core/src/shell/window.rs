@@ -81,6 +81,17 @@ pub fn win_key_down() -> bool {
     }
 }
 
+/// Is the `V` key held down right now?  (`Win+V` opens the clipboard history.)
+///
+/// Same reasoning as [`win_key_down`]: the shell must see the combination
+/// while another program has the text focus, and `GetAsyncKeyState` is the
+/// only way to ask that from a background window.
+pub fn v_key_down() -> bool {
+    use windows_sys::Win32::UI::Input::KeyboardAndMouse::GetAsyncKeyState;
+    const DOWN: i16 = 0x8000u16 as i16;
+    unsafe { (GetAsyncKeyState(0x56) & DOWN) != 0 }
+}
+
 /// Make the given window the foreground window and give it keyboard focus.
 ///
 /// A shell at the bottom of the z-order never becomes foreground on its own, so

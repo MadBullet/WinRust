@@ -137,18 +137,19 @@ impl ExplorerApp {
         }
     }
 
-    /// Is the active tab showing "This PC" (a drive root with no directory
-    /// contents worth listing, i.e. the Computer known folder)?
+    /// Is the active tab showing "This PC" - the Computer known folder?
+    ///
+    /// This used to also answer "yes" for a bare drive root (`C:\`), which is
+    /// the 0.9.0 bug the review found: opening a drive navigated the tab to
+    /// `C:\`, the view recognised that as "This PC" again, and the same grid
+    /// of drive tiles came back - so a double-click on a drive looked like it
+    /// did nothing.  A drive root is a folder to list, not the Computer view.
     pub(super) fn is_computer_view(&self) -> bool {
         let p = &self.current().path;
-        if let Some(computer) = KnownFolder::Computer.path() {
-            if p == &computer {
-                return true;
-            }
+        match KnownFolder::Computer.path() {
+            Some(computer) => p == &computer,
+            None => false,
         }
-        // Bare drive root: "C:\\"
-        let s = p.to_string_lossy();
-        s.len() == 3 && s.ends_with(":\\")
     }
 
     /// Shared selection logic: plain click replaces, Ctrl toggles, Shift extends.

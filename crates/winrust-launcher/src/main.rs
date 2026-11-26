@@ -450,11 +450,15 @@ impl LauncherApp {
             self.status = ts("Select at least one component").to_string();
             return;
         }
-        if !self.user.elevated {
-            let msg = ts(
-                "Administrator rights are required to install. Relaunch WinRust as administrator.",
-            );
-            self.status = msg.into();
+        if !self.user.privilege.may_modify_system() {
+            // The account may still be an administrator: then the right answer
+            // is a button, not an error.  `can_elevate` is exactly that case.
+            let msg = if self.user.privilege.can_elevate {
+                ts("Install needs the full administrator token. Use "Restart as administrator" in the header.")
+            } else {
+                ts("Administrator rights are required to install. Sign in as an administrator.")
+            };
+            self.status = msg.to_string();
             self.log(LogKind::Error, msg);
             return;
         }
@@ -682,7 +686,7 @@ impl LauncherApp {
 
     fn request_uninstall(&mut self, c: Component) {
         if c == Component::Desktop {
-            if !self.user.elevated {
+            if !self.user.privilege.may_modify_system() {
                 self.status = ts("Administrator rights are required").to_string();
                 return;
             }
@@ -714,7 +718,7 @@ impl LauncherApp {
             self.status = tf!("{} is not installed", c.title());
             return;
         }
-        if !self.user.elevated {
+        if !self.user.privilege.may_modify_system() {
             self.status = ts("Administrator rights are required to uninstall").to_string();
             self.log(LogKind::Error, ts("Uninstall needs elevation"));
             return;
@@ -982,8 +986,17 @@ impl eframe::App for LauncherApp {
                 ui.heading(RichText::new("WinRust").size(26.0).strong());
                 ui.label(RichText::new(ts("Windows components rewritten in Rust")).weak());
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    let (color, text) = if self.user.elevated {
+                    // Rights come from `Privilege`: "administrator" and
+                    // "can elevate by relaunching" are different answers, and
+                    // the second one gets a button instead of a complaint.
+                    let privilege = self.user.privilege;
+                    let (color, text) = if privilege.elevated {
                         (Color32::from_rgb(120, 220, 120), ts("administrator"))
+                    } else if privilege.can_elevate {
+                        (
+                            Color32::from_rgb(230, 190, 110),
+                            ts("administrator — restart to install"),
+                        )
                     } else {
                         (
                             Color32::from_rgb(230, 170, 120),
@@ -991,6 +1004,28 @@ impl eframe::App for LauncherApp {
                         )
                     };
                     ui.label(RichText::new(text).small().color(color));
+                    if privilege.can_elevate {
+                        if ui
+                            .button(format!("🛡 {}", t("Restart as administrator")))
+                            .on_hover_text(t(
+                                "Asks Windows for consent, then reopens the launcher with full rights.",
+                            ))
+                            .clicked()
+                        {
+                            match winrust_core::system::privilege::relaunch_elevated("") {
+                                Ok(_) => {
+                                    // The child is elevated; this window is not,
+                                    // and two launchers fighting over the same
+                                    // files is worse than one.
+                                    self.status = ts("Restarted with administrator rights").to_string();
+                                    std::process::exit(0);
+                                }
+                                Err(e) => {
+                                    self.log(LogKind::Error, tf!("Elevation failed: {}", e));
+                                }
+                            }
+                        }
+                    }
                     ui.separator();
                     ui.label(RichText::new(self.os.as_str()).small().weak());
                     ui.separator();
@@ -1118,7 +1153,7 @@ impl LauncherApp {
         let mut uninstall: Option<Component> = None;
         let mut toggle_selected: Option<Component> = None;
         let mut change_integration: Option<(Component, Integration)> = None;
-        let elevated = self.user.elevated;
+        let elevated = self.user.privilege.may_modify_system();
 
         egui::ScrollArea::vertical()
             .auto_shrink([false, false])
@@ -1400,7 +1435,10 @@ impl LauncherApp {
             }
             ui.horizontal(|ui| {
                 if ui
-                    .add_enabled(self.user.elevated, egui::Button::new(ts("Install driver")))
+                    .add_enabled(
+                        self.user.privilege.may_modify_system(),
+                        egui::Button::new(ts("Install driver")),
+                    )
                     .on_hover_text(ts(
                         "Needs administrator rights and WinRustKernel.sys next to this launcher",
                     ))
@@ -1410,7 +1448,7 @@ impl LauncherApp {
                 }
                 if ui
                     .add_enabled(
-                        self.user.elevated && self.kernel_installed,
+                        self.user.privilege.may_modify_system() && self.kernel_installed,
                         egui::Button::new(ts("Remove")),
                     )
                     .clicked()

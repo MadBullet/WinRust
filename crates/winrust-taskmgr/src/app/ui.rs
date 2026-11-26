@@ -15,7 +15,7 @@ use winrust_core::shell;
 use winrust_core::{t, tf, ts};
 
 use super::format::{bytes_text, format_uptime, heat_color, icon_text, mb, rate};
-use super::model::{is_app_row, sort_rows, Metric, Row};
+use super::model::{compare_rows, is_app_row, sort_rows, Metric, Row};
 use super::startup::StartupItem;
 use super::{RowFilter, SortBy, Tab, TaskManagerApp};
 
@@ -487,11 +487,18 @@ impl TaskManagerApp {
             .collect();
         sort_rows(&mut display, self.sort_by, self.sort_desc);
         if self.group_by_app {
+            // Grouping must not *destroy* the column sort the user picked: it
+            // partitions the list (apps before background) and then orders by
+            // group, keeping the chosen column's order inside each group.  The
+            // 0.9.0 code sorted by `(is_app, group)` only, so clicking "CPU"
+            // with grouping on appeared to do nothing - the reported bug.
             display.sort_by(|a, b| {
-                is_app_row(a)
-                    .cmp(&is_app_row(b))
-                    .reverse()
+                is_app_row(b)
+                    .cmp(&is_app_row(a))
                     .then(a.group.cmp(&b.group))
+                    .then_with(|| {
+                        compare_rows(a, b, self.sort_by, self.sort_desc)
+                    })
             });
             // A collapsed group hides all of its rows, which is the whole point
             // of the chevron in the stock Task Manager.
@@ -613,9 +620,17 @@ impl TaskManagerApp {
                     };
                     // A process that belongs to another application's group is
                     // drawn indented, the way Windows shows app children.
+                    //
+                    // The test is "is this row the group's own process?": the
+                    // group key is the name of the topmost ancestor that is an
+                    // app, so a helper whose own name differs from the group
+                    // *and* which is not that ancestor is a child.  Comparing
+                    // the display name with the group - what 0.9.0 did - put
+                    // an arrow on almost every row, because the group is
+                    // lowercased while the label is not.
                     let child = self.group_by_app
                         && r.group != label.to_lowercase()
-                        && r.group != r.info.name.to_lowercase();
+                        && !r.group.is_empty();
                     let shown = if child {
                         format!("    ↳ {}", winrust_core::i18n::middle(&label, 36, 20))
                     } else {
@@ -722,87 +737,111 @@ impl TaskManagerApp {
     }
 
     pub(super) fn performance_tab(&mut self, ui: &mut egui::Ui) {
-        // egui 0.29 wants the column contents as a closure, so the whole body
-        // lives inside `ui.columns`.
-        ui.columns(2, |cols| {
-            let cpu_hist = self.history_cpu.clone();
-            let mem_hist = self.history_mem.clone();
-            let gpu_hist = self.history_gpu.clone();
-            let net_hist = self.history_net.clone();
+        // One scrolling column, largest first.  The 0.9.0 page put two graphs
+        // in columns of a `ui.columns(2, ..)`, each 460 px wide at most, so on
+        // a normal window the second column was pushed under the first and
+        // every graph overlapped its neighbour - literally the review's "the
+        // lines overlap".  A single column makes each graph the width of the
+        // page and scrolls instead of colliding.
+        let cpu_hist = self.history_cpu.clone();
+        let mem_hist = self.history_mem.clone();
+        let gpu_hist = self.history_gpu.clone();
+        let net_hist = self.history_net.clone();
 
-            cols[0].heading(ts("CPU"));
-            self.graph(&mut cols[0], &cpu_hist, 100.0, ts("CPU"));
-            cols[0].label(tf!(
-                "{} · {} logical processors",
-                self.cpu_info.arch,
-                self.cpu_info.logical
-            ));
-            cols[0].label(tf!("Uptime: {}", format_uptime(self.snapshot.uptime_ms)));
-            cols[0].separator();
+        egui::ScrollArea::vertical()
+            .id_salt("perf_scroll")
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                ui.heading(ts("CPU"));
+                self.graph(ui, &cpu_hist, 100.0, ts("CPU"));
+                ui.label(tf!(
+                    "{} · {} logical processors",
+                    self.cpu_info.arch,
+                    self.cpu_info.logical
+                ));
+                ui.label(tf!("Uptime: {}", format_uptime(self.snapshot.uptime_ms)));
+                ui.add_space(8.0);
 
-            cols[0].heading(ts("Memory"));
-            self.graph(&mut cols[0], &mem_hist, 100.0, ts("Memory"));
-            let m = self.snapshot.memory;
-            cols[0].label(tf!(
-                "In use: {} ({}%)",
-                bytes_text(m.used_phys()),
-                format_args!("{:.0}", m.used_percent())
-            ));
-            cols[0].label(tf!("Available: {}", bytes_text(m.avail_phys)));
-            cols[0].label(tf!("Total: {}", bytes_text(m.total_phys)));
-            if let Some(ram) = self.ram_installed {
-                cols[0].label(tf!("Installed RAM: {}", bytes_text(ram)));
-            }
-            cols[0].label(tf!(
-                "Committed: {}",
-                bytes_text(m.total_page_file.saturating_sub(m.avail_page_file))
-            ));
-            cols[0].separator();
-
-            cols[1].heading(ts("GPU"));
-            self.graph(&mut cols[1], &gpu_hist, 100.0, ts("GPU"));
-            if self.snapshot.gpu.by_adapter.is_empty() {
-                cols[1].label(
-                    RichText::new(ts("No GPU counters available"))
-                        .weak()
-                        .small(),
-                );
-            } else {
-                for (adapter, pct) in &self.snapshot.gpu.by_adapter {
-                    let name = self
-                        .gpus
-                        .get(*adapter as usize)
-                        .map(|(_, n)| n.as_str())
-                        .unwrap_or(ts("GPU"));
-                    cols[1].label(format!("{name}: {pct:.0}%"));
+                ui.heading(ts("Memory"));
+                self.graph(ui, &mem_hist, 100.0, ts("Memory"));
+                let m = self.snapshot.memory;
+                ui.label(tf!(
+                    "In use: {} ({}%)",
+                    bytes_text(m.used_phys()),
+                    format_args!("{:.0}", m.used_percent())
+                ));
+                ui.label(tf!("Available: {}", bytes_text(m.avail_phys)));
+                ui.label(tf!("Total: {}", bytes_text(m.total_phys)));
+                if let Some(ram) = self.ram_installed {
+                    ui.label(tf!("Installed RAM: {}", bytes_text(ram)));
                 }
-            }
-            cols[1].separator();
-            cols[1].heading(ts("Network"));
-            self.graph(&mut cols[1], &net_hist, 100.0 * 1024.0, ts("Network"));
-            cols[1].label(tf!(
-                "Total throughput: {}",
-                rate(net_hist.last().copied().unwrap_or(0.0) as f64)
-            ));
-            cols[1].separator();
-            cols[1].heading(ts("Kernel CPU time"));
-            cols[1].label(format!(
-                "{}: {:.1} s   {}: {:.1} s   {}: {:.1} s",
-                t("Kernel"),
-                self.snapshot.cpu.kernel_100ns() as f64 / 1e7,
-                t("User"),
-                self.snapshot.cpu.user_100ns() as f64 / 1e7,
-                t("Idle"),
-                self.snapshot.cpu.idle_100ns() as f64 / 1e7,
-            ));
-        });
+                ui.label(tf!(
+                    "Committed: {}",
+                    bytes_text(m.total_page_file.saturating_sub(m.avail_page_file))
+                ));
+                ui.add_space(8.0);
+
+                ui.heading(ts("GPU"));
+                self.graph(ui, &gpu_hist, 100.0, ts("GPU"));
+                if self.snapshot.gpu.by_adapter.is_empty() {
+                    ui.label(
+                        RichText::new(ts("No GPU counters available"))
+                            .weak()
+                            .small(),
+                    );
+                } else {
+                    for (adapter, pct) in &self.snapshot.gpu.by_adapter {
+                        let name = self
+                            .gpus
+                            .get(*adapter as usize)
+                            .map(|(_, n)| n.as_str())
+                            .unwrap_or(ts("GPU"));
+                        ui.label(format!("{name}: {pct:.0}%"));
+                    }
+                }
+                ui.add_space(8.0);
+
+                ui.heading(ts("Network"));
+                self.graph(ui, &net_hist, 100.0 * 1024.0, ts("Network"));
+                ui.label(tf!(
+                    "Total throughput: {}",
+                    rate(net_hist.last().copied().unwrap_or(0.0) as f64)
+                ));
+                ui.add_space(8.0);
+
+                ui.heading(ts("Kernel CPU time"));
+                ui.label(format!(
+                    "{}: {:.1} s   {}: {:.1} s   {}: {:.1} s",
+                    t("Kernel"),
+                    self.snapshot.cpu.kernel_100ns() as f64 / 1e7,
+                    t("User"),
+                    self.snapshot.cpu.user_100ns() as f64 / 1e7,
+                    t("Idle"),
+                    self.snapshot.cpu.idle_100ns() as f64 / 1e7,
+                ));
+            });
     }
 
+    /// One history graph: a filled area under a single line.
+    ///
+    /// Two defects are fixed here, both from the review's "the performance
+    /// graph is too complex and the lines overlap":
+    ///
+    /// * the fill was a `convex_polygon` of a polyline that goes up and down -
+    ///   not a convex shape - so egui triangulated it as a fan and the shading
+    ///   spilled outside the area, which is what read as overlapping lines.
+    ///   The fill is now a `Mesh` of one quad per sample interval, which is
+    ///   exact for any curve;
+    /// * each graph drew its own baseline, grid and colour, so four of them on
+    ///   one page looked like four charts fighting.  Every graph now has the
+    ///   same height, the same three horizontal grid lines and the same
+    ///   `y = 0` floor, so they read as rows of one instrument panel.
     fn graph(&self, ui: &mut egui::Ui, data: &[f32], max: f32, label: &str) {
-        let size = egui::vec2(ui.available_width().min(460.0), 130.0);
+        let size = egui::vec2(ui.available_width(), 96.0);
         let (rect, _) = ui.allocate_exact_size(size, egui::Sense::hover());
         let painter = ui.painter();
         painter.rect_filled(rect, 4.0, Color32::from_rgb(20, 22, 28));
+        // Three grid lines: 25 / 50 / 75 %, with the frame serving as 0/100.
         for i in 1..4 {
             let y = rect.top() + rect.height() * i as f32 / 4.0;
             painter.line_segment(
@@ -815,33 +854,49 @@ impl TaskManagerApp {
             return;
         }
         let step = rect.width() / (n - 1) as f32;
-        let mut points = Vec::with_capacity(n);
-        for (i, v) in data.iter().enumerate() {
-            let norm = if max <= 0.0 {
-                0.0
-            } else {
-                (v / max).clamp(0.0, 1.0)
-            };
-            let y = rect.bottom() - norm * rect.height();
-            points.push(egui::pos2(rect.left() + i as f32 * step, y));
+        // Sample positions first: `Painter` borrows the `Ui`, so nothing may
+        // call `ui.*` while it is alive.
+        let points: Vec<egui::Pos2> = (0..n)
+            .map(|i| {
+                let norm = if max <= 0.0 {
+                    0.0
+                } else {
+                    (data[i] / max).clamp(0.0, 1.0)
+                };
+                egui::pos2(
+                    rect.left() + i as f32 * step,
+                    rect.bottom() - norm * rect.height(),
+                )
+            })
+            .collect();
+        // Fill: one quad per interval, so the shape is exact whether the curve
+        // is convex or not.
+        let mut fill = egui::Mesh::default();
+        for pair in points.windows(2) {
+            let (x0, x1) = (pair[0], pair[1]);
+            let base = fill.vertices.len() as u32;
+            for (pos, color) in [
+                (x0, Color32::from_rgba_unmultiplied(120, 200, 255, 26)),
+                (x1, Color32::from_rgba_unmultiplied(120, 200, 255, 26)),
+                (egui::pos2(x1.x, rect.bottom()), Color32::TRANSPARENT),
+                (egui::pos2(x0.x, rect.bottom()), Color32::TRANSPARENT),
+            ] {
+                fill.colored_vertex(pos, color);
+            }
+            fill.add_triangle(base, base + 1, base + 2);
+            fill.add_triangle(base, base + 2, base + 3);
         }
+        painter.add(egui::Shape::mesh(fill));
+        // The line itself: one stroke, one colour, no second series.
         painter.add(egui::Shape::line(
-            points.clone(),
+            points,
             egui::Stroke::new(1.5_f32, Color32::from_rgb(120, 200, 255)),
         ));
-        let mut fill = points;
-        fill.push(egui::pos2(rect.right(), rect.bottom()));
-        fill.push(egui::pos2(rect.left(), rect.bottom()));
-        painter.add(egui::Shape::convex_polygon(
-            fill,
-            Color32::from_rgba_unmultiplied(120, 200, 255, 26),
-            egui::Stroke::NONE,
-        ));
         painter.text(
-            rect.left_top() + egui::vec2(8.0, 8.0),
+            rect.left_top() + egui::vec2(8.0, 6.0),
             egui::Align2::LEFT_TOP,
             format!("{} {:.1}", label, data.last().copied().unwrap_or(0.0)),
-            egui::FontId::proportional(13.0),
+            egui::FontId::proportional(12.0),
             Color32::from_rgb(205, 225, 255),
         );
     }

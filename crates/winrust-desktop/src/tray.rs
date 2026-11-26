@@ -70,6 +70,10 @@ pub struct TrayState {
     ssid: Option<String>,
     lang: String,
     notifications: Vec<Notification>,
+    /// Where the button that opened the current flyout sits, so the panel
+    /// hangs under it.  Written by [`TrayState::toggle_from`], read by
+    /// [`TrayState::anchor`] - the drawing code never places it by guesswork.
+    anchor: FlyoutAnchor,
     /// Last sample of the audio device, so the volume poll matches it.
     sampled_at: Option<std::time::Instant>,
     network_at: Option<std::time::Instant>,
@@ -116,6 +120,19 @@ impl TrayState {
             which
         };
         self.flyout.is_open()
+    }
+    /// Like [`TrayState::toggle`], but remembers which button was pressed so
+    /// the panel can be placed under it.
+    pub fn toggle_from(&mut self, which: Flyout, button: egui::Rect, bar_top: f32) -> bool {
+        self.anchor = FlyoutAnchor {
+            button_right: button.right(),
+            bar_top,
+        };
+        self.toggle(which)
+    }
+    /// The anchor recorded by the last [`TrayState::toggle_from`].
+    pub fn anchor(&self) -> FlyoutAnchor {
+        self.anchor
     }
     pub fn close(&mut self) {
         self.flyout = Flyout::None;
@@ -202,6 +219,33 @@ impl Flyout {
     pub fn is_open(self) -> bool {
         self != Flyout::None
     }
+
+    /// The panel width this flyout wants.
+    fn width(self) -> f32 {
+        match self {
+            Flyout::Calendar => 340.0,
+            Flyout::Notifications => 360.0,
+            Flyout::Network => 340.0,
+            Flyout::Overflow => 280.0,
+            _ => 320.0,
+        }
+    }
+}
+
+/// Where the open flyout's button is, so the panel can hang under it.
+///
+/// The 0.9.0 flyout was placed by subtracting a *guessed* panel height
+/// (`height_hint`) from the bar's bottom, and the panel was usually shorter
+/// than the guess - so the calendar floated up to 60 px above the bar while
+/// the short flyouts sat far too low.  That is the "flyouts slide up too much"
+/// defect.  A flyout is anchored by its **top** at the bar and grows
+/// downwards, the only direction with room above a taskbar.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct FlyoutAnchor {
+    /// Right edge of the button that opened the panel.
+    button_right: f32,
+    /// Top of the taskbar's inner strip.
+    bar_top: f32,
 }
 
 /// Draw the whole tray row.
@@ -234,7 +278,7 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
             ui.allocate_exact_size(egui::vec2(28.0, 38.0), egui::Sense::click());
         draw_bell(ui.painter(), bell_rect, unread, text, pal.accent);
         if bell_resp.clicked() {
-            toggle(app, Flyout::Notifications);
+            toggle(app, Flyout::Notifications, bell_rect, inner.top());
         }
         bell_resp.on_hover_text(t("Notifications"));
 
@@ -268,7 +312,7 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
             weak,
         );
         if clock_resp.clicked() {
-            toggle(app, Flyout::Calendar);
+            toggle(app, Flyout::Calendar, clock_rect, inner.top());
         }
         clock_resp.on_hover_text(t("Date and time"));
 
@@ -288,7 +332,7 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
             text,
         );
         if lang_resp.clicked() {
-            toggle(app, Flyout::Language);
+            toggle(app, Flyout::Language, lang_rect, inner.top());
         }
         lang_resp.on_hover_text(t("Input language"));
 
@@ -303,7 +347,7 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
             text,
         );
         if vol_resp.clicked() {
-            toggle(app, Flyout::Volume);
+            toggle(app, Flyout::Volume, vol_rect, inner.top());
         }
         vol_resp.on_hover_text(match app.tray.volume() {
             Some(v) if !app.tray.is_muted() => tf!("Volume {}%", v),
@@ -318,7 +362,7 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
         let wireless = app.tray.network().map(|n| n.wireless).unwrap_or(false);
         draw_network(ui.painter(), net_rect, connected, wireless, text, weak);
         if net_resp.clicked() {
-            toggle(app, Flyout::Network);
+            toggle(app, Flyout::Network, net_rect, inner.top());
         }
         net_resp.on_hover_text(network_label(app));
 
@@ -327,7 +371,7 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
             ui.allocate_exact_size(egui::vec2(22.0, 38.0), egui::Sense::click());
         draw_chevron(ui.painter(), chev_rect, weak);
         if chev_resp.clicked() {
-            toggle(app, Flyout::Overflow);
+            toggle(app, Flyout::Overflow, chev_rect, inner.top());
         }
         chev_resp.on_hover_text(t("Show hidden icons"));
     });
@@ -341,8 +385,8 @@ pub fn draw(app: &mut DesktopApp, ctx: &egui::Context, inner: egui::Rect) {
 
 /// Toggle a flyout, closing any other.  Opening one closes the Start menu,
 /// which is the only reason this needs the whole app rather than the tray.
-fn toggle(app: &mut DesktopApp, which: Flyout) {
-    if app.tray.toggle(which) {
+fn toggle(app: &mut DesktopApp, which: Flyout, button: egui::Rect, bar_top: f32) {
+    if app.tray.toggle_from(which, button, bar_top) {
         app.close_start();
     }
 }
@@ -377,35 +421,22 @@ fn flyout(
     inner: egui::Rect,
     pal: winrust_ui::theme::Palette,
 ) {
-    // Panels sit above the bar, right-aligned the way Windows places them.
-    let width = match app.tray.flyout() {
-        Flyout::Calendar => 340.0,
-        Flyout::Notifications => 360.0,
-        Flyout::Network => 340.0,
-        Flyout::Overflow => 280.0,
-        _ => 320.0,
-    };
-    // The panel is placed *above* the bar.  It used to be anchored at
-    // `inner.top()`, i.e. directly on the taskbar strip, so the bar painted over
-    // its lower part and the panel looked cut off.
-    let height_hint = match app.tray.flyout() {
-        Flyout::Calendar => 460.0,
-        Flyout::Notifications => 470.0,
-        Flyout::Network => 250.0,
-        Flyout::Volume => 190.0,
-        Flyout::Language => 210.0,
-        Flyout::Overflow => 200.0,
-        Flyout::None => 120.0,
-    };
+    // Panels hang from the bar, under the button that opened them, and grow
+    // downwards.  `height_hint` is gone: a panel's own content decides its
+    // height, and an `Area` placed by its top edge cannot "slide up" because a
+    // guessed height was wrong.
+    let width = app.tray.flyout().width();
+    let anchor = app.tray.anchor();
     let screen = ctx.screen_rect();
-    // Rise and fade, the same easing the Start menu uses.
+    // Slide in from the bar: 8 px down.
     let anim = app.flyout_anim.clamp(0.0, 1.0);
-    let slide = (1.0 - anim) * 10.0;
-    let top = (inner.bottom() + 6.0 - height_hint).max(screen.top() + 8.0);
-    let pos = egui::pos2(
-        (inner.right() - width - 6.0).max(screen.left() + 8.0),
-        top + slide,
-    );
+    let slide = (1.0 - anim) * 8.0;
+    // Right edge under the button, kept on screen; the panel's lower edge is
+    // allowed to be as tall as the content wants.
+    let right = anchor.button_right.clamp(screen.left() + width + 8.0, screen.right() - 8.0);
+    let left = (right - width).max(screen.left() + 8.0);
+    let top = anchor.bar_top + slide;
+    let pos = egui::pos2(left, top);
     let alpha = (anim * 252.0) as u8;
     let surface =
         Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, alpha);

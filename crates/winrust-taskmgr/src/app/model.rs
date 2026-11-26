@@ -420,52 +420,64 @@ pub(super) fn is_app_row(r: &Row) -> bool {
     !r.app_name.is_empty()
 }
 
-pub(super) fn sort_rows(rows: &mut [Row], by: SortBy, desc: bool) {
-    let cmp = |a: &Row, b: &Row| -> std::cmp::Ordering {
-        let ord = match by {
-            SortBy::Name => a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase()),
-            SortBy::Cpu => a
-                .cpu_percent
-                .partial_cmp(&b.cpu_percent)
-                .unwrap_or(std::cmp::Ordering::Equal),
-            SortBy::Memory => a.info.private_bytes.cmp(&b.info.private_bytes),
-            SortBy::Disk => a
-                .disk_bps
-                .partial_cmp(&b.disk_bps)
-                .unwrap_or(std::cmp::Ordering::Equal),
-            SortBy::Network => a
-                .net_bps
-                .partial_cmp(&b.net_bps)
-                .unwrap_or(std::cmp::Ordering::Equal),
-            SortBy::Gpu => a
-                .gpu_percent
-                .partial_cmp(&b.gpu_percent)
-                .unwrap_or(std::cmp::Ordering::Equal),
-            SortBy::GpuEngine => a
-                .gpu_engine
-                .to_lowercase()
-                .cmp(&b.gpu_engine.to_lowercase()),
-            SortBy::Status => status_rank(a).cmp(&status_rank(b)),
-            SortBy::Priority => a.info.priority.rank().cmp(&b.info.priority.rank()),
-            SortBy::Pid => a.info.pid.cmp(&b.info.pid),
-            SortBy::UserName => a
-                .info
-                .user_name
-                .to_lowercase()
-                .cmp(&b.info.user_name.to_lowercase()),
-            SortBy::Path => a
-                .info
-                .exe_path
-                .to_lowercase()
-                .cmp(&b.info.exe_path.to_lowercase()),
-        };
-        if desc {
-            ord.reverse()
-        } else {
-            ord
-        }
+/// Order two rows by one column.
+///
+/// This is the *only* definition of "what column X means": `sort_rows` sorts
+/// a whole list with it, and the grouped view calls it as the tie-breaker
+/// inside each group, so enabling grouping cannot change the order the user
+/// asked for.
+pub(super) fn compare_rows(
+    a: &Row,
+    b: &Row,
+    by: SortBy,
+    desc: bool,
+) -> std::cmp::Ordering {
+    let ord = match by {
+        SortBy::Name => a.info.name.to_lowercase().cmp(&b.info.name.to_lowercase()),
+        SortBy::Cpu => a
+            .cpu_percent
+            .partial_cmp(&b.cpu_percent)
+            .unwrap_or(std::cmp::Ordering::Equal),
+        SortBy::Memory => a.info.private_bytes.cmp(&b.info.private_bytes),
+        SortBy::Disk => a
+            .disk_bps
+            .partial_cmp(&b.disk_bps)
+            .unwrap_or(std::cmp::Ordering::Equal),
+        SortBy::Network => a
+            .net_bps
+            .partial_cmp(&b.net_bps)
+            .unwrap_or(std::cmp::Ordering::Equal),
+        SortBy::Gpu => a
+            .gpu_percent
+            .partial_cmp(&b.gpu_percent)
+            .unwrap_or(std::cmp::Ordering::Equal),
+        SortBy::GpuEngine => a
+            .gpu_engine
+            .to_lowercase()
+            .cmp(&b.gpu_engine.to_lowercase()),
+        SortBy::Status => status_rank(a).cmp(&status_rank(b)),
+        SortBy::Priority => a.info.priority.rank().cmp(&b.info.priority.rank()),
+        SortBy::Pid => a.info.pid.cmp(&b.info.pid),
+        SortBy::UserName => a
+            .info
+            .user_name
+            .to_lowercase()
+            .cmp(&b.info.user_name.to_lowercase()),
+        SortBy::Path => a
+            .info
+            .exe_path
+            .to_lowercase()
+            .cmp(&b.info.exe_path.to_lowercase()),
     };
-    rows.sort_by(cmp);
+    if desc {
+        ord.reverse()
+    } else {
+        ord
+    }
+}
+
+pub(super) fn sort_rows(rows: &mut [Row], by: SortBy, desc: bool) {
+    rows.sort_by(|a, b| compare_rows(a, b, by, desc));
 }
 
 /// First token of a startup command line, with quotes stripped.

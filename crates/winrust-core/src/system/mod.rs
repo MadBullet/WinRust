@@ -5,6 +5,7 @@
 //! each keeps its own file and its own public path.
 
 pub mod gpu;
+pub mod privilege;
 pub mod process;
 pub mod service;
 pub mod system;
@@ -13,3 +14,6 @@ pub mod user;
 // `winrust_core::system::memory_status()` and `winrust_core::system::os_info()`
 // keep resolving: the module of that name is this group's own file.
 pub use self::system::*;
+
+// The permission answer is one value, reachable where the old boolean was.
+pub use self::privilege::Privilege;

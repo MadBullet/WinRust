@@ -34,6 +34,67 @@ pub struct WindowEntry {
     pub exe: String,
 }
 
+/// Which taskbar button the pointer is resting on, since when, and where the
+/// button is.
+///
+/// These three facts only make sense together - a preview without an anchor
+/// cannot be placed, and an anchor without a start time cannot be delayed - so
+/// they live in one value with three verbs instead of three fields on the
+/// shell.  (The 0.9.0 shell had `hover_pid`, `hover_since` and placed the
+/// preview against the screen edge, which is why it appeared to the right of
+/// the pointer instead of over it.)
+#[derive(Debug, Clone, Copy)]
+pub struct Hover {
+    pid: u32,
+    since: Instant,
+    anchor: egui::Rect,
+}
+
+impl Hover {
+    /// The pointer entered `pid`'s button this frame, or moved to another.
+    pub fn enter(&mut self, pid: u32, anchor: egui::Rect) {
+        if self.anchor != anchor {
+            self.pid = pid;
+            self.since = Instant::now();
+            self.anchor = anchor;
+        }
+    }
+
+    /// The pointer left every button.
+    pub fn clear(&mut self) {
+        // `anchor` is the "nothing hovered" marker: an empty rect can never be
+        // a real button.
+        self.anchor = egui::Rect::NOTHING;
+    }
+
+    pub fn is_empty(&self) -> bool {
+        !self.anchor.is_positive()
+    }
+
+    pub fn pid(&self) -> Option<u32> {
+        (!self.is_empty()).then_some(self.pid)
+    }
+
+    pub fn anchor(&self) -> egui::Rect {
+        self.anchor
+    }
+
+    /// Long enough for a preview, and long enough to skip a quick pass-over.
+    pub fn rested(&self) -> bool {
+        !self.is_empty() && self.since.elapsed() >= std::time::Duration::from_millis(350)
+    }
+}
+
+impl Default for Hover {
+    fn default() -> Self {
+        Self {
+            pid: 0,
+            since: Instant::now(),
+            anchor: egui::Rect::NOTHING,
+        }
+    }
+}
+
 /// List windows through `EnumWindows`, with the owning process' image path so
 /// the button can fall back to the executable's icon.
 pub fn windows() -> Vec<WindowEntry> {
@@ -95,7 +156,7 @@ impl DesktopApp {
             [40.0, 38.0],
             egui::Button::new(RichText::new("⊞").size(20.0))
                 .frame(false)
-                .fill(if self.start_open {
+                .fill(if self.start_open() {
                     Color32::from_rgba_unmultiplied(
                         pal.selection.0,
                         pal.selection.1,
@@ -160,8 +221,24 @@ impl DesktopApp {
                 let icon = self.window_icon(ctx, first);
                 let (rect, resp) =
                     ui.allocate_exact_size(egui::vec2(button_w, 38.0), egui::Sense::click());
+                // Two states, two signals - the 0.9.1 review asked for them to
+                // be readable at a glance and they were not:
+                //   * running  -> a short blue line under the icon, always;
+                //   * active   -> a soft translucent fill behind the button.
+                // Hover is a third, weaker fill, so it never masks "active".
                 let selected = self.active_pid == Some(pid);
-                if resp.hovered() || selected {
+                if selected {
+                    ui.painter().rect_filled(
+                        rect.shrink(1.0),
+                        5.0,
+                        Color32::from_rgba_unmultiplied(
+                            pal.selection.0,
+                            pal.selection.1,
+                            pal.selection.2,
+                            90,
+                        ),
+                    );
+                } else if resp.hovered() {
                     ui.painter().rect_filled(
                         rect.shrink(1.0),
                         5.0,
@@ -169,7 +246,7 @@ impl DesktopApp {
                             pal.hover.0,
                             pal.hover.1,
                             pal.hover.2,
-                            if selected { 150 } else { 90 },
+                            70,
                         ),
                     );
                 }
@@ -193,36 +270,25 @@ impl DesktopApp {
                         );
                     }
                 }
-                // The running underline: one segment per window.
-                let segments = count.min(4) as f32;
-                let total_w = 14.0;
-                let seg_w = (total_w - (segments - 1.0) * 2.0) / segments;
-                for i in 0..count.min(4) {
-                    let x = rect.center().x - total_w / 2.0 + i as f32 * (seg_w + 2.0);
-                    ui.painter().rect_filled(
-                        egui::Rect::from_min_size(
-                            egui::pos2(x, rect.bottom() - 3.0),
-                            egui::vec2(seg_w, 3.0),
-                        ),
-                        1.5,
-                        if selected {
-                            Color32::from_rgb(pal.accent.0, pal.accent.1, pal.accent.2)
-                        } else {
-                            Color32::from_rgba_unmultiplied(
-                                pal.accent.0,
-                                pal.accent.1,
-                                pal.accent.2,
-                                170,
-                            )
-                        },
-                    );
-                }
+                // The running line: one short bar for "running", a wider one
+                // per extra window, always the same Windows blue.  It used to
+                // be a strip of 14 px segments 3 px above the bar's edge that
+                // read as a smudge; a single 16 px bar sitting on the bar's
+                // inner edge is unambiguous even at a glance.
+                let blue = Color32::from_rgb(0x4c, 0x9a, 0xff);
+                let width = 16.0_f32.min(rect.width() - 12.0) + (count.min(3) as f32 - 1.0) * 4.0;
+                let x = rect.center().x - width / 2.0;
+                ui.painter().rect_filled(
+                    egui::Rect::from_min_size(
+                        egui::pos2(x, rect.bottom() - 4.0),
+                        egui::vec2(width, 3.0),
+                    ),
+                    1.5,
+                    blue,
+                );
                 if resp.hovered() {
                     hovered_any = true;
-                    if self.hover_pid != Some(pid) {
-                        self.hover_pid = Some(pid);
-                        self.hover_since = Some(Instant::now());
-                    }
+                    self.hover.enter(pid, rect);
                 }
                 if resp.clicked() {
                     self.active_pid = Some(pid);
@@ -249,27 +315,27 @@ impl DesktopApp {
         //
         // This runs outside the button closure: `preview` needs `&mut self`,
         // which the closure has already borrowed for the button loop.
-        let resting = self
-            .hover_since
-            .map(|t| t.elapsed() >= std::time::Duration::from_millis(350))
-            .unwrap_or(false);
-        if hovered_any && resting {
-            if let Some(pid) = self.hover_pid {
+        if hovered_any && self.hover.rested() {
+            if let Some(pid) = self.hover.pid() {
+                // Only windows that are really open: a window the bar knows
+                // about but that is minimised to the tray, or that has been
+                // destroyed since the last scan, must not get a card full of
+                // "no picture" - the preview is thumbnail-first.
                 let group: Vec<WindowEntry> = self
                     .open_windows
                     .iter()
                     .filter(|w| w.pid == pid)
+                    .filter(|w| winrust_core::thumb::window_size(w.hwnd).is_some())
                     .cloned()
                     .collect();
                 if !group.is_empty() {
-                    preview(self, ctx, bar, pal, &group);
+                    preview(self, ctx, bar, pal, &group, self.hover.anchor());
                 }
             }
         }
         // Leaving the buttons drops the preview immediately, like the bar does.
         if !hovered_any {
-            self.hover_pid = None;
-            self.hover_since = None;
+            self.hover.clear();
         }
 
         // ---- Right: the tray -------------------------------------------------
@@ -348,19 +414,21 @@ fn power_menu() -> Vec<(&'static str, fn(&mut DesktopApp))> {
             }
         }),
         ("Power", |app: &mut DesktopApp| {
-            app.show_start_power();
+            // Same confirmation as the Start menu's power list: Win+X is one
+            // keystroke from a shutdown and must not fire on a misclick.
+            app.ask_power(crate::session::PowerAction::ShutDown);
         }),
         ("Lock", |_app: &mut DesktopApp| {
             winrust_core::shell::lock_workstation();
         }),
-        ("Sign out", |_app: &mut DesktopApp| {
-            winrust_core::shell::sign_out();
+        ("Sign out", |app: &mut DesktopApp| {
+            app.ask_power(crate::session::PowerAction::SignOut);
         }),
-        ("Shut down", |_app: &mut DesktopApp| {
-            winrust_core::shell::shutdown();
+        ("Shut down", |app: &mut DesktopApp| {
+            app.ask_power(crate::session::PowerAction::ShutDown);
         }),
-        ("Restart", |_app: &mut DesktopApp| {
-            winrust_core::shell::restart();
+        ("Restart", |app: &mut DesktopApp| {
+            app.ask_power(crate::session::PowerAction::Restart);
         }),
     ]
 }
@@ -379,37 +447,37 @@ fn glyph_for_title(title: &str) -> &'static str {
     }
 }
 
-/// Windows to offer in the Start menu's "running" section.
-pub fn describe_running(list: &[WindowEntry]) -> String {
-    if list.is_empty() {
-        ts("No open windows").to_string()
-    } else {
-        tf!("{} open windows", list.len())
-    }
-}
-
-/// The hover preview: one card per window of a group, above the taskbar.
+/// The hover preview: one card per window of the group, over the button.
 ///
-/// Cards are 200x124 (16:10, the shape of the originals) with the window title
-/// underneath, and the whole strip is anchored to the bar's bottom edge so it
-/// never floats in the middle of the screen.  Thumbnails are captured at most
-/// once every two seconds per window - `PrintWindow` costs a full window
-/// redraw, which is far too much for every frame.
+/// Three things the 0.9.1 review asked for, and what each one means here:
+///
+/// * **at the mouse** - the strip is centred on the button that is hovered
+///   (`anchor`, passed in by the bar) and clamped to the screen, instead of
+///   being pinned to the tray's right edge, which put it a foot away from the
+///   pointer;
+/// * **shape follows the window** - a card is `96..=190` px wide and
+///   `80..=150` px tall, chosen from the window's own aspect ratio, so a
+///   portrait document is not letterboxed into a 16:10 hole;
+/// * **thumbnail first** - the picture fills the card, the title is one line
+///   under it, and a window with no picture is not offered at all (the caller
+///   filters those out).
+///
+/// Cost is bounded the way the bar needs it: each picture is captured at most
+/// once every two seconds, and a capture asks for exactly the card's size, not
+/// a fixed 400x250 that would then be scaled down.
 fn preview(
     app: &mut DesktopApp,
     ctx: &egui::Context,
     bar: egui::Rect,
     pal: winrust_ui::theme::Palette,
     windows: &[WindowEntry],
+    anchor: egui::Rect,
 ) {
-    const CARD: egui::Vec2 = egui::vec2(200.0, 124.0);
-    const GAP: f32 = 8.0;
-    const PAD: f32 = 8.0;
+    const GAP: f32 = 6.0;
+    const PAD: f32 = 6.0;
+    const CAPTION: f32 = 18.0;
 
-    let refresh = app
-        .thumbs_at
-        .map(|t| t.elapsed() > std::time::Duration::from_secs(2))
-        .unwrap_or(true);
+    let refresh = app.thumbs_at.map(|t| t.elapsed() > std::time::Duration::from_secs(2)).unwrap_or(true);
     if refresh {
         app.thumbs_at = Some(Instant::now());
         // Forget pictures of windows that are gone; otherwise the texture map
@@ -418,38 +486,48 @@ fn preview(
         app.thumbs.retain(|hwnd, _| live.contains(hwnd));
     }
 
+    // One card size for the whole strip: the shape of the first window is the
+    // group's shape, which keeps a group of docks the same height.
+    let shape = windows
+        .first()
+        .and_then(|w| winrust_core::thumb::window_size(w.hwnd))
+        .map(|(w, h)| w as f32 / h.max(1) as f32)
+        .unwrap_or(16.0 / 10.0);
+    let (card_w, card_h) = card_for(shape);
+    let card = egui::vec2(card_w, card_h);
+
     let count = windows.len() as f32;
-    let width = count * CARD.x + (count - 1.0) * GAP + PAD * 2.0;
-    let height = CARD.y + 30.0 + PAD * 2.0;
+    let width = count * card.x + (count - 1.0) * GAP + PAD * 2.0;
+    let height = card.y + CAPTION + PAD * 2.0;
     let screen = ctx.screen_rect();
-    // Right-aligned with the tray, which is where Windows puts it.
-    let left = (screen.right() - crate::tray::WIDTH - width).max(screen.left() + 4.0);
-    let top = bar.top() - height - 6.0;
+
+    // Centred over the hovered button, then clamped: a button near the screen
+    // edge gets a strip that has slid inward rather than one that is cut off.
+    let want_left = anchor.center().x - width / 2.0;
+    let left = want_left
+        .max(screen.left() + 4.0)
+        .min(screen.right() - width - 4.0);
+    // Above the bar, never overlapping it.
+    let top = (bar.top() - height - 6.0).max(screen.top() + 4.0);
     let rect = egui::Rect::from_min_size(egui::pos2(left, top), egui::vec2(width, height));
 
     // Capture/refresh every picture first.  `Painter` borrows the context, so
     // calling `ctx.load_texture` while it is alive does not compile - and
     // loading before painting also keeps the frame's shape list tidy.
+    let want = (card.x as u32 * 2).max(160);
     for w in windows.iter() {
         if refresh || !app.thumbs.contains_key(&w.hwnd) {
-            let image = winrust_core::thumb::window_thumbnail(w.hwnd, 400, 250).map(|t| {
-                egui::ColorImage::from_rgba_unmultiplied(
-                    [t.width as usize, t.height as usize],
-                    &t.rgba,
-                )
+            let image = winrust_core::thumb::window_thumbnail(w.hwnd, want, want).map(|t| {
+                egui::ColorImage::from_rgba_unmultiplied([t.width as usize, t.height as usize], &t.rgba)
             });
             let handle = image.map(|img| {
-                ctx.load_texture(
-                    format!("thumb_{}", w.hwnd),
-                    img,
-                    egui::TextureOptions::LINEAR,
-                )
+                ctx.load_texture(format!("thumb_{}", w.hwnd), img, egui::TextureOptions::LINEAR)
             });
             app.thumbs.insert(w.hwnd, handle);
         }
     }
 
-    let surface = Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, 250);
+    let surface = Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, 248);
     let painter = ctx.layer_painter(egui::LayerId::new(
         egui::Order::Tooltip,
         egui::Id::new("taskbar_preview_bg"),
@@ -458,10 +536,7 @@ fn preview(
     painter.rect_stroke(
         rect,
         8.0,
-        egui::Stroke::new(
-            1.0_f32,
-            Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
-        ),
+        egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
     );
 
     // Texture ids only: holding the map borrowed would block the `app` writes
@@ -480,12 +555,12 @@ fn preview(
 
     let mut clicked: Option<isize> = None;
     for (i, w) in windows.iter().enumerate() {
-        let card = egui::Rect::from_min_size(
+        let card_rect = egui::Rect::from_min_size(
             egui::pos2(
-                rect.left() + PAD + i as f32 * (CARD.x + GAP),
+                rect.left() + PAD + i as f32 * (card.x + GAP),
                 rect.top() + PAD,
             ),
-            CARD,
+            card,
         );
         let (_, tex_id, size) = ids[i];
         // Guarded arms do not count towards exhaustiveness, so the size check
@@ -493,9 +568,11 @@ fn preview(
         let sized = (size.x > 0.0 && size.y > 0.0).then_some(tex_id).flatten();
         match sized {
             Some(id) => {
-                // Letterbox inside the card so odd window shapes stay centred.
-                let scale = (card.width() / size.x).min(card.height() / size.y);
-                let draw = egui::Rect::from_center_size(card.center(), size * scale);
+                // Letterbox inside the card so odd window shapes stay centred;
+                // the card itself already follows the shape, so this only trims
+                // a group whose second window has a different shape.
+                let scale = (card_rect.width() / size.x).min(card_rect.height() / size.y);
+                let draw = egui::Rect::from_center_size(card_rect.center(), size * scale);
                 painter.image(
                     id,
                     draw,
@@ -504,21 +581,21 @@ fn preview(
                 );
             }
             None => {
-                painter.rect_filled(card, 4.0, Color32::from_rgb(30, 33, 42));
+                painter.rect_filled(card_rect, 4.0, Color32::from_rgb(30, 33, 42));
                 painter.text(
-                    card.center(),
+                    card_rect.center(),
                     egui::Align2::CENTER_CENTER,
                     glyph_for_title(&w.title),
-                    egui::FontId::proportional(28.0),
+                    egui::FontId::proportional(24.0),
                     Color32::from_rgb(pal.text_weak.0, pal.text_weak.1, pal.text_weak.2),
                 );
             }
         }
         painter.text(
-            egui::pos2(card.center().x, card.bottom() + 6.0),
+            egui::pos2(card_rect.center().x, card_rect.bottom() + 3.0),
             egui::Align2::CENTER_TOP,
-            winrust_core::i18n::end(&w.title, 28),
-            egui::FontId::proportional(11.5),
+            winrust_core::i18n::end(&w.title, 22),
+            egui::FontId::proportional(10.5),
             Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
         );
     }
@@ -526,18 +603,18 @@ fn preview(
     // The click targets are registered after painting: `Painter` borrows the
     // context, so the two cannot overlap.
     for (i, w) in windows.iter().enumerate() {
-        let card = egui::Rect::from_min_size(
+        let card_rect = egui::Rect::from_min_size(
             egui::pos2(
-                rect.left() + PAD + i as f32 * (CARD.x + GAP),
+                rect.left() + PAD + i as f32 * (card.x + GAP),
                 rect.top() + PAD,
             ),
-            CARD,
+            card,
         );
         let resp = egui::Area::new(egui::Id::new(("thumb_hit", w.hwnd)))
             .order(egui::Order::Tooltip)
-            .fixed_pos(card.left_top())
+            .fixed_pos(card_rect.left_top())
             .show(ctx, |ui| {
-                ui.allocate_exact_size(CARD, egui::Sense::click()).1
+                ui.allocate_exact_size(card, egui::Sense::click()).1
             })
             .inner;
         if resp.clicked() {
@@ -547,10 +624,25 @@ fn preview(
 
     if let Some(hwnd) = clicked {
         winrust_core::window::activate_window_hwnd(hwnd);
-        app.hover_pid = None;
-        app.hover_since = None;
+        app.hover.clear();
         // The shell window is behind everything again after this, so the
         // preview must go away rather than linger until the next repaint.
         app.thumbs_at = None;
     }
+}
+
+/// The card size for a window's aspect ratio: landscape stays wide, a square
+/// window gets a square, a portrait one gets a tall card.  The bounds keep a
+/// strip of four windows on screen and a single one readable.
+fn card_for(shape: f32) -> (f32, f32) {
+    let height = 104.0_f32;
+    let width = (height * shape).clamp(84.0, 178.0);
+    // A tall/narrow window would otherwise get a card shorter than the
+    // caption; grow the height to keep the shape.
+    let height = if shape < 1.0 {
+        (width / shape).clamp(height, 150.0)
+    } else {
+        height
+    };
+    (width, height)
 }

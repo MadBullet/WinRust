@@ -198,10 +198,34 @@ pub fn show_properties(path: impl AsRef<Path>) -> Result<()> {
 /// Launch an executable with command-line arguments, waiting for the handle.
 ///
 /// Returns the process id when the shell reports one.
+///
+/// The process inherits this one's token: a shell started from the Winlogon
+/// `Shell` value is a normal-privilege process, so everything it starts is
+/// normal too.  Elevating is [`execute_elevated`]'s job.
 pub fn execute(
     path: impl AsRef<Path>,
     args: &str,
     working_dir: Option<&Path>,
+) -> Result<Option<u32>> {
+    execute_with(path, args, working_dir, None)
+}
+
+/// Launch a program through the UAC consent prompt (`runas`).
+///
+/// `ShellExecuteExW` with `lpVerb = "runas"` is the documented way to ask for
+/// an elevated child; the user sees the same prompt Explorer's "Run as
+/// administrator" shows, and a refusal comes back as error 1223
+/// (`ERROR_CANCELLED`).  The handle is still closed even when the shell
+/// refuses, which is why the whole thing goes through `execute_with`.
+pub fn execute_elevated(path: impl AsRef<Path>, args: &str) -> Result<Option<u32>> {
+    execute_with(path, args, None, Some("runas"))
+}
+
+fn execute_with(
+    path: impl AsRef<Path>,
+    args: &str,
+    working_dir: Option<&Path>,
+    verb: Option<&str>,
 ) -> Result<Option<u32>> {
     let mut info: SHELLEXECUTEINFOW = unsafe { std::mem::zeroed() };
     info.cbSize = std::mem::size_of::<SHELLEXECUTEINFOW>() as u32;
@@ -209,8 +233,12 @@ pub fn execute(
     let file = to_wide(path.as_ref());
     let params = str_to_wide(args);
     let dir = working_dir.map(to_wide);
+    let verb_w = verb.map(str_to_wide);
     info.lpFile = file.as_ptr();
     info.lpParameters = params.as_ptr();
+    if let Some(v) = &verb_w {
+        info.lpVerb = v.as_ptr();
+    }
     if let Some(d) = &dir {
         info.lpDirectory = d.as_ptr();
     }
@@ -675,6 +703,41 @@ pub fn sign_out() {
 /// Restart the machine.
 pub fn restart() {
     let _ = launch("shutdown.exe", "/r /t 0");
+}
+
+/// Suspend (sleep) the machine.
+///
+/// `SetSuspendState(FALSE, ...)` is the documented call; going through
+/// `rundll32 powrprof.dll,SetSuspendState` - which is what runs when a string
+/// is passed to the shell - silently hibernates instead of sleeping on many
+/// systems, which is the bug this replaces.
+pub fn sleep() {
+    use windows_sys::Win32::System::Power::SetSuspendState;
+    unsafe {
+        SetSuspendState(0, 0, 0);
+    }
+}
+
+/// Is hibernation enabled on this machine?
+///
+/// The power menu greys the entry out instead of offering a button that does
+/// nothing: `SetSuspendState` with the hibernate flag fails silently when
+/// `powercfg /hibernate` is off.
+pub fn hibernate_allowed() -> bool {
+    use windows_sys::Win32::System::Power::IsPwrHibernateAllowed;
+    unsafe { IsPwrHibernateAllowed() != 0 }
+}
+
+/// Suspend to disk.  Requires hibernation to be enabled; `SetSuspendState`
+/// with the hibernate flag does nothing (and says so) otherwise.
+pub fn hibernate() -> bool {
+    use windows_sys::Win32::System::Power::{IsPwrHibernateAllowed, SetSuspendState};
+    unsafe {
+        if IsPwrHibernateAllowed() == 0 {
+            return false;
+        }
+        SetSuspendState(1, 0, 0) != 0
+    }
 }
 
 /// Shut the machine down.
