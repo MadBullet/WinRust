@@ -24,9 +24,23 @@ pub struct WindowInfo {
 
 unsafe extern "system" fn enum_window_proc(hwnd: HWND, lparam: LPARAM) -> BOOL {
     use windows_sys::Win32::UI::WindowsAndMessaging::{
-        GetWindowTextW, GetWindowThreadProcessId, IsWindowVisible,
+        GetWindow, GetWindowLongW, GetWindowTextW, GetWindowThreadProcessId, IsWindowVisible,
+        GWL_EXSTYLE, GW_OWNER, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
     };
     if IsWindowVisible(hwnd) == 0 {
+        return 1;
+    }
+    // Not every visible window is a taskbar button.  Windows hides three
+    // kinds, and without these tests our bar filled up with the small helper
+    // windows programs create - the "значки не соответствуют запущенным
+    // программам" report.  Hidden from the bar:
+    //   * owned windows (dialogs with a parent), `GW_OWNER != 0`;
+    //   * tool windows (`WS_EX_TOOLWINDOW`), which is how tray helpers and
+    //     floating palettes mark themselves;
+    //   * windows that refuse activation (`WS_EX_NOACTIVATE`).
+    let style = GetWindowLongW(hwnd, GWL_EXSTYLE) as u32;
+    let owned = !GetWindow(hwnd, GW_OWNER).is_null();
+    if owned || (style & WS_EX_TOOLWINDOW as u32) != 0 || (style & WS_EX_NOACTIVATE as u32) != 0 {
         return 1;
     }
     let mut buf = [0u16; 512];
@@ -44,6 +58,21 @@ unsafe extern "system" fn enum_window_proc(hwnd: HWND, lparam: LPARAM) -> BOOL {
         exe: crate::system::process::exe_path_of(pid).unwrap_or_default(),
     });
     1
+}
+
+/// The handle of the foreground window, if any.
+///
+/// The taskbar needs the *window*, not just its process: grouping is by
+/// program, and a program with several windows only has one of them in front,
+/// so "which button is active" can only be answered by the handle.
+pub fn foreground_hwnd() -> Option<isize> {
+    use windows_sys::Win32::UI::WindowsAndMessaging::GetForegroundWindow;
+    let hwnd = unsafe { GetForegroundWindow() };
+    if hwnd.is_null() {
+        None
+    } else {
+        Some(hwnd as isize)
+    }
 }
 
 /// The process that owns the foreground window, if any.

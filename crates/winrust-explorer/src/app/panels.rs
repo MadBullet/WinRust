@@ -371,7 +371,13 @@ impl ExplorerApp {
         let mut pin_now: Vec<PathBuf> = Vec::new();
         // Reordering the favourites list by drag: which row is being dragged
         // and which row it was dropped on.
-        let mut fav_drag: Option<usize> = None;
+        // The row being dragged has to outlive one frame: `drag_started` is
+        // true for a single frame while the release comes several frames
+        // later, so a local could never see both - which is exactly why the
+        // reorder "did not work" while the drag ghost did.  egui's memory
+        // carries it, and a plain click (drag never started) never sets it.
+        let fav_drag_id = egui::Id::new("explorer_fav_drag");
+        let fav_drag: Option<usize> = ctx.data(|d| d.get_temp(fav_drag_id));
         let mut fav_drop: Option<usize> = None;
         // Dropping a folder on the favourites area pins it.  `drag_paths` is the
         // snapshot the right pane filled in when the drag started.
@@ -511,7 +517,7 @@ impl ExplorerApp {
                         // A favourites row is not a file drag: `drag_active`
                         // stays false so the ghost and the drop zones in the
                         // right pane do not engage.
-                        fav_drag = Some(idx);
+                        ui.ctx().data_mut(|d| d.insert_temp(fav_drag_id, idx));
                         ui.ctx().request_repaint();
                     }
                     if resp.hovered() && fav_drag.is_some() {
@@ -539,6 +545,11 @@ impl ExplorerApp {
                         path.display(),
                         t("Right-click to unpin")
                     ));
+                }
+                if ui.ctx().input(|i| i.pointer.primary_released()) {
+                    // Cleared after every row had a chance to read it, so the
+                    // row under the pointer can still commit the drop.
+                    ui.ctx().data_mut(|d| d.remove_temp::<usize>(fav_drag_id));
                 }
                 if let Some(path) = unpin {
                     unpin_now = Some(path);

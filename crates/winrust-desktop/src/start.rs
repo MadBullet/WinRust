@@ -326,6 +326,7 @@ impl DesktopApp {
                             ui,
                             &open_windows,
                             &user,
+                            pal,
                             app_session_power_open,
                             app_session_user_open,
                             &mut output,
@@ -500,6 +501,12 @@ fn app_list(
 }
 
 /// The right column: pinned apps as square icon tiles with the name below.
+///
+/// The grid is *free-form*, the way Windows 11's pinned area behaves: empty
+/// slots are drawn as dimmed placeholders and a tile may be dropped on any of
+/// them, not only on a tile that is already occupied.  Reordering compacts
+/// afterwards, so the dropped tile really travels to the slot the user aimed
+/// at instead of snapping back to the end of the list.
 fn pinned_grid(
     ui: &mut egui::Ui,
     pins: &[(AppEntry, Option<egui::TextureId>)],
@@ -518,143 +525,215 @@ fn pinned_grid(
     let per_row = ((ui.available_width() + gap) / (tile + gap))
         .floor()
         .max(1.0) as usize;
+    // One spare row of empty slots: enough to drop "past the end", and it is
+    // what makes the area read as a grid rather than a ragged list.
+    let rows = pins.len().div_ceil(per_row).max(1) + 1;
+    let slots = rows * per_row;
+
+    let drag_id = egui::Id::new("start_pin_drag");
+    let mut drop_slot: Option<usize> = None;
+
     egui::ScrollArea::vertical()
         .id_salt("start_pins")
         .auto_shrink([false, false])
         .show(ui, |ui| {
-            let mut start = 0usize;
-            while start < pins.len() {
-                let end = (start + per_row).min(pins.len());
+            let mut slot = 0usize;
+            while slot < slots {
+                let end = (slot + per_row).min(slots);
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing.x = gap;
-                    for (pos, (app, icon)) in pins[start..end].iter().enumerate() {
-                        let global_index = start + pos;
+                    for index in slot..end {
                         let (rect, resp) = ui.allocate_exact_size(
                             egui::vec2(tile, tile + 18.0),
                             egui::Sense::click_and_drag(),
                         );
-                        // Pins can be reordered by dragging one tile onto
-                        // another: the grid is the user's, and the order they
-                        // choose is the order that is saved.  `drag_started`
-                        // is true for a single frame and `primary_released`
-                        // arrives on a later one, so the tile being dragged
-                        // has to be remembered in egui's own memory for the
-                        // duration of the gesture.
-                        let drag_id = egui::Id::new("start_pin_drag");
-                        if resp.drag_started() {
-                            ui.ctx().data_mut(|d| d.insert_temp(drag_id, global_index));
-                        }
-                        let dragging_from: Option<usize> = ui.ctx().data(|d| d.get_temp(drag_id));
-                        if resp.hovered() && dragging_from.is_some() {
-                            // Outline the tile the pointer is over - that is
-                            // where the dragged pin will land.
-                            if dragging_from != Some(global_index) {
-                                ui.painter().rect_stroke(
-                                    resp.rect.shrink(1.0),
-                                    8.0,
-                                    egui::Stroke::new(2.0_f32, Color32::from_rgb(0x60, 0xa8, 0xff)),
-                                );
-                            }
-                            if ui.ctx().input(|i| i.pointer.primary_released()) {
-                                if let Some(from) = dragging_from {
-                                    out.pin_move = Some((from, global_index));
-                                }
-                            }
-                        }
-                        if resp.dragged() {
-                            ui.painter().rect_stroke(
-                                resp.rect.shrink(2.0),
-                                8.0,
-                                egui::Stroke::new(1.5_f32, Color32::from_rgb(0x60, 0xa8, 0xff)),
-                            );
-                        }
                         let square = egui::Rect::from_min_size(rect.min, egui::vec2(tile, tile));
-                        let fill = if resp.hovered() {
-                            Color32::from_rgba_unmultiplied(
-                                pal.hover.0,
-                                pal.hover.1,
-                                pal.hover.2,
-                                120,
-                            )
-                        } else {
-                            Color32::from_rgba_unmultiplied(pal.tile.0, pal.tile.1, pal.tile.2, 255)
-                        };
-                        ui.painter().rect_filled(square, 8.0, fill);
-                        let icon_rect =
-                            egui::Rect::from_center_size(square.center(), egui::vec2(34.0, 34.0));
-                        match icon {
-                            Some(id) => {
-                                ui.painter().image(
-                                    *id,
-                                    icon_rect,
-                                    egui::Rect::from_min_max(
-                                        egui::pos2(0.0, 0.0),
-                                        egui::pos2(1.0, 1.0),
-                                    ),
-                                    Color32::WHITE,
+                        let pin = pins.get(index);
+                        let dragged: Option<usize> = ui.ctx().data(|d| d.get_temp(drag_id));
+                        if resp.drag_started() {
+                            if let Some((_, _)) = pin {
+                                ui.ctx().data_mut(|d| d.insert_temp(drag_id, index));
+                            }
+                        }
+                        // Target highlight: the slot under the pointer while a
+                        // drag is live, whether or not it already holds a tile.
+                        let is_target = resp.hovered()
+                            && dragged.is_some_and(|from| from != index);
+                        match pin {
+                            Some((app, icon)) => {
+                                let fill = if resp.hovered() && dragged.is_none() {
+                                    Color32::from_rgba_unmultiplied(
+                                        pal.hover.0,
+                                        pal.hover.1,
+                                        pal.hover.2,
+                                        120,
+                                    )
+                                } else {
+                                    Color32::from_rgba_unmultiplied(
+                                        pal.tile.0,
+                                        pal.tile.1,
+                                        pal.tile.2,
+                                        255,
+                                    )
+                                };
+                                // The tile being dragged is drawn faint, which
+                                // is the ghost: it stays where it was so the
+                                // pointer can be followed with the eye.
+                                let is_source = dragged == Some(index);
+                                ui.painter().rect_filled(
+                                    square,
+                                    8.0,
+                                    if is_source {
+                                        Color32::from_rgba_unmultiplied(
+                                            pal.tile.0,
+                                            pal.tile.1,
+                                            pal.tile.2,
+                                            90,
+                                        )
+                                    } else {
+                                        fill
+                                    },
                                 );
+                                let icon_rect = egui::Rect::from_center_size(
+                                    square.center(),
+                                    egui::vec2(34.0, 34.0),
+                                );
+                                match icon {
+                                    Some(id) => {
+                                        ui.painter().image(
+                                            *id,
+                                            icon_rect,
+                                            egui::Rect::from_min_max(
+                                                egui::pos2(0.0, 0.0),
+                                                egui::pos2(1.0, 1.0),
+                                            ),
+                                            if is_source {
+                                                Color32::from_white_alpha(110)
+                                            } else {
+                                                Color32::WHITE
+                                            },
+                                        );
+                                    }
+                                    None => {
+                                        ui.painter().text(
+                                            square.center(),
+                                            egui::Align2::CENTER_CENTER,
+                                            "▣",
+                                            egui::FontId::proportional(26.0),
+                                            Color32::from_rgb(
+                                                pal.text_weak.0,
+                                                pal.text_weak.1,
+                                                pal.text_weak.2,
+                                            ),
+                                        );
+                                    }
+                                }
+                                ui.painter().text(
+                                    egui::pos2(square.center().x, square.bottom() + 4.0),
+                                    egui::Align2::CENTER_TOP,
+                                    winrust_core::i18n::end(&app.name, 14),
+                                    egui::FontId::proportional(10.5),
+                                    Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
+                                );
+                                if resp.clicked() {
+                                    out.launch = Some(app.path.clone());
+                                }
+                                // The pin's own context menu, in the order the
+                                // review asked for: Open, file location,
+                                // Unpin, Properties.  "Pin to Start" lives on
+                                // the app list's menu, so the set is editable
+                                // from both sides.
+                                resp.context_menu(|ui| {
+                                    ui.set_min_width(210.0);
+                                    if ui.button(t("Open")).clicked() {
+                                        out.launch = Some(app.path.clone());
+                                        ui.close_menu();
+                                    }
+                                    if ui.button(t("File location")).clicked() {
+                                        out.reveal = Some(app.path.clone());
+                                        ui.close_menu();
+                                    }
+                                    ui.separator();
+                                    if ui.button(t("Unpin from Start")).clicked() {
+                                        out.unpin = Some(app.path.clone());
+                                        ui.close_menu();
+                                    }
+                                    if ui.button(t("Properties")).clicked() {
+                                        out.props = Some(app.path.clone());
+                                        ui.close_menu();
+                                    }
+                                });
+                                resp.on_hover_text(app.path.display().to_string());
                             }
                             None => {
-                                ui.painter().text(
-                                    square.center(),
-                                    egui::Align2::CENTER_CENTER,
-                                    "▣",
-                                    egui::FontId::proportional(26.0),
-                                    Color32::from_rgb(
-                                        pal.text_weak.0,
-                                        pal.text_weak.1,
-                                        pal.text_weak.2,
+                                // An empty slot: a dimmed square.  It is a drop
+                                // target like any other, which is what makes the
+                                // grid free-form.
+                                ui.painter().rect_filled(
+                                    square,
+                                    8.0,
+                                    Color32::from_rgba_unmultiplied(
+                                        pal.tile.0,
+                                        pal.tile.1,
+                                        pal.tile.2,
+                                        if resp.hovered() { 110 } else { 60 },
+                                    ),
+                                );
+                                ui.painter().rect_stroke(
+                                    square,
+                                    8.0,
+                                    egui::Stroke::new(
+                                        1.0_f32,
+                                        Color32::from_rgba_unmultiplied(
+                                            pal.line.0,
+                                            pal.line.1,
+                                            pal.line.2,
+                                            120,
+                                        ),
                                     ),
                                 );
                             }
                         }
-                        ui.painter().text(
-                            egui::pos2(square.center().x, square.bottom() + 4.0),
-                            egui::Align2::CENTER_TOP,
-                            winrust_core::i18n::end(&app.name, 14),
-                            egui::FontId::proportional(10.5),
-                            Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
-                        );
-                        if resp.clicked() {
-                            out.launch = Some(app.path.clone());
+                        if is_target {
+                            ui.painter().rect_stroke(
+                                square.shrink(1.0),
+                                8.0,
+                                egui::Stroke::new(2.0_f32, Color32::from_rgb(0x60, 0xa8, 0xff)),
+                            );
                         }
-                        // The pin's own context menu, in the order the review
-                        // asked for: Open, file location, Unpin, Properties.
-                        // "Pin to Start" lives on the app list's menu, so the
-                        // set is editable from both sides.
-                        resp.context_menu(|ui| {
-                            ui.set_min_width(210.0);
-                            if ui.button(t("Open")).clicked() {
-                                out.launch = Some(app.path.clone());
-                                ui.close_menu();
-                            }
-                            if ui.button(t("File location")).clicked() {
-                                out.reveal = Some(app.path.clone());
-                                ui.close_menu();
-                            }
-                            ui.separator();
-                            if ui.button(t("Unpin from Start")).clicked() {
-                                out.unpin = Some(app.path.clone());
-                                ui.close_menu();
-                            }
-                            if ui.button(t("Properties")).clicked() {
-                                out.props = Some(app.path.clone());
-                                ui.close_menu();
-                            }
-                        });
-                        resp.on_hover_text(app.path.display().to_string());
+                        if is_target && ui.ctx().input(|i| i.pointer.primary_released()) {
+                            drop_slot = Some(index);
+                        }
                     }
                 });
-                start = end;
+                slot = end;
             }
         });
-    // The gesture is over: drop the remembered tile *after* every tile had a
-    // chance to read it, otherwise the first tile in the list would clear the
-    // state before the tile under the pointer could commit the drop.
-    if ui.ctx().input(|i| i.pointer.primary_released()) {
-        ui.ctx()
-            .data_mut(|d| d.remove_temp::<usize>(egui::Id::new("start_pin_drag")));
+
+    if let (Some(from), Some(to)) = (
+        ui.ctx().data(|d| d.get_temp::<usize>(drag_id)),
+        drop_slot,
+    ) {
+        if from != to {
+            out.pin_move = Some((from, to));
+        }
     }
+    // The gesture is over: drop the remembered tile *after* every slot had a
+    // chance to read it, otherwise the first slot would clear the state before
+    // the slot under the pointer could commit the drop.
+    if ui.ctx().input(|i| i.pointer.primary_released()) {
+        ui.ctx().data_mut(|d| d.remove_temp::<usize>(drag_id));
+    }
+}
+
+/// The surface the two footer lists are drawn on, matching the tray's flyouts.
+fn popup_surface(pal: winrust_ui::theme::Palette) -> Color32 {
+    Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, 252)
+}
+
+/// The outline of the two footer lists, matching the tray's flyouts.
+fn popup_line(pal: winrust_ui::theme::Palette) -> Color32 {
+    Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)
 }
 
 /// The bottom row: the account, Settings, the running-window list and power.
@@ -662,6 +741,7 @@ fn footer(
     ui: &mut egui::Ui,
     open_windows: &[crate::taskbar::WindowEntry],
     user: &str,
+    pal: winrust_ui::theme::Palette,
     // Whether the session already has each nested list open.  Read in `draw`
     // and passed in, because the two lists are drawn here in the footer.
     power_open: bool,
@@ -685,21 +765,32 @@ fn footer(
                 screen.bottom() - crate::taskbar::HEIGHT,
                 6.0,
                 |ui| {
-                    ui.set_min_width(200.0);
-                    if ui.button(t("Access to the machine")).clicked() {
-                        let _ = winrust_core::shell::launch(
-                            "rundll32.exe",
-                            "shell32.dll,Control_RunDLL userpasswords",
-                        );
-                    }
-                    if ui.button(t("Switch user")).clicked() {
-                        out.switch_user = true;
-                        out.close_user_menu = true;
-                    }
-                    if ui.button(t("Lock")).clicked() {
-                        winrust_core::shell::lock_workstation();
-                        out.close_user_menu = true;
-                    }
+                    // Same frame as the tray's flyouts.  Without it the Area
+                    // painted its buttons straight onto whatever was behind
+                    // them, so the list had no surface and no outline - the
+                    // "списки висят сами по себе без общей обводки" report.
+                    egui::Frame::popup(ui.style())
+                        .fill(popup_surface(pal))
+                        .stroke(egui::Stroke::new(1.0_f32, popup_line(pal)))
+                        .rounding(10.0)
+                        .inner_margin(egui::Margin::same(10.0))
+                        .show(ui, |ui| {
+                            ui.set_min_width(200.0);
+                            if ui.button(t("Access to the machine")).clicked() {
+                                let _ = winrust_core::shell::launch(
+                                    "rundll32.exe",
+                                    "shell32.dll,Control_RunDLL userpasswords",
+                                );
+                            }
+                            if ui.button(t("Switch user")).clicked() {
+                                out.switch_user = true;
+                                out.close_user_menu = true;
+                            }
+                            if ui.button(t("Lock")).clicked() {
+                                winrust_core::shell::lock_workstation();
+                                out.close_user_menu = true;
+                            }
+                        });
                 },
             );
         }
@@ -730,6 +821,12 @@ fn footer(
                     screen.bottom() - crate::taskbar::HEIGHT,
                     6.0,
                     |ui| {
+                        egui::Frame::popup(ui.style())
+                            .fill(popup_surface(pal))
+                            .stroke(egui::Stroke::new(1.0_f32, popup_line(pal)))
+                            .rounding(10.0)
+                            .inner_margin(egui::Margin::same(10.0))
+                            .show(ui, |ui| {
                         ui.set_min_width(200.0);
                         for action in PowerAction::ALL {
                             let enabled = action != PowerAction::Hibernate
@@ -749,6 +846,7 @@ fn footer(
                                 out.close_power_menu = true;
                             }
                         }
+                            });
                     },
                 );
             }

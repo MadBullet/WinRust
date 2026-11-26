@@ -846,6 +846,9 @@ fn notifications_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
 /// Overflow: the icons Windows hides behind the chevron.  The shell has no
 /// third-party tray clients of its own, so this lists the shell's own tools.
 fn overflow_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
+    // Read once for the whole panel: the hover fill and the label both need it,
+    // and `app` is borrowed mutably below for the launches.
+    let pal = winrust_ui::theme::pal(&app.appearance);
     ui.label(RichText::new(t("Hidden icons")).strong().size(12.5));
     ui.separator();
     for (glyph, exe, label) in [
@@ -854,14 +857,39 @@ fn overflow_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         ("🛠", "winrust-sysctl.exe", "System Control"),
         ("🗂", "winrust-explorer.exe", "Explorer"),
     ] {
-        if ui
-            .add_sized(
-                [ui.available_width(), 26.0],
-                egui::Button::new(RichText::new(format!("{glyph}  {}", t(label))).size(12.0))
-                    .frame(false),
-            )
-            .clicked()
-        {
+        // A frameless button has no visual state at all, so the pointer gave
+        // no feedback before clicking.  The row is drawn like the tray's own
+        // tiles: a faint fill plus an accent outline under the pointer, and
+        // the buttons themselves stay frameless so the row does not get a
+        // permanent box.
+        let (rect, resp) = ui.allocate_exact_size(
+            egui::vec2(ui.available_width(), 26.0),
+            egui::Sense::click(),
+        );
+        let hovered = resp.hovered();
+        if hovered {
+            ui.painter().rect_filled(
+                rect,
+                5.0,
+                Color32::from_rgba_unmultiplied(pal.hover.0, pal.hover.1, pal.hover.2, 90),
+            );
+            ui.painter().rect_stroke(
+                rect,
+                5.0,
+                egui::Stroke::new(
+                    1.0_f32,
+                    Color32::from_rgba_unmultiplied(pal.accent.0, pal.accent.1, pal.accent.2, 150),
+                ),
+            );
+        }
+        ui.painter().text(
+            rect.center(),
+            egui::Align2::CENTER_CENTER,
+            format!("{glyph}  {}", t(label)),
+            egui::FontId::proportional(12.0),
+            Color32::from_rgb(pal.text.0, pal.text.1, pal.text.2),
+        );
+        if resp.clicked() {
             if let Some(p) = winrust_core::install::find_binary(exe) {
                 let _ = winrust_core::shell::execute(&p, "", None);
             }

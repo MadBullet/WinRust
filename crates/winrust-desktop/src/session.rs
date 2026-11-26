@@ -211,9 +211,13 @@ impl Session {
         if self.pins.is_empty() {
             self.pins = default_pins().into_iter().map(|a| a.path).collect();
         }
-        if from < self.pins.len() && to < self.pins.len() && from != to {
+        if from < self.pins.len() && from != to {
             let moved = self.pins.remove(from);
-            self.pins.insert(to, moved);
+            // `to` may be an empty slot past the end - the pinned grid draws a
+            // spare row for exactly that - so the destination is clamped to
+            // "one past the last tile" rather than rejected.
+            let at = to.min(self.pins.len());
+            self.pins.insert(at, moved);
             self.save_pins();
         }
     }

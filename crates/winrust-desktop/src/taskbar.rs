@@ -238,7 +238,12 @@ impl DesktopApp {
             for key in &order {
                 let first = windows_list.iter().find(|w| &app_key(w) == key);
                 let Some(first) = first else { continue };
-                let count = windows_list.iter().filter(|w| &app_key(w) == key).count();
+                let group_hwnds: Vec<Option<isize>> = windows_list
+                    .iter()
+                    .filter(|w| &app_key(w) == key)
+                    .map(|w| Some(w.hwnd))
+                    .collect();
+                let count = group_hwnds.len();
                 let icon = self.window_icon(ctx, first);
                 let (rect, resp) =
                     ui.allocate_exact_size(egui::vec2(button_w, 38.0), egui::Sense::click());
@@ -250,9 +255,13 @@ impl DesktopApp {
                 // Active means "one of this group's windows is in front", not
                 // just the first one: with grouping by program, the active
                 // window is rarely the group's first entry.
-                let group_active: Vec<&WindowEntry> =
-                    windows_list.iter().filter(|w| &app_key(w) == key).collect();
-                let selected = group_active.iter().any(|w| self.active_pid == Some(w.pid));
+                // "Active" is the group that owns the foreground *window*.
+                // Comparing pids marked every window of a multi-process
+                // program (browsers, Office) as active at once, and missed the
+                // case where the foreground belongs to a different process of
+                // the same program.
+                let selected = group_hwnds.iter().any(|h| *h == self.active_hwnd)
+                    || (self.active_hwnd.is_none() && self.active_pid == Some(first.pid));
                 if selected {
                     ui.painter().rect_filled(
                         rect.shrink(1.0),
@@ -317,10 +326,23 @@ impl DesktopApp {
                 if resp.hovered() {
                     hovered_any = true;
                     self.hover.enter(group_pid, rect);
+                    // Remember the group, not just the pid: the strip below is
+                    // built from it, and a pid is not unique across a program
+                    // with several windows.
+                    self.hovered_group = Some(key.clone());
                 }
                 if resp.clicked() {
+                    // Raise the window of this group that the user last used,
+                    // falling back to the first one.  Activating by pid raised
+                    // whichever window Windows felt like, not the one clicked.
+                    let target = group_hwnds
+                        .iter()
+                        .flatten()
+                        .copied()
+                        .find(|h| Some(*h) == self.active_hwnd)
+                        .unwrap_or(first.hwnd);
                     self.active_pid = Some(group_pid);
-                    winrust_core::window::activate_window(group_pid);
+                    winrust_core::window::activate_window_hwnd(target);
                 }
                 let hover = if count > 1 {
                     format!("{}\n{}", first.title, tf!("{} windows", count))
@@ -343,51 +365,62 @@ impl DesktopApp {
         //
         // This runs outside the button closure: `preview` needs `&mut self`,
         // which the closure has already borrowed for the button loop.
-        if hovered_any && self.hover.rested() {
-            if let Some(pid) = self.hover.pid() {
-                // Only windows that are really open: a window the bar knows
-                // about but that is minimised to the tray, or that has been
-                // destroyed since the last scan, must not get a card full of
-                // "no picture" - the preview is thumbnail-first.
-                // The whole *program's* windows, not just the clicked
-                // process's: grouping made one button stand for several
-                // processes, so the preview has to list all of them.
-                let group_key = self
-                    .open_windows
-                    .iter()
-                    .find(|w| w.pid == pid)
-                    .map(|w| app_key(w))
-                    .unwrap_or_default();
-                let group: Vec<WindowEntry> = self
-                    .open_windows
-                    .iter()
-                    .filter(|w| app_key(w) == group_key)
-                    .filter(|w| winrust_core::thumb::window_size(w.hwnd).is_some())
-                    .cloned()
-                    .collect();
-                if !group.is_empty() {
-                    // Read the anchor before `self` is lent to `preview`.
-                    let anchor = self.hover.anchor();
-                    let on_card = preview(self, ctx, bar, pal, &group, anchor);
-                    // The miniature is drawn *outside* the button loop, so the
-                    // pointer leaves the button the moment it moves onto a
-                    // card.  That cleared `hovered_any`, which cleared the
-                    // peek - so the preview vanished exactly when the user
-                    // tried to look at it ("при наведении на миниатюру она
-                    // сразу пропадает").  A card counts as still being on the
-                    // group.
-                    if on_card {
-                        hovered_any = true;
-                    }
+        if hovered_any {
+            // Sticky while the pointer travels from the button to the strip.
+            if !self.hover.is_empty() {
+                self.hovered_group = self
+                    .hover
+                    .pid()
+                    .and_then(|pid| self.open_windows.iter().find(|w| w.pid == pid))
+                    .map(app_key)
+                    .or_else(|| self.hovered_group.clone());
+            }
+        }
+        if let Some(group_key) = self.hovered_group.clone() {
+            let group: Vec<WindowEntry> = self
+                .open_windows
+                .iter()
+                .filter(|w| app_key(w) == group_key)
+                .cloned()
+                .collect();
+            // The strip must be *built* whenever the pointer is still around,
+            // not only when it is on a button: once it is up the pointer moves
+            // onto it, `hovered_any` is false for a frame, and rebuilding only
+            // on `rested()` dropped the strip before the hit test could run.
+            // `preview` itself reports whether the pointer is on it.
+            if !group.is_empty() && (hovered_any || self.hover.rested() || self.hovered_group.is_some())
+            {
+                // Read the anchor before `self` is lent to `preview`; with the
+                // pointer already on the strip the anchor is stale, which is
+                // fine - the strip is not moved once it is up.
+                let anchor = self.hover.anchor();
+                let on_card = preview(self, ctx, bar, pal, &group, anchor);
+                // The miniature is drawn *outside* the button loop, so the
+                // pointer leaves the button the moment it moves onto a card.
+                // A card counts as still being on the group.
+                if on_card {
+                    hovered_any = true;
+                    // The strip is under the pointer: remember it, so the
+                    // grace period below starts counting from *now* and not
+                    // from the moment the pointer left the button.
+                    self.preview_at = Instant::now();
                 }
             }
         }
         // Leaving the buttons *and* the cards drops the preview, like the bar
         // does, and takes the full-screen peek with it.
-        if !hovered_any {
+        // Grace period: crossing the gap between button and strip, or moving
+        // inside the strip's padding, must not dismiss it.
+        let grace = self.hovered_group.is_some()
+            && self.preview_at.elapsed() < std::time::Duration::from_millis(250);
+        if !hovered_any && !grace {
             self.hover.clear();
+            self.hovered_group = None;
             self.peek_hwnd = None;
             self.peek_at = None;
+        }
+        if grace {
+            ctx.request_repaint_after(std::time::Duration::from_millis(16));
         }
 
         // ---- Right: the tray -------------------------------------------------
@@ -403,8 +436,30 @@ impl DesktopApp {
         if let Some(slot) = self.window_icons.get(&w.pid) {
             return slot.as_ref().map(|t| t.id());
         }
+        // Three sources, cheapest first: the window's own icon, then the
+        // executable's own icon, then the executable path looked up again.
+        // The last one matters: `WindowEntry::exe` is captured when the
+        // window list is built, and for a process that could not be opened at
+        // that moment it is empty - which is why some taskbar buttons fell
+        // back to a text glyph.  Asking the process again here costs one
+        // `QueryFullProcessImageNameW` per previously iconless button.
+        let exe = if w.exe.is_empty() {
+            winrust_core::system::process::exe_path_of(w.pid).unwrap_or_default()
+        } else {
+            w.exe.clone()
+        };
         let rgba = winrust_core::window::window_icon_rgba(w.hwnd, 32)
-            .or_else(|| winrust_core::window::exe_icon_rgba(&w.exe, 32));
+            .or_else(|| winrust_core::window::exe_icon_rgba(&exe, 32))
+            .or_else(|| {
+                // A shortcut to the program in the Start menu carries the same
+                // picture, and `install::find_binary` knows where the shell's
+                // own programs live.
+                let name = std::path::Path::new(&exe)
+                    .file_name()
+                    .map(|n| n.to_string_lossy().to_string())?;
+                let path = winrust_core::install::find_binary(&name)?;
+                winrust_core::window::exe_icon_rgba(&path.to_string_lossy(), 32)
+            });
         let texture = rgba.and_then(|rgba| {
             let px = match rgba.len() / 4 {
                 n if n >= 48 * 48 => 48,
@@ -714,6 +769,10 @@ fn preview(
     }
 
     let surface = Color32::from_rgba_unmultiplied(pal.surface.0, pal.surface.1, pal.surface.2, 248);
+    // `Order::Foreground` is *below* the taskbar's own input areas, which are
+    // also foreground: a pointer over the strip was still reported as being
+    // over the bar, so the strip could never be hovered and the preview went
+    // away as soon as the user left the button.  Tooltip is above all of them.
     let painter = ctx.layer_painter(egui::LayerId::new(
         egui::Order::Tooltip,
         egui::Id::new("taskbar_preview_bg"),

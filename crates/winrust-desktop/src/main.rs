@@ -109,6 +109,10 @@ pub struct DesktopApp {
     pub(crate) band_start: Option<egui::Pos2>,
     /// Which application the user last activated from the taskbar.
     pub(crate) active_pid: Option<u32>,
+    /// The foreground *window*.  Grouping is by program, so the active button
+    /// is the group that owns this handle - a pid alone would mark the wrong
+    /// button whenever a program has several windows.
+    pub(crate) active_hwnd: Option<isize>,
     /// Delete pressed on the wallpaper: the paths waiting for confirmation and
     /// whether Shift was held (skip the Recycle Bin).
     pub(crate) delete_confirm: Vec<std::path::PathBuf>,
@@ -119,6 +123,17 @@ pub struct DesktopApp {
     /// that button is: the preview appears after a short delay, over the
     /// button.
     pub(crate) hover: taskbar::Hover,
+    /// The program whose preview is showing.  Kept apart from `hover` so the
+    /// strip survives the pointer leaving the button for the strip itself -
+    /// the preview used to vanish exactly when the user reached for it.
+    pub(crate) hovered_group: Option<String>,
+    /// When the pointer last rested on the preview strip.  The preview stays
+    /// up for a short grace period after that, so crossing the 6 px gap
+    /// between the button and the strip - or dipping into the strip's padding
+    /// - does not dismiss it.  Without this the strip also disappeared while
+    /// the user was still aiming at it, which is half of the "миниатюра сразу
+    /// сворачивается" report.
+    pub(crate) preview_at: Instant,
     /// Cached window pictures for the hover preview, keyed by hwnd.
     pub(crate) thumbs: std::collections::HashMap<isize, Option<egui::TextureHandle>>,
     pub(crate) thumbs_at: Option<Instant>,
@@ -176,10 +191,13 @@ impl DesktopApp {
             selection: std::collections::BTreeSet::new(),
             band_start: None,
             active_pid: None,
+            active_hwnd: None,
             delete_confirm: Vec::new(),
             delete_permanent: false,
             flyout_anim: 0.0,
             hover: taskbar::Hover::default(),
+            hovered_group: None,
+            preview_at: Instant::now() - Duration::from_secs(30),
             thumbs: std::collections::HashMap::new(),
             thumbs_at: None,
         }
@@ -191,13 +209,22 @@ impl DesktopApp {
             self.icons = desktop::scan(self.sort_order, self.sort_desc);
             self.icons_at = Instant::now();
         }
-        if self.windows_at.elapsed() >= Duration::from_secs(3) {
-            self.open_windows = taskbar::windows();
-            // Highlight whatever is actually in front, so the taskbar follows the
-            // user switching windows with Alt+Tab instead of remembering only the
-            // last button they pressed.
-            self.active_pid = winrust_core::window::foreground_pid();
-            self.windows_at = Instant::now();
+        // The foreground can change at any moment (Alt+Tab, a click in another
+        // window), and the highlight is the only feedback the bar gives, so it
+        // is sampled every frame.  The window *list* is a heavier `EnumWindows`
+        // over every process image and stays on its own cadence.
+        self.active_pid = winrust_core::window::foreground_pid();
+        self.active_hwnd = winrust_core::window::foreground_hwnd();
+        if self.windows_at.elapsed() >= Duration::from_secs(1) {
+            let next = taskbar::windows();
+            // A program that was just started must get its button at once, so
+            // the list is rebuilt when its shape changes, not only on the tick.
+            if next.len() != self.open_windows.len()
+                || next.iter().map(|w| w.pid).ne(self.open_windows.iter().map(|w| w.pid))
+            {
+                self.windows_at = Instant::now();
+            }
+            self.open_windows = next;
         }
         if self.session.apps_stale() {
             self.session.set_apps(start::installed_apps());
