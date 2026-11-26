@@ -1,99 +1,87 @@
-    Updating crates.io index
-     Locking 341 packages to highest compatible versions
-      Adding eframe v0.29.1 (available: v0.37.0)
-      Adding egui v0.29.1 (available: v0.37.0)
-      Adding egui_extras v0.29.1 (available: v0.37.0)
-      Adding thiserror v1.0.69 (available: v2.0.21)
-      Adding windows-sys v0.59.0 (available: v0.61.2)
- Downloading crates ...
-  Downloaded itoa v1.0.19
-  Downloaded log v0.4.35
-  Downloaded once_cell_polyfill v1.70.2
-  Downloaded regex v1.13.2
-  Downloaded regex-syntax v0.8.12
-  Downloaded is_terminal_polyfill v1.70.2
-  Downloaded syn v3.0.10
-  Downloaded proc-macro2 v1.0.107
-  Downloaded windows-link v0.2.1
-  Downloaded colorchoice v1.0.5
-  Downloaded anstyle-parse v1.0.0
-  Downloaded windows-targets v0.52.6
-  Downloaded aho-corasick v1.1.5
-  Downloaded env_filter v2.1.0
-  Downloaded anstyle-query v1.1.5
-  Downloaded memchr v2.8.3
-  Downloaded unicode-ident v1.0.27
-  Downloaded anstyle v1.0.14
-  Downloaded anstyle-wincon v3.0.11
-  Downloaded env_logger v0.11.12
-  Downloaded quote v1.0.47
-  Downloaded jiff-core v1.0.2
-  Downloaded thiserror-impl v1.0.69
-  Downloaded serde_core v1.0.229
-  Downloaded serde_json v1.0.154
-  Downloaded zmij v1.0.23
-  Downloaded serde_derive v1.0.229
-  Downloaded regex-automata v0.4.19
-  Downloaded serde v1.0.229
-  Downloaded utf8parse v0.2.2
-  Downloaded thiserror v1.0.69
-  Downloaded anstream v1.0.0
-  Downloaded syn v2.0.119
-  Downloaded windows_x86_64_msvc v0.52.6
-  Downloaded jiff v1.0.3
-  Downloaded windows-sys v0.61.2
-  Downloaded windows-sys v0.59.0
-   Compiling proc-macro2 v1.0.107
-   Compiling quote v1.0.47
-   Compiling unicode-ident v1.0.27
-   Compiling memchr v2.8.3
-   Compiling serde_core v1.0.229
-   Compiling windows_x86_64_msvc v0.52.6
-   Compiling windows-link v0.2.1
-   Compiling windows-sys v0.61.2
-   Compiling aho-corasick v1.1.5
-   Compiling regex-syntax v0.8.12
-   Compiling zmij v1.0.23
-   Compiling regex-automata v0.4.19
-   Compiling syn v2.0.119
-   Compiling syn v3.0.10
-   Compiling log v0.4.35
-   Compiling utf8parse v0.2.2
-   Compiling once_cell_polyfill v1.70.2
-   Compiling thiserror v1.0.69
-   Compiling serde v1.0.229
-   Compiling anstyle v1.0.14
-   Compiling serde_json v1.0.154
-   Compiling anstyle-wincon v3.0.11
-   Compiling serde_derive v1.0.229
-   Compiling anstyle-parse v1.0.0
-   Compiling thiserror-impl v1.0.69
-   Compiling windows-targets v0.52.6
-   Compiling regex v1.13.2
-   Compiling anstyle-query v1.1.5
-   Compiling itoa v1.0.19
-   Compiling jiff-core v1.0.2
-   Compiling is_terminal_polyfill v1.70.2
-   Compiling colorchoice v1.0.5
-   Compiling anstream v1.0.0
-   Compiling jiff v1.0.3
-   Compiling env_filter v2.1.0
-   Compiling windows-sys v0.59.0
-   Compiling env_logger v0.11.12
-   Compiling winrust-kernel-abi v0.9.0 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-   Compiling winrust-core v0.9.0 (D:\a\WinRust\WinRust\crates\winrust-core)
-warning: unnecessary `unsafe` block
-  --> crates\winrust-core\src\system\gpu.rs:83:32
-   |
-47 |             unsafe {
-   |             ------ because it's nested under this `unsafe` block
-...
-83 |                     let name = unsafe { from_wide_ptr(item.szName) };
-   |                                ^^^^^^ unnecessary `unsafe` block
-   |
-   = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
-
-warning: `winrust-core` (lib) generated 1 warning
-   Compiling winrust-kernel-control v0.9.0 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-    Finished `release` profile [optimized] target(s) in 1m 23s
-exit=True
+exit=0
+[1m[92m    Updating[0m crates.io index
+[1m[92m     Locking[0m 341 packages to highest compatible versions
+[1m[92m      Adding[0m eframe v0.29.1 [1m[93m(available: v0.37.0)[0m
+[1m[92m      Adding[0m egui v0.29.1 [1m[93m(available: v0.37.0)[0m
+[1m[92m      Adding[0m egui_extras v0.29.1 [1m[93m(available: v0.37.0)[0m
+[1m[92m      Adding[0m thiserror v1.0.69 [1m[93m(available: v2.0.21)[0m
+[1m[92m      Adding[0m windows-sys v0.59.0 [1m[93m(available: v0.61.2)[0m
+[1m[92m Downloading[0m crates ...
+[1m[92m  Downloaded[0m serde_derive v1.0.229
+[1m[92m  Downloaded[0m jiff-core v1.0.2
+[1m[92m  Downloaded[0m anstream v1.0.0
+[1m[92m  Downloaded[0m anstyle-parse v1.0.0
+[1m[92m  Downloaded[0m utf8parse v0.2.2
+[1m[92m  Downloaded[0m windows-link v0.2.1
+[1m[92m  Downloaded[0m windows-targets v0.52.6
+[1m[92m  Downloaded[0m anstyle-query v1.1.5
+[1m[92m  Downloaded[0m once_cell_polyfill v1.70.2
+[1m[92m  Downloaded[0m regex-syntax v0.8.12
+[1m[92m  Downloaded[0m aho-corasick v1.1.5
+[1m[92m  Downloaded[0m serde_core v1.0.229
+[1m[92m  Downloaded[0m serde v1.0.229
+[1m[92m  Downloaded[0m thiserror v1.0.69
+[1m[92m  Downloaded[0m anstyle-wincon v3.0.11
+[1m[92m  Downloaded[0m regex v1.13.2
+[1m[92m  Downloaded[0m anstyle v1.0.14
+[1m[92m  Downloaded[0m env_filter v2.1.0
+[1m[92m  Downloaded[0m quote v1.0.47
+[1m[92m  Downloaded[0m syn v3.0.10
+[1m[92m  Downloaded[0m is_terminal_polyfill v1.70.2
+[1m[92m  Downloaded[0m log v0.4.35
+[1m[92m  Downloaded[0m colorchoice v1.0.5
+[1m[92m  Downloaded[0m itoa v1.0.19
+[1m[92m  Downloaded[0m env_logger v0.11.12
+[1m[92m  Downloaded[0m thiserror-impl v1.0.69
+[1m[92m  Downloaded[0m proc-macro2 v1.0.107
+[1m[92m  Downloaded[0m unicode-ident v1.0.27
+[1m[92m  Downloaded[0m zmij v1.0.23
+[1m[92m  Downloaded[0m syn v2.0.119
+[1m[92m  Downloaded[0m memchr v2.8.3
+[1m[92m  Downloaded[0m serde_json v1.0.154
+[1m[92m  Downloaded[0m regex-automata v0.4.19
+[1m[92m  Downloaded[0m jiff v1.0.3
+[1m[92m  Downloaded[0m windows_x86_64_msvc v0.52.6
+[1m[92m  Downloaded[0m windows-sys v0.59.0
+[1m[92m  Downloaded[0m windows-sys v0.61.2
+[1m[92m   Compiling[0m proc-macro2 v1.0.107
+[1m[92m   Compiling[0m quote v1.0.47
+[1m[92m   Compiling[0m unicode-ident v1.0.27
+[1m[92m   Compiling[0m memchr v2.8.3
+[1m[92m   Compiling[0m windows_x86_64_msvc v0.52.6
+[1m[92m   Compiling[0m windows-link v0.2.1
+[1m[92m   Compiling[0m serde_core v1.0.229
+[1m[92m   Compiling[0m windows-sys v0.61.2
+[1m[92m   Compiling[0m aho-corasick v1.1.5
+[1m[92m   Compiling[0m zmij v1.0.23
+[1m[92m   Compiling[0m regex-syntax v0.8.12
+[1m[92m   Compiling[0m syn v2.0.119
+[1m[92m   Compiling[0m syn v3.0.10
+[1m[92m   Compiling[0m regex-automata v0.4.19
+[1m[92m   Compiling[0m serde v1.0.229
+[1m[92m   Compiling[0m thiserror v1.0.69
+[1m[92m   Compiling[0m anstyle v1.0.14
+[1m[92m   Compiling[0m once_cell_polyfill v1.70.2
+[1m[92m   Compiling[0m utf8parse v0.2.2
+[1m[92m   Compiling[0m log v0.4.35
+[1m[92m   Compiling[0m serde_json v1.0.154
+[1m[92m   Compiling[0m anstyle-parse v1.0.0
+[1m[92m   Compiling[0m anstyle-wincon v3.0.11
+[1m[92m   Compiling[0m thiserror-impl v1.0.69
+[1m[92m   Compiling[0m windows-targets v0.52.6
+[1m[92m   Compiling[0m anstyle-query v1.1.5
+[1m[92m   Compiling[0m serde_derive v1.0.229
+[1m[92m   Compiling[0m regex v1.13.2
+[1m[92m   Compiling[0m colorchoice v1.0.5
+[1m[92m   Compiling[0m is_terminal_polyfill v1.70.2
+[1m[92m   Compiling[0m itoa v1.0.19
+[1m[92m   Compiling[0m jiff-core v1.0.2
+[1m[92m   Compiling[0m jiff v1.0.3
+[1m[92m   Compiling[0m anstream v1.0.0
+[1m[92m   Compiling[0m env_filter v2.1.0
+[1m[92m   Compiling[0m windows-sys v0.59.0
+[1m[92m   Compiling[0m winrust-kernel-abi v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
+[1m[92m   Compiling[0m env_logger v0.11.12
+[1m[92m   Compiling[0m winrust-core v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-core)
+[1m[92m   Compiling[0m winrust-kernel-control v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 41.22s
