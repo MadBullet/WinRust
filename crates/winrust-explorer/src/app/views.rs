@@ -232,6 +232,10 @@ impl ExplorerApp {
         let sort_key = self.current().sort_key;
         let sort_asc = self.current().sort_asc;
         let clicked_cell = std::cell::Cell::new(None::<SortKeySerde>);
+        // Both are read before `TableBuilder` takes `ui` for the rest of the
+        // function, because `ui.max_rect()` is an immutable borrow.
+        let table_rect = ui.max_rect();
+        let (table_left, table_right) = (table_rect.left(), table_rect.right());
 
         // Rubber-band selection.  The background is claimed *before* the table
         // so the rows stack above it: a press that lands on a row belongs to
@@ -307,8 +311,6 @@ impl ExplorerApp {
         // The folder currently under the pointer during a drag (highlight only).
         let mut drag_hover: Option<PathBuf> = None;
         let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
-        let table_rect = ui.max_rect();
-        let (table_left, table_right) = (table_rect.left(), table_rect.right());
         let pointer_released = ctx.input(|i| i.pointer.primary_released());
 
         table.body(|body| {
