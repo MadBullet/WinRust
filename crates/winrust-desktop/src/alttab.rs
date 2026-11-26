@@ -276,7 +276,7 @@ impl DesktopApp {
                         t.id(),
                         draw,
                         egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
-                        Color32::WHITE,
+                        egui::Color32::WHITE,
                     );
                 }
                 None => {
