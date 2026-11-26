@@ -9,10 +9,10 @@ exit=0
 [1m[92m    Checking[0m yoke v0.8.4
 [1m[92m    Checking[0m windows_x86_64_msvc v0.52.6
 [1m[92m    Checking[0m simd-adler32 v0.3.10
-[1m[92m    Checking[0m zerovec v0.11.9
 [1m[92m    Checking[0m windows-targets v0.52.6
-[1m[92m    Checking[0m once_cell v1.21.4
 [1m[92m    Checking[0m adler2 v2.0.1
+[1m[92m    Checking[0m zerovec v0.11.9
+[1m[92m    Checking[0m once_cell v1.21.4
 [1m[92m    Checking[0m writeable v0.6.4
 [1m[92m    Checking[0m utf_types v1.0.0
 [1m[92m    Checking[0m litemap v0.8.3
@@ -23,93 +23,93 @@ exit=0
 [1m[92m    Checking[0m memchr v2.8.3
 [1m[92m    Checking[0m tinystr v0.8.5
 [1m[92m    Checking[0m potential_utf v0.1.6
-[1m[92m    Checking[0m flate2 v1.1.11
-[1m[92m    Checking[0m icu_locale_core v2.4.0
 [1m[92m    Checking[0m icu_collections v2.4.0
-[1m[92m    Checking[0m icu_normalizer_data v2.4.0
+[1m[92m    Checking[0m icu_locale_core v2.4.0
+[1m[92m    Checking[0m flate2 v1.1.11
 [1m[92m    Checking[0m icu_properties_data v2.4.0
+[1m[92m    Checking[0m icu_normalizer_data v2.4.0
 [1m[92m    Checking[0m serde_core v1.0.229
-[1m[92m    Checking[0m scopeguard v1.2.0
 [1m[92m    Checking[0m ttf-parser v0.25.1
+[1m[92m    Checking[0m scopeguard v1.2.0
 [1m[92m    Checking[0m lock_api v0.4.14
-[1m[92m    Checking[0m parking_lot_core v0.9.12
 [1m[92m    Checking[0m icu_provider v2.4.0
-[1m[92m    Checking[0m zerocopy v0.8.66
+[1m[92m    Checking[0m parking_lot_core v0.9.12
 [1m[92m    Checking[0m icu_properties v2.4.0
 [1m[92m    Checking[0m icu_normalizer v2.4.0
-[1m[92m    Checking[0m owned_ttf_parser v0.25.1
+[1m[92m    Checking[0m zerocopy v0.8.66
 [1m[92m    Checking[0m emath v0.29.1
+[1m[92m    Checking[0m owned_ttf_parser v0.25.1
 [1m[92m    Checking[0m windows-sys v0.61.2
 [1m[92m    Checking[0m ab_glyph_rasterizer v0.1.10
-[1m[92m    Checking[0m ecolor v0.29.1
-[1m[92m    Checking[0m ab_glyph v0.2.32
 [1m[92m    Checking[0m serde v1.0.229
+[1m[92m    Checking[0m ab_glyph v0.2.32
+[1m[92m    Checking[0m ecolor v0.29.1
 [1m[92m    Checking[0m idna_adapter v1.2.2
 [1m[92m    Checking[0m parking_lot v0.12.5
 [1m[92m    Checking[0m bitflags v2.13.2
-[1m[92m    Checking[0m epaint_default_fonts v0.29.1
 [1m[92m    Checking[0m percent-encoding v2.3.2
+[1m[92m    Checking[0m epaint_default_fonts v0.29.1
 [1m[92m    Checking[0m nohash-hasher v0.2.0
 [1m[92m    Checking[0m form_urlencoded v1.2.3
 [1m[92m    Checking[0m idna v1.1.0
 [1m[92m    Checking[0m zmij v1.0.23
 [1m[92m    Checking[0m miniz_oxide v0.8.9
 [1m[92m    Checking[0m fdeflate v0.3.7
-[1m[92m    Checking[0m raw-window-handle v0.6.2
 [1m[92m    Checking[0m itoa v1.0.19
+[1m[92m    Checking[0m raw-window-handle v0.6.2
 [1m[92m    Checking[0m serde_json v1.0.154
 [1m[92m    Checking[0m thiserror v1.0.69
 [1m[92m    Checking[0m url v2.5.9
 [1m[92m    Checking[0m aho-corasick v1.1.5
-[1m[92m    Checking[0m windows-sys v0.52.0
 [1m[92m    Checking[0m windows-sys v0.59.0
+[1m[92m    Checking[0m windows-sys v0.52.0
+[1m[92m    Checking[0m regex-syntax v0.8.12
 [1m[92m    Checking[0m ahash v0.8.14
 [1m[92m    Checking[0m epaint v0.29.1
-[1m[92m    Checking[0m regex-syntax v0.8.12
-[1m[92m    Checking[0m egui v0.29.1
 [1m[92m    Checking[0m regex-automata v0.4.19
+[1m[92m    Checking[0m egui v0.29.1
 [1m[92m    Checking[0m utf8parse v0.2.2
-[1m[92m    Checking[0m tracing-core v0.1.36
-[1m[92m    Checking[0m pin-project-lite v0.2.18
 [1m[92m    Checking[0m once_cell_polyfill v1.70.2
+[1m[92m    Checking[0m pin-project-lite v0.2.18
 [1m[92m    Checking[0m anstyle v1.0.14
+[1m[92m    Checking[0m tracing-core v0.1.36
 [1m[92m    Checking[0m tracing v0.1.44
 [1m[92m    Checking[0m anstyle-wincon v3.0.11
 [1m[92m    Checking[0m anstyle-parse v1.0.0
 [1m[92m    Checking[0m num-traits v0.2.19
 [1m[92m    Checking[0m regex v1.13.2
 [1m[92m    Checking[0m anstyle-query v1.1.5
-[1m[92m    Checking[0m zeroize v1.9.2
-[1m[92m    Checking[0m colorchoice v1.0.5
-[1m[92m    Checking[0m jiff-core v1.0.2
-[1m[92m    Checking[0m float-cmp v0.9.0
-[1m[92m    Checking[0m arrayvec v0.7.8
-[1m[92m    Checking[0m dpi v0.1.2
-[1m[92m    Checking[0m smol_str v0.2.2
-[1m[92m    Checking[0m pxfm v0.1.30
-[1m[92m    Checking[0m error-code v3.4.0
-[1m[92m    Checking[0m is_terminal_polyfill v1.70.2
-[1m[92m    Checking[0m cursor-icon v1.2.0
-[1m[92m    Checking[0m unicode-segmentation v1.13.3
 [1m[92m    Checking[0m weezl v0.1.12
+[1m[92m    Checking[0m arrayvec v0.7.8
+[1m[92m    Checking[0m cursor-icon v1.2.0
+[1m[92m    Checking[0m colorchoice v1.0.5
+[1m[92m    Checking[0m float-cmp v0.9.0
 [1m[92m    Checking[0m color_quant v1.1.0
+[1m[92m    Checking[0m pxfm v0.1.30
+[1m[92m    Checking[0m zeroize v1.9.2
+[1m[92m    Checking[0m smol_str v0.2.2
+[1m[92m    Checking[0m is_terminal_polyfill v1.70.2
+[1m[92m    Checking[0m error-code v3.4.0
+[1m[92m    Checking[0m dpi v0.1.2
+[1m[92m    Checking[0m jiff-core v1.0.2
+[1m[92m    Checking[0m unicode-segmentation v1.13.3
 [1m[92m    Checking[0m winit v0.30.13
-[1m[92m    Checking[0m gif v0.14.2
 [1m[92m    Checking[0m jiff v1.0.3
-[1m[92m    Checking[0m anstream v1.0.0
 [1m[92m    Checking[0m moxcms v0.8.1
 [1m[92m    Checking[0m clipboard-win v5.4.3
+[1m[92m    Checking[0m anstream v1.0.0
+[1m[92m    Checking[0m rustls-pki-types v1.16.0
+[1m[92m    Checking[0m gif v0.14.2
 [1m[92m    Checking[0m strict-num v0.1.1
 [1m[92m    Checking[0m env_filter v2.1.0
-[1m[92m    Checking[0m rustls-pki-types v1.16.0
-[1m[92m    Checking[0m glutin_wgl_sys v0.6.1
 [1m[92m    Checking[0m glutin_egl_sys v0.7.1
+[1m[92m    Checking[0m glutin_wgl_sys v0.6.1
 [1m[92m    Checking[0m png v0.18.1
 [1m[92m    Checking[0m libloading v0.8.9
-[1m[92m    Checking[0m arrayref v0.3.9
 [1m[92m    Checking[0m byteorder-lite v0.1.0
+[1m[92m    Checking[0m winrust-core v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-core)
+[1m[92m    Checking[0m arrayref v0.3.9
 [1m[92m    Checking[0m tiny-skia-path v0.11.4
-[1m[92m    Checking[0m winrust-core v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-core)
 [1m[92m    Checking[0m glutin v0.32.3
 [1m[92m    Checking[0m env_logger v0.11.12
 [1m[92m    Checking[0m memoffset v0.9.1
@@ -119,11 +119,12 @@ exit=0
 [1m[92m    Checking[0m getrandom v0.2.17
 [1m[92m    Checking[0m web-time v1.1.0
 [1m[92m    Checking[0m siphasher v0.3.11
-[1m[92m    Checking[0m untrusted v0.9.0
 [1m[92m    Checking[0m glow v0.14.2
+[1m[92m    Checking[0m untrusted v0.9.0
 [1m[92m   Compiling[0m unicase v2.10.0
-[1m[92m   Compiling[0m phf_shared v0.11.3
 [1m[92m    Checking[0m image v0.25.10
+[1m[92m   Compiling[0m phf_shared v0.11.3
+[1m[92m    Checking[0m ring v0.17.14
 [1m[93mwarning[0m[1m[97m: doc list item overindented[0m
   [1m[96m--> [0mcrates\winrust-core\src\lib.rs:13:5
    [1m[96m|[0m
@@ -157,7 +158,6 @@ exit=0
    [1m[96m|[0m
    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#doc_overindented_list_items
 
-[1m[92m    Checking[0m ring v0.17.14
 [1m[93mwarning[0m[1m[97m: name `PROPERTYKEY` contains a capitalized acronym[0m
    [1m[96m--> [0mcrates\winrust-core\src\devices\audio.rs:217:8
     [1m[96m|[0m
@@ -219,44 +219,71 @@ exit=0
    [1m[96m|[0m
    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#module_inception
 
+[1m[92m    Checking[0m egui_glow v0.29.1
 [1m[93mwarning[0m: `winrust-core` (lib) generated 10 warnings (run `cargo clippy --fix --lib -p winrust-core -- ` to apply 2 suggestions)
 [1m[92m    Checking[0m svgtypes v0.13.0
 [1m[92m    Checking[0m egui-winit v0.29.1
 [1m[92m    Checking[0m glutin-winit v0.5.0
-[1m[92m    Checking[0m egui_glow v0.29.1
 [1m[92m    Checking[0m winapi v0.3.9
 [1m[92m    Checking[0m rctree v0.5.0
 [1m[92m    Checking[0m static_assertions v1.1.0
-[1m[92m    Checking[0m usvg-tree v0.37.0
 [1m[92m    Checking[0m rustls-webpki v0.103.17
-[1m[92m    Checking[0m winrust-ui v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-ui)
+[1m[92m    Checking[0m winrust-ui v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-ui)
+[1m[92m    Checking[0m usvg-tree v0.37.0
 [1m[92m   Compiling[0m phf v0.11.3
 [1m[92m    Checking[0m webpki-roots v1.0.12
 [1m[92m    Checking[0m simplecss v0.2.2
-[1m[92m    Checking[0m roxmltree v0.19.0
-[1m[92m    Checking[0m subtle v2.6.1
-[1m[92m    Checking[0m data-url v0.3.2
 [1m[92m    Checking[0m bitflags v1.3.2
 [1m[92m    Checking[0m imagesize v0.12.0
-[1m[92m    Checking[0m png v0.17.16
+[1m[92m    Checking[0m data-url v0.3.2
+[1m[92m    Checking[0m subtle v2.6.1
+[1m[92m    Checking[0m roxmltree v0.19.0
 [1m[92m    Checking[0m rustls v0.23.46
+[1m[92m    Checking[0m png v0.17.16
 [1m[92m    Checking[0m usvg-parser v0.37.0
-[1m[92m    Checking[0m eframe v0.29.1
 [1m[92m    Checking[0m webpki-roots v0.26.11
+[1m[92m    Checking[0m eframe v0.29.1
 [1m[92m   Compiling[0m mime_guess2 v2.3.1
 [1m[92m    Checking[0m base64 v0.22.1
-[1m[92m    Checking[0m xmlwriter v0.1.0
-[1m[92m    Checking[0m pico-args v0.5.0
 [1m[92m    Checking[0m base64 v0.21.7
+[1m[92m    Checking[0m pico-args v0.5.0
+[1m[92m    Checking[0m xmlwriter v0.1.0
 [1m[92m    Checking[0m tiny-skia v0.11.4
 [1m[92m    Checking[0m rgb v0.8.53
 [1m[92m    Checking[0m usvg v0.37.0
 [1m[92m    Checking[0m mime v0.3.18
 [1m[92m    Checking[0m enum-map v2.7.3
-[1m[92m    Checking[0m winrust-kernel-abi v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-[1m[92m    Checking[0m winrust-desktop v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-desktop)
-[1m[92m    Checking[0m winrust-kernel-control v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
+[1m[92m    Checking[0m winrust-kernel-abi v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
+[1m[92m    Checking[0m winrust-kernel-control v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
+[1m[92m    Checking[0m winrust-launcher v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-launcher)
 [1m[92m    Checking[0m resvg v0.37.0
+[1m[93mwarning[0m[1m[97m: this `if` statement can be collapsed[0m
+    [1m[96m--> [0mcrates\winrust-launcher\src\main.rs:1009:21
+     [1m[96m|[0m
+[1m[96m1009[0m [1m[96m|[0m [1m[93m/[0m                     if privilege.can_elevate {
+[1m[96m1010[0m [1m[96m|[0m [1m[93m|[0m                         if ui
+[1m[96m1011[0m [1m[96m|[0m [1m[93m|[0m                             .button(format!("🛡 {}", t("Restart as administrator")))
+[1m[96m1012[0m [1m[96m|[0m [1m[93m|[0m                             .on_hover_text(t(
+[1m[96m...[0m    [1m[93m|[0m
+[1m[96m1030[0m [1m[96m|[0m [1m[93m|[0m                     }
+     [1m[96m|[0m [1m[93m|_____________________^[0m
+     [1m[96m|[0m
+     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#collapsible_if
+     [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::collapsible_if)]` on by default
+[1m[96mhelp[0m: collapse nested if block
+     [1m[96m|[0m
+[1m[96m1009[0m [92m~ [0m                    if privilege.can_elevate
+[1m[96m1010[0m [92m~ [0m                        [92m&&[0m ui
+[1m[96m1011[0m [1m[96m|[0m                             .button(format!("🛡 {}", t("Restart as administrator")))
+ [1m[96m...[0m
+[1m[96m1028[0m [1m[96m|[0m                             }
+[1m[96m1029[0m [92m~ [0m                        }
+     [1m[96m|[0m
+
+[1m[93mwarning[0m: `winrust-launcher` (bin "WinRust") generated 1 warning (run `cargo clippy --fix --bin "WinRust" -p winrust-launcher -- ` to apply 1 suggestion)
+[1m[92m    Checking[0m winrust-desktop v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-desktop)
+[1m[93mwarning[0m: `winrust-launcher` (bin "WinRust" test) generated 1 warning (1 duplicate)
+[1m[92m    Checking[0m ureq v2.12.1
 [1m[93mwarning[0m[1m[97m: very complex type used. Consider factoring parts into `type` definitions[0m
    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:320:12
     [1m[96m|[0m
@@ -266,7 +293,6 @@ exit=0
     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#type_complexity
     [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::type_complexity)]` on by default
 
-[1m[92m    Checking[0m winrust-launcher v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-launcher)
 [1m[93mwarning[0m[1m[97m: redundant closure[0m
    [1m[96m--> [0mcrates\winrust-desktop\src\taskbar.rs:359:26
     [1m[96m|[0m
@@ -324,38 +350,54 @@ exit=0
 [1m[96m589[0m [92m~ [0m            }
     [1m[96m|[0m
 
-[1m[93mwarning[0m: `winrust-desktop` (bin "winrust-desktop" test) generated 6 warnings (run `cargo clippy --fix --bin "winrust-desktop" -p winrust-desktop --tests -- ` to apply 2 suggestions)
-[1m[93mwarning[0m[1m[97m: this `if` statement can be collapsed[0m
-    [1m[96m--> [0mcrates\winrust-launcher\src\main.rs:1009:21
-     [1m[96m|[0m
-[1m[96m1009[0m [1m[96m|[0m [1m[93m/[0m                     if privilege.can_elevate {
-[1m[96m1010[0m [1m[96m|[0m [1m[93m|[0m                         if ui
-[1m[96m1011[0m [1m[96m|[0m [1m[93m|[0m                             .button(format!("🛡 {}", t("Restart as administrator")))
-[1m[96m1012[0m [1m[96m|[0m [1m[93m|[0m                             .on_hover_text(t(
-[1m[96m...[0m    [1m[93m|[0m
-[1m[96m1030[0m [1m[96m|[0m [1m[93m|[0m                     }
-     [1m[96m|[0m [1m[93m|_____________________^[0m
-     [1m[96m|[0m
-     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#collapsible_if
-     [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::collapsible_if)]` on by default
-[1m[96mhelp[0m: collapse nested if block
-     [1m[96m|[0m
-[1m[96m1009[0m [92m~ [0m                    if privilege.can_elevate
-[1m[96m1010[0m [92m~ [0m                        [92m&&[0m ui
-[1m[96m1011[0m [1m[96m|[0m                             .button(format!("🛡 {}", t("Restart as administrator")))
- [1m[96m...[0m
-[1m[96m1028[0m [1m[96m|[0m                             }
-[1m[96m1029[0m [92m~ [0m                        }
-     [1m[96m|[0m
-
-[1m[93mwarning[0m: `winrust-launcher` (bin "WinRust") generated 1 warning (1 duplicate)
-[1m[93mwarning[0m: `winrust-launcher` (bin "WinRust" test) generated 1 warning (run `cargo clippy --fix --bin "WinRust" -p winrust-launcher --tests -- ` to apply 1 suggestion)
-[1m[92m    Checking[0m ureq v2.12.1
-[1m[93mwarning[0m: `winrust-desktop` (bin "winrust-desktop") generated 6 warnings (6 duplicates)
+[1m[93mwarning[0m: `winrust-desktop` (bin "winrust-desktop" test) generated 6 warnings (1 duplicate) (run `cargo clippy --fix --bin "winrust-desktop" -p winrust-desktop --tests -- ` to apply 1 suggestion)
+[1m[93mwarning[0m: `winrust-desktop` (bin "winrust-desktop") generated 6 warnings (5 duplicates) (run `cargo clippy --fix --bin "winrust-desktop" -p winrust-desktop -- ` to apply 1 suggestion)
 [1m[92m    Checking[0m ehttp v0.5.0
 [1m[92m    Checking[0m egui_extras v0.29.1
-[1m[92m    Checking[0m winrust-taskmgr v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
-[1m[92m    Checking[0m winrust-explorer v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-explorer)
+[1m[92m    Checking[0m winrust-explorer v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-explorer)
+[1m[92m    Checking[0m winrust-sysctl v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
+[1m[93mwarning[0m: `winrust-core` (lib test) generated 10 warnings (10 duplicates)
+[1m[92m    Checking[0m winrust-services v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-services)
+[1m[93mwarning[0m[1m[97m: doc list item without indentation[0m
+  [1m[96m--> [0mcrates\winrust-explorer\src\app.rs:20:5
+   [1m[96m|[0m
+[1m[96m20[0m [1m[96m|[0m //! Modules
+   [1m[96m|[0m     [1m[93m^[0m
+   [1m[96m|[0m
+   [1m[96m= [0m[1m[97mhelp[0m: if this is supposed to be its own paragraph, add a blank line
+   [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#doc_lazy_continuation
+   [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::doc_lazy_continuation)]` on by default
+[1m[96mhelp[0m: indent this line
+   [1m[96m|[0m
+[1m[96m20[0m [1m[96m| [0m//! [92m  [0mModules
+   [1m[96m|[0m     [92m++[0m
+
+[1m[92m    Checking[0m winrust-taskmgr v0.9.4 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
+[1m[93mwarning[0m[1m[97m: this `if` statement can be collapsed[0m
+   [1m[96m--> [0mcrates\winrust-explorer\src\app\views.rs:218:9
+    [1m[96m|[0m
+[1m[96m218[0m [1m[96m|[0m [1m[93m/[0m         if self.current().selection.len() == before && before > 0 {
+[1m[96m219[0m [1m[96m|[0m [1m[93m|[0m             if ctx.input(|i| i.pointer.primary_clicked()) {
+[1m[96m220[0m [1m[96m|[0m [1m[93m|[0m                 let pointer = ctx.input(|i| i.pointer.interact_pos());
+[1m[96m221[0m [1m[96m|[0m [1m[93m|[0m                 let on_row = pointer
+[1m[96m...[0m   [1m[93m|[0m
+[1m[96m233[0m [1m[96m|[0m [1m[93m|[0m         }
+    [1m[96m|[0m [1m[93m|_________^[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#collapsible_if
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::collapsible_if)]` on by default
+[1m[96mhelp[0m: collapse nested if block
+    [1m[96m|[0m
+[1m[96m218[0m [92m~ [0m        if self.current().selection.len() == before && before > 0
+[1m[96m219[0m [92m~ [0m            [92m&&[0m ctx.input(|i| i.pointer.primary_clicked()) {
+[1m[96m220[0m [1m[96m|[0m                 let pointer = ctx.input(|i| i.pointer.interact_pos());
+[1m[96m...[0m
+[1m[96m231[0m [1m[96m|[0m                 }
+[1m[96m232[0m [92m~ [0m            }
+    [1m[96m|[0m
+
+[1m[93mwarning[0m: `winrust-explorer` (bin "winrust-explorer") generated 2 warnings (run `cargo clippy --fix --bin "winrust-explorer" -p winrust-explorer -- ` to apply 1 suggestion)
+[1m[93mwarning[0m: `winrust-explorer` (bin "winrust-explorer" test) generated 2 warnings (2 duplicates)
 [1m[93mwarning[0m[1m[97m: type `app::model::Sampler` is more private than the item `app::TaskManagerApp::sampler`[0m
    [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:55:5
     [1m[96m|[0m
@@ -433,48 +475,6 @@ exit=0
      [1m[96m|[0m
      [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
 
-[1m[93mwarning[0m: `winrust-core` (lib test) generated 10 warnings (10 duplicates)
-[1m[93mwarning[0m: `winrust-taskmgr` (bin "winrust-taskmgr") generated 7 warnings (run `cargo clippy --fix --bin "winrust-taskmgr" -p winrust-taskmgr -- ` to apply 3 suggestions)
-[1m[92m    Checking[0m winrust-services v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-services)
-[1m[93mwarning[0m: `winrust-taskmgr` (bin "winrust-taskmgr" test) generated 7 warnings (7 duplicates)
-[1m[93mwarning[0m[1m[97m: doc list item without indentation[0m
-  [1m[96m--> [0mcrates\winrust-explorer\src\app.rs:20:5
-   [1m[96m|[0m
-[1m[96m20[0m [1m[96m|[0m //! Modules
-   [1m[96m|[0m     [1m[93m^[0m
-   [1m[96m|[0m
-   [1m[96m= [0m[1m[97mhelp[0m: if this is supposed to be its own paragraph, add a blank line
-   [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#doc_lazy_continuation
-   [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::doc_lazy_continuation)]` on by default
-[1m[96mhelp[0m: indent this line
-   [1m[96m|[0m
-[1m[96m20[0m [1m[96m| [0m//! [92m  [0mModules
-   [1m[96m|[0m     [92m++[0m
-
-[1m[93mwarning[0m[1m[97m: this `if` statement can be collapsed[0m
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\views.rs:218:9
-    [1m[96m|[0m
-[1m[96m218[0m [1m[96m|[0m [1m[93m/[0m         if self.current().selection.len() == before && before > 0 {
-[1m[96m219[0m [1m[96m|[0m [1m[93m|[0m             if ctx.input(|i| i.pointer.primary_clicked()) {
-[1m[96m220[0m [1m[96m|[0m [1m[93m|[0m                 let pointer = ctx.input(|i| i.pointer.interact_pos());
-[1m[96m221[0m [1m[96m|[0m [1m[93m|[0m                 let on_row = pointer
-[1m[96m...[0m   [1m[93m|[0m
-[1m[96m233[0m [1m[96m|[0m [1m[93m|[0m         }
-    [1m[96m|[0m [1m[93m|_________^[0m
-    [1m[96m|[0m
-    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#collapsible_if
-    [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::collapsible_if)]` on by default
-[1m[96mhelp[0m: collapse nested if block
-    [1m[96m|[0m
-[1m[96m218[0m [92m~ [0m        if self.current().selection.len() == before && before > 0
-[1m[96m219[0m [92m~ [0m            [92m&&[0m ctx.input(|i| i.pointer.primary_clicked()) {
-[1m[96m220[0m [1m[96m|[0m                 let pointer = ctx.input(|i| i.pointer.interact_pos());
-[1m[96m...[0m
-[1m[96m231[0m [1m[96m|[0m                 }
-[1m[96m232[0m [92m~ [0m            }
-    [1m[96m|[0m
-
-[1m[93mwarning[0m: `winrust-explorer` (bin "winrust-explorer") generated 2 warnings (run `cargo clippy --fix --bin "winrust-explorer" -p winrust-explorer -- ` to apply 1 suggestion)
-[1m[92m    Checking[0m winrust-sysctl v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
-[1m[93mwarning[0m: `winrust-explorer` (bin "winrust-explorer" test) generated 2 warnings (2 duplicates)
-[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 23.46s
+[1m[93mwarning[0m: `winrust-taskmgr` (bin "winrust-taskmgr" test) generated 7 warnings (run `cargo clippy --fix --bin "winrust-taskmgr" -p winrust-taskmgr --tests -- ` to apply 3 suggestions)
+[1m[93mwarning[0m: `winrust-taskmgr` (bin "winrust-taskmgr") generated 7 warnings (7 duplicates)
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 32.76s
