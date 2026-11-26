@@ -48,7 +48,7 @@ pub struct DesktopApp {
     pub(crate) session: session::Session,
     /// `Win+V` clipboard history.  The list lives in the core; the shell owns
     /// one instance and polls the system clipboard on a slow timer.
-    pub(crate) clipboard: winrust_core::shell::ClipboardHistory,
+    pub(crate) clipboard_history: winrust_core::shell::ClipboardHistory,
     pub(crate) clipboard_at: Instant,
     pub(crate) open_windows: Vec<taskbar::WindowEntry>,
     pub(crate) windows_at: Instant,
@@ -121,7 +121,7 @@ impl DesktopApp {
             icons_at: Instant::now() - Duration::from_secs(30),
             selected: None,
             session: session::Session::new(),
-            clipboard: winrust_core::shell::ClipboardHistory::new(),
+            clipboard_history: winrust_core::shell::ClipboardHistory::new(),
             clipboard_at: Instant::now() - Duration::from_secs(30),
             open_windows: Vec::new(),
             windows_at: Instant::now() - Duration::from_secs(30),
@@ -179,7 +179,7 @@ impl DesktopApp {
         // history panel) and a slower one to notice text copied by the other
         // program before the panel is opened.
         if self.clipboard_at.elapsed() >= Duration::from_millis(700) {
-            self.clipboard.observe();
+            self.clipboard_history.observe();
             self.clipboard_at = Instant::now();
         }
         self.clock = crate::tray::clock_text();
@@ -526,7 +526,7 @@ impl DesktopApp {
         // closure *may* borrow `self`: `Frame::show` boxes it with an inferred
         // lifetime, so a snapshot is a convenience here, not a requirement.)
         let entries: Vec<String> = self
-            .clipboard
+            .clipboard_history
             .entries()
             .iter()
             .map(|e| {
@@ -596,13 +596,13 @@ impl DesktopApp {
             .response;
 
         if let Some(i) = picked {
-            if self.clipboard.pick(i) {
+            if self.clipboard_history.pick(i) {
                 self.session.hide_clipboard();
                 self.status = ts("Copied back to the clipboard").to_string();
             }
         }
         if clear {
-            self.clipboard.clear();
+            self.clipboard_history.clear();
         }
         let escape = ctx.input(|i| i.key_pressed(egui::Key::Escape));
         let outside = ctx.input(|i| i.pointer.any_click())
