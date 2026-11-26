@@ -46,6 +46,16 @@ pub struct DesktopApp {
     pub(crate) selected: Option<usize>,
     /// The Start menu's own state (open, search text, app list, animation).
     pub(crate) session: session::Session,
+    /// Frames drawn by this shell; the Start menu stamps itself with it so an
+    /// opening click cannot also count as a click outside.
+    pub(crate) frame_no: u64,
+    /// The window whose full-screen preview is showing, set when the pointer
+    /// rests on its taskbar thumbnail.  Leaving the thumbnail clears it.
+    pub(crate) peek_hwnd: Option<isize>,
+    /// The picture for the peek, taken once per window.
+    pub(crate) peek_tex: Option<egui::TextureHandle>,
+    /// Which window `peek_tex` shows, so a different one re-captures.
+    pub(crate) peek_at: Option<isize>,
     /// `Win+V` clipboard history.  The list lives in the core; the shell owns
     /// one instance and polls the system clipboard on a slow timer.
     pub(crate) clipboard_history: winrust_core::shell::ClipboardHistory,
@@ -121,6 +131,10 @@ impl DesktopApp {
             icons_at: Instant::now() - Duration::from_secs(30),
             selected: None,
             session: session::Session::new(),
+            frame_no: 0,
+            peek_hwnd: None,
+            peek_tex: None,
+            peek_at: None,
             clipboard_history: winrust_core::shell::ClipboardHistory::new(),
             clipboard_at: Instant::now() - Duration::from_secs(30),
             open_windows: Vec::new(),
@@ -466,6 +480,7 @@ impl DesktopApp {
     pub(crate) fn show_start(&mut self) {
         winrust_core::window::focus_window(self.hwnd);
         self.session.open();
+        self.session.note_opened(self.frame_no);
         self.tray.close();
     }
 
@@ -622,6 +637,9 @@ impl eframe::App for DesktopApp {
     }
 
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        // Bumped before anything draws, so a widget that opens the menu can
+        // stamp this frame and the menu's outside-click test can skip it.
+        self.frame_no = self.frame_no.wrapping_add(1);
         self.tick();
         if self.hwnd == 0 {
             self.hwnd = winrust_ui::theme::hwnd_from_handle(frame).unwrap_or(0);
@@ -706,6 +724,12 @@ impl eframe::App for DesktopApp {
         }
         // `Win+V`: our own clipboard history, because Windows' lives inside
         // explorer.exe and stops working when the stock shell is replaced.
+        // `Win+I`: the Windows settings app, as on a stock system.  The
+        // session does the edge detection so holding the keys opens it once.
+        let i_down = winrust_core::window::i_key_down();
+        if self.session.win_i_pressed(win_down, i_down) {
+            let _ = winrust_core::shell::open_shell_path("ms-settings:");
+        }
         let v_down = winrust_core::window::v_key_down();
         if self.session.win_v_pressed(win_down, v_down) {
             winrust_core::window::focus_window(self.hwnd);
@@ -717,6 +741,9 @@ impl eframe::App for DesktopApp {
         // Start menu and taskbar are painted as panels; the icon grid fills
         // whatever is left.
         self.taskbar(ctx);
+        // The peek sits over every other shell surface: it is a "look at this
+        // window" mode, so the tray flyouts and the icon grid go behind it.
+        self.peek_overlay(ctx);
         self.start_menu(ctx);
         // The confirmation is a window of its own: it outlives the menu, which
         // closes as soon as the user picks a power action.

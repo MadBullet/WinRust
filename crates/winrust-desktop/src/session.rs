@@ -105,6 +105,8 @@ pub struct Session {
     /// True while `Win` is held and `V` was already seen, so one press opens
     /// the panel once instead of once per frame.
     clipboard_chord_seen: bool,
+    /// The same latch for `Win+I`.
+    settings_chord_seen: bool,
     open: bool,
     /// The search box's contents; cleared on every close.
     search: String,
@@ -115,6 +117,14 @@ pub struct Session {
     apps_at: Option<Instant>,
     /// The power action waiting for its "yes".
     pending: Option<PowerAction>,
+    /// The frame the menu was opened on.
+    ///
+    /// The Start button toggles the menu inside the taskbar pass, but the
+    /// menu draws later in the same frame - and its "clicked outside" test
+    /// would see the very click that opened it and close it again, so the
+    /// menu flashed open and shut.  Comparing frame stamps lets that one
+    /// click through.
+    opened_at: u64,
 }
 
 impl Session {
@@ -154,6 +164,17 @@ impl Session {
 
     pub fn open(&mut self) {
         self.open = true;
+    }
+
+    /// Record that the menu was opened during `frame`.
+    pub fn note_opened(&mut self, frame: u64) {
+        self.opened_at = frame;
+    }
+
+    /// Was the menu opened during `frame`?  The outside-click test skips that
+    /// frame so the opening click cannot immediately close it.
+    pub fn opened_this_frame(&self, frame: u64) -> bool {
+        self.open && self.opened_at == frame
     }
 
     pub fn close(&mut self) {
@@ -202,6 +223,24 @@ impl Session {
     pub fn set_apps(&mut self, apps: Vec<AppEntry>) {
         self.apps = apps;
         self.apps_at = Some(Instant::now());
+    }
+
+    /// The `Win+I` edge detector: `true` on the frame the chord goes down.
+    ///
+    /// Separate from [`Self::win_v_pressed`] because the two chords have
+    /// independent "already seen" state - pressing `Win+I` while the
+    /// clipboard panel is open must not be swallowed by the `V` detector.
+    pub fn win_i_pressed(&mut self, win: bool, i: bool) -> bool {
+        let chord = win && i;
+        if !chord {
+            self.settings_chord_seen = false;
+            return false;
+        }
+        if self.settings_chord_seen {
+            return false;
+        }
+        self.settings_chord_seen = true;
+        true
     }
 
     /// True when the list is old enough to be worth rescanning.

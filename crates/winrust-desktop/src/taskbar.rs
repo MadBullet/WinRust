@@ -152,21 +152,27 @@ impl DesktopApp {
                 ))
                 .layout(egui::Layout::left_to_right(egui::Align::Center)),
         );
-        let start_resp = left_ui.add_sized(
-            [40.0, 38.0],
-            egui::Button::new(RichText::new("⊞").size(20.0))
-                .frame(false)
-                .fill(if self.start_open() {
-                    Color32::from_rgba_unmultiplied(
-                        pal.selection.0,
-                        pal.selection.1,
-                        pal.selection.2,
-                        150,
-                    )
-                } else {
-                    Color32::TRANSPARENT
-                }),
-        );
+        // The button keeps its geometry but draws the four-pane Windows mark
+        // itself: the old glyph was `⊞` (U+229E "squared plus"), which reads
+        // as a plus in a box and does not look like the Windows logo on any
+        // font.  A painter keeps it crisp at every DPI and needs no asset.
+        let (start_rect, start_resp) =
+            left_ui.allocate_exact_size(egui::vec2(40.0, 38.0), egui::Sense::click());
+        let hovered = start_resp.hovered();
+        if self.start_open() || hovered {
+            let alpha = if self.start_open() { 150 } else { 80 };
+            left_ui.painter().rect_filled(
+                start_rect.shrink(2.0),
+                5.0,
+                Color32::from_rgba_unmultiplied(
+                    pal.selection.0,
+                    pal.selection.1,
+                    pal.selection.2,
+                    alpha,
+                ),
+            );
+        }
+        draw_windows_mark(left_ui.painter(), start_rect, pal.text);
         if start_resp.clicked() {
             // Claim focus before toggling: a bottom-most shell window does not
             // become foreground by itself, so without this the very next click
@@ -265,19 +271,23 @@ impl DesktopApp {
                         );
                     }
                 }
-                // The running line: one short bar for "running", a wider one
-                // per extra window, always the same Windows blue.  It used to
-                // be a strip of 14 px segments 3 px above the bar's edge that
-                // read as a smudge; a single 16 px bar sitting on the bar's
-                // inner edge is unambiguous even at a glance.
-                let blue = Color32::from_rgb(0x4c, 0x9a, 0xff);
-                let width = 16.0_f32.min(rect.width() - 12.0) + (count.min(3) as f32 - 1.0) * 4.0;
+                // The running indicator: a Windows-blue line under the icon,
+                // sitting on the bar's bottom edge.  Two complaints shaped
+                // this: it has to be visible at a glance, and one process with
+                // several windows has to look different from one with one.
+                //
+                // The underline is 3 px tall and pinned to `bar.bottom() - 3`,
+                // not to the button's own bottom - the button is inset inside
+                // the bar, so a line at `rect.bottom() - 4` floated in the
+                // middle of the button and read as a stray dash rather than an
+                // underline.
+                let blue = Color32::from_rgb(0x60, 0xa8, 0xff);
+                let windows_of_pid = count.min(3) as f32;
+                let width = 14.0_f32 + (windows_of_pid - 1.0) * 5.0;
                 let x = rect.center().x - width / 2.0;
+                let y = bar.bottom() - 3.0;
                 ui.painter().rect_filled(
-                    egui::Rect::from_min_size(
-                        egui::pos2(x, rect.bottom() - 4.0),
-                        egui::vec2(width, 3.0),
-                    ),
+                    egui::Rect::from_min_size(egui::pos2(x, y), egui::vec2(width, 3.0)),
                     1.5,
                     blue,
                 );
@@ -330,9 +340,12 @@ impl DesktopApp {
                 }
             }
         }
-        // Leaving the buttons drops the preview immediately, like the bar does.
+        // Leaving the buttons drops the preview immediately, like the bar does,
+        // and takes the full-screen peek with it.
         if !hovered_any {
             self.hover.clear();
+            self.peek_hwnd = None;
+            self.peek_at = None;
         }
 
         // ---- Right: the tray -------------------------------------------------
@@ -378,6 +391,25 @@ fn order_empty(list: &[WindowEntry]) -> bool {
 }
 
 /// The Start button's right-click menu (Win+X).
+/// The four-pane Windows mark, drawn as four squares with a one-pixel gap.
+///
+/// Windows 10/11 use this shape for the Start button; it is drawn rather than
+/// shipped as an icon so it stays sharp at any scale factor.
+fn draw_windows_mark(p: &egui::Painter, rect: egui::Rect, color: (u8, u8, u8)) {
+    let fill = Color32::from_rgb(color.0, color.1, color.2);
+    let pane = 7.5_f32;
+    let gap = 1.5_f32;
+    let total = pane * 2.0 + gap;
+    let origin = rect.center() - egui::vec2(total / 2.0, total / 2.0);
+    for (dx, dy) in [(0.0, 0.0), (pane + gap, 0.0), (0.0, pane + gap), (pane + gap, pane + gap)] {
+        p.rect_filled(
+            egui::Rect::from_min_size(origin + egui::vec2(dx, dy), egui::vec2(pane, pane)),
+            0.5,
+            fill,
+        );
+    }
+}
+
 fn power_menu() -> Vec<(&'static str, fn(&mut DesktopApp))> {
     vec![
         ("Task Manager", |_app: &mut DesktopApp| {
@@ -462,6 +494,85 @@ fn glyph_for_title(title: &str) -> &'static str {
 /// Cost is bounded the way the bar needs it: each picture is captured at most
 /// once every two seconds, and a capture asks for exactly the card's size, not
 /// a fixed 400x250 that would then be scaled down.
+impl DesktopApp {
+    /// The full-screen peek.
+    ///
+    /// Resting the pointer on a taskbar thumbnail raises this: the screen dims
+    /// and the hovered window is shown large, in the same place and at the same
+    /// shape it occupies, so the user can read it without switching.  Moving
+    /// off the thumbnail clears `peek_hwnd` and the overlay disappears - there
+    /// is no separate dismiss gesture and nothing stays behind.
+    ///
+    /// It is a capture, not a live window: raising a real window would take the
+    /// foreground away from the shell and the taskbar would lose the pointer,
+    /// which is what "all windows hidden, only the hovered one shown" means in
+    /// practice for a shell that owns the desktop.
+    pub(crate) fn peek_overlay(&mut self, ctx: &egui::Context) {
+        let Some(hwnd) = self.peek_hwnd else {
+            return;
+        };
+        // A window that closed while its peek was up must not leave the screen
+        // dimmed with a stale picture in the middle of it.
+        let Some(size) = winrust_core::window::window_size(hwnd) else {
+            self.peek_hwnd = None;
+            return;
+        };
+        let screen = ctx.screen_rect();
+        let pal = winrust_ui::theme::pal(&self.appearance);
+
+        // Capture once per peek: a 60 Hz `PrintWindow` would cost more than the
+        // feature is worth, and the point is to read a static window.
+        let want_w = (screen.width() as u32).min(1600).max(320);
+        let want_h = (screen.height() as u32).min(1000).max(200);
+        if self.peek_at != Some(hwnd) {
+            let image = winrust_core::thumb::window_thumbnail(hwnd, want_w, want_h).map(|t| {
+                egui::ColorImage::from_rgba_unmultiplied(
+                    [t.width as usize, t.height as usize],
+                    &t.rgba,
+                )
+            });
+            self.peek_tex = image.map(|img| {
+                ctx.load_texture("peek_window", img, egui::TextureOptions::LINEAR)
+            });
+            self.peek_at = Some(hwnd);
+        }
+
+        let painter = ctx.layer_painter(egui::LayerId::new(
+            egui::Order::Tooltip,
+            egui::Id::new("peek_overlay"),
+        ));
+        // The dim: everything behind the peeked window is hidden, which is the
+        // effect the request asked for ("all windows hidden, only the hovered
+        // one shown").
+        painter.rect_filled(
+            screen,
+            0.0,
+            Color32::from_rgba_unmultiplied(0, 0, 0, 190),
+        );
+        let (w, h) = (size.0 as f32, size.1 as f32);
+        let scale = ((screen.width() * 0.86) / w).min((screen.height() * 0.86) / h).min(1.0);
+        let target = egui::Rect::from_center_size(screen.center(), egui::vec2(w, h) * scale);
+        match &self.peek_tex {
+            Some(tex) => {
+                painter.image(
+                    tex.id(),
+                    target,
+                    egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+                    Color32::WHITE,
+                );
+            }
+            None => {
+                painter.rect_filled(target, 6.0, Color32::from_rgb(30, 33, 42));
+            }
+        }
+        painter.rect_stroke(
+            target,
+            6.0,
+            egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
+        );
+    }
+}
+
 fn preview(
     app: &mut DesktopApp,
     ctx: &egui::Context,
@@ -630,10 +741,17 @@ fn preview(
         if resp.clicked() {
             clicked = Some(w.hwnd);
         }
+        // Resting on a thumbnail raises the full-screen peek; moving off it
+        // lowers it again.  `hovered()` is per-card, so exactly one window can
+        // be peeked at a time and it goes away the moment the pointer leaves.
+        if resp.hovered() {
+            app.peek_hwnd = Some(w.hwnd);
+        }
     }
 
     if let Some(hwnd) = clicked {
         winrust_core::window::activate_window_hwnd(hwnd);
+        app.peek_hwnd = None;
         app.hover.clear();
         // The shell window is behind everything again after this, so the
         // preview must go away rather than linger until the next repaint.

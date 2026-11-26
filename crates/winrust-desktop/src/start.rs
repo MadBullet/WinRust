@@ -167,10 +167,10 @@ impl MenuOutput {
         }
         if self.open_settings {
             app.session.close();
-            // `WinRust.exe --settings`; the launcher is the settings surface.
-            if let Some(path) = winrust_core::install::find_binary("WinRust.exe") {
-                let _ = winrust_core::shell::execute(&path, "--settings", None);
-            }
+            // The Windows settings app, exactly as `Win+I` opens it.  This used
+            // to launch `WinRust.exe --settings`, i.e. the *launcher's* own
+            // options, which is not what "Settings" in a Start menu means.
+            let _ = winrust_core::shell::open_shell_path("ms-settings:");
         }
         if self.switch_user {
             app.session.close();
@@ -302,8 +302,15 @@ impl DesktopApp {
         self.session.search_mut().push_str(&search);
         output.apply(self);
 
-        // Clicking outside closes the menu.
-        if self.session.is_open() && ctx.input(|i| i.pointer.any_click()) {
+        // Clicking outside closes the menu - except on the frame it was
+        // opened.  The Start button toggles the menu in the taskbar pass,
+        // which runs *before* this function, so the click that opened it is
+        // still "a click outside the menu" here and closed it again in the
+        // same frame: the menu flashed and disappeared.
+        if self.session.is_open()
+            && !self.session.opened_this_frame(self.frame_no)
+            && ctx.input(|i| i.pointer.any_click())
+        {
             if let Some(p) = ctx.input(|i| i.pointer.latest_pos()) {
                 if !response.rect.contains(p) {
                     self.session.close();

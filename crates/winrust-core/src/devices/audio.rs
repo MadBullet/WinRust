@@ -216,8 +216,14 @@ struct PROPVARIANT {
 }
 
 /// Open the default multimedia render endpoint.
+///
+/// The caller owns the COM apartment: this function used to create its own
+/// [`ComGuard`] and hand back an `IMMDevice`, which meant `CoUninitialize` ran
+/// the moment it returned - while the caller still held a live COM pointer.
+/// Every later call on that pointer failed, so `master_volume()` was always
+/// `None` and the tray showed 0.  The guard now lives in [`with_endpoint`],
+/// which is the whole lifetime of the objects it creates.
 fn with_device() -> Option<ComObject> {
-    let _com = ComGuard::new();
     unsafe {
         let mut enumerator: *mut usize = std::ptr::null_mut();
         let hr = windows_sys::Win32::System::Com::CoCreateInstance(

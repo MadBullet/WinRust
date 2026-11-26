@@ -87,9 +87,24 @@ pub fn win_key_down() -> bool {
 /// while another program has the text focus, and `GetAsyncKeyState` is the
 /// only way to ask that from a background window.
 pub fn v_key_down() -> bool {
+    key_down(0x56)
+}
+
+/// Is the `I` key held down right now?  (`Win+I` opens Settings.)
+pub fn i_key_down() -> bool {
+    key_down(0x49)
+}
+
+/// Is the virtual key `vk` held down right now?
+///
+/// The one place `GetAsyncKeyState` is read.  `Win+V`, `Win+I` and any future
+/// shell-wide chord all need the same thing - a key that egui cannot see,
+/// from a window that is not focused - so the state is read here and the
+/// callers only name the key.
+pub fn key_down(vk: i32) -> bool {
     use windows_sys::Win32::UI::Input::KeyboardAndMouse::GetAsyncKeyState;
     const DOWN: i16 = 0x8000u16 as i16;
-    unsafe { (GetAsyncKeyState(0x56) & DOWN) != 0 }
+    unsafe { (GetAsyncKeyState(vk) & DOWN) != 0 }
 }
 
 /// Make the given window the foreground window and give it keyboard focus.

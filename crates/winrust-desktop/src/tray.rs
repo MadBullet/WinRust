@@ -152,6 +152,14 @@ impl TrayState {
         }
     }
     /// Set the volume, 0..=100; unmutes like the real slider does.
+    /// Take `percent` as the current volume without touching the device.
+    ///
+    /// Used right after a successful [`Self::set_volume`] so the next poll
+    /// cannot momentarily show the previous level.
+    pub fn adopt_volume(&mut self, percent: u8) {
+        self.volume = Some(percent);
+    }
+
     pub fn set_volume(&mut self, percent: u8) -> bool {
         if winrust_core::audio::set_master_volume(percent).is_some() {
             self.volume = Some(percent);
@@ -221,6 +229,22 @@ impl Flyout {
     }
 
     /// The panel width this flyout wants.
+    /// A planning height for the panel, used only to place its top edge above
+    /// the bar.  The real height comes from the content; this is an upper
+    /// bound, and an over-estimate just moves the panel up, which is the safe
+    /// direction on a short screen.
+    fn height_hint(self) -> f32 {
+        match self {
+            Flyout::Calendar => 340.0,
+            Flyout::Notifications => 400.0,
+            Flyout::Network => 240.0,
+            Flyout::Volume => 190.0,
+            Flyout::Language => 260.0,
+            Flyout::Overflow => 220.0,
+            Flyout::None => 0.0,
+        }
+    }
+
     fn width(self) -> f32 {
         match self {
             Flyout::Calendar => 340.0,
@@ -437,7 +461,14 @@ fn flyout(
         .button_right
         .clamp(screen.left() + width + 8.0, screen.right() - 8.0);
     let left = (right - width).max(screen.left() + 8.0);
-    let top = anchor.bar_top + slide;
+    // The panel's *bottom* edge sits on the bar's top edge, so it hangs above
+    // the bar the way the Windows flyouts do.  It used to start at
+    // `anchor.bar_top`, i.e. its top edge level with the bar's top - which put
+    // the whole panel over the taskbar and made the row slide off the bottom
+    // of the screen, which is the "съехали раскрывающие пункты" report.
+    let height_hint = app.tray.flyout().height_hint();
+    let bottom = anchor.bar_top - 6.0 + slide;
+    let top = (bottom - height_hint).max(screen.top() + 8.0);
     let pos = egui::pos2(left, top);
     let alpha = (anim * 252.0) as u8;
     let surface =
@@ -522,7 +553,10 @@ fn network_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
         )
         .clicked()
     {
-        let _ = winrust_core::shell::launch("rundll32.exe", "shell32.dll,Control_RunDLL ncpa.cpl");
+        // The Settings page, not the legacy adapter list: `ncpa.cpl` shows
+        // network *adapters* and is what the old Control Panel opened, while
+        // the item is labelled "Network & Internet settings".
+        let _ = winrust_core::shell::open_shell_path("ms-settings:network");
         app.tray.close();
     }
 }
@@ -562,16 +596,28 @@ fn volume_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
             let target = !app.tray.is_muted();
             app.tray.set_muted(target);
         }
-        let mut value = app.tray.volume().unwrap_or(0);
+        // `None` means the endpoint could not be queried - not "silent".  The
+        // slider used to fall back to 0 and then fight the audio session: it
+        // showed 0, and moving it wrote 0 back.  Now it starts wherever the
+        // device is and says "unknown" instead of pretending to be zero.
+        let mut value = app.tray.volume().unwrap_or(50);
         let slider = ui.add(
             egui::Slider::new(&mut value, 0..=100)
                 .show_value(true)
                 .text(""),
         );
         if slider.changed() {
-            app.tray.set_volume(value);
+            if app.tray.set_volume(value) {
+                // Adopt the value we just wrote, so the slider does not snap
+                // back to a stale sample on the next poll.
+                app.tray.adopt_volume(value);
+            }
         }
-        ui.label(RichText::new(format!("{}", value)).size(13.0));
+        if app.tray.volume().is_none() {
+            ui.label(RichText::new("—").size(13.0).weak());
+        } else {
+            ui.label(RichText::new(format!("{}", app.tray.volume().unwrap_or(value))).size(13.0));
+        }
     });
     ui.separator();
     ui.horizontal(|ui| {
@@ -853,14 +899,16 @@ fn overflow_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
 // The small vector glyphs
 // ---------------------------------------------------------------------------
 
+/// The overflow chevron: points **up**, because the flyout it opens is drawn
+/// above the bar.  It pointed down, which reads as "the panel is below".
 fn draw_chevron(p: &egui::Painter, rect: egui::Rect, color: Color32) {
     let c = rect.center();
     p.line_segment(
-        [c + egui::vec2(-5.0, -2.0), c + egui::vec2(0.0, 3.0)],
+        [c + egui::vec2(-5.0, 2.0), c + egui::vec2(0.0, -3.0)],
         egui::Stroke::new(1.4_f32, color),
     );
     p.line_segment(
-        [c + egui::vec2(0.0, 3.0), c + egui::vec2(5.0, -2.0)],
+        [c + egui::vec2(0.0, -3.0), c + egui::vec2(5.0, 2.0)],
         egui::Stroke::new(1.4_f32, color),
     );
 }
