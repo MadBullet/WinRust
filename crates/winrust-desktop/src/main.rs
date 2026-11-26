@@ -16,6 +16,7 @@
 //! The window is a normal eframe window sized to the screen and kept behind
 //! everything else (`always_on_bottom`), which is exactly how a shell behaves.
 
+mod alttab;
 mod desktop;
 mod model;
 mod session;
@@ -134,6 +135,9 @@ pub struct DesktopApp {
     /// the user was still aiming at it, which is half of the "миниатюра сразу
     /// сворачивается" report.
     pub(crate) preview_at: Instant,
+    /// `Alt+Tab`: the window switcher.  Its state is one value with verbs -
+    /// see `alttab.rs` for why it is not three fields.
+    pub(crate) alt_tab: alttab::AltTab,
     /// Cached window pictures for the hover preview, keyed by hwnd.
     pub(crate) thumbs: std::collections::HashMap<isize, Option<egui::TextureHandle>>,
     pub(crate) thumbs_at: Option<Instant>,
@@ -198,6 +202,7 @@ impl DesktopApp {
             hover: taskbar::Hover::default(),
             hovered_group: None,
             preview_at: Instant::now() - Duration::from_secs(30),
+            alt_tab: alttab::AltTab::default(),
             thumbs: std::collections::HashMap::new(),
             thumbs_at: None,
         }
@@ -775,12 +780,34 @@ impl eframe::App for DesktopApp {
         }
         self.win_key_was_down = win_down;
 
+        // `Alt+Tab`.  The chord is a reserved shell key combination, so it is
+        // polled rather than delivered as a key event - see `alttab.rs`.
+        // The tick returns the window to raise when `Alt` comes up, which is
+        // the only moment the switch actually happens.
+        let list = self.open_windows.clone();
+        if let Some(hwnd) = self.alt_tab.tick(self.hwnd, &list) {
+            winrust_core::window::activate_window_hwnd(hwnd);
+        }
+
         // Start menu and taskbar are painted as panels; the icon grid fills
         // whatever is left.
         self.taskbar(ctx);
         // The peek sits over every other shell surface: it is a "look at this
         // window" mode, so the tray flyouts and the icon grid go behind it.
         self.peek_overlay(ctx);
+        // Above everything: the switcher is the one panel that must not be
+        // covered while the user is choosing - and the shell window itself is
+        // `always_on_bottom`, so it is raised for the duration of the panel.
+        let want_raised = self.alt_tab.visible();
+        if want_raised != self.alt_tab.raised {
+            self.alt_tab.raised = want_raised;
+            ctx.send_viewport_cmd(egui::ViewportCommand::WindowLevel(if want_raised {
+                egui::WindowLevel::AlwaysOnTop
+            } else {
+                egui::WindowLevel::AlwaysOnBottom
+            }));
+        }
+        self.alt_tab_panel(ctx);
         self.start_menu(ctx);
         // The confirmation is a window of its own: it outlives the menu, which
         // closes as soon as the user picks a power action.
