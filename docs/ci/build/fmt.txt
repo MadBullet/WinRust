@@ -1,1 +1,35 @@
-exit=0
+exit=1
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\alttab.rs:124:
+     ///
+     /// `frame` is the shell's own window: it must never appear in its own
+     /// switcher, because it *is* the desktop.
+[31m-    pub(crate) fn tick(&mut self, frame_hwnd: isize, list: &[crate::taskbar::WindowEntry]) -> Option<isize> {
+[0m[32m+    pub(crate) fn tick(
+[0m[32m+        &mut self,
+[0m[32m+        frame_hwnd: isize,
+[0m[32m+        list: &[crate::taskbar::WindowEntry],
+[0m[32m+    ) -> Option<isize> {
+[0m         let alt = winrust_core::window::key_down(VK_MENU);
+         let tab = winrust_core::window::key_down(VK_TAB);
+         let shift = winrust_core::window::key_down(VK_SHIFT);
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\alttab.rs:223:
+                         &t.rgba,
+                     )
+                 });
+[31m-                let handle = image
+[0m[31m-                    .map(|img| ctx.load_texture("alt_tab", img, egui::TextureOptions::LINEAR));
+[0m[32m+                let handle =
+[0m[32m+                    image.map(|img| ctx.load_texture("alt_tab", img, egui::TextureOptions::LINEAR));
+[0m                 self.thumbs.insert(c.cache_key(), handle);
+             }
+         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\alttab.rs:311:
+             .fixed_pos(rect.left_top())
+             .show(ctx, |ui| {
+                 let resp = ui.allocate_exact_size(rect.size(), egui::Sense::click()).1;
+[31m-                resp.clicked().then(|| ui.input(|i| i.pointer.interact_pos()))
+[0m[32m+                resp.clicked()
+[0m[32m+                    .then(|| ui.input(|i| i.pointer.interact_pos()))
+[0m             })
+             .inner
+             .flatten();
