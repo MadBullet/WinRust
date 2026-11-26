@@ -1,0 +1,48 @@
+name: fmt
+
+# rustfmt cannot be run in every development environment, so this workflow is
+# the canonical formatter: it runs `cargo fmt --all` on windows-latest and
+# commits the result straight back to the branch that pushed the change.
+# (workflow_dispatch is kept for manual runs; it only works once this file
+# exists on the default branch.)
+on:
+  push:
+    branches: [arena/1e8c9b58-winrust]
+    paths:
+      - "**.rs"
+      - ".github/workflows/fmt.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: install rustfmt
+        run: rustup component add rustfmt
+
+      - name: cargo fmt --all
+        run: cargo fmt --all
+
+      # The build workflow also triggers on pushes; skip it for the pure
+      # formatting commit by checking out first, formatting, then pushing with
+      # `[skip ci]` in the message (handled below).
+
+      - name: commit formatting
+        shell: bash
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "already formatted"
+            exit 0
+          fi
+          git add -A
+          git commit -m "style: cargo fmt --all [skip ci]"
+          git push origin HEAD:${{ github.ref_name }}

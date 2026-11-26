@@ -1,0 +1,29 @@
+name: tools
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  api-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: extract API digests
+        run: python tools/api_digest.py
+      - name: commit digests back to branch
+        run: |
+          git config user.name "WinRust CI"
+          git config user.email "ci@winrust.local"
+          git add docs/ci
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: refresh API digests [skip ci]"
+            git push
+          else
+            echo "no changes"
+          fi
