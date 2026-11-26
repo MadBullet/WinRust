@@ -1,1 +1,57 @@
-exit=0
+exit=1
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:401:
+     let gap = 1.5_f32;
+     let total = pane * 2.0 + gap;
+     let origin = rect.center() - egui::vec2(total / 2.0, total / 2.0);
+[31m-    for (dx, dy) in [(0.0, 0.0), (pane + gap, 0.0), (0.0, pane + gap), (pane + gap, pane + gap)] {
+[0m[32m+    for (dx, dy) in [
+[0m[32m+        (0.0, 0.0),
+[0m[32m+        (pane + gap, 0.0),
+[0m[32m+        (0.0, pane + gap),
+[0m[32m+        (pane + gap, pane + gap),
+[0m[32m+    ] {
+[0m         p.rect_filled(
+             egui::Rect::from_min_size(origin + egui::vec2(dx, dy), egui::vec2(pane, pane)),
+             0.5,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:531:
+                     &t.rgba,
+                 )
+             });
+[31m-            self.peek_tex = image.map(|img| {
+[0m[31m-                ctx.load_texture("peek_window", img, egui::TextureOptions::LINEAR)
+[0m[31m-            });
+[0m[32m+            self.peek_tex =
+[0m[32m+                image.map(|img| ctx.load_texture("peek_window", img, egui::TextureOptions::LINEAR));
+[0m             self.peek_at = Some(hwnd);
+         }
+ 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:544:
+         // The dim: everything behind the peeked window is hidden, which is the
+         // effect the request asked for ("all windows hidden, only the hovered
+         // one shown").
+[31m-        painter.rect_filled(
+[0m[31m-            screen,
+[0m[31m-            0.0,
+[0m[31m-            Color32::from_rgba_unmultiplied(0, 0, 0, 190),
+[0m[31m-        );
+[0m[32m+        painter.rect_filled(screen, 0.0, Color32::from_rgba_unmultiplied(0, 0, 0, 190));
+[0m         let (w, h) = (size.0 as f32, size.1 as f32);
+[31m-        let scale = ((screen.width() * 0.86) / w).min((screen.height() * 0.86) / h).min(1.0);
+[0m[32m+        let scale = ((screen.width() * 0.86) / w)
+[0m[32m+            .min((screen.height() * 0.86) / h)
+[0m[32m+            .min(1.0);
+[0m         let target = egui::Rect::from_center_size(screen.center(), egui::vec2(w, h) * scale);
+         match &self.peek_tex {
+             Some(tex) => {
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:568:
+         painter.rect_stroke(
+             target,
+             6.0,
+[31m-            egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
+[0m[32m+            egui::Stroke::new(
+[0m[32m+                1.0_f32,
+[0m[32m+                Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
+[0m[32m+            ),
+[0m         );
+     }
+ }
