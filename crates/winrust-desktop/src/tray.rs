@@ -453,15 +453,9 @@ fn flyout(
                 .inner_margin(egui::Margin::same(12.0))
                 .show(ui, |ui| {
                     ui.set_width(width - 24.0);
-                    match app.tray.flyout() {
-                        Flyout::Network => network_panel(app, ui),
-                        Flyout::Volume => volume_panel(app, ui),
-                        Flyout::Language => language_panel(app, ui),
-                        Flyout::Calendar => calendar_panel(app, ui),
-                        Flyout::Notifications => notifications_panel(app, ui),
-                        Flyout::Overflow => overflow_panel(app, ui),
-                        Flyout::None => {}
-                    }
+                    // Read the kind before `app` is lent to `panel_body`.
+                    let kind = app.tray.flyout();
+                    panel_body(app, kind, ui);
                 });
         })
         .response;
@@ -528,6 +522,19 @@ fn network_panel(app: &mut DesktopApp, ui: &mut egui::Ui) {
     {
         let _ = winrust_core::shell::launch("rundll32.exe", "shell32.dll,Control_RunDLL ncpa.cpl");
         app.tray.close();
+    }
+}
+
+/// The body of one flyout, chosen by `kind`.
+fn panel_body(app: &mut DesktopApp, kind: Flyout, ui: &mut egui::Ui) {
+    match kind {
+        Flyout::Network => network_panel(app, ui),
+        Flyout::Volume => volume_panel(app, ui),
+        Flyout::Language => language_panel(app, ui),
+        Flyout::Calendar => calendar_panel(app, ui),
+        Flyout::Notifications => notifications_panel(app, ui),
+        Flyout::Overflow => overflow_panel(app, ui),
+        Flyout::None => {}
     }
 }
 

@@ -520,6 +520,18 @@ impl DesktopApp {
             screen.center().x - width / 2.0,
             (screen.bottom() - crate::taskbar::HEIGHT - 8.0 - 320.0).max(screen.top() + 40.0),
         );
+        // The history is copied into plain strings first.  `Frame::show` boxes
+        // its content closure (`show_dyn`), so the closure may not hold
+        // `&mut self` - the same restriction that shapes `start_menu`.
+        let entries: Vec<String> = self
+            .clipboard
+            .entries()
+            .iter()
+            .map(|e| {
+                let one_line: String = e.text.split_whitespace().collect::<Vec<_>>().join(" ");
+                winrust_core::i18n::end(&one_line, 60)
+            })
+            .collect();
         let mut picked: Option<usize> = None;
         let mut clear = false;
         let response = egui::Area::new(egui::Id::new("clipboard_panel"))
@@ -553,7 +565,7 @@ impl DesktopApp {
                             );
                         });
                         ui.add_space(6.0);
-                        if self.clipboard.is_empty() {
+                        if entries.is_empty() {
                             ui.label(
                                 RichText::new(ts("Copy something and it will appear here"))
                                     .small()
@@ -566,13 +578,7 @@ impl DesktopApp {
                             .auto_shrink([false, false])
                             .max_height(260.0)
                             .show(ui, |ui| {
-                                for (i, entry) in self.clipboard.entries().iter().enumerate() {
-                                    let one_line: String = entry
-                                        .text
-                                        .split_whitespace()
-                                        .collect::<Vec<_>>()
-                                        .join(" ");
-                                    let label = winrust_core::i18n::end(&one_line, 60);
+                                for (i, label) in entries.iter().enumerate() {
                                     let resp = ui.add_sized(
                                         [ui.available_width(), 26.0],
                                         egui::Button::new(RichText::new(label).size(12.5))

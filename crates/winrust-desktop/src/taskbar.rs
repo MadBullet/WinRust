@@ -329,7 +329,9 @@ impl DesktopApp {
                     .cloned()
                     .collect();
                 if !group.is_empty() {
-                    preview(self, ctx, bar, pal, &group, self.hover.anchor());
+                    // Read the anchor before `self` is lent to `preview`.
+                    let anchor = self.hover.anchor();
+                    preview(self, ctx, bar, pal, &group, anchor);
                 }
             }
         }
