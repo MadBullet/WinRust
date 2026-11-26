@@ -7,38 +7,38 @@ exit=0
 [1m[92m      Adding[0m thiserror v1.0.69 [1m[93m(available: v2.0.21)[0m
 [1m[92m      Adding[0m windows-sys v0.59.0 [1m[93m(available: v0.61.2)[0m
 [1m[92m Downloading[0m crates ...
-[1m[92m  Downloaded[0m serde_derive v1.0.229
-[1m[92m  Downloaded[0m jiff-core v1.0.2
-[1m[92m  Downloaded[0m anstream v1.0.0
 [1m[92m  Downloaded[0m anstyle-parse v1.0.0
-[1m[92m  Downloaded[0m utf8parse v0.2.2
-[1m[92m  Downloaded[0m windows-link v0.2.1
-[1m[92m  Downloaded[0m windows-targets v0.52.6
-[1m[92m  Downloaded[0m anstyle-query v1.1.5
-[1m[92m  Downloaded[0m once_cell_polyfill v1.70.2
-[1m[92m  Downloaded[0m regex-syntax v0.8.12
-[1m[92m  Downloaded[0m aho-corasick v1.1.5
-[1m[92m  Downloaded[0m serde_core v1.0.229
-[1m[92m  Downloaded[0m serde v1.0.229
-[1m[92m  Downloaded[0m thiserror v1.0.69
-[1m[92m  Downloaded[0m anstyle-wincon v3.0.11
-[1m[92m  Downloaded[0m regex v1.13.2
-[1m[92m  Downloaded[0m anstyle v1.0.14
-[1m[92m  Downloaded[0m env_filter v2.1.0
-[1m[92m  Downloaded[0m quote v1.0.47
-[1m[92m  Downloaded[0m syn v3.0.10
 [1m[92m  Downloaded[0m is_terminal_polyfill v1.70.2
-[1m[92m  Downloaded[0m log v0.4.35
-[1m[92m  Downloaded[0m colorchoice v1.0.5
+[1m[92m  Downloaded[0m windows-targets v0.52.6
+[1m[92m  Downloaded[0m windows-link v0.2.1
+[1m[92m  Downloaded[0m anstyle-query v1.1.5
+[1m[92m  Downloaded[0m utf8parse v0.2.2
+[1m[92m  Downloaded[0m anstyle-wincon v3.0.11
 [1m[92m  Downloaded[0m itoa v1.0.19
-[1m[92m  Downloaded[0m env_logger v0.11.12
-[1m[92m  Downloaded[0m thiserror-impl v1.0.69
-[1m[92m  Downloaded[0m proc-macro2 v1.0.107
-[1m[92m  Downloaded[0m unicode-ident v1.0.27
+[1m[92m  Downloaded[0m colorchoice v1.0.5
+[1m[92m  Downloaded[0m anstyle v1.0.14
+[1m[92m  Downloaded[0m once_cell_polyfill v1.70.2
+[1m[92m  Downloaded[0m env_filter v2.1.0
+[1m[92m  Downloaded[0m thiserror v1.0.69
 [1m[92m  Downloaded[0m zmij v1.0.23
-[1m[92m  Downloaded[0m syn v2.0.119
+[1m[92m  Downloaded[0m env_logger v0.11.12
+[1m[92m  Downloaded[0m anstream v1.0.0
+[1m[92m  Downloaded[0m quote v1.0.47
+[1m[92m  Downloaded[0m thiserror-impl v1.0.69
+[1m[92m  Downloaded[0m unicode-ident v1.0.27
+[1m[92m  Downloaded[0m log v0.4.35
+[1m[92m  Downloaded[0m serde_derive v1.0.229
+[1m[92m  Downloaded[0m serde_core v1.0.229
+[1m[92m  Downloaded[0m proc-macro2 v1.0.107
+[1m[92m  Downloaded[0m serde v1.0.229
 [1m[92m  Downloaded[0m memchr v2.8.3
+[1m[92m  Downloaded[0m regex v1.13.2
+[1m[92m  Downloaded[0m jiff-core v1.0.2
+[1m[92m  Downloaded[0m aho-corasick v1.1.5
 [1m[92m  Downloaded[0m serde_json v1.0.154
+[1m[92m  Downloaded[0m syn v2.0.119
+[1m[92m  Downloaded[0m syn v3.0.10
+[1m[92m  Downloaded[0m regex-syntax v0.8.12
 [1m[92m  Downloaded[0m regex-automata v0.4.19
 [1m[92m  Downloaded[0m jiff v1.0.3
 [1m[92m  Downloaded[0m windows_x86_64_msvc v0.52.6
@@ -58,30 +58,30 @@ exit=0
 [1m[92m   Compiling[0m syn v2.0.119
 [1m[92m   Compiling[0m syn v3.0.10
 [1m[92m   Compiling[0m regex-automata v0.4.19
+[1m[92m   Compiling[0m log v0.4.35
 [1m[92m   Compiling[0m serde v1.0.229
+[1m[92m   Compiling[0m serde_json v1.0.154
+[1m[92m   Compiling[0m once_cell_polyfill v1.70.2
 [1m[92m   Compiling[0m thiserror v1.0.69
 [1m[92m   Compiling[0m anstyle v1.0.14
-[1m[92m   Compiling[0m once_cell_polyfill v1.70.2
 [1m[92m   Compiling[0m utf8parse v0.2.2
-[1m[92m   Compiling[0m log v0.4.35
-[1m[92m   Compiling[0m serde_json v1.0.154
 [1m[92m   Compiling[0m anstyle-parse v1.0.0
 [1m[92m   Compiling[0m anstyle-wincon v3.0.11
 [1m[92m   Compiling[0m thiserror-impl v1.0.69
 [1m[92m   Compiling[0m windows-targets v0.52.6
 [1m[92m   Compiling[0m anstyle-query v1.1.5
-[1m[92m   Compiling[0m serde_derive v1.0.229
-[1m[92m   Compiling[0m regex v1.13.2
 [1m[92m   Compiling[0m colorchoice v1.0.5
+[1m[92m   Compiling[0m regex v1.13.2
+[1m[92m   Compiling[0m serde_derive v1.0.229
+[1m[92m   Compiling[0m jiff-core v1.0.2
 [1m[92m   Compiling[0m is_terminal_polyfill v1.70.2
 [1m[92m   Compiling[0m itoa v1.0.19
-[1m[92m   Compiling[0m jiff-core v1.0.2
 [1m[92m   Compiling[0m jiff v1.0.3
 [1m[92m   Compiling[0m anstream v1.0.0
 [1m[92m   Compiling[0m env_filter v2.1.0
 [1m[92m   Compiling[0m windows-sys v0.59.0
-[1m[92m   Compiling[0m winrust-kernel-abi v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
+[1m[92m   Compiling[0m winrust-kernel-abi v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
 [1m[92m   Compiling[0m env_logger v0.11.12
-[1m[92m   Compiling[0m winrust-core v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-core)
-[1m[92m   Compiling[0m winrust-kernel-control v0.9.1 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
-[1m[92m    Finished[0m `release` profile [optimized] target(s) in 41.22s
+[1m[92m   Compiling[0m winrust-core v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-core)
+[1m[92m   Compiling[0m winrust-kernel-control v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 38.22s
