@@ -1,4 +1,3 @@
--rwxr-xr-x 2 runneradmin 197121 4267008 Nov 26 08:26 target/release/WinRust.exe
--rwxr-xr-x 2 runneradmin 197121  946688 Nov 26 08:25 target/release/winrust-driver.exe
--rwxr-xr-x 2 runneradmin 197121 4176384 Nov 26 08:26 target/release/winrust-sysctl.exe
-1.8G	target
+-rwxr-xr-x 2 runneradmin 197121 4267520 Nov 26 08:32 target/release/WinRust.exe
+-rwxr-xr-x 2 runneradmin 197121  946688 Nov 26 08:31 target/release/winrust-driver.exe
+1.7G	target

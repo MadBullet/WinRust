@@ -1,57 +1,75 @@
 exit=1
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:401:
-     let gap = 1.5_f32;
-     let total = pane * 2.0 + gap;
-     let origin = rect.center() - egui::vec2(total / 2.0, total / 2.0);
-[31m-    for (dx, dy) in [(0.0, 0.0), (pane + gap, 0.0), (0.0, pane + gap), (pane + gap, pane + gap)] {
-[0m[32m+    for (dx, dy) in [
-[0m[32m+        (0.0, 0.0),
-[0m[32m+        (pane + gap, 0.0),
-[0m[32m+        (0.0, pane + gap),
-[0m[32m+        (pane + gap, pane + gap),
-[0m[32m+    ] {
-[0m         p.rect_filled(
-             egui::Rect::from_min_size(origin + egui::vec2(dx, dy), egui::vec2(pane, pane)),
-             0.5,
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:531:
-                     &t.rgba,
-                 )
-             });
-[31m-            self.peek_tex = image.map(|img| {
-[0m[31m-                ctx.load_texture("peek_window", img, egui::TextureOptions::LINEAR)
-[0m[31m-            });
-[0m[32m+            self.peek_tex =
-[0m[32m+                image.map(|img| ctx.load_texture("peek_window", img, egui::TextureOptions::LINEAR));
-[0m             self.peek_at = Some(hwnd);
-         }
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\explorer.rs:2:
  
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:544:
-         // The dim: everything behind the peeked window is hidden, which is the
-         // effect the request asked for ("all windows hidden, only the hovered
-         // one shown").
-[31m-        painter.rect_filled(
-[0m[31m-            screen,
-[0m[31m-            0.0,
-[0m[31m-            Color32::from_rgba_unmultiplied(0, 0, 0, 190),
+ pub static ENTRIES: &[(&str, &str)] = &[
+     ("FAVOURITES", "ИЗБРАННОЕ"),
+[31m-    ("   drag a folder here to pin it", "   перетащите папку сюда, чтобы закрепить"),
+[0m[32m+    (
+[0m[32m+        "   drag a folder here to pin it",
+[0m[32m+        "   перетащите папку сюда, чтобы закрепить",
+[0m[32m+    ),
+[0m     ("Drop to pin", "Отпустите, чтобы закрепить"),
+     ("Right-click to unpin", "Правый клик — открепить"),
+     ("Unpinned", "Откреплено"),
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-core\src\i18n\table\services.rs:1:
+ //! Strings used by the services component.
+ 
+[31m-pub static ENTRIES: &[(&str, &str)] = &[
+[0m[31m-    ("Service restarted", "Служба перезапущена"),
+[0m[31m-];
+[0m[32m+pub static ENTRIES: &[(&str, &str)] = &[("Service restarted", "Служба перезапущена")];
+[0m 
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\panels.rs:527:
+                     ui.painter().rect_filled(
+                         drop_rect,
+                         3.0,
+[31m-                        Color32::from_rgba_unmultiplied(0, 120, 215, if hovering { 56 } else { 20 }),
+[0m[32m+                        Color32::from_rgba_unmultiplied(
+[0m[32m+                            0,
+[0m[32m+                            120,
+[0m[32m+                            215,
+[0m[32m+                            if hovering { 56 } else { 20 },
+[0m[32m+                        ),
+[0m                     );
+                     ui.painter().rect_stroke(
+                         drop_rect,
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\views.rs:456:
+         entries: &[DirEntry],
+     ) {
+         let app_list = self.open_with.clone();
+[31m-        
+[0m[32m+
+[0m         let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
+         // Rubber-band selection.  The background is claimed *before* the table
+         // so the rows stack above it: a press that lands on a row belongs to
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\views.rs:572:
+         icon: u32,
+     ) {
+         let app_list = self.open_with.clone();
+[31m-        
+[0m[32m+
+[0m         let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
+         // Rubber-band selection.  The background is claimed *before* the table
+         // so the rows stack above it: a press that lands on a row belongs to
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-explorer\src\app\views.rs:720:
+         entries: &[DirEntry],
+     ) {
+         let app_list = self.open_with.clone();
+[31m-        
+[0m[32m+
+[0m         let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
+         // Rubber-band selection.  The background is claimed *before* the table
+         // so the rows stack above it: a press that lands on a row belongs to
+Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-taskmgr\src\app\ui.rs:581:
+         // easier to hit and harmless, because rows install their own menu on
+         // top of this one and win the click.
+         let list_area = ui.available_rect_before_wrap();
+[31m-        let list_resp = ui.interact(
+[0m[31m-            list_area,
+[0m[31m-            ui.id().with("tm_list_bg"),
+[0m[31m-            egui::Sense::click(),
 [0m[31m-        );
-[0m[32m+        painter.rect_filled(screen, 0.0, Color32::from_rgba_unmultiplied(0, 0, 0, 190));
-[0m         let (w, h) = (size.0 as f32, size.1 as f32);
-[31m-        let scale = ((screen.width() * 0.86) / w).min((screen.height() * 0.86) / h).min(1.0);
-[0m[32m+        let scale = ((screen.width() * 0.86) / w)
-[0m[32m+            .min((screen.height() * 0.86) / h)
-[0m[32m+            .min(1.0);
-[0m         let target = egui::Rect::from_center_size(screen.center(), egui::vec2(w, h) * scale);
-         match &self.peek_tex {
-             Some(tex) => {
-Diff in \\?\D:\a\WinRust\WinRust\crates\winrust-desktop\src\taskbar.rs:568:
-         painter.rect_stroke(
-             target,
-             6.0,
-[31m-            egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
-[0m[32m+            egui::Stroke::new(
-[0m[32m+                1.0_f32,
-[0m[32m+                Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
-[0m[32m+            ),
-[0m         );
-     }
- }
+[0m[32m+        let list_resp = ui.interact(list_area, ui.id().with("tm_list_bg"), egui::Sense::click());
+[0m         list_resp.context_menu(|ui| {
+             ui.label(RichText::new(ts("Update speed")).strong());
+             ui.separator();
