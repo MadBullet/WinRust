@@ -127,12 +127,12 @@ impl ExplorerApp {
         // Devices and drives with usage bars and the free-of-total text.
         if self.is_computer_view() && self.current().filter.is_empty() {
             egui::ScrollArea::vertical()
-            // Dragging with the left button is a *selection* gesture here.
-            // `drag_to_scroll` would otherwise pan the list when the pointer
-            // starts on empty space between rows, which is exactly where a
-            // rubber band has to start - the "мешает листать список зажатой
-            // ЛКМ" report.  Wheel scrolling is untouched.
-            .drag_to_scroll(false)
+                // Dragging with the left button is a *selection* gesture here.
+                // `drag_to_scroll` would otherwise pan the list when the pointer
+                // starts on empty space between rows, which is exactly where a
+                // rubber band has to start - the "мешает листать список зажатой
+                // ЛКМ" report.  Wheel scrolling is untouched.
+                .drag_to_scroll(false)
                 .id_salt("computer_home")
                 .auto_shrink([false, false])
                 .show(ui, |ui| {
@@ -166,7 +166,11 @@ impl ExplorerApp {
         // gutter down the left edge is dead space where a band may start; the
         // views are laid out to the right of it.
         let view_mode = self.current().view;
-        let gutter_w = if view_mode == ViewMode::Tiles { 0.0 } else { 14.0 };
+        let gutter_w = if view_mode == ViewMode::Tiles {
+            0.0
+        } else {
+            14.0
+        };
         ui.horizontal_top(|ui| {
             if gutter_w > 0.0 {
                 let (_gutter, gutter_resp) = ui.allocate_exact_size(

@@ -499,12 +499,11 @@ impl ExplorerApp {
                     // what "перетаскивать закреплённое" asks for.  Dragging a
                     // folder in from the right pane is a different gesture and
                     // still pins, see the drop zone below.
-                    let resp = ui
-                        .add(
-                            egui::Button::new(RichText::new(format!("📌  {name}")).size(12.0))
-                                .frame(here)
-                                .sense(egui::Sense::click_and_drag()),
-                        );
+                    let resp = ui.add(
+                        egui::Button::new(RichText::new(format!("📌  {name}")).size(12.0))
+                            .frame(here)
+                            .sense(egui::Sense::click_and_drag()),
+                    );
                     if resp.clicked() {
                         nav = Some(path.clone());
                     }

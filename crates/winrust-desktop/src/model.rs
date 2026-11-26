@@ -116,4 +116,3 @@ pub(crate) fn default_pins() -> Vec<AppEntry> {
     }
     pins
 }
-

@@ -252,9 +252,7 @@ impl DesktopApp {
                 // window is rarely the group's first entry.
                 let group_active: Vec<&WindowEntry> =
                     windows_list.iter().filter(|w| &app_key(w) == key).collect();
-                let selected = group_active
-                    .iter()
-                    .any(|w| self.active_pid == Some(w.pid));
+                let selected = group_active.iter().any(|w| self.active_pid == Some(w.pid));
                 if selected {
                     ui.painter().rect_filled(
                         rect.shrink(1.0),

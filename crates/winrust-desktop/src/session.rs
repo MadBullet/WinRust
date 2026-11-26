@@ -22,7 +22,6 @@ use std::time::Instant;
 // in the bottom layer both modules can depend on.
 pub use crate::model::PowerAction;
 
-
 /// The `Win+V` clipboard panel's own state.
 ///
 /// It was two fields on [`Session`] plus three methods, which meant a panel
@@ -198,10 +197,7 @@ impl Session {
         // Materialise the defaults first: pinning into an "empty" set must not
         // silently replace the whole default list with that one pin.
         if self.pins.is_empty() {
-            self.pins = default_pins()
-                .into_iter()
-                .map(|a| a.path)
-                .collect();
+            self.pins = default_pins().into_iter().map(|a| a.path).collect();
         }
         if !self.pins.iter().any(|p| p == path) {
             self.pins.push(path.to_path_buf());
@@ -213,10 +209,7 @@ impl Session {
     /// pinned grid does.  The order is the user's, so it is saved.
     pub fn move_pin(&mut self, from: usize, to: usize) {
         if self.pins.is_empty() {
-            self.pins = default_pins()
-                .into_iter()
-                .map(|a| a.path)
-                .collect();
+            self.pins = default_pins().into_iter().map(|a| a.path).collect();
         }
         if from < self.pins.len() && to < self.pins.len() && from != to {
             let moved = self.pins.remove(from);
@@ -227,10 +220,7 @@ impl Session {
 
     pub fn unpin(&mut self, path: &std::path::Path) {
         if self.pins.is_empty() {
-            self.pins = default_pins()
-                .into_iter()
-                .map(|a| a.path)
-                .collect();
+            self.pins = default_pins().into_iter().map(|a| a.path).collect();
         }
         self.pins.retain(|p| p != path);
         self.save_pins();

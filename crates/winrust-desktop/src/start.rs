@@ -535,11 +535,9 @@ fn pinned_grid(
                         // duration of the gesture.
                         let drag_id = egui::Id::new("start_pin_drag");
                         if resp.drag_started() {
-                            ui.ctx()
-                                .data_mut(|d| d.insert_temp(drag_id, global_index));
+                            ui.ctx().data_mut(|d| d.insert_temp(drag_id, global_index));
                         }
-                        let dragging_from: Option<usize> =
-                            ui.ctx().data(|d| d.get_temp(drag_id));
+                        let dragging_from: Option<usize> = ui.ctx().data(|d| d.get_temp(drag_id));
                         if resp.hovered() && dragging_from.is_some() {
                             // Outline the tile the pointer is over - that is
                             // where the dragged pin will land.
@@ -560,10 +558,7 @@ fn pinned_grid(
                             ui.painter().rect_stroke(
                                 resp.rect.shrink(2.0),
                                 8.0,
-                                egui::Stroke::new(
-                                    1.5_f32,
-                                    Color32::from_rgb(0x60, 0xa8, 0xff),
-                                ),
+                                egui::Stroke::new(1.5_f32, Color32::from_rgb(0x60, 0xa8, 0xff)),
                             );
                         }
                         let square = egui::Rect::from_min_size(rect.min, egui::vec2(tile, tile));
