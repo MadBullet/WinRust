@@ -466,7 +466,7 @@ fn flyout(
                 });
         },
     )
-        .response;
+    .response;
 
     // Clicking elsewhere closes it, exactly like the real flyouts.
     if ctx.input(|i| i.pointer.any_click()) {
