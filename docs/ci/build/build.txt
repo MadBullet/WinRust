@@ -1,172 +1,172 @@
-exit=101
+exit=0
 [1m[92m Downloading[0m crates ...
-[1m[92m  Downloaded[0m adler2 v2.0.1
-[1m[92m  Downloaded[0m bitflags v1.3.2
-[1m[92m  Downloaded[0m color_quant v1.1.0
-[1m[92m  Downloaded[0m ab_glyph v0.2.32
-[1m[92m  Downloaded[0m ab_glyph_rasterizer v0.1.10
-[1m[92m  Downloaded[0m idna_adapter v1.2.2
-[1m[92m  Downloaded[0m owned_ttf_parser v0.25.1
-[1m[92m  Downloaded[0m anstyle-wincon v3.0.11
-[1m[92m  Downloaded[0m anstyle-parse v1.0.0
-[1m[92m  Downloaded[0m anstyle-query v1.1.5
-[1m[92m  Downloaded[0m arrayref v0.3.9
-[1m[92m  Downloaded[0m byteorder-lite v0.1.0
-[1m[92m  Downloaded[0m float-cmp v0.9.0
-[1m[92m  Downloaded[0m roxmltree v0.19.0
-[1m[92m  Downloaded[0m form_urlencoded v1.2.3
-[1m[92m  Downloaded[0m glutin_egl_sys v0.7.1
-[1m[92m  Downloaded[0m raw-window-handle v0.6.2
-[1m[92m  Downloaded[0m cursor-icon v1.2.0
-[1m[92m  Downloaded[0m ecolor v0.29.1
-[1m[92m  Downloaded[0m env_filter v2.1.0
-[1m[92m  Downloaded[0m glutin_wgl_sys v0.6.1
-[1m[92m  Downloaded[0m once_cell_polyfill v1.70.2
-[1m[92m  Downloaded[0m cfg-if v1.0.5
-[1m[92m  Downloaded[0m is_terminal_polyfill v1.70.2
-[1m[92m  Downloaded[0m cfg_aliases v0.2.2
-[1m[92m  Downloaded[0m memoffset v0.9.1
-[1m[92m  Downloaded[0m percent-encoding v2.3.2
-[1m[92m  Downloaded[0m imagesize v0.12.0
-[1m[92m  Downloaded[0m phf_generator v0.11.3
-[1m[92m  Downloaded[0m glutin-winit v0.5.0
-[1m[92m  Downloaded[0m pico-args v0.5.0
-[1m[92m  Downloaded[0m potential_utf v0.1.6
-[1m[92m  Downloaded[0m rctree v0.5.0
-[1m[92m  Downloaded[0m strict-num v0.1.1
-[1m[92m  Downloaded[0m enum-map-derive v0.17.0
-[1m[92m  Downloaded[0m nohash-hasher v0.2.0
-[1m[92m  Downloaded[0m colorchoice v1.0.5
-[1m[92m  Downloaded[0m document-features v0.2.12
-[1m[92m  Downloaded[0m ehttp v0.5.0
-[1m[92m  Downloaded[0m error-code v3.4.0
-[1m[92m  Downloaded[0m clipboard-win v5.4.3
-[1m[92m  Downloaded[0m data-url v0.3.2
-[1m[92m  Downloaded[0m anstyle v1.0.14
-[1m[92m  Downloaded[0m autocfg v1.5.1
-[1m[92m  Downloaded[0m displaydoc v0.2.7
-[1m[92m  Downloaded[0m dpi v0.1.2
-[1m[92m  Downloaded[0m anstream v1.0.0
-[1m[92m  Downloaded[0m enum-map v2.7.3
-[1m[92m  Downloaded[0m gl_generator v0.14.0
-[1m[92m  Downloaded[0m phf v0.11.3
-[1m[92m  Downloaded[0m bytemuck_derive v1.12.1
-[1m[92m  Downloaded[0m lock_api v0.4.14
-[1m[92m  Downloaded[0m mime_guess2 v2.3.1
-[1m[92m  Downloaded[0m jobserver v0.1.35
-[1m[92m  Downloaded[0m libloading v0.8.9
-[1m[92m  Downloaded[0m find-msvc-tools v0.1.15
-[1m[92m  Downloaded[0m siphasher v0.3.11
-[1m[92m  Downloaded[0m utf8parse v0.2.2
-[1m[92m  Downloaded[0m zerofrom v0.1.8
-[1m[92m  Downloaded[0m untrusted v0.9.0
-[1m[92m  Downloaded[0m emath v0.29.1
-[1m[92m  Downloaded[0m xmlwriter v0.1.0
-[1m[92m  Downloaded[0m arboard v3.7.0
-[1m[92m  Downloaded[0m arrayvec v0.7.8
-[1m[92m  Downloaded[0m fdeflate v0.3.7
-[1m[92m  Downloaded[0m getrandom v0.2.17
-[1m[92m  Downloaded[0m gif v0.14.2
-[1m[92m  Downloaded[0m litemap v0.8.3
-[1m[92m  Downloaded[0m mime v0.3.18
-[1m[92m  Downloaded[0m once_cell v1.21.4
-[1m[92m  Downloaded[0m parking_lot_core v0.9.12
-[1m[92m  Downloaded[0m phf_macros v0.11.3
-[1m[92m  Downloaded[0m env_logger v0.11.12
-[1m[92m  Downloaded[0m egui-winit v0.29.1
-[1m[92m  Downloaded[0m egui_extras v0.29.1
-[1m[92m  Downloaded[0m egui_glow v0.29.1
-[1m[92m  Downloaded[0m crc32fast v1.5.6
-[1m[92m  Downloaded[0m num-traits v0.2.19
-[1m[92m  Downloaded[0m getrandom v0.4.3
-[1m[92m  Downloaded[0m bitflags v2.13.2
-[1m[92m  Downloaded[0m icu_provider v2.4.0
-[1m[92m  Downloaded[0m litrs v1.1.0
-[1m[92m  Downloaded[0m ahash v0.8.14
-[1m[92m  Downloaded[0m icu_locale_core v2.4.0
-[1m[92m  Downloaded[0m miniz_oxide v0.8.9
-[1m[92m  Downloaded[0m bytemuck v1.25.2
-[1m[92m  Downloaded[0m parking_lot v0.12.5
 [1m[92m  Downloaded[0m base64 v0.21.7
-[1m[92m  Downloaded[0m glutin v0.32.3
-[1m[92m  Downloaded[0m miniz_oxide v0.9.1
-[1m[92m  Downloaded[0m flate2 v1.1.11
-[1m[92m  Downloaded[0m icu_normalizer_data v2.4.0
-[1m[92m  Downloaded[0m base64 v0.22.1
-[1m[92m  Downloaded[0m epaint v0.29.1
-[1m[92m  Downloaded[0m kurbo v0.9.5
+[1m[92m  Downloaded[0m ab_glyph v0.2.32
 [1m[92m  Downloaded[0m phf_shared v0.11.3
-[1m[92m  Downloaded[0m subtle v2.6.1
-[1m[92m  Downloaded[0m scopeguard v1.2.0
+[1m[92m  Downloaded[0m potential_utf v0.1.6
+[1m[92m  Downloaded[0m ab_glyph_rasterizer v0.1.10
+[1m[92m  Downloaded[0m arrayref v0.3.9
+[1m[92m  Downloaded[0m arrayvec v0.7.8
+[1m[92m  Downloaded[0m autocfg v1.5.1
+[1m[92m  Downloaded[0m pin-project-lite v0.2.18
 [1m[92m  Downloaded[0m smol_str v0.2.2
-[1m[92m  Downloaded[0m siphasher v1.0.4
-[1m[92m  Downloaded[0m eframe v0.29.1
-[1m[92m  Downloaded[0m icu_collections v2.4.0
-[1m[92m  Downloaded[0m jiff-core v1.0.2
-[1m[92m  Downloaded[0m utf8_iter v1.1.0
-[1m[92m  Downloaded[0m version_check v0.9.5
+[1m[92m  Downloaded[0m zerofrom v0.1.8
+[1m[92m  Downloaded[0m egui-winit v0.29.1
+[1m[92m  Downloaded[0m cursor-icon v1.2.0
+[1m[92m  Downloaded[0m pico-args v0.5.0
+[1m[92m  Downloaded[0m xmlwriter v0.1.0
+[1m[92m  Downloaded[0m icu_normalizer_data v2.4.0
+[1m[92m  Downloaded[0m siphasher v0.3.11
+[1m[92m  Downloaded[0m stable_deref_trait v1.2.1
+[1m[92m  Downloaded[0m web-time v1.1.0
+[1m[92m  Downloaded[0m phf v0.11.3
+[1m[92m  Downloaded[0m gl_generator v0.14.0
+[1m[92m  Downloaded[0m glutin_wgl_sys v0.6.1
+[1m[92m  Downloaded[0m litemap v0.8.3
+[1m[92m  Downloaded[0m bitflags v1.3.2
+[1m[92m  Downloaded[0m miniz_oxide v0.9.1
+[1m[92m  Downloaded[0m png v0.18.1
+[1m[92m  Downloaded[0m strict-num v0.1.1
+[1m[92m  Downloaded[0m utf8parse v0.2.2
+[1m[92m  Downloaded[0m tiny-skia-path v0.11.4
+[1m[92m  Downloaded[0m svgtypes v0.13.0
+[1m[92m  Downloaded[0m byteorder-lite v0.1.0
+[1m[92m  Downloaded[0m miniz_oxide v0.8.9
+[1m[92m  Downloaded[0m emath v0.29.1
+[1m[92m  Downloaded[0m libloading v0.8.9
+[1m[92m  Downloaded[0m subtle v2.6.1
+[1m[92m  Downloaded[0m cfg-if v1.0.5
+[1m[92m  Downloaded[0m anstyle-wincon v3.0.11
+[1m[92m  Downloaded[0m data-url v0.3.2
+[1m[92m  Downloaded[0m once_cell v1.21.4
+[1m[92m  Downloaded[0m simplecss v0.2.2
 [1m[92m  Downloaded[0m windows-link v0.2.1
 [1m[92m  Downloaded[0m yoke-derive v0.8.4
-[1m[92m  Downloaded[0m zerofrom-derive v0.1.8
-[1m[92m  Downloaded[0m idna v1.1.0
-[1m[92m  Downloaded[0m icu_properties v2.4.0
-[1m[92m  Downloaded[0m aho-corasick v1.1.5
-[1m[92m  Downloaded[0m cc v1.11.3
-[1m[92m  Downloaded[0m glow v0.14.2
-[1m[92m  Downloaded[0m icu_properties_data v2.4.0
-[1m[92m  Downloaded[0m moxcms v0.8.1
-[1m[92m  Downloaded[0m image v0.25.10
-[1m[92m  Downloaded[0m egui v0.29.1
-[1m[92m  Downloaded[0m webpki-roots v0.26.11
-[1m[92m  Downloaded[0m rand_core v0.6.4
-[1m[92m  Downloaded[0m shlex v2.0.1
+[1m[92m  Downloaded[0m fdeflate v0.3.7
+[1m[92m  Downloaded[0m zeroize v1.9.2
 [1m[92m  Downloaded[0m simd-adler32 v0.3.10
-[1m[92m  Downloaded[0m icu_normalizer v2.4.0
-[1m[92m  Downloaded[0m static_assertions v1.1.0
-[1m[92m  Downloaded[0m synstructure v0.14.0
-[1m[92m  Downloaded[0m tinystr v0.8.5
-[1m[92m  Downloaded[0m unicase v2.10.0
+[1m[92m  Downloaded[0m enum-map v2.7.3
+[1m[92m  Downloaded[0m raw-window-handle v0.6.2
 [1m[92m  Downloaded[0m rgb v0.8.53
+[1m[92m  Downloaded[0m unicase v2.10.0
+[1m[92m  Downloaded[0m usvg v0.37.0
+[1m[92m  Downloaded[0m yoke v0.8.4
+[1m[92m  Downloaded[0m zerovec-derive v0.11.7
+[1m[92m  Downloaded[0m scopeguard v1.2.0
+[1m[92m  Downloaded[0m anstyle-parse v1.0.0
+[1m[92m  Downloaded[0m colorchoice v1.0.5
+[1m[92m  Downloaded[0m epaint v0.29.1
+[1m[92m  Downloaded[0m float-cmp v0.9.0
+[1m[92m  Downloaded[0m icu_provider v2.4.0
+[1m[92m  Downloaded[0m shlex v2.0.1
+[1m[92m  Downloaded[0m smallvec v1.16.6
+[1m[92m  Downloaded[0m weezl v0.1.12
+[1m[92m  Downloaded[0m zerotrie v0.2.5
+[1m[92m  Downloaded[0m webpki-roots v0.26.11
+[1m[92m  Downloaded[0m png v0.17.16
+[1m[92m  Downloaded[0m webbrowser v1.2.7
+[1m[92m  Downloaded[0m color_quant v1.1.0
+[1m[92m  Downloaded[0m env_filter v2.1.0
+[1m[92m  Downloaded[0m is_terminal_polyfill v1.70.2
+[1m[92m  Downloaded[0m nohash-hasher v0.2.0
+[1m[92m  Downloaded[0m percent-encoding v2.3.2
+[1m[92m  Downloaded[0m static_assertions v1.1.0
+[1m[92m  Downloaded[0m utf_types v1.0.0
+[1m[92m  Downloaded[0m resvg v0.37.0
+[1m[92m  Downloaded[0m synstructure v0.14.0
+[1m[92m  Downloaded[0m unicode-segmentation v1.13.3
+[1m[92m  Downloaded[0m untrusted v0.9.0
+[1m[92m  Downloaded[0m ureq v2.12.1
+[1m[92m  Downloaded[0m url v2.5.9
+[1m[92m  Downloaded[0m xml-rs v0.8.29
+[1m[92m  Downloaded[0m adler2 v2.0.1
+[1m[92m  Downloaded[0m anstream v1.0.0
+[1m[92m  Downloaded[0m ecolor v0.29.1
+[1m[92m  Downloaded[0m glutin-winit v0.5.0
+[1m[92m  Downloaded[0m mime v0.3.18
+[1m[92m  Downloaded[0m rctree v0.5.0
+[1m[92m  Downloaded[0m regex v1.13.2
+[1m[92m  Downloaded[0m siphasher v1.0.4
 [1m[92m  Downloaded[0m usvg-tree v0.37.0
+[1m[92m  Downloaded[0m gif v0.14.2
+[1m[92m  Downloaded[0m displaydoc v0.2.7
+[1m[92m  Downloaded[0m form_urlencoded v1.2.3
+[1m[92m  Downloaded[0m find-msvc-tools v0.1.15
+[1m[92m  Downloaded[0m anstyle v1.0.14
+[1m[92m  Downloaded[0m num-traits v0.2.19
+[1m[92m  Downloaded[0m crc32fast v1.5.6
+[1m[92m  Downloaded[0m icu_locale_core v2.4.0
+[1m[92m  Downloaded[0m eframe v0.29.1
+[1m[92m  Downloaded[0m error-code v3.4.0
+[1m[92m  Downloaded[0m document-features v0.2.12
+[1m[92m  Downloaded[0m ahash v0.8.14
+[1m[92m  Downloaded[0m jiff-core v1.0.2
+[1m[92m  Downloaded[0m cfg_aliases v0.2.2
+[1m[92m  Downloaded[0m ehttp v0.5.0
+[1m[92m  Downloaded[0m glutin_egl_sys v0.7.1
+[1m[92m  Downloaded[0m dpi v0.1.2
+[1m[92m  Downloaded[0m icu_properties_data v2.4.0
+[1m[92m  Downloaded[0m idna_adapter v1.2.2
+[1m[92m  Downloaded[0m mime_guess2 v2.3.1
+[1m[92m  Downloaded[0m lock_api v0.4.14
+[1m[92m  Downloaded[0m bytemuck v1.25.2
+[1m[92m  Downloaded[0m env_logger v0.11.12
+[1m[92m  Downloaded[0m owned_ttf_parser v0.25.1
+[1m[92m  Downloaded[0m phf_generator v0.11.3
+[1m[92m  Downloaded[0m anstyle-query v1.1.5
+[1m[92m  Downloaded[0m enum-map-derive v0.17.0
+[1m[92m  Downloaded[0m memoffset v0.9.1
+[1m[92m  Downloaded[0m clipboard-win v5.4.3
+[1m[92m  Downloaded[0m jobserver v0.1.35
+[1m[92m  Downloaded[0m once_cell_polyfill v1.70.2
+[1m[92m  Downloaded[0m phf_macros v0.11.3
+[1m[92m  Downloaded[0m bytemuck_derive v1.12.1
+[1m[92m  Downloaded[0m parking_lot_core v0.9.12
+[1m[92m  Downloaded[0m imagesize v0.12.0
+[1m[92m  Downloaded[0m egui_extras v0.29.1
+[1m[92m  Downloaded[0m litrs v1.1.0
+[1m[92m  Downloaded[0m parking_lot v0.12.5
+[1m[92m  Downloaded[0m arboard v3.7.0
+[1m[92m  Downloaded[0m base64 v0.22.1
+[1m[92m  Downloaded[0m bitflags v2.13.2
+[1m[92m  Downloaded[0m egui_glow v0.29.1
+[1m[92m  Downloaded[0m getrandom v0.4.3
+[1m[92m  Downloaded[0m flate2 v1.1.11
+[1m[92m  Downloaded[0m getrandom v0.2.17
+[1m[92m  Downloaded[0m glutin v0.32.3
+[1m[92m  Downloaded[0m cc v1.11.3
+[1m[92m  Downloaded[0m kurbo v0.9.5
+[1m[92m  Downloaded[0m icu_collections v2.4.0
+[1m[92m  Downloaded[0m icu_properties v2.4.0
+[1m[92m  Downloaded[0m idna v1.1.0
+[1m[92m  Downloaded[0m moxcms v0.8.1
+[1m[92m  Downloaded[0m aho-corasick v1.1.5
+[1m[92m  Downloaded[0m egui v0.29.1
+[1m[92m  Downloaded[0m rand_core v0.6.4
+[1m[92m  Downloaded[0m rustls-webpki v0.103.17
+[1m[92m  Downloaded[0m glow v0.14.2
+[1m[92m  Downloaded[0m image v0.25.10
+[1m[92m  Downloaded[0m icu_normalizer v2.4.0
 [1m[92m  Downloaded[0m khronos_api v3.1.0
-[1m[92m  Downloaded[0m simplecss v0.2.2
 [1m[92m  Downloaded[0m epaint_default_fonts v0.29.1
 [1m[92m  Downloaded[0m jiff v1.0.3
-[1m[92m  Downloaded[0m stable_deref_trait v1.2.1
-[1m[92m  Downloaded[0m utf_types v1.0.0
-[1m[92m  Downloaded[0m web-time v1.1.0
-[1m[92m  Downloaded[0m zerovec-derive v0.11.7
-[1m[92m  Downloaded[0m pin-project-lite v0.2.18
-[1m[92m  Downloaded[0m zeroize v1.9.2
 [1m[92m  Downloaded[0m rand v0.8.8
-[1m[92m  Downloaded[0m rustls-pki-types v1.16.0
-[1m[92m  Downloaded[0m smallvec v1.16.6
-[1m[92m  Downloaded[0m usvg v0.37.0
-[1m[92m  Downloaded[0m writeable v0.6.4
-[1m[92m  Downloaded[0m svgtypes v0.13.0
-[1m[92m  Downloaded[0m tiny-skia-path v0.11.4
-[1m[92m  Downloaded[0m yoke v0.8.4
-[1m[92m  Downloaded[0m xml-rs v0.8.29
-[1m[92m  Downloaded[0m tracing-core v0.1.36
-[1m[92m  Downloaded[0m weezl v0.1.12
-[1m[92m  Downloaded[0m webbrowser v1.2.7
-[1m[92m  Downloaded[0m usvg-parser v0.37.0
-[1m[92m  Downloaded[0m zerotrie v0.2.5
-[1m[92m  Downloaded[0m resvg v0.37.0
-[1m[92m  Downloaded[0m rustls-webpki v0.103.17
-[1m[92m  Downloaded[0m url v2.5.9
-[1m[92m  Downloaded[0m unicode-segmentation v1.13.3
-[1m[92m  Downloaded[0m png v0.17.16
-[1m[92m  Downloaded[0m ureq v2.12.1
-[1m[92m  Downloaded[0m zerovec v0.11.9
-[1m[92m  Downloaded[0m png v0.18.1
-[1m[92m  Downloaded[0m regex v1.13.2
-[1m[92m  Downloaded[0m tiny-skia v0.11.4
-[1m[92m  Downloaded[0m ttf-parser v0.25.1
+[1m[92m  Downloaded[0m zerofrom-derive v0.1.8
+[1m[92m  Downloaded[0m roxmltree v0.19.0
+[1m[92m  Downloaded[0m version_check v0.9.5
 [1m[92m  Downloaded[0m webpki-roots v1.0.12
+[1m[92m  Downloaded[0m utf8_iter v1.1.0
+[1m[92m  Downloaded[0m rustls-pki-types v1.16.0
+[1m[92m  Downloaded[0m writeable v0.6.4
+[1m[92m  Downloaded[0m tinystr v0.8.5
 [1m[92m  Downloaded[0m zlib-rs v0.6.9
+[1m[92m  Downloaded[0m tracing-core v0.1.36
+[1m[92m  Downloaded[0m usvg-parser v0.37.0
+[1m[92m  Downloaded[0m zerovec v0.11.9
 [1m[92m  Downloaded[0m zerocopy v0.8.66
+[1m[92m  Downloaded[0m tiny-skia v0.11.4
 [1m[92m  Downloaded[0m regex-syntax v0.8.12
+[1m[92m  Downloaded[0m ttf-parser v0.25.1
 [1m[92m  Downloaded[0m rustls v0.23.46
 [1m[92m  Downloaded[0m tracing v0.1.44
 [1m[92m  Downloaded[0m winit v0.30.13
@@ -185,27 +185,27 @@ exit=101
 [1m[92m   Compiling[0m simd-adler32 v0.3.10
 [1m[92m   Compiling[0m crc32fast v1.5.6
 [1m[92m   Compiling[0m adler2 v2.0.1
-[1m[92m   Compiling[0m utf_types v1.0.0
-[1m[92m   Compiling[0m litemap v0.8.3
-[1m[92m   Compiling[0m once_cell v1.21.4
 [1m[92m   Compiling[0m writeable v0.6.4
-[1m[92m   Compiling[0m utf8_iter v1.1.0
+[1m[92m   Compiling[0m once_cell v1.21.4
+[1m[92m   Compiling[0m litemap v0.8.3
+[1m[92m   Compiling[0m utf_types v1.0.0
 [1m[92m   Compiling[0m miniz_oxide v0.9.1
+[1m[92m   Compiling[0m utf8_iter v1.1.0
 [1m[92m   Compiling[0m khronos_api v3.1.0
-[1m[92m   Compiling[0m icu_normalizer_data v2.4.0
 [1m[92m   Compiling[0m icu_properties_data v2.4.0
-[1m[92m   Compiling[0m cfg_aliases v0.2.2
-[1m[92m   Compiling[0m autocfg v1.5.1
+[1m[92m   Compiling[0m icu_normalizer_data v2.4.0
 [1m[92m   Compiling[0m flate2 v1.1.11
+[1m[92m   Compiling[0m autocfg v1.5.1
+[1m[92m   Compiling[0m cfg_aliases v0.2.2
+[1m[92m   Compiling[0m parking_lot_core v0.9.12
 [1m[92m   Compiling[0m version_check v0.9.5
-[1m[92m   Compiling[0m zerocopy v0.8.66
 [1m[92m   Compiling[0m xml-rs v0.8.29
 [1m[92m   Compiling[0m synstructure v0.14.0
-[1m[92m   Compiling[0m parking_lot_core v0.9.12
+[1m[92m   Compiling[0m zerocopy v0.8.66
+[1m[92m   Compiling[0m gl_generator v0.14.0
 [1m[92m   Compiling[0m ahash v0.8.14
 [1m[92m   Compiling[0m ttf-parser v0.25.1
 [1m[92m   Compiling[0m scopeguard v1.2.0
-[1m[92m   Compiling[0m gl_generator v0.14.0
 [1m[92m   Compiling[0m lock_api v0.4.14
 [1m[92m   Compiling[0m zerofrom-derive v0.1.8
 [1m[92m   Compiling[0m yoke-derive v0.8.4
@@ -214,47 +214,47 @@ exit=101
 [1m[92m   Compiling[0m yoke v0.8.4
 [1m[92m   Compiling[0m zerovec-derive v0.11.7
 [1m[92m   Compiling[0m bytemuck v1.25.2
-[1m[92m   Compiling[0m displaydoc v0.2.7
 [1m[92m   Compiling[0m zerovec v0.11.9
-[1m[92m   Compiling[0m emath v0.29.1
+[1m[92m   Compiling[0m displaydoc v0.2.7
 [1m[92m   Compiling[0m potential_utf v0.1.6
+[1m[92m   Compiling[0m emath v0.29.1
+[1m[92m   Compiling[0m owned_ttf_parser v0.25.1
 [1m[92m   Compiling[0m tinystr v0.8.5
 [1m[92m   Compiling[0m zerotrie v0.2.5
 [1m[92m   Compiling[0m icu_locale_core v2.4.0
 [1m[92m   Compiling[0m icu_collections v2.4.0
-[1m[92m   Compiling[0m owned_ttf_parser v0.25.1
 [1m[92m   Compiling[0m windows-sys v0.61.2
+[1m[92m   Compiling[0m bitflags v2.13.2
 [1m[92m   Compiling[0m ab_glyph_rasterizer v0.1.10
 [1m[92m   Compiling[0m shlex v2.0.1
 [1m[92m   Compiling[0m icu_provider v2.4.0
 [1m[92m   Compiling[0m percent-encoding v2.3.2
-[1m[92m   Compiling[0m find-msvc-tools v0.1.15
 [1m[92m   Compiling[0m icu_properties v2.4.0
 [1m[92m   Compiling[0m icu_normalizer v2.4.0
-[1m[92m   Compiling[0m bitflags v2.13.2
+[1m[92m   Compiling[0m find-msvc-tools v0.1.15
 [1m[92m   Compiling[0m cc v1.11.3
 [1m[92m   Compiling[0m form_urlencoded v1.2.3
-[1m[92m   Compiling[0m ab_glyph v0.2.32
 [1m[92m   Compiling[0m idna_adapter v1.2.2
+[1m[92m   Compiling[0m ab_glyph v0.2.32
 [1m[92m   Compiling[0m idna v1.1.0
 [1m[92m   Compiling[0m ecolor v0.29.1
 [1m[92m   Compiling[0m parking_lot v0.12.5
 [1m[92m   Compiling[0m miniz_oxide v0.8.9
 [1m[92m   Compiling[0m fdeflate v0.3.7
-[1m[92m   Compiling[0m nohash-hasher v0.2.0
 [1m[92m   Compiling[0m epaint_default_fonts v0.29.1
-[1m[92m   Compiling[0m epaint v0.29.1
+[1m[92m   Compiling[0m nohash-hasher v0.2.0
 [1m[92m   Compiling[0m ring v0.17.14
+[1m[92m   Compiling[0m epaint v0.29.1
 [1m[92m   Compiling[0m url v2.5.9
 [1m[92m   Compiling[0m serde_derive v1.0.229
 [1m[92m   Compiling[0m num-traits v0.2.19
 [1m[92m   Compiling[0m windows-sys v0.52.0
+[1m[92m   Compiling[0m float-cmp v0.9.0
+[1m[92m   Compiling[0m raw-window-handle v0.6.2
 [1m[92m   Compiling[0m zeroize v1.9.2
 [1m[92m   Compiling[0m arrayvec v0.7.8
-[1m[92m   Compiling[0m raw-window-handle v0.6.2
-[1m[92m   Compiling[0m float-cmp v0.9.0
-[1m[92m   Compiling[0m strict-num v0.1.1
 [1m[92m   Compiling[0m rustls-pki-types v1.16.0
+[1m[92m   Compiling[0m strict-num v0.1.1
 [1m[92m   Compiling[0m egui v0.29.1
 [1m[92m   Compiling[0m serde v1.0.229
 [1m[92m   Compiling[0m glutin_wgl_sys v0.6.1
@@ -265,199 +265,148 @@ exit=101
 [1m[92m   Compiling[0m tracing-core v0.1.36
 [1m[92m   Compiling[0m arrayref v0.3.9
 [1m[92m   Compiling[0m pin-project-lite v0.2.18
-[1m[92m   Compiling[0m tracing v0.1.44
 [1m[92m   Compiling[0m tiny-skia-path v0.11.4
+[1m[92m   Compiling[0m tracing v0.1.44
 [1m[92m   Compiling[0m regex-automata v0.4.19
 [1m[92m   Compiling[0m kurbo v0.9.5
 [1m[92m   Compiling[0m memoffset v0.9.1
 [1m[92m   Compiling[0m glutin v0.32.3
 [1m[92m   Compiling[0m getrandom v0.2.17
-[1m[92m   Compiling[0m untrusted v0.9.0
-[1m[92m   Compiling[0m smol_str v0.2.2
-[1m[92m   Compiling[0m anstyle v1.0.14
-[1m[92m   Compiling[0m siphasher v0.3.11
-[1m[92m   Compiling[0m siphasher v1.0.4
-[1m[92m   Compiling[0m once_cell_polyfill v1.70.2
-[1m[92m   Compiling[0m litrs v1.1.0
 [1m[92m   Compiling[0m utf8parse v0.2.2
-[1m[92m   Compiling[0m dpi v0.1.2
+[1m[92m   Compiling[0m siphasher v1.0.4
 [1m[92m   Compiling[0m unicase v2.10.0
 [1m[92m   Compiling[0m error-code v3.4.0
-[1m[92m   Compiling[0m cursor-icon v1.2.0
-[1m[92m   Compiling[0m pxfm v0.1.30
-[1m[92m   Compiling[0m weezl v0.1.12
-[1m[92m   Compiling[0m unicode-segmentation v1.13.3
+[1m[92m   Compiling[0m siphasher v0.3.11
 [1m[92m   Compiling[0m color_quant v1.1.0
-[1m[92m   Compiling[0m gif v0.14.2
+[1m[92m   Compiling[0m untrusted v0.9.0
+[1m[92m   Compiling[0m cursor-icon v1.2.0
+[1m[92m   Compiling[0m litrs v1.1.0
+[1m[92m   Compiling[0m weezl v0.1.12
+[1m[92m   Compiling[0m smol_str v0.2.2
+[1m[92m   Compiling[0m anstyle v1.0.14
+[1m[92m   Compiling[0m pxfm v0.1.30
+[1m[92m   Compiling[0m dpi v0.1.2
+[1m[92m   Compiling[0m once_cell_polyfill v1.70.2
+[1m[92m   Compiling[0m unicode-segmentation v1.13.3
+[1m[92m   Compiling[0m anstyle-wincon v3.0.11
 [1m[92m   Compiling[0m document-features v0.2.12
-[1m[92m   Compiling[0m clipboard-win v5.4.3
+[1m[92m   Compiling[0m gif v0.14.2
 [1m[92m   Compiling[0m moxcms v0.8.1
+[1m[92m   Compiling[0m svgtypes v0.13.0
+[1m[92m   Compiling[0m clipboard-win v5.4.3
 [1m[92m   Compiling[0m phf_shared v0.11.3
 [1m[92m   Compiling[0m anstyle-parse v1.0.0
-[1m[92m   Compiling[0m anstyle-wincon v3.0.11
-[1m[92m   Compiling[0m svgtypes v0.13.0
 [1m[92m   Compiling[0m regex v1.13.2
 [1m[92m   Compiling[0m png v0.18.1
 [1m[92m   Compiling[0m anstyle-query v1.1.5
 [1m[92m   Compiling[0m glutin-winit v0.5.0
 [1m[92m   Compiling[0m libloading v0.8.9
 [1m[92m   Compiling[0m jiff-core v1.0.2
-[1m[92m   Compiling[0m rctree v0.5.0
-[1m[92m   Compiling[0m byteorder-lite v0.1.0
 [1m[92m   Compiling[0m winapi v0.3.9
-[1m[92m   Compiling[0m is_terminal_polyfill v1.70.2
+[1m[92m   Compiling[0m rctree v0.5.0
 [1m[92m   Compiling[0m colorchoice v1.0.5
+[1m[92m   Compiling[0m is_terminal_polyfill v1.70.2
+[1m[92m   Compiling[0m byteorder-lite v0.1.0
 [1m[92m   Compiling[0m rustls v0.23.46
-[1m[92m   Compiling[0m anstream v1.0.0
 [1m[92m   Compiling[0m image v0.25.10
-[1m[92m   Compiling[0m usvg-tree v0.37.0
 [1m[92m   Compiling[0m jiff v1.0.3
+[1m[92m   Compiling[0m anstream v1.0.0
+[1m[92m   Compiling[0m usvg-tree v0.37.0
 [1m[92m   Compiling[0m winrust-core v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-core)
-[1m[92m   Compiling[0m rustls-webpki v0.103.17
 [1m[92m   Compiling[0m env_filter v2.1.0
 [1m[92m   Compiling[0m phf v0.11.3
 [1m[92m   Compiling[0m arboard v3.7.0
+[1m[92m   Compiling[0m rustls-webpki v0.103.17
 [1m[92m   Compiling[0m webpki-roots v1.0.12
 [1m[92m   Compiling[0m webbrowser v1.2.7
 [1m[92m   Compiling[0m simplecss v0.2.2
-[1m[92m   Compiling[0m bitflags v1.3.2
-[1m[92m   Compiling[0m imagesize v0.12.0
-[1m[92m   Compiling[0m data-url v0.3.2
-[1m[92m   Compiling[0m glow v0.14.2
-[1m[92m   Compiling[0m roxmltree v0.19.0
 [1m[92m   Compiling[0m web-time v1.1.0
 [1m[92m   Compiling[0m subtle v2.6.1
-[1m[92m   Compiling[0m egui-winit v0.29.1
+[1m[92m   Compiling[0m roxmltree v0.19.0
+[1m[92m   Compiling[0m data-url v0.3.2
+[1m[92m   Compiling[0m glow v0.14.2
+[1m[92m   Compiling[0m bitflags v1.3.2
+[1m[92m   Compiling[0m imagesize v0.12.0
+[1m[92m   Compiling[0m png v0.17.16
 [1m[92m   Compiling[0m usvg-parser v0.37.0
 [1m[92m   Compiling[0m egui_glow v0.29.1
-[1m[92m   Compiling[0m png v0.17.16
+[1m[92m   Compiling[0m egui-winit v0.29.1
 [1m[92m   Compiling[0m webpki-roots v0.26.11
 [1m[92m   Compiling[0m mime_guess2 v2.3.1
 [1m[92m   Compiling[0m env_logger v0.11.12
 [1m[92m   Compiling[0m base64 v0.22.1
-[1m[92m   Compiling[0m xmlwriter v0.1.0
+[1m[92m   Compiling[0m base64 v0.21.7
 [1m[92m   Compiling[0m static_assertions v1.1.0
 [1m[92m   Compiling[0m pico-args v0.5.0
-[1m[92m   Compiling[0m base64 v0.21.7
+[1m[92m   Compiling[0m xmlwriter v0.1.0
 [1m[92m   Compiling[0m usvg v0.37.0
-[1m[92m   Compiling[0m ureq v2.12.1
-[1m[92m   Compiling[0m eframe v0.29.1
 [1m[92m   Compiling[0m tiny-skia v0.11.4
+[1m[92m   Compiling[0m eframe v0.29.1
+[1m[92m   Compiling[0m ureq v2.12.1
 [1m[92m   Compiling[0m winrust-ui v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-ui)
 [1m[92m   Compiling[0m enum-map-derive v0.17.0
 [1m[92m   Compiling[0m rgb v0.8.53
 [1m[92m   Compiling[0m mime v0.3.18
-[1m[92m   Compiling[0m resvg v0.37.0
 [1m[92m   Compiling[0m enum-map v2.7.3
 [1m[92m   Compiling[0m ehttp v0.5.0
+[1m[92m   Compiling[0m resvg v0.37.0
 [1m[92m   Compiling[0m winrust-kernel-abi v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
-[1m[92m   Compiling[0m winrust-kernel-control v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
 [1m[92m   Compiling[0m egui_extras v0.29.1
+[1m[92m   Compiling[0m winrust-kernel-control v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-kernel\control)
 [1m[92m   Compiling[0m winrust-launcher v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-launcher)
 [1m[92m   Compiling[0m winrust-desktop v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-desktop)
 [1m[92m   Compiling[0m winrust-sysctl v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
+[1m[92m   Compiling[0m winrust-taskmgr v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
+[1m[93mwarning[0m[1m[97m: type `Sampler` is more private than the item `TaskManagerApp::sampler`[0m
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:55:5
+    [1m[96m|[0m
+[1m[96m 55[0m [1m[96m|[0m     pub(super) sampler: Sampler,
+    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `TaskManagerApp::sampler` is reachable at visibility `pub(crate)`[0m
+    [1m[96m|[0m
+[1m[92mnote[0m: but type `Sampler` is only usable at visibility `pub(in crate::app)`
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:142:1
+    [1m[96m|[0m
+[1m[96m142[0m [1m[96m|[0m pub(super) struct Sampler {
+    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(private_interfaces)]` on by default
+
+[1m[93mwarning[0m[1m[97m: type `Snapshot` is more private than the item `TaskManagerApp::snapshot`[0m
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:56:5
+    [1m[96m|[0m
+[1m[96m 56[0m [1m[96m|[0m     pub(super) snapshot: Snapshot,
+    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `TaskManagerApp::snapshot` is reachable at visibility `pub(crate)`[0m
+    [1m[96m|[0m
+[1m[92mnote[0m: but type `Snapshot` is only usable at visibility `pub(in crate::app)`
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:132:1
+    [1m[96m|[0m
+[1m[96m132[0m [1m[96m|[0m pub(super) struct Snapshot {
+    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[93mwarning[0m[1m[97m: type `Snapshot` is more private than the item `TaskManagerApp::pending_snapshot`[0m
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:84:5
+    [1m[96m|[0m
+[1m[96m 84[0m [1m[96m|[0m     pub(super) pending_snapshot: Option<Snapshot>,
+    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `TaskManagerApp::pending_snapshot` is reachable at visibility `pub(crate)`[0m
+    [1m[96m|[0m
+[1m[92mnote[0m: but type `Snapshot` is only usable at visibility `pub(in crate::app)`
+   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:132:1
+    [1m[96m|[0m
+[1m[96m132[0m [1m[96m|[0m pub(super) struct Snapshot {
+    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
+[1m[93mwarning[0m[1m[97m: type `StartupItem` is more private than the item `TaskManagerApp::startup`[0m
+  [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:87:5
+   [1m[96m|[0m
+[1m[96m87[0m [1m[96m|[0m     pub(super) startup: Vec<StartupItem>,
+   [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `TaskManagerApp::startup` is reachable at visibility `pub(crate)`[0m
+   [1m[96m|[0m
+[1m[92mnote[0m: but type `StartupItem` is only usable at visibility `pub(in crate::app)`
+  [1m[96m--> [0mcrates\winrust-taskmgr\src\app\startup.rs:15:1
+   [1m[96m|[0m
+[1m[96m15[0m [1m[96m|[0m pub(super) struct StartupItem {
+   [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+
 [1m[92m   Compiling[0m winrust-explorer v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-explorer)
-[1m[91merror[E0599][0m[1m[97m: the method `clone` exists for enum `std::option::Option<DragGhost>`, but its trait bounds were not satisfied[0m
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\keyboard.rs:59:43
-    [1m[96m|[0m
-[1m[96m 59[0m [1m[96m|[0m         let Some(ghost) = self.drag_ghost.clone() else {
-    [1m[96m|[0m                                           [1m[91m^^^^^[0m [1m[91mmethod cannot be called on `std::option::Option<DragGhost>` due to unsatisfied trait bounds[0m
-    [1m[96m|[0m
-   [1m[96m::: [0mcrates\winrust-explorer\src\app\state.rs:168:1
-    [1m[96m|[0m
-[1m[96m168[0m [1m[96m|[0m pub(super) struct DragGhost {
-    [1m[96m|[0m [1m[96m---------------------------[0m [1m[96mdoesn't satisfy `DragGhost: Clone`[0m
-    [1m[96m|[0m
-    [1m[96m= [0m[1m[97mnote[0m: the following trait bounds were not satisfied:
-            `DragGhost: Clone`
-            which is required by `std::option::Option<DragGhost>: Clone`
-[1m[96mhelp[0m: consider annotating `DragGhost` with `#[derive(Clone)]`
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\state.rs:168:1
-    [1m[96m|[0m
-[1m[96m168[0m [92m+ #[derive(Clone)][0m
-[1m[96m169[0m [1m[96m|[0m pub(super) struct DragGhost {
-    [1m[96m|[0m
-
-[1m[91merror[E0277][0m[1m[97m: the trait bound `std::sync::mpsc::Receiver<Listing>: Clone` is not satisfied[0m
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\state.rs:100:5
-    [1m[96m|[0m
-[1m[96m 90[0m [1m[96m|[0m #[derive(Debug, Clone)]
-    [1m[96m|[0m                 [1m[96m-----[0m [1m[96min this derive macro expansion[0m
-[1m[96m...[0m
-[1m[96m100[0m [1m[96m|[0m     listing_rx: Receiver<Listing>,
-    [1m[96m|[0m     [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `Clone` is not implemented for `std::sync::mpsc::Receiver<Listing>`[0m
-
-[1m[91merror[E0277][0m[1m[97m: the trait bound `std::sync::mpsc::Receiver<JobUpdate>: Clone` is not satisfied[0m
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\state.rs:102:5
-    [1m[96m|[0m
-[1m[96m 90[0m [1m[96m|[0m #[derive(Debug, Clone)]
-    [1m[96m|[0m                 [1m[96m-----[0m [1m[96min this derive macro expansion[0m
-[1m[96m...[0m
-[1m[96m102[0m [1m[96m|[0m     job_rx: Receiver<JobUpdate>,
-    [1m[96m|[0m     [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `Clone` is not implemented for `std::sync::mpsc::Receiver<JobUpdate>`[0m
-
-[1m[91merror[E0277][0m[1m[97m: the trait bound `std::sync::mpsc::Receiver<(PathBuf, u64, u64)>: Clone` is not satisfied[0m
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\state.rs:104:5
-    [1m[96m|[0m
-[1m[96m 90[0m [1m[96m|[0m #[derive(Debug, Clone)]
-    [1m[96m|[0m                 [1m[96m-----[0m [1m[96min this derive macro expansion[0m
-[1m[96m...[0m
-[1m[96m104[0m [1m[96m|[0m     folder_size_rx: Receiver<(PathBuf, u64, u64)>,
-    [1m[96m|[0m     [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `Clone` is not implemented for `std::sync::mpsc::Receiver<(PathBuf, u64, u64)>`[0m
-
-[1m[91merror[E0277][0m[1m[97m: the trait bound `std::sync::mpsc::Receiver<(PathBuf, std::vec::Vec<winrust_core::disk::DirEntry>)>: Clone` is not satisfied[0m
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\state.rs:106:5
-    [1m[96m|[0m
-[1m[96m 90[0m [1m[96m|[0m #[derive(Debug, Clone)]
-    [1m[96m|[0m                 [1m[96m-----[0m [1m[96min this derive macro expansion[0m
-[1m[96m...[0m
-[1m[96m106[0m [1m[96m|[0m     search_rx: Receiver<(PathBuf, Vec<DirEntry>)>,
-    [1m[96m|[0m     [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `Clone` is not implemented for `std::sync::mpsc::Receiver<(PathBuf, std::vec::Vec<winrust_core::disk::DirEntry>)>`[0m
-
-[1m[91merror[E0382][0m[1m[97m: borrow of moved value: `fav_drag`[0m
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\panels.rs:517:42
-    [1m[96m|[0m
-[1m[96m514[0m [1m[96m|[0m                         fav_drag = Some((idx, path.clone()));
-    [1m[96m|[0m                         [1m[96m--------[0m [1m[96mthis reinitialization might get skipped[0m
-[1m[96m...[0m
-[1m[96m517[0m [1m[96m|[0m                     if resp.hovered() && fav_drag.is_some() {
-    [1m[96m|[0m                                          [1m[91m^^^^^^^^[0m [1m[91mvalue borrowed here after move[0m
-[1m[96m...[0m
-[1m[96m520[0m [1m[96m|[0m                         let line_y = if fav_drag.map(|(f, _)| f) < Some(idx) {
-    [1m[96m|[0m                                                  [1m[96m---------------[0m [1m[96m`fav_drag` moved due to this method call, in previous iteration of loop[0m
-    [1m[96m|[0m
-[1m[92mnote[0m: `std::option::Option::<T>::map` takes ownership of the receiver `self`, which moves `fav_drag`
-   [1m[96m--> [0m/rustc/0ef1bc386059596dada8fb65b50425aab2ea637a/library/core\src\option.rs:1160:27
-    [1m[96m= [0m[1m[97mnote[0m: move occurs because `fav_drag` has type `std::option::Option<(usize, PathBuf)>`, which does not implement the `Copy` trait
-[1m[96mhelp[0m: you can `clone` the value and consume it, but this might not be your desired behavior
-    [1m[96m|[0m
-[1m[96m520[0m [1m[96m| [0m                        let line_y = if fav_drag[92m.clone()[0m.map(|(f, _)| f) < Some(idx) {
-    [1m[96m|[0m                                                 [92m++++++++[0m
-
-[1m[91merror[E0382][0m[1m[97m: borrow of moved value: `fav_drag`[0m
-   [1m[96m--> [0mcrates\winrust-explorer\src\app\panels.rs:600:33
-    [1m[96m|[0m
-[1m[96m374[0m [1m[96m|[0m         let mut fav_drag: Option<(usize, PathBuf)> = None;
-    [1m[96m|[0m             [1m[96m------------[0m [1m[96mmove occurs because `fav_drag` has type `std::option::Option<(usize, PathBuf)>`, which does not implement the `Copy` trait[0m
-[1m[96m...[0m
-[1m[96m411[0m [1m[96m|[0m             .show(ui, |ui| {
-    [1m[96m|[0m                       [1m[96m----[0m [1m[96mvalue moved into closure here[0m
-[1m[96m...[0m
-[1m[96m491[0m [1m[96m|[0m                 for (idx, path) in pinned.iter().enumerate() {
-    [1m[96m|[0m                 [1m[96m--------------------------------------------[0m [1m[96minside of this loop[0m
-[1m[96m...[0m
-[1m[96m520[0m [1m[96m|[0m                         let line_y = if fav_drag.map(|(f, _)| f) < Some(idx) {
-    [1m[96m|[0m                                         [1m[96m--------[0m [1m[96mvariable moved due to use in closure[0m
-[1m[96m...[0m
-[1m[96m600[0m [1m[96m|[0m             if let Some(from) = fav_drag.as_ref().map(|(i, _)| *i) {
-    [1m[96m|[0m                                 [1m[91m^^^^^^^^[0m [1m[91mvalue borrowed here after move[0m
-    [1m[96m|[0m
-[1m[96mhelp[0m: consider cloning the value if the performance cost is acceptable
-    [1m[96m|[0m
-[1m[96m520[0m [1m[96m| [0m                        let line_y = if fav_drag[92m.clone()[0m.map(|(f, _)| f) < Some(idx) {
-    [1m[96m|[0m                                                 [92m++++++++[0m
-
-[1m[97mSome errors have detailed explanations: E0277, E0382, E0599.[0m
-[1m[97mFor more information about an error, try `rustc --explain E0277`.[0m
-[1m[91merror[0m: could not compile `winrust-explorer` (bin "winrust-explorer") due to 7 previous errors
-[1m[93mwarning[0m: build failed, waiting for other jobs to finish...
+[1m[92m   Compiling[0m winrust-services v0.9.3 (D:\a\WinRust\WinRust\crates\winrust-services)
+[1m[93mwarning[0m: `winrust-taskmgr` (bin "winrust-taskmgr") generated 4 warnings
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 1m 11s
