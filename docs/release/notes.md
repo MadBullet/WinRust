@@ -1,111 +1,102 @@
-Windows 10/11 system components rewritten in Rust. Release 0.9.1 is the
-correctness release for what 0.9.0 put on screen: four groups of bugs found in
-review, each fixed at its cause, and every structural change run through
-[deslop-please](https://github.com/deterministic-machines/deslop-please) again.
+Windows 10/11 system components rewritten in Rust. Release 0.9.2 answers a
+second review of 0.9.1: four groups of reports, fixed at their causes.
 
-## 1. The launcher now knows what it is allowed to do
+## 1. Explorer
 
-The review's first finding was blunt: start the launcher as an administrator
-and it still calls you a standard user, then refuses to install. Three things
-were wrong at once:
+* **A drag is a move.** Dropping a folder into another folder copied it - the
+  drop passed `cut = false` unconditionally - while the file job it started was
+  labelled "Copying" and left the source in place. A drag now moves (copy then
+  delete across volumes) and holding Ctrl copies, which is what the same
+  gesture does in Windows.
+* **You can see where it will land.** The hovered folder's whole row is filled
+  and outlined during the drag; before, only a hairline around the name cell
+  hinted at it, and only in the details view.
+* **The window opens on "This PC"**, so the drives are the first thing on
+  screen. A virtual folder is a tab that carries the marker itself, so opening
+  a drive no longer falls back to the drive grid.
+* **The left pane is the user's now.** The "folders in this view" list merely
+  repeated the right pane; it is gone, and in its place is a favourites list
+  filled by dragging folders onto it. Right-click an entry to unpin it. The
+  list survives a restart.
+* **Rubber-band selection in all four views.** Press on empty space, drag a
+  box, release: everything the box touched is selected, and Ctrl adds to an
+  existing selection instead of replacing it. The box tests the rows' real
+  screen rectangles, recorded by each view as it draws, so it cannot drift from
+  what is on screen.
 
-* one boolean (`elevated`) answered three different questions - *is this
-  process elevated*, *is the account an administrator*, and *could it elevate
-  by relaunching* - so a UAC-limited administrator was indistinguishable from
-  an ordinary user;
-* the token query returned `false` on any failure, hiding the real error behind
-  a policy-looking answer;
-* the only advice the UI had was "relaunch as administrator", with no way to do
-  it.
+## 2. Start, taskbar and the tray
 
-`Privilege` (new, `winrust-core::system::privilege`) is now the single answer:
-`elevated`, `administrator`, `can_elevate`, plus `may_modify_system()` and a
-label. It asks Windows with `TokenElevation`, `TokenElevationType` **and**
-`CheckTokenMembership` against the Administrators SID, so "limited admin" is
-reported as what it is. `UserInfo` embeds it, so no call site moved.
+* **The Start button no longer closes what it just opened.** The taskbar draws
+  before the Start menu, so the click that opened the menu was still "a click
+  outside it" when the menu's own outside-click test ran later in the same
+  frame. The session stamps the frame it opened on, and that frame is exempt.
+* **The button is the Windows mark**, four painted panes, not `⊞` (U+229E,
+  "squared plus"), which read as a plus in a box on every font.
+* **Start > Settings is Windows Settings.** It opened the launcher's own
+  options; it opens `ms-settings:`, the same thing `Win+I` does - and `Win+I`
+  was not implemented at all, now it is.
+* **Flyouts sit on the bar.** They hung from the bar's top edge downward, so
+  they covered the taskbar and their lower rows ran off the screen. Their
+  bottom edge now sits on the bar's top edge and they grow upward. The overflow
+  chevron points up over the panel it opens.
+* **The volume slider works.** `with_device()` created its own `ComGuard`, so
+  `CoUninitialize` ran while the caller still held the `IMMDevice`; every query
+  on it failed and `master_volume()` was always `None`. The guard belongs to
+  the function that owns the objects. An unknown level shows "—", never a
+  false zero.
+* **The running indicator is an underline** pinned to the bar's bottom edge and
+  wider for a process with several windows, in place of a dash inside the
+  button.
+* **Clicking a thumbnail peeks.** Resting the pointer on a taskbar preview
+  raises a full-screen peek - the screen dims, that window is shown large -
+  and moving off it lowers the peek. A window that closes takes its peek with
+  it. Hovering the preview no longer opens it, which is what made the old
+  "hover" feel like a jump.
 
-The launcher shows the right badge, and when the answer is "you could elevate"
-it offers a **Restart as administrator** button that goes through
-`ShellExecuteExW("runas")` - the documented consent path - instead of an error
-message telling the user to go find the exe.
+## 3. Task Manager
 
-## 2. The Start menu and the taskbar
+* **Sorting starts in the direction the column reads.** Every column started
+  descending, so the first click on "Name" looked like nothing had happened;
+  text columns now start A-Z and numeric columns biggest-first, and a second
+  click reverses.
+* **The group headers are checkboxes.** "Приложения" and "Фоновые процессы"
+  had a bare chevron, which said nothing about whether the group was part of
+  the view; a ticked box means shown, and clicking the box or the caption
+  toggles it.
+* **Update speed is a setting**: 1 s by default, 3 s, 5 s and instant, offered
+  by a right-click on the process list. The sampler keeps sampling at its own
+  rate; the view adopts a sample when the chosen interval allows it, so a
+  slower speed does not starve the graphs.
 
-* **It closes as fast as it opens.** One easing rate (14/s) served both
-  directions, so dismissal took ~7 frames. Opening is 22/s and closing 45/s,
-  the same asymmetry Windows uses.
-* **It sits where it belongs.** The panel is anchored to the taskbar's top
-  edge, and its height is capped by the space actually left on screen; the
-  footer can no longer be pushed behind the bar.
-* **Two columns, not sixty rectangles.** Left: every installed app once,
-  alphabetical, with the icon the shell reports. Right: pinned apps as square
-  icon tiles with the name underneath. Searching filters the left column.
-* **One Settings, one account, one power button.** The power button opens a
-  list - shut down, restart, sleep, hibernation, sign out - and **every entry
-  asks for confirmation** in its own dialog. `Win+X` uses the same path, so a
-  misclick cannot shut the machine down. Hibernation is greyed out when
-  `powercfg /hibernate` is off, instead of silently doing nothing.
-  Sleep and hibernation now call `SetSuspendState` directly; routing
-  `SetSuspendState` through `rundll32` hibernates on many systems even when
-  "sleep" was requested.
-* **Tray flyouts hang from their button.** They used to be placed by
-  subtracting a *guessed* height from the bar, so the calendar floated up to
-  60 px above the bar. A flyout is now anchored by its top edge under the
-  button that opened it and grows downwards into the screen.
-* **Running and active are two different signals.** Running: a short blue line
-  (16 px, wider per extra window) on the bar's inner edge. Active: a soft
-  translucent fill behind the button. Hover is a third, weaker fill, so it can
-  no longer mask "active".
-* **The preview is a thumbnail at the mouse.** It is centred on the hovered
-  button instead of pinned to the tray's right edge, its card is 84-178 px wide
-  and 80-150 px tall chosen from the window's aspect ratio, and windows that do
-  not really exist are filtered out - it is thumbnail-first, title second.
-* **`Win+V` works again.** Windows' clipboard history lives in `explorer.exe`;
-  with WinRust as the shell it stopped existing. The core now has a
-  `shell::clipboard::History` (40 entries, de-duplicated, most recent first) and
-  the desktop polls the system clipboard, opens the panel on `Win+V`, and puts a
-  picked entry back on the clipboard.
+## 4. Services
 
-## 3. Explorer
+* **Right-clicking a service opens a menu**: Start, Stop, Pause, Resume,
+  Restart, Properties. Restart is stop, wait, then start, and a service that
+  refuses to stop reports that instead of leaving the machine half-restarted.
+  The menu acts on the row it was opened on, and opening it selects that row.
 
-* **Double-clicking a drive opens the drive.** `is_computer_view()` also
-  answered "yes" for a bare root like `C:\`, so navigating to a drive
-  re-rendered the "This PC" tile grid and the click looked dead. A drive root
-  is a folder now.
-* **The navigation pane has a place to right-click.** A strip above the folder
-  list carries the same background menu as the file area (refresh, paste, new
-  folder).
+## Where the new state lives
 
-## 4. Task Manager
+The same seams the linter pointed at in 0.9.1, extended rather than duplicated:
 
-* **Grouping no longer destroys the column sort.** With "group by app" on, the
-  list was sorted by `(is_app, group)` only, so clicking a column appeared to do
-  nothing. Grouping now partitions (apps, then background) and orders by group,
-  using the chosen column as the tie-breaker - one `compare_rows` defines
-  "what CPU means" for both the flat and the grouped view.
-* **The app-child arrow means something.** The indent test compared the display
-  name with the lowercased group key, which put an arrow on nearly every row.
-* **The performance graph does not overlap.** The fill was a `convex_polygon`
-  over a polyline that goes up and down - not a convex shape - so egui
-  triangulated it as a fan and the shading spilled out of the area. It is a
-  `Mesh` of one quad per interval now. The four graphs also shared a
-  two-column layout whose columns were up to 460 px each and collided on a
-  normal window; the page is one column that scrolls.
-
-## What the linter reports
-
-`field-leak` and `shallow-module` again, on the new seams:
-
-| was | now |
+| new in 0.9.2 | owner |
 | --- | --- |
-| five loose Start fields on `DesktopApp` (`start_open`, `start_search`, `start_power_menu`, `start_anim`, app list) | `session::Session` with verbs (`open`, `close`, `toggle`, `ask_power`, `confirm_power`) |
-| `hover_pid` + `hover_since` on `DesktopApp`, preview anchored to the screen | `taskbar::Hover` (pid, since, anchor) with `enter` / `clear` / `rested` |
-| flyout placement guessed from a height table | `TrayState` hands out `toggle_from(button, bar_top)` and `anchor()` |
-| "is this an administrator?" asked in four places | `Privilege::current()` once, embedded in `UserInfo` |
+| the frame a menu was opened on, and the `Win+I` latch | `session::Session` (`opened_at`, `note_opened`, `settings_chord_seen`) |
+| how often the view adopts a sample | `app::UpdateInterval`, with `hold()` as the only place its meaning is spelled out |
+| which folders the left pane shows | `ExplorerApp::pinned`, saved in `PersistedState` alongside the tab list |
+| the rows a rubber band can touch | `ExplorerApp::row_rects`, refilled by each view as it draws |
+| a generic key probe | `shell::window::key_down(vk)`, with `win_key_down` / `v_key_down` / `i_key_down` as thin names for it |
+
+`shell::window::key_down` replaces the two near-copies of the
+`GetAsyncKeyState` read, so a fourth chord is now a one-line wrapper rather
+than a third implementation.
 
 The structure drawing - before and after - is in `docs/architecture.svg`.
 
 ## Everything else
 
 * `cargo fmt --all` and `cargo clippy` are clean on every crate; the release,
-  clippy and test jobs are green on the tagged commit.
+  build, fmt, clippy and test jobs are green on the tagged commit.
+* The volume fix also removes the last `ComGuard` inside `with_device()`, so
+  the rule "one COM apartment per top-level operation" now holds everywhere in
+  `devices::audio`.
