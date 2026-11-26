@@ -496,7 +496,9 @@ impl TaskManagerApp {
                 is_app_row(b)
                     .cmp(&is_app_row(a))
                     .then(a.group.cmp(&b.group))
-                    .then_with(|| compare_rows(a, b, self.sort_by, self.sort_desc))
+                    .then_with(|| {
+                        compare_rows(a, b, self.sort_by, self.sort_desc)
+                    })
             });
             // A collapsed group hides all of its rows, which is the whole point
             // of the chevron in the stock Task Manager.
@@ -626,8 +628,9 @@ impl TaskManagerApp {
                     // the display name with the group - what 0.9.0 did - put
                     // an arrow on almost every row, because the group is
                     // lowercased while the label is not.
-                    let child =
-                        self.group_by_app && r.group != label.to_lowercase() && !r.group.is_empty();
+                    let child = self.group_by_app
+                        && r.group != label.to_lowercase()
+                        && !r.group.is_empty();
                     let shown = if child {
                         format!("    ↳ {}", winrust_core::i18n::middle(&label, 36, 20))
                     } else {

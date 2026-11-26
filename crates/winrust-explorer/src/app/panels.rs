@@ -1,6 +1,7 @@
 //! The chrome around the file area: the tab strip, the command bar and the
 //! navigation pane.
 
+use super::commands::Command;
 use super::state::{truncate_middle, ExplorerApp, FileClipboard};
 use super::tabs::{file_name_of, Special, Tab};
 use super::viewmode::{SortKeySerde, ViewMode};
@@ -378,8 +379,10 @@ impl ExplorerApp {
         // the folder list opens the same context menu the file area has - the
         // review's "there is nowhere to right-click in the left pane".  The
         // strip is allocated first so it exists even when the tree is short.
-        let strip =
-            ui.allocate_response(egui::vec2(ui.available_width(), 10.0), egui::Sense::click());
+        let strip = ui.allocate_response(
+            egui::vec2(ui.available_width(), 10.0),
+            egui::Sense::click(),
+        );
         // `refresh_now` is set instead of pushing a `Command`: the context menu
         // runs while `self` is borrowed for drawing, and `run(..)` needs
         // `&mut self`.

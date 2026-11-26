@@ -25,7 +25,7 @@ mod tray;
 use eframe::egui;
 use egui::{Color32, RichText};
 use std::time::{Duration, Instant};
-use winrust_core::i18n::{self, ts, Lang};
+use winrust_core::i18n::{self, Lang, ts};
 use winrust_core::{t, tf};
 
 /// What the shell is doing with the mouse, across frames.
@@ -682,11 +682,7 @@ impl eframe::App for DesktopApp {
         };
         let anim = ease(self.session.anim(), start_target, start_rate, dt);
         self.session.set_anim(anim);
-        let flyout_target = if self.tray.flyout().is_open() {
-            1.0
-        } else {
-            0.0
-        };
+        let flyout_target = if self.tray.flyout().is_open() { 1.0 } else { 0.0 };
         let flyout_rate = if flyout_target > self.flyout_anim {
             22.0
         } else {

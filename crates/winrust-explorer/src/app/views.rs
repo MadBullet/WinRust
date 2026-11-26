@@ -14,8 +14,8 @@ use std::path::Path;
 use std::path::PathBuf;
 use winrust_core::disk::{self, DirEntry};
 use winrust_core::t;
-use winrust_core::tf;
 use winrust_core::ts;
+use winrust_core::tf;
 
 impl ExplorerApp {
     pub(super) fn file_area(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
@@ -884,3 +884,4 @@ impl ExplorerApp {
         }
     }
 }
+

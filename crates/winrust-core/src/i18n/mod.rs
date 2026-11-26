@@ -47,6 +47,22 @@ pub fn current() -> Lang {
     }
 }
 
+/// Serialises the tests that change the process-wide language.
+///
+/// `CURRENT` is a `static` shared by the whole test binary, and `cargo test`
+/// runs tests on several threads: an i18n test that switches to Russian can
+/// run *while* an unrelated test formats a disk size or a status line, which
+/// is exactly how `storage::disk::tests::size_formatting` failed in CI while
+/// passing locally.  Any test that calls [`set_lang`] - or asserts on
+/// translated output - takes this lock first.
+#[cfg(test)]
+pub fn test_lock() -> std::sync::MutexGuard<'static, ()> {
+    static LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+    // A test that panicked while holding the lock leaves it poisoned; the
+    // language is reset by every lock holder, so recovering is correct here.
+    LOCK.lock().unwrap_or_else(|e| e.into_inner())
+}
+
 /// `true` when the UI should speak Russian.
 pub fn ru() -> bool {
     current() == Lang::Ru
@@ -220,12 +236,14 @@ mod tests {
 
     #[test]
     fn english_is_identity() {
+        let _lock = test_lock();
         set_lang(Lang::En);
         assert_eq!(t("Cancel"), "Cancel");
     }
 
     #[test]
     fn russian_translates_known_and_keeps_unknown() {
+        let _lock = test_lock();
         set_lang(Lang::Ru);
         assert_eq!(t("Cancel"), "Отмена");
         assert_eq!(

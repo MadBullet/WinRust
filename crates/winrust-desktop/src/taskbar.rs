@@ -242,7 +242,12 @@ impl DesktopApp {
                     ui.painter().rect_filled(
                         rect.shrink(1.0),
                         5.0,
-                        Color32::from_rgba_unmultiplied(pal.hover.0, pal.hover.1, pal.hover.2, 70),
+                        Color32::from_rgba_unmultiplied(
+                            pal.hover.0,
+                            pal.hover.1,
+                            pal.hover.2,
+                            70,
+                        ),
                     );
                 }
                 let icon_rect = egui::Rect::from_center_size(rect.center(), egui::vec2(22.0, 22.0));
@@ -524,11 +529,7 @@ fn preview(
                 )
             });
             let handle = image.map(|img| {
-                ctx.load_texture(
-                    format!("thumb_{}", w.hwnd),
-                    img,
-                    egui::TextureOptions::LINEAR,
-                )
+                ctx.load_texture(format!("thumb_{}", w.hwnd), img, egui::TextureOptions::LINEAR)
             });
             app.thumbs.insert(w.hwnd, handle);
         }
@@ -543,10 +544,7 @@ fn preview(
     painter.rect_stroke(
         rect,
         8.0,
-        egui::Stroke::new(
-            1.0_f32,
-            Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2),
-        ),
+        egui::Stroke::new(1.0_f32, Color32::from_rgb(pal.line.0, pal.line.1, pal.line.2)),
     );
 
     // Texture ids only: holding the map borrowed would block the `app` writes

@@ -448,9 +448,7 @@ fn pinned_grid(
     ui.add_space(6.0);
     let tile = 74.0;
     let gap = 6.0;
-    let per_row = ((ui.available_width() + gap) / (tile + gap))
-        .floor()
-        .max(1.0) as usize;
+    let per_row = ((ui.available_width() + gap) / (tile + gap)).floor().max(1.0) as usize;
     egui::ScrollArea::vertical()
         .id_salt("start_pins")
         .auto_shrink([false, false])
@@ -586,7 +584,9 @@ fn footer(
                     ui.set_min_width(260.0);
                     for w in open_windows.iter().take(12) {
                         if ui
-                            .button(RichText::new(winrust_core::i18n::end(&w.title, 46)).size(12.0))
+                            .button(
+                                RichText::new(winrust_core::i18n::end(&w.title, 46)).size(12.0),
+                            )
                             .clicked()
                         {
                             winrust_core::window::activate_window(w.pid);

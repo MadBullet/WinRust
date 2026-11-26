@@ -57,12 +57,7 @@ impl History {
         if text.trim().is_empty() {
             return;
         }
-        if self
-            .entries
-            .first()
-            .map(|e| e.text == text)
-            .unwrap_or(false)
-        {
+        if self.entries.first().map(|e| e.text == text).unwrap_or(false) {
             return;
         }
         // A value copied again moves to the top instead of appearing twice.

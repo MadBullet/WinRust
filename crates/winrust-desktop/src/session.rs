@@ -162,6 +162,7 @@ impl Session {
         self.pending = None;
     }
 
+
     // ---- the clipboard panel (Win+V) -------------------------------------
     pub fn clipboard_open(&self) -> bool {
         self.clipboard_open

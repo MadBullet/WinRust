@@ -431,6 +431,11 @@ pub fn item_kind(entry: &DirEntry) -> String {
 pub fn format_size(bytes: u64) -> String {
     const KB: f64 = 1024.0;
     let b = bytes as f64;
+    // The unit is translated: disk sizes read as "2 КБ" in the Russian UI.
+    // That makes this function depend on the process-wide language, so its
+    // test pins the language with `i18n::test_lock()` - without it a
+    // concurrently running i18n test that switches to Russian wins the race
+    // and the assertions fail on a machine that is otherwise green.
     fn trimmed(v: f64, unit: &'static str, decimals: usize) -> String {
         let unit = crate::i18n::ts(unit);
         let s = format!("{v:.decimals$}");
@@ -656,6 +661,8 @@ mod tests {
 
     #[test]
     fn size_formatting() {
+        let _lock = crate::i18n::test_lock();
+        crate::i18n::set_lang(crate::i18n::Lang::En);
         assert_eq!(format_size(999), "999");
         // Explorer drops trailing zeros: 2.0 KB is shown as "2 KB".
         assert_eq!(format_size(2048), "2 KB");
