@@ -1,4 +1,4 @@
-exit=0
+exit=101
 [1m[92m    Checking[0m cfg-if v1.0.5
 [1m[92m    Checking[0m log v0.4.35
 [1m[92m    Checking[0m windows-link v0.2.1
@@ -9,16 +9,16 @@ exit=0
 [1m[92m    Checking[0m yoke v0.8.4
 [1m[92m    Checking[0m windows_x86_64_msvc v0.52.6
 [1m[92m    Checking[0m simd-adler32 v0.3.10
-[1m[92m    Checking[0m zerovec v0.11.9
 [1m[92m    Checking[0m windows-targets v0.52.6
-[1m[92m    Checking[0m once_cell v1.21.4
+[1m[92m    Checking[0m zerovec v0.11.9
 [1m[92m    Checking[0m adler2 v2.0.1
-[1m[92m    Checking[0m litemap v0.8.3
+[1m[92m    Checking[0m once_cell v1.21.4
 [1m[92m    Checking[0m writeable v0.6.4
 [1m[92m    Checking[0m utf_types v1.0.0
+[1m[92m    Checking[0m litemap v0.8.3
 [1m[92m    Checking[0m miniz_oxide v0.9.1
-[1m[92m    Checking[0m crc32fast v1.5.6
 [1m[92m    Checking[0m utf8_iter v1.1.0
+[1m[92m    Checking[0m crc32fast v1.5.6
 [1m[92m    Checking[0m zerotrie v0.2.5
 [1m[92m    Checking[0m memchr v2.8.3
 [1m[92m    Checking[0m tinystr v0.8.5
@@ -35,31 +35,31 @@ exit=0
 [1m[92m    Checking[0m parking_lot_core v0.9.12
 [1m[92m    Checking[0m icu_provider v2.4.0
 [1m[92m    Checking[0m zerocopy v0.8.66
-[1m[92m    Checking[0m icu_normalizer v2.4.0
 [1m[92m    Checking[0m icu_properties v2.4.0
 [1m[92m    Checking[0m owned_ttf_parser v0.25.1
+[1m[92m    Checking[0m icu_normalizer v2.4.0
 [1m[92m    Checking[0m emath v0.29.1
 [1m[92m    Checking[0m windows-sys v0.61.2
 [1m[92m    Checking[0m ab_glyph_rasterizer v0.1.10
-[1m[92m    Checking[0m ecolor v0.29.1
+[1m[92m    Checking[0m idna_adapter v1.2.2
 [1m[92m    Checking[0m ab_glyph v0.2.32
 [1m[92m    Checking[0m serde v1.0.229
-[1m[92m    Checking[0m idna_adapter v1.2.2
+[1m[92m    Checking[0m ecolor v0.29.1
 [1m[92m    Checking[0m parking_lot v0.12.5
 [1m[92m    Checking[0m epaint_default_fonts v0.29.1
-[1m[92m    Checking[0m bitflags v2.13.2
-[1m[92m    Checking[0m percent-encoding v2.3.2
 [1m[92m    Checking[0m nohash-hasher v0.2.0
+[1m[92m    Checking[0m percent-encoding v2.3.2
+[1m[92m    Checking[0m bitflags v2.13.2
 [1m[92m    Checking[0m form_urlencoded v1.2.3
-[1m[92m    Checking[0m idna v1.1.0
 [1m[92m    Checking[0m zmij v1.0.23
+[1m[92m    Checking[0m idna v1.1.0
 [1m[92m    Checking[0m miniz_oxide v0.8.9
 [1m[92m    Checking[0m fdeflate v0.3.7
-[1m[92m    Checking[0m raw-window-handle v0.6.2
 [1m[92m    Checking[0m itoa v1.0.19
-[1m[92m    Checking[0m thiserror v1.0.69
+[1m[92m    Checking[0m raw-window-handle v0.6.2
 [1m[92m    Checking[0m serde_json v1.0.154
 [1m[92m    Checking[0m url v2.5.9
+[1m[92m    Checking[0m thiserror v1.0.69
 [1m[92m    Checking[0m aho-corasick v1.1.5
 [1m[92m    Checking[0m windows-sys v0.59.0
 [1m[92m    Checking[0m windows-sys v0.52.0
@@ -69,56 +69,56 @@ exit=0
 [1m[92m    Checking[0m egui v0.29.1
 [1m[92m    Checking[0m regex-automata v0.4.19
 [1m[92m    Checking[0m tracing-core v0.1.36
-[1m[92m    Checking[0m once_cell_polyfill v1.70.2
-[1m[92m    Checking[0m pin-project-lite v0.2.18
-[1m[92m    Checking[0m utf8parse v0.2.2
 [1m[92m    Checking[0m anstyle v1.0.14
-[1m[92m    Checking[0m anstyle-parse v1.0.0
+[1m[92m    Checking[0m utf8parse v0.2.2
+[1m[92m    Checking[0m pin-project-lite v0.2.18
+[1m[92m    Checking[0m once_cell_polyfill v1.70.2
 [1m[92m    Checking[0m tracing v0.1.44
 [1m[92m    Checking[0m anstyle-wincon v3.0.11
+[1m[92m    Checking[0m anstyle-parse v1.0.0
 [1m[92m    Checking[0m num-traits v0.2.19
 [1m[92m    Checking[0m regex v1.13.2
 [1m[92m    Checking[0m anstyle-query v1.1.5
-[1m[92m    Checking[0m unicode-segmentation v1.13.3
-[1m[92m    Checking[0m jiff-core v1.0.2
-[1m[92m    Checking[0m smol_str v0.2.2
-[1m[92m    Checking[0m weezl v0.1.12
-[1m[92m    Checking[0m colorchoice v1.0.5
-[1m[92m    Checking[0m pxfm v0.1.30
-[1m[92m    Checking[0m cursor-icon v1.2.0
-[1m[92m    Checking[0m float-cmp v0.9.0
-[1m[92m    Checking[0m is_terminal_polyfill v1.70.2
-[1m[92m    Checking[0m arrayvec v0.7.8
-[1m[92m    Checking[0m zeroize v1.9.2
-[1m[92m    Checking[0m dpi v0.1.2
-[1m[92m    Checking[0m error-code v3.4.0
 [1m[92m    Checking[0m color_quant v1.1.0
+[1m[92m    Checking[0m weezl v0.1.12
+[1m[92m    Checking[0m error-code v3.4.0
+[1m[92m    Checking[0m unicode-segmentation v1.13.3
+[1m[92m    Checking[0m float-cmp v0.9.0
+[1m[92m    Checking[0m zeroize v1.9.2
+[1m[92m    Checking[0m smol_str v0.2.2
+[1m[92m    Checking[0m is_terminal_polyfill v1.70.2
+[1m[92m    Checking[0m cursor-icon v1.2.0
+[1m[92m    Checking[0m jiff-core v1.0.2
+[1m[92m    Checking[0m arrayvec v0.7.8
+[1m[92m    Checking[0m pxfm v0.1.30
+[1m[92m    Checking[0m dpi v0.1.2
+[1m[92m    Checking[0m colorchoice v1.0.5
+[1m[92m    Checking[0m anstream v1.0.0
 [1m[92m    Checking[0m winit v0.30.13
+[1m[92m    Checking[0m jiff v1.0.3
+[1m[92m    Checking[0m rustls-pki-types v1.16.0
+[1m[92m    Checking[0m moxcms v0.8.1
+[1m[92m    Checking[0m strict-num v0.1.1
 [1m[92m    Checking[0m gif v0.14.2
 [1m[92m    Checking[0m clipboard-win v5.4.3
-[1m[92m    Checking[0m rustls-pki-types v1.16.0
-[1m[92m    Checking[0m anstream v1.0.0
-[1m[92m    Checking[0m jiff v1.0.3
-[1m[92m    Checking[0m strict-num v0.1.1
 [1m[92m    Checking[0m env_filter v2.1.0
-[1m[92m    Checking[0m moxcms v0.8.1
 [1m[92m    Checking[0m glutin_egl_sys v0.7.1
 [1m[92m    Checking[0m glutin_wgl_sys v0.6.1
 [1m[92m    Checking[0m png v0.18.1
 [1m[92m    Checking[0m libloading v0.8.9
-[1m[92m    Checking[0m arrayref v0.3.9
-[1m[92m    Checking[0m winrust-core v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-core)
 [1m[92m    Checking[0m byteorder-lite v0.1.0
+[1m[92m    Checking[0m winrust-core v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-core)
+[1m[92m    Checking[0m arrayref v0.3.9
 [1m[92m    Checking[0m tiny-skia-path v0.11.4
-[1m[92m    Checking[0m env_logger v0.11.12
 [1m[92m    Checking[0m glutin v0.32.3
+[1m[92m    Checking[0m env_logger v0.11.12
 [1m[92m    Checking[0m memoffset v0.9.1
 [1m[92m    Checking[0m arboard v3.7.0
 [1m[92m    Checking[0m kurbo v0.9.5
 [1m[92m    Checking[0m webbrowser v1.2.7
 [1m[92m    Checking[0m getrandom v0.2.17
-[1m[92m    Checking[0m glow v0.14.2
-[1m[92m    Checking[0m untrusted v0.9.0
+[1m[92m   Compiling[0m unicase v2.10.0
+[1m[92m    Checking[0m web-time v1.1.0
 [1m[93mwarning[0m[1m[97m: doc list item overindented[0m
   [1m[96m--> [0mcrates\winrust-core\src\lib.rs:13:5
    [1m[96m|[0m
@@ -152,25 +152,26 @@ exit=0
    [1m[96m|[0m
    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#doc_overindented_list_items
 
+[1m[92m    Checking[0m glow v0.14.2
 [1m[92m    Checking[0m siphasher v0.3.11
 [1m[93mwarning[0m[1m[97m: name `PROPERTYKEY` contains a capitalized acronym[0m
-   [1m[96m--> [0mcrates\winrust-core\src\devices\audio.rs:201:8
+   [1m[96m--> [0mcrates\winrust-core\src\devices\audio.rs:210:8
     [1m[96m|[0m
-[1m[96m201[0m [1m[96m|[0m struct PROPERTYKEY {
+[1m[96m210[0m [1m[96m|[0m struct PROPERTYKEY {
     [1m[96m|[0m        [1m[93m^^^^^^^^^^^[0m [1m[93mhelp: consider making the acronym lowercase, except the initial letter: `Propertykey`[0m
     [1m[96m|[0m
     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#upper_case_acronyms
     [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::upper_case_acronyms)]` on by default
 
 [1m[93mwarning[0m[1m[97m: name `PROPVARIANT` contains a capitalized acronym[0m
-   [1m[96m--> [0mcrates\winrust-core\src\devices\audio.rs:210:8
+   [1m[96m--> [0mcrates\winrust-core\src\devices\audio.rs:219:8
     [1m[96m|[0m
-[1m[96m210[0m [1m[96m|[0m struct PROPVARIANT {
+[1m[96m219[0m [1m[96m|[0m struct PROPVARIANT {
     [1m[96m|[0m        [1m[93m^^^^^^^^^^^[0m [1m[93mhelp: consider making the acronym lowercase, except the initial letter: `Propvariant`[0m
     [1m[96m|[0m
     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#upper_case_acronyms
 
-[1m[92m   Compiling[0m unicase v2.10.0
+[1m[92m    Checking[0m untrusted v0.9.0
 [1m[93mwarning[0m[1m[97m: module has the same name as its containing module[0m
  [1m[96m--> [0mcrates\winrust-core\src\shell\mod.rs:9:1
   [1m[96m|[0m
@@ -180,31 +181,32 @@ exit=0
   [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#module_inception
   [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::module_inception)]` on by default
 
+[1m[92m    Checking[0m ring v0.17.14
 [1m[93mwarning[0m[1m[97m: consider using `sort_by_key`[0m
-  [1m[96m--> [0mcrates\winrust-core\src\storage\fileassoc.rs:83:5
+  [1m[96m--> [0mcrates\winrust-core\src\storage\fileassoc.rs:56:5
    [1m[96m|[0m
-[1m[96m83[0m [1m[96m|[0m     out.sort_by(|a, b| a.label.to_lowercase().cmp(&b.label.to_lowercase()));
+[1m[96m56[0m [1m[96m|[0m     out.sort_by(|a, b| a.label.to_lowercase().cmp(&b.label.to_lowercase()));
    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
    [1m[96m|[0m
    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#unnecessary_sort_by
    [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::unnecessary_sort_by)]` on by default
 [1m[96mhelp[0m: try
    [1m[96m|[0m
-[1m[96m83[0m [91m- [0m    out.[91msort_by(|a, b| a.label.to_lowercase().cmp(&b.label.to_lowercase()))[0m;
-[1m[96m83[0m [92m+ [0m    out.[92msort_by_key(|a| a.label.to_lowercase())[0m;
+[1m[96m56[0m [91m- [0m    out.[91msort_by(|a, b| a.label.to_lowercase().cmp(&b.label.to_lowercase()))[0m;
+[1m[96m56[0m [92m+ [0m    out.[92msort_by_key(|a| a.label.to_lowercase())[0m;
    [1m[96m|[0m
 
 [1m[93mwarning[0m[1m[97m: consider using `sort_by_key`[0m
-   [1m[96m--> [0mcrates\winrust-core\src\storage\fileassoc.rs:202:5
+   [1m[96m--> [0mcrates\winrust-core\src\storage\fileassoc.rs:210:5
     [1m[96m|[0m
-[1m[96m202[0m [1m[96m|[0m     out.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+[1m[96m210[0m [1m[96m|[0m     out.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
     [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
     [1m[96m|[0m
     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#unnecessary_sort_by
 [1m[96mhelp[0m: try
     [1m[96m|[0m
-[1m[96m202[0m [91m- [0m    out.[91msort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()))[0m;
-[1m[96m202[0m [92m+ [0m    out.[92msort_by_key(|a| a.name.to_lowercase())[0m;
+[1m[96m210[0m [91m- [0m    out.[91msort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()))[0m;
+[1m[96m210[0m [92m+ [0m    out.[92msort_by_key(|a| a.name.to_lowercase())[0m;
     [1m[96m|[0m
 
 [1m[93mwarning[0m[1m[97m: module has the same name as its containing module[0m
@@ -215,42 +217,40 @@ exit=0
    [1m[96m|[0m
    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#module_inception
 
-[1m[92m    Checking[0m web-time v1.1.0
 [1m[93mwarning[0m: `winrust-core` (lib) generated 10 warnings (run `cargo clippy --fix --lib -p winrust-core -- ` to apply 2 suggestions)
+[1m[92m    Checking[0m svgtypes v0.13.0
+[1m[92m    Checking[0m image v0.25.10
 [1m[92m   Compiling[0m phf_shared v0.11.3
 [1m[92m    Checking[0m egui-winit v0.29.1
-[1m[92m    Checking[0m image v0.25.10
-[1m[92m    Checking[0m svgtypes v0.13.0
-[1m[92m    Checking[0m ring v0.17.14
 [1m[92m    Checking[0m glutin-winit v0.5.0
 [1m[92m    Checking[0m winapi v0.3.9
 [1m[92m    Checking[0m egui_glow v0.29.1
 [1m[92m    Checking[0m static_assertions v1.1.0
 [1m[92m    Checking[0m rctree v0.5.0
-[1m[92m    Checking[0m usvg-tree v0.37.0
 [1m[92m    Checking[0m rustls-webpki v0.103.17
+[1m[92m    Checking[0m usvg-tree v0.37.0
 [1m[92m   Compiling[0m phf v0.11.3
 [1m[92m    Checking[0m winrust-ui v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-ui)
 [1m[92m    Checking[0m webpki-roots v1.0.12
 [1m[92m    Checking[0m simplecss v0.2.2
-[1m[92m    Checking[0m bitflags v1.3.2
-[1m[92m    Checking[0m data-url v0.3.2
 [1m[92m    Checking[0m subtle v2.6.1
+[1m[92m    Checking[0m bitflags v1.3.2
 [1m[92m    Checking[0m imagesize v0.12.0
 [1m[92m    Checking[0m roxmltree v0.19.0
-[1m[92m    Checking[0m eframe v0.29.1
+[1m[92m    Checking[0m data-url v0.3.2
 [1m[92m    Checking[0m rustls v0.23.46
 [1m[92m    Checking[0m png v0.17.16
 [1m[92m    Checking[0m usvg-parser v0.37.0
+[1m[92m    Checking[0m eframe v0.29.1
 [1m[92m    Checking[0m webpki-roots v0.26.11
 [1m[92m   Compiling[0m mime_guess2 v2.3.1
-[1m[92m    Checking[0m pico-args v0.5.0
-[1m[92m    Checking[0m base64 v0.21.7
 [1m[92m    Checking[0m xmlwriter v0.1.0
+[1m[92m    Checking[0m base64 v0.21.7
 [1m[92m    Checking[0m base64 v0.22.1
+[1m[92m    Checking[0m pico-args v0.5.0
 [1m[92m    Checking[0m tiny-skia v0.11.4
-[1m[92m    Checking[0m usvg v0.37.0
 [1m[92m    Checking[0m rgb v0.8.53
+[1m[92m    Checking[0m usvg v0.37.0
 [1m[92m    Checking[0m mime v0.3.18
 [1m[92m    Checking[0m enum-map v2.7.3
 [1m[92m    Checking[0m winrust-kernel-abi v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-kernel-abi)
@@ -279,17 +279,37 @@ exit=0
 [1m[96m1029[0m [92m~ [0m                        }
      [1m[96m|[0m
 
-[1m[92m    Checking[0m resvg v0.37.0
-[1m[93mwarning[0m: `winrust-launcher` (bin "WinRust") generated 1 warning (run `cargo clippy --fix --bin "WinRust" -p winrust-launcher -- ` to apply 1 suggestion)
+[1m[93mwarning[0m: `winrust-launcher` (bin "WinRust" test) generated 1 warning (run `cargo clippy --fix --bin "WinRust" -p winrust-launcher --tests -- ` to apply 1 suggestion)
 [1m[92m    Checking[0m winrust-desktop v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-desktop)
-[1m[93mwarning[0m[1m[97m: empty line after doc comment[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\main.rs:374:5
+[1m[92m    Checking[0m resvg v0.37.0
+[1m[91merror[E0433][0m[1m[97m: cannot find module or crate `serde` in this scope[0m
+   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:157:30
     [1m[96m|[0m
-[1m[96m374[0m [1m[96m|[0m [1m[93m/[0m     /// Persist the View-menu switches if anything changed.
-[1m[96m375[0m [1m[96m|[0m [1m[93m|[0m
+[1m[96m157[0m [1m[96m|[0m #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
+    [1m[96m|[0m                              [1m[91m^^^^^[0m [1m[91muse of unresolved module or unlinked crate `serde`[0m
+
+[1m[91merror[E0433][0m[1m[97m: cannot find module or crate `serde` in this scope[0m
+   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:157:48
+    [1m[96m|[0m
+[1m[96m157[0m [1m[96m|[0m #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize)]
+    [1m[96m|[0m                                                [1m[91m^^^^^[0m [1m[91muse of unresolved module or unlinked crate `serde`[0m
+
+[1m[91merror[0m[1m[97m: cannot find attribute `serde` in this scope[0m
+   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:160:7
+    [1m[96m|[0m
+[1m[96m160[0m [1m[96m|[0m     #[serde(default)]
+    [1m[96m|[0m       [1m[91m^^^^^[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mnote[0m: `serde` is an attribute that can be used by the derive macros `Deserialize` and `Serialize`, you might be missing a `derive` attribute
+
+[1m[93mwarning[0m[1m[97m: empty line after doc comment[0m
+   [1m[96m--> [0mcrates\winrust-desktop\src\main.rs:380:5
+    [1m[96m|[0m
+[1m[96m380[0m [1m[96m|[0m [1m[93m/[0m     /// Persist the View-menu switches if anything changed.
+[1m[96m381[0m [1m[96m|[0m [1m[93m|[0m
     [1m[96m|[0m [1m[93m|_^[0m
 [1m[96m...[0m
-[1m[96m380[0m [1m[96m|[0m       fn handle_desktop_keys(&mut self, ctx: &egui::Context) {
+[1m[96m386[0m [1m[96m|[0m       fn handle_desktop_keys(&mut self, ctx: &egui::Context) {
     [1m[96m|[0m       [1m[96m----------------------[0m [1m[96mthe comment documents this function[0m
     [1m[96m|[0m
     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#empty_line_after_doc_comments
@@ -297,162 +317,157 @@ exit=0
     [1m[96m= [0m[1m[97mhelp[0m: if the empty line is unintentional, remove it
 [1m[96mhelp[0m: if the documentation should include the empty line include it in the comment
     [1m[96m|[0m
-[1m[96m375[0m [1m[96m| [0m[92m    ///[0m
+[1m[96m381[0m [1m[96m| [0m[92m    ///[0m
     [1m[96m|[0m
 
-[1m[93mwarning[0m[1m[97m: very complex type used. Consider factoring parts into `type` definitions[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\taskbar.rs:418:20
-    [1m[96m|[0m
-[1m[96m418[0m [1m[96m|[0m fn power_menu() -> Vec<(&'static str, fn(&mut DesktopApp))> {
-    [1m[96m|[0m                    [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-    [1m[96m|[0m
-    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#type_complexity
-    [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::type_complexity)]` on by default
-
-[1m[93mwarning[0m[1m[97m: clamp-like pattern without using clamp function[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\taskbar.rs:530:22
-    [1m[96m|[0m
-[1m[96m530[0m [1m[96m|[0m         let want_w = (screen.width() as u32).min(1600).max(320);
-    [1m[96m|[0m                      [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mhelp: replace with clamp: `(screen.width() as u32).clamp(320, 1600)`[0m
-    [1m[96m|[0m
-    [1m[96m= [0m[1m[97mnote[0m: clamp will panic if max < min
-    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#manual_clamp
-    [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::manual_clamp)]` on by default
-
-[1m[93mwarning[0m[1m[97m: clamp-like pattern without using clamp function[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\taskbar.rs:531:22
-    [1m[96m|[0m
-[1m[96m531[0m [1m[96m|[0m         let want_h = (screen.height() as u32).min(1000).max(200);
-    [1m[96m|[0m                      [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mhelp: replace with clamp: `(screen.height() as u32).clamp(200, 1000)`[0m
-    [1m[96m|[0m
-    [1m[96m= [0m[1m[97mnote[0m: clamp will panic if max < min
-    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#manual_clamp
-
-[1m[93mwarning[0m[1m[97m: this `if` statement can be collapsed[0m
-   [1m[96m--> [0mcrates\winrust-desktop\src\tray.rs:610:9
-    [1m[96m|[0m
-[1m[96m610[0m [1m[96m|[0m [1m[93m/[0m         if slider.changed() {
-[1m[96m611[0m [1m[96m|[0m [1m[93m|[0m             if app.tray.set_volume(value) {
-[1m[96m...[0m   [1m[93m|[0m
-[1m[96m616[0m [1m[96m|[0m [1m[93m|[0m         }
-    [1m[96m|[0m [1m[93m|_________^[0m
-    [1m[96m|[0m
-    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#collapsible_if
-    [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::collapsible_if)]` on by default
-[1m[96mhelp[0m: collapse nested if block
-    [1m[96m|[0m
-[1m[96m610[0m [92m~ [0m        if slider.changed()
-[1m[96m611[0m [92m~ [0m            [92m&&[0m app.tray.set_volume(value) {
-[1m[96m612[0m [1m[96m|[0m                 // Adopt the value we just wrote, so the slider does not snap
-[1m[96m613[0m [1m[96m|[0m                 // back to a stale sample on the next poll.
-[1m[96m614[0m [1m[96m|[0m                 app.tray.adopt_volume(value);
-[1m[96m615[0m [92m~ [0m            }
-    [1m[96m|[0m
-
-[1m[93mwarning[0m: `winrust-desktop` (bin "winrust-desktop") generated 5 warnings (run `cargo clippy --fix --bin "winrust-desktop" -p winrust-desktop -- ` to apply 1 suggestion)
-[1m[93mwarning[0m: `winrust-launcher` (bin "WinRust" test) generated 1 warning (1 duplicate)
-[1m[92m    Checking[0m ureq v2.12.1
-[1m[93mwarning[0m: `winrust-desktop` (bin "winrust-desktop" test) generated 5 warnings (5 duplicates)
-[1m[92m    Checking[0m ehttp v0.5.0
-[1m[92m    Checking[0m egui_extras v0.29.1
-[1m[92m    Checking[0m winrust-taskmgr v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-taskmgr)
-[1m[92m    Checking[0m winrust-sysctl v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-sysctl)
-[1m[92m    Checking[0m winrust-services v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-services)
-[1m[92m    Checking[0m winrust-explorer v0.9.2 (D:\a\WinRust\WinRust\crates\winrust-explorer)
-[1m[93mwarning[0m: `winrust-core` (lib test) generated 10 warnings (10 duplicates)
-[1m[93mwarning[0m[1m[97m: type `app::model::Sampler` is more private than the item `app::TaskManagerApp::sampler`[0m
-   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:55:5
-    [1m[96m|[0m
-[1m[96m 55[0m [1m[96m|[0m     pub(super) sampler: Sampler,
-    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `app::TaskManagerApp::sampler` is reachable at visibility `pub(crate)`[0m
-    [1m[96m|[0m
-[1m[92mnote[0m: but type `app::model::Sampler` is only usable at visibility `pub(in crate::app)`
-   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:142:1
-    [1m[96m|[0m
-[1m[96m142[0m [1m[96m|[0m pub(super) struct Sampler {
-    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-    [1m[96m= [0m[1m[97mnote[0m: `#[warn(private_interfaces)]` on by default
-
-[1m[93mwarning[0m[1m[97m: type `app::model::Snapshot` is more private than the item `app::TaskManagerApp::snapshot`[0m
-   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:56:5
-    [1m[96m|[0m
-[1m[96m 56[0m [1m[96m|[0m     pub(super) snapshot: Snapshot,
-    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `app::TaskManagerApp::snapshot` is reachable at visibility `pub(crate)`[0m
-    [1m[96m|[0m
-[1m[92mnote[0m: but type `app::model::Snapshot` is only usable at visibility `pub(in crate::app)`
-   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:132:1
-    [1m[96m|[0m
-[1m[96m132[0m [1m[96m|[0m pub(super) struct Snapshot {
-    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-
-[1m[93mwarning[0m[1m[97m: type `app::model::Snapshot` is more private than the item `app::TaskManagerApp::pending_snapshot`[0m
-   [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:84:5
-    [1m[96m|[0m
-[1m[96m 84[0m [1m[96m|[0m     pub(super) pending_snapshot: Option<Snapshot>,
-    [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `app::TaskManagerApp::pending_snapshot` is reachable at visibility `pub(crate)`[0m
-    [1m[96m|[0m
-[1m[92mnote[0m: but type `app::model::Snapshot` is only usable at visibility `pub(in crate::app)`
-   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:132:1
-    [1m[96m|[0m
-[1m[96m132[0m [1m[96m|[0m pub(super) struct Snapshot {
-    [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-
-[1m[93mwarning[0m[1m[97m: type `app::startup::StartupItem` is more private than the item `app::TaskManagerApp::startup`[0m
-  [1m[96m--> [0mcrates\winrust-taskmgr\src\app.rs:87:5
-   [1m[96m|[0m
-[1m[96m87[0m [1m[96m|[0m     pub(super) startup: Vec<StartupItem>,
-   [1m[96m|[0m     [1m[93m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[93mfield `app::TaskManagerApp::startup` is reachable at visibility `pub(crate)`[0m
-   [1m[96m|[0m
-[1m[92mnote[0m: but type `app::startup::StartupItem` is only usable at visibility `pub(in crate::app)`
-  [1m[96m--> [0mcrates\winrust-taskmgr\src\app\startup.rs:15:1
-   [1m[96m|[0m
-[1m[96m15[0m [1m[96m|[0m pub(super) struct StartupItem {
-   [1m[96m|[0m [1m[92m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-
-[1m[93mwarning[0m[1m[97m: unnecessary map of the identity function[0m
-   [1m[96m--> [0mcrates\winrust-taskmgr\src\app\model.rs:250:34
-    [1m[96m|[0m
-[1m[96m250[0m [1m[96m|[0m                           .cloned()
-    [1m[96m|[0m [1m[93m __________________________________^[0m
-[1m[96m251[0m [1m[96m|[0m [1m[93m|[0m                         .map(|(pct, eng)| (pct, eng))
-    [1m[96m|[0m [1m[93m|_____________________________________________________^[0m [1m[93mhelp: remove the call to `map`[0m
-    [1m[96m|[0m
-    [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#map_identity
-    [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::map_identity)]` on by default
-
-[1m[93mwarning[0m[1m[97m: useless conversion to the same type: `&str`[0m
-    [1m[96m--> [0mcrates\winrust-taskmgr\src\app\ui.rs:1165:82
+[1m[91merror[E0277][0m[1m[97m: the trait bound `desktop::SavedPos: serde::de::DeserializeOwned` is not satisfied[0m
+    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:176:51
      [1m[96m|[0m
-[1m[96m1165[0m [1m[96m|[0m                         let state = s.state.map(|x| x.label()).unwrap_or_else(|| "—".into());
-     [1m[96m|[0m                                                                                  [1m[93m^^^^^^^^^^[0m [1m[93mhelp: consider removing `.into()`: `"—"`[0m
+[1m[96m 176[0m [1m[96m|[0m         if let Ok(pos) = serde_json::from_value::<SavedPos>(value.clone()) {
+     [1m[96m|[0m                                                   [1m[91m^^^^^^^^[0m [1m[91munsatisfied trait bound[0m
      [1m[96m|[0m
-     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
-     [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::useless_conversion)]` on by default
-
-[1m[93mwarning[0m[1m[97m: useless conversion to the same type: `&str`[0m
-    [1m[96m--> [0mcrates\winrust-taskmgr\src\app\ui.rs:1175:52
+[1m[96mhelp[0m: the trait `for<'de> serde_core::de::Deserialize<'de>` is not implemented for `desktop::SavedPos`
+    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:158:1
      [1m[96m|[0m
-[1m[96m1175[0m [1m[96m|[0m [1m[96m...[0m                   .unwrap_or_else(|| "—".into()),
-     [1m[96m|[0m                                          [1m[93m^^^^^^^^^^[0m [1m[93mhelp: consider removing `.into()`: `"—"`[0m
+[1m[96m 158[0m [1m[96m|[0m struct SavedPos {
+     [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^[0m
+     [1m[96m= [0m[1m[97mhelp[0m: the following other types implement trait `serde_core::de::Deserialize<'de>`:
+               `&'a [u8]` implements `serde_core::de::Deserialize<'de>`
+               `&'a std::path::Path` implements `serde_core::de::Deserialize<'de>`
+               `&'a str` implements `serde_core::de::Deserialize<'de>`
+               `()` implements `serde_core::de::Deserialize<'de>`
+               `(T,)` implements `serde_core::de::Deserialize<'de>`
+               `(T0, T1)` implements `serde_core::de::Deserialize<'de>`
+               `(T0, T1, T2)` implements `serde_core::de::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `serde_core::de::Deserialize<'de>`
+             and 163 others
+     [1m[96m= [0m[1m[97mnote[0m: required for `desktop::SavedPos` to implement `serde_core::de::DeserializeOwned`
+[1m[92mnote[0m: required by a bound in `serde_json::from_value`
+    [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_json-1.0.154\src\value\mod.rs:1039:8
      [1m[96m|[0m
-     [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#useless_conversion
+[1m[96m1037[0m [1m[96m|[0m pub fn from_value<T>(value: Value) -> Result<T, Error>
+[1m[96m1038[0m [1m[96m|[0m where
+[1m[96m1039[0m [1m[96m|[0m     T: DeserializeOwned,
+     [1m[96m|[0m        [1m[92m^^^^^^^^^^^^^^^^[0m [1m[92mrequired by this bound in `from_value`[0m
 
-[1m[93mwarning[0m: `winrust-taskmgr` (bin "winrust-taskmgr") generated 7 warnings (run `cargo clippy --fix --bin "winrust-taskmgr" -p winrust-taskmgr -- ` to apply 3 suggestions)
-[1m[93mwarning[0m: `winrust-taskmgr` (bin "winrust-taskmgr" test) generated 7 warnings (7 duplicates)
-[1m[93mwarning[0m[1m[97m: doc list item without indentation[0m
-  [1m[96m--> [0mcrates\winrust-explorer\src\app.rs:20:5
-   [1m[96m|[0m
-[1m[96m20[0m [1m[96m|[0m //! Modules
-   [1m[96m|[0m     [1m[93m^[0m
-   [1m[96m|[0m
-   [1m[96m= [0m[1m[97mhelp[0m: if this is supposed to be its own paragraph, add a blank line
-   [1m[96m= [0m[1m[97mhelp[0m: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.100.0/index.html#doc_lazy_continuation
-   [1m[96m= [0m[1m[97mnote[0m: `#[warn(clippy::doc_lazy_continuation)]` on by default
-[1m[96mhelp[0m: indent this line
-   [1m[96m|[0m
-[1m[96m20[0m [1m[96m| [0m//! [92m  [0mModules
-   [1m[96m|[0m     [92m++[0m
+[1m[91merror[E0277][0m[1m[97m: the trait bound `desktop::SavedPos: serde::Serialize` is not satisfied[0m
+    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:204:52
+     [1m[96m|[0m
+[1m[96m 204[0m [1m[96m|[0m     if let Ok(text) = serde_json::to_string_pretty(&map) {
+     [1m[96m|[0m                       [1m[96m----------------------------[0m [1m[91m^^^^[0m [1m[91munsatisfied trait bound[0m
+     [1m[96m|[0m                       [1m[96m|[0m
+     [1m[96m|[0m                       [1m[96mrequired by a bound introduced by this call[0m
+     [1m[96m|[0m
+[1m[96mhelp[0m: the trait `serde_core::ser::Serialize` is not implemented for `desktop::SavedPos`
+    [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:158:1
+     [1m[96m|[0m
+[1m[96m 158[0m [1m[96m|[0m struct SavedPos {
+     [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^[0m
+     [1m[96m= [0m[1m[97mnote[0m: for local types consider adding `#[derive(serde::Serialize)]` to your `desktop::SavedPos` type
+     [1m[96m= [0m[1m[97mnote[0m: for types from other crates check whether the crate offers a `serde` feature flag
+     [1m[96m= [0m[1m[97mhelp[0m: the following other types implement trait `serde_core::ser::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 151 others
+     [1m[96m= [0m[1m[97mnote[0m: required for `std::collections::HashMap<&str, desktop::SavedPos>` to implement `serde_core::ser::Serialize`
+[1m[92mnote[0m: required by a bound in `serde_json::to_string_pretty`
+    [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_json-1.0.154\src\ser.rs:2266:17
+     [1m[96m|[0m
+[1m[96m2264[0m [1m[96m|[0m pub fn to_string_pretty<T>(value: &T) -> Result<String>
+[1m[96m2265[0m [1m[96m|[0m where
+[1m[96m2266[0m [1m[96m|[0m     T: ?Sized + Serialize,
+     [1m[96m|[0m                 [1m[92m^^^^^^^^^[0m [1m[92mrequired by this bound in `to_string_pretty`[0m
 
-[1m[93mwarning[0m: `winrust-explorer` (bin "winrust-explorer" test) generated 1 warning
-[1m[93mwarning[0m: `winrust-explorer` (bin "winrust-explorer") generated 1 warning (1 duplicate)
-[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 31.77s
+[1m[91merror[E0277][0m[1m[97m: the trait bound `SizedTexture: From<(&TextureId, Vec2)>` is not satisfied[0m
+   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:493:33
+    [1m[96m|[0m
+[1m[96m492[0m [1m[96m|[0m [1m[96m...[0m                   egui::Button::image_and_text(
+    [1m[96m|[0m                       [1m[96m----------------------------[0m [1m[96mrequired by a bound introduced by this call[0m
+[1m[96m493[0m [1m[96m|[0m [1m[96m...[0m                       (id, egui::vec2(16.0, 16.0)),
+    [1m[96m|[0m                           [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `std::convert::From<(&eframe::egui::TextureId, eframe::egui::Vec2)>` is not implemented for `eframe::egui::load::SizedTexture`[0m
+    [1m[96m|[0m
+[1m[96mhelp[0m: `eframe::egui::load::SizedTexture` implements trait `std::convert::From<T>`
+   [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\src\load.rs:406:1
+    [1m[96m|[0m
+[1m[96m406[0m [1m[96m|[0m impl From<(TextureId, Vec2)> for SizedTexture {
+    [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[96m`std::convert::From<(eframe::egui::TextureId, eframe::egui::Vec2)>`[0m
+[1m[96m...[0m
+[1m[96m413[0m [1m[96m|[0m impl<'a> From<&'a TextureHandle> for SizedTexture {
+    [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[96m`std::convert::From<&eframe::egui::TextureHandle>`[0m
+    [1m[96m= [0m[1m[97mnote[0m: required for `(&eframe::egui::TextureId, eframe::egui::Vec2)` to implement `std::convert::Into<eframe::egui::load::SizedTexture>`
+    [1m[96m= [0m[1m[97mnote[0m: required for `eframe::egui::ImageSource<'_>` to implement `std::convert::From<(&eframe::egui::TextureId, eframe::egui::Vec2)>`
+    [1m[96m= [0m[1m[97mnote[0m: 3 redundant requirements hidden
+    [1m[96m= [0m[1m[97mnote[0m: required for `(&eframe::egui::TextureId, eframe::egui::Vec2)` to implement `std::convert::Into<eframe::egui::Image<'_>>`
+[1m[92mnote[0m: required by a bound in `eframe::egui::Button::<'a>::image_and_text`
+   [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\src\widgets\button.rs:55:39
+    [1m[96m|[0m
+[1m[96m 42[0m [1m[96m|[0m impl<'a> Button<'a> {
+[1m[96m...[0m
+[1m[96m 55[0m [1m[96m|[0m     pub fn image_and_text(image: impl Into<Image<'a>>, text: impl Into<WidgetText>) -> Self {
+    [1m[96m|[0m                                       [1m[92m^^^^^^^^^^^^^^^[0m [1m[92mrequired by this bound in `Button::<'a>::image_and_text`[0m
+    [1m[96m= [0m[1m[97mnote[0m: the full name for the type has been written to 'D:\a\WinRust\WinRust\target\debug\build\winrust-desktop/c158fd4892365593\out\winrust_desktop-c158fd4892365593.long-type-12421243716007674201.txt'
+    [1m[96m= [0m[1m[97mnote[0m: consider using `--verbose` to print the full type name to the console
+
+[1m[91merror[E0277][0m[1m[97m: the trait bound `std::borrow::Cow<'_, str>: std::convert::AsRef<std::path::Path>` is not satisfied[0m
+   [1m[96m--> [0mcrates\winrust-desktop\src\start.rs:212:59
+    [1m[96m|[0m
+[1m[96m212[0m [1m[96m|[0m             let _ = winrust_core::shell::show_properties(&path.to_string_lossy());
+    [1m[96m|[0m                     [1m[96m------------------------------------[0m  [1m[91m^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `std::convert::AsRef<std::path::Path>` is not implemented for `std::borrow::Cow<'_, str>`[0m
+    [1m[96m|[0m                     [1m[96m|[0m
+    [1m[96m|[0m                     [1m[96mrequired by a bound introduced by this call[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mnote[0m: required for `&std::borrow::Cow<'_, str>` to implement `std::convert::AsRef<std::path::Path>`
+[1m[92mnote[0m: required by a bound in `winrust_core::shell::show_properties`
+   [1m[96m--> [0mcrates\winrust-core\src\shell\shell.rs:186:35
+    [1m[96m|[0m
+[1m[96m186[0m [1m[96m|[0m pub fn show_properties(path: impl AsRef<Path>) -> Result<()> {
+    [1m[96m|[0m                                   [1m[92m^^^^^^^^^^^[0m [1m[92mrequired by this bound in `show_properties`[0m
+[1m[96mhelp[0m: consider dereferencing here
+    [1m[96m|[0m
+[1m[96m212[0m [1m[96m| [0m            let _ = winrust_core::shell::show_properties(&[92m*[0mpath.to_string_lossy());
+    [1m[96m|[0m                                                           [92m+[0m
+
+[1m[91merror[E0277][0m[1m[97m: the trait bound `SizedTexture: From<(&TextureId, Vec2)>` is not satisfied[0m
+   [1m[96m--> [0mcrates\winrust-desktop\src\desktop.rs:493:33
+    [1m[96m|[0m
+[1m[96m492[0m [1m[96m|[0m [1m[96m...[0m                   egui::Button::image_and_text(
+    [1m[96m|[0m                       [1m[96m----------------------------[0m [1m[96mrequired by a bound introduced by this call[0m
+[1m[96m493[0m [1m[96m|[0m [1m[96m...[0m                       (id, egui::vec2(16.0, 16.0)),
+    [1m[96m|[0m                           [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mthe trait `std::convert::From<(&eframe::egui::TextureId, eframe::egui::Vec2)>` is not implemented for `eframe::egui::load::SizedTexture`[0m
+    [1m[96m|[0m
+[1m[96mhelp[0m: `eframe::egui::load::SizedTexture` implements trait `std::convert::From<T>`
+   [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\src\load.rs:406:1
+    [1m[96m|[0m
+[1m[96m406[0m [1m[96m|[0m impl From<(TextureId, Vec2)> for SizedTexture {
+    [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[96m`std::convert::From<(eframe::egui::TextureId, eframe::egui::Vec2)>`[0m
+[1m[96m...[0m
+[1m[96m413[0m [1m[96m|[0m impl<'a> From<&'a TextureHandle> for SizedTexture {
+    [1m[96m|[0m [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[96m`std::convert::From<&eframe::egui::TextureHandle>`[0m
+    [1m[96m= [0m[1m[97mnote[0m: required for `(&eframe::egui::TextureId, eframe::egui::Vec2)` to implement `std::convert::Into<eframe::egui::load::SizedTexture>`
+    [1m[96m= [0m[1m[97mnote[0m: required for `eframe::egui::ImageSource<'_>` to implement `std::convert::From<(&eframe::egui::TextureId, eframe::egui::Vec2)>`
+    [1m[96m= [0m[1m[97mnote[0m: 3 redundant requirements hidden
+    [1m[96m= [0m[1m[97mnote[0m: required for `(&eframe::egui::TextureId, eframe::egui::Vec2)` to implement `std::convert::Into<eframe::egui::Image<'_>>`
+[1m[92mnote[0m: required by a bound in `eframe::egui::Button::<'a>::image_and_text`
+   [1m[96m--> [0mC:\Users\runneradmin\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\egui-0.29.1\src\widgets\button.rs:55:39
+    [1m[96m|[0m
+[1m[96m 42[0m [1m[96m|[0m impl<'a> Button<'a> {
+[1m[96m...[0m
+[1m[96m 55[0m [1m[96m|[0m     pub fn image_and_text(image: impl Into<Image<'a>>, text: impl Into<WidgetText>) -> Self {
+    [1m[96m|[0m                                       [1m[92m^^^^^^^^^^^^^^^[0m [1m[92mrequired by this bound in `Button::<'a>::image_and_text`[0m
+    [1m[96m= [0m[1m[97mnote[0m: the full name for the type has been written to 'D:\a\WinRust\WinRust\target\debug\build\winrust-desktop/cb903eb8ab3bb9a2\out\winrust_desktop-cb903eb8ab3bb9a2.long-type-4680499569080559888.txt'
+    [1m[96m= [0m[1m[97mnote[0m: consider using `--verbose` to print the full type name to the console
+
+[1m[97mSome errors have detailed explanations: E0277, E0433.[0m
+[1m[97mFor more information about an error, try `rustc --explain E0277`.[0m
+[1m[93mwarning[0m: `winrust-desktop` (bin "winrust-desktop" test) generated 1 warning
+[1m[91merror[0m: could not compile `winrust-desktop` (bin "winrust-desktop" test) due to 7 previous errors; 1 warning emitted
+[1m[93mwarning[0m: build failed, waiting for other jobs to finish...
+[1m[93mwarning[0m: `winrust-desktop` (bin "winrust-desktop") generated 1 warning (1 duplicate)
+[1m[91merror[0m: could not compile `winrust-desktop` (bin "winrust-desktop") due to 7 previous errors; 1 warning emitted
+[1m[93mwarning[0m: `winrust-launcher` (bin "WinRust") generated 1 warning (1 duplicate)
