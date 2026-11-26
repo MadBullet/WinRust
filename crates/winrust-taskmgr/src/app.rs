@@ -32,7 +32,7 @@ mod startup;
 mod tabs;
 mod ui;
 
-pub use sort::{RowFilter, SortBy};
+pub use sort::{RowFilter, SortBy, UpdateInterval};
 pub use tabs::Tab;
 
 use eframe::egui;
@@ -73,6 +73,15 @@ pub struct TaskManagerApp {
     pub(super) row_filter: RowFilter,
     pub(super) sort_by: SortBy,
     pub(super) sort_desc: bool,
+    /// How often the list redraws from the sampler.  Windows calls this the
+    /// "update speed" and sets it from a right-click on the list.
+    pub(super) update_interval: UpdateInterval,
+    /// When the visible snapshot was last taken from the sampler, so the
+    /// chosen interval can hold back newer samples.
+    pub(super) shown_at: Instant,
+    /// The newest sample the sampler has produced; `snapshot` is the one the
+    /// interval allowed through.
+    pub(super) pending_snapshot: Option<Snapshot>,
     pub(super) status: String,
     pub(super) confirm_kill: Option<(u32, String)>,
     pub(super) startup: Vec<StartupItem>,
@@ -122,6 +131,9 @@ impl TaskManagerApp {
             row_filter: RowFilter::All,
             sort_by: SortBy::Cpu,
             sort_desc: true,
+            update_interval: UpdateInterval::OneSecond,
+            shown_at: Instant::now(),
+            pending_snapshot: None,
             status: String::new(),
             confirm_kill: None,
             startup: Vec::new(),
@@ -141,7 +153,31 @@ impl TaskManagerApp {
     }
 
     pub(super) fn pump(&mut self, ctx: &egui::Context) {
+        // The sampler runs at its own fixed rate; the *view* decides how often
+        // it adopts a sample.  Keeping the newest one aside and showing it when
+        // the chosen interval has elapsed is what makes "update speed" a
+        // setting instead of a re-spawn of the worker thread.
+        let mut newest: Option<Snapshot> = None;
         while let Ok(snap) = self.sampler.rx.try_recv() {
+            newest = Some(snap);
+        }
+        if let Some(snap) = newest {
+            self.pending_snapshot = Some(snap);
+        }
+        if self.shown_at.elapsed() < self.update_interval.hold() {
+            // Not time yet: keep the samples coming so the next tick shows the
+            // freshest one, and repaint so the UI stays responsive.
+            ctx.request_repaint_after(std::time::Duration::from_millis(150));
+            self.tick_side_panels();
+            return;
+        }
+        let Some(snap) = self.pending_snapshot.take() else {
+            ctx.request_repaint_after(std::time::Duration::from_millis(200));
+            self.tick_side_panels();
+            return;
+        };
+        self.shown_at = Instant::now();
+        {
             // `remove(0)` panics on an empty vector; the histories are created
             // with 120 zeros, but hardening costs nothing and the abort-on-panic
             // profile makes every panic fatal.
@@ -164,12 +200,12 @@ impl TaskManagerApp {
             self.history_net.push(net_total as f32);
             self.snapshot = snap;
         }
-        // Repaint unconditionally.  This used to run only after a new snapshot
-        // arrived, which meant the window was left asleep between samples and
-        // egui only woke it on mouse input - the "updates only when I move the
-        // mouse" report.  Asking for the next frame every frame keeps the UI at
-        // its own cadence and costs nothing compared with the sampling itself.
-        ctx.request_repaint_after(Duration::from_millis(200));
+        self.tick_side_panels();
+    }
+
+    /// The slow polls that are independent of the process list's update speed:
+    /// connections and, on the Services tab, the service list.
+    fn tick_side_panels(&mut self) {
         if self.last_conn_refresh.elapsed().as_secs() >= 2 {
             self.connections = net::tcp_connections();
             self.last_conn_refresh = Instant::now();

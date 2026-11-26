@@ -114,6 +114,9 @@ pub(super) struct PersistedState {
     pub(super) preview_open: bool,
     #[serde(default)]
     pub(super) sidebar_width: f32,
+    /// Folders the user pinned into the left pane's favourites list.
+    #[serde(default)]
+    pub(super) pinned: Vec<PathBuf>,
 }
 
 pub(super) fn state_path() -> Option<PathBuf> {

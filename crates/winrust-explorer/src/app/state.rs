@@ -1,7 +1,7 @@
 //! The window itself: [`ExplorerApp`], its construction, navigation verbs,
 //! and the caches that make a directory listing cheap to draw twice.
 
-use super::tabs::{file_name_of, FileJob, Listing, Tab};
+use super::tabs::{file_name_of, FileJob, Listing, Special, Tab};
 use super::viewmode::{load_state, FolderPrefs, SortKeySerde};
 use eframe::egui;
 use std::collections::HashMap;
@@ -32,6 +32,10 @@ pub struct ExplorerApp {
     pub(super) folder_size_rx: Receiver<(PathBuf, u64, u64)>,
     pub(super) folder_size_tx: Sender<(PathBuf, u64, u64)>,
     pub(super) nav_selected: Option<KnownFolder>,
+    /// Folders pinned to the left pane's favourites list.  Explorer has no
+    /// "quick access" of its own here, so this *is* that list: the user drags a
+    /// folder onto the pane and it stays.
+    pub(super) pinned: Vec<PathBuf>,
     pub(super) drives: Vec<disk::VolumeInfo>,
     pub(super) rename_target: Option<PathBuf>,
     pub(super) rename_buffer: String,
@@ -59,6 +63,13 @@ pub struct ExplorerApp {
     pub(super) last_search: std::time::Instant,
     /// Ghost card that follows the cursor while dragging, by animation.
     pub(super) drag_ghost: Option<DragGhost>,
+    /// Where a rubber-band selection started, in screen coordinates.  Set on a
+    /// press over empty space in the file area, cleared on release.
+    pub(super) band_start: Option<egui::Pos2>,
+    /// Screen rectangles of the rows drawn this frame, so the rubber band can
+    /// ask "which entries did the box touch?" using what is actually on screen
+    /// instead of guessing row heights.  Cleared by each view as it starts.
+    pub(super) row_rects: Vec<(PathBuf, egui::Rect)>,
     /// Global transparency/blur, shared with the other components.
     pub(super) appearance: winrust_core::i18n::Appearance,
     pub(super) appearance_dirty: bool,
@@ -107,11 +118,10 @@ impl ExplorerApp {
         winrust_ui::theme::apply(&cc.egui_ctx, &appearance);
 
         let persisted = load_state();
-        let default_start = KnownFolder::Profile
-            .path()
-            .unwrap_or_else(|| PathBuf::from("C:\\"));
+        // Explorer opens on "This PC", as Windows does, so the first thing the
+        // user sees is the drives.  It used to open the profile folder.
         let tabs: Vec<Tab> = if persisted.tabs.is_empty() {
-            vec![Tab::new(default_start)]
+            vec![Tab::special(Special::Computer)]
         } else {
             persisted
                 .tabs
@@ -131,6 +141,7 @@ impl ExplorerApp {
                 .collect()
         };
         let active = persisted.active_tab.min(tabs.len().saturating_sub(1));
+        let pinned = persisted.pinned.clone();
         let (tx, rx) = channel();
         let (job_tx, job_rx) = channel();
         let (folder_size_tx, folder_size_rx) = channel();
@@ -149,7 +160,8 @@ impl ExplorerApp {
             folder_size_pending: None,
             folder_size_rx,
             folder_size_tx,
-            nav_selected: Some(KnownFolder::Profile),
+            nav_selected: Some(KnownFolder::Computer),
+            pinned,
             drives: disk::volumes(),
             rename_target: None,
             rename_buffer: String::new(),
@@ -176,6 +188,8 @@ impl ExplorerApp {
             search_tx,
             last_search: std::time::Instant::now(),
             drag_ghost: None,
+            band_start: None,
+            row_rects: Vec::new(),
             appearance,
             appearance_dirty: false,
             hwnd: 0,

@@ -228,6 +228,7 @@ impl ExplorerApp {
         entries: &[DirEntry],
     ) {
         let app_list = self.open_with.clone();
+        self.row_rects.clear();
         let sort_key = self.current().sort_key;
         let sort_asc = self.current().sort_asc;
         let clicked_cell = std::cell::Cell::new(None::<SortKeySerde>);
@@ -283,6 +284,21 @@ impl ExplorerApp {
             }
         });
 
+        // Rubber-band selection.  The background is claimed *before* the table
+        // so the rows stack above it: a press that lands on a row belongs to
+        // the row, and only a press on the empty strip below the last entry
+        // reaches this.
+        let band_rect = ui.available_rect_before_wrap();
+        let bg = ui.interact(
+            band_rect,
+            ui.id().with("explorer_band_bg_details"),
+            egui::Sense::click_and_drag(),
+        );
+        let band_pressed = bg.hovered() && ctx.input(|i| i.pointer.primary_pressed());
+        if band_pressed && !self.drag_active {
+            self.band_start = ctx.input(|i| i.pointer.interact_pos());
+        }
+
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -290,6 +306,9 @@ impl ExplorerApp {
         let mut drop_on: Option<PathBuf> = None;
         // The folder currently under the pointer during a drag (highlight only).
         let mut drag_hover: Option<PathBuf> = None;
+        let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
+        let table_rect = ui.max_rect();
+        let (table_left, table_right) = (table_rect.left(), table_rect.right());
         let pointer_released = ctx.input(|i| i.pointer.primary_released());
 
         table.body(|body| {
@@ -306,6 +325,20 @@ impl ExplorerApp {
                         ui.label(if entry.is_dir { "🗀" } else { "🗎" });
                     }
                 });
+                // Now that one column exists the row has a rectangle -
+                // `Row::response()` panics before that.  The band is widened to
+                // the table because a row's response covers only the cells laid
+                // out so far.
+                {
+                    let r = row.response().rect;
+                    row_rect_out.push((
+                        entry.path.clone(),
+                        egui::Rect::from_min_max(
+                            egui::pos2(table_left, r.top()),
+                            egui::pos2(table_right, r.bottom()),
+                        ),
+                    ));
+                }
 
                 row.col(|ui| {
                     let mut text = RichText::new(&entry.name);
@@ -329,9 +362,26 @@ impl ExplorerApp {
                     // the pointer a moment earlier.
                     if entry.is_dir && resp.hovered() && self.drag_active {
                         drag_hover = Some(entry.path.clone());
+                        // A 1.5 px outline around the name cell was too quiet to
+                        // answer "where will this land?".  Paint the whole row
+                        // - a translucent fill plus a solid border - at the
+                        // table's own width, which is what Explorer does.
+                        // `Row::response()` panics until at least one cell has
+                        // been laid out, so the row band is built from the cell
+                        // we are drawing in - same height, full table width.
+                        let band = ui.max_rect();
+                        let row_rect = egui::Rect::from_min_max(
+                            egui::pos2(band.left(), resp.rect.top()),
+                            egui::pos2(band.right(), resp.rect.bottom()),
+                        );
+                        ui.painter().rect_filled(
+                            row_rect,
+                            0.0,
+                            Color32::from_rgba_unmultiplied(0, 120, 215, 48),
+                        );
                         ui.painter().rect_stroke(
-                            resp.rect.expand(1.0),
-                            2.0,
+                            row_rect,
+                            0.0,
                             egui::Stroke::new(1.5_f32, Color32::from_rgb(0, 150, 255)),
                         );
                         if pointer_released {
@@ -395,6 +445,7 @@ impl ExplorerApp {
         if let Some(entry) = opened {
             self.open_entry(&entry);
         }
+        self.row_rects = std::mem::take(&mut row_rect_out);
         self.finish_drag_and_commands(ctx, entries, commands);
     }
 
@@ -405,6 +456,23 @@ impl ExplorerApp {
         entries: &[DirEntry],
     ) {
         let app_list = self.open_with.clone();
+        
+        let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
+        // Rubber-band selection.  The background is claimed *before* the table
+        // so the rows stack above it: a press that lands on a row belongs to
+        // the row, and only a press on the empty strip below the last entry
+        // reaches this.
+        let band_rect = ui.available_rect_before_wrap();
+        let bg = ui.interact(
+            band_rect,
+            ui.id().with("explorer_band_bg_list"),
+            egui::Sense::click_and_drag(),
+        );
+        let band_pressed = bg.hovered() && ctx.input(|i| i.pointer.primary_pressed());
+        if band_pressed && !self.drag_active {
+            self.band_start = ctx.input(|i| i.pointer.interact_pos());
+        }
+
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -491,6 +559,7 @@ impl ExplorerApp {
         if let Some(entry) = opened {
             self.open_entry(&entry);
         }
+        self.row_rects = std::mem::take(&mut row_rect_out);
         self.finish_drag_and_commands(ctx, entries, commands);
     }
 
@@ -503,6 +572,23 @@ impl ExplorerApp {
         icon: u32,
     ) {
         let app_list = self.open_with.clone();
+        
+        let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
+        // Rubber-band selection.  The background is claimed *before* the table
+        // so the rows stack above it: a press that lands on a row belongs to
+        // the row, and only a press on the empty strip below the last entry
+        // reaches this.
+        let band_rect = ui.available_rect_before_wrap();
+        let bg = ui.interact(
+            band_rect,
+            ui.id().with("explorer_band_bg_tiles"),
+            egui::Sense::click_and_drag(),
+        );
+        let band_pressed = bg.hovered() && ctx.input(|i| i.pointer.primary_pressed());
+        if band_pressed && !self.drag_active {
+            self.band_start = ctx.input(|i| i.pointer.interact_pos());
+        }
+
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -565,6 +651,7 @@ impl ExplorerApp {
                                         egui::Id::new(("tile_drag", idx)),
                                         egui::Sense::click_and_drag(),
                                     );
+                                    row_rect_out.push((entry.path.clone(), resp.rect));
                                     let mut local: Vec<Command> = Vec::new();
                                     resp.context_menu(|ui| {
                                         simple_context_menu(ui, entry, &app_list, &mut local)
@@ -621,6 +708,7 @@ impl ExplorerApp {
         if let Some(entry) = opened {
             self.open_entry(&entry);
         }
+        self.row_rects = std::mem::take(&mut row_rect_out);
         self.finish_drag_and_commands(ctx, entries, commands);
     }
 
@@ -632,6 +720,23 @@ impl ExplorerApp {
         entries: &[DirEntry],
     ) {
         let app_list = self.open_with.clone();
+        
+        let mut row_rect_out: Vec<(PathBuf, egui::Rect)> = Vec::new();
+        // Rubber-band selection.  The background is claimed *before* the table
+        // so the rows stack above it: a press that lands on a row belongs to
+        // the row, and only a press on the empty strip below the last entry
+        // reaches this.
+        let band_rect = ui.available_rect_before_wrap();
+        let bg = ui.interact(
+            band_rect,
+            ui.id().with("explorer_band_bg_content"),
+            egui::Sense::click_and_drag(),
+        );
+        let band_pressed = bg.hovered() && ctx.input(|i| i.pointer.primary_pressed());
+        if band_pressed && !self.drag_active {
+            self.band_start = ctx.input(|i| i.pointer.interact_pos());
+        }
+
         let mut clicked: Option<(usize, PathBuf)> = None;
         let mut opened: Option<DirEntry> = None;
         let mut commands: Vec<(PathBuf, Command)> = Vec::new();
@@ -645,6 +750,7 @@ impl ExplorerApp {
                         egui::vec2(ui.available_width(), 52.0),
                         egui::Sense::click(),
                     );
+                    row_rect_out.push((entry.path.clone(), rect));
                     if selected {
                         ui.painter()
                             .rect_filled(rect, 3.0, ui.visuals().selection.bg_fill);
@@ -717,6 +823,7 @@ impl ExplorerApp {
         if let Some(entry) = opened {
             self.open_entry(&entry);
         }
+        self.row_rects = std::mem::take(&mut row_rect_out);
         self.finish_drag_and_commands(ctx, entries, commands);
     }
 }
@@ -847,6 +954,60 @@ impl ExplorerApp {
             }
         }
 
+        // Rubber band.  The band is drawn while the button is down and turns
+        // into a selection on release: every entry whose row rectangle it
+        // touches gets selected, exactly like the desktop's box.  The row
+        // rectangles come from `row_rects`, which the views fill while they
+        // draw, so the test uses what was actually on screen.
+        if let Some(start) = self.band_start {
+            let pointer = ctx.input(|i| i.pointer.interact_pos());
+            if let Some(p) = pointer {
+                let band = egui::Rect::from_two_pos(start, p);
+                if band.width() > 3.0 || band.height() > 3.0 {
+                    let painter = ctx.layer_painter(egui::LayerId::new(
+                        egui::Order::Foreground,
+                        egui::Id::new("explorer_rubber_band"),
+                    ));
+                    painter.rect_filled(
+                        band,
+                        0.0,
+                        Color32::from_rgba_unmultiplied(0, 120, 215, 48),
+                    );
+                    painter.rect_stroke(
+                        band,
+                        0.0,
+                        egui::Stroke::new(1.0_f32, Color32::from_rgb(0, 150, 255)),
+                    );
+                }
+            }
+            if ctx.input(|i| i.pointer.primary_released()) {
+                if let Some(p) = pointer {
+                    let band = egui::Rect::from_two_pos(start, p);
+                    let add = ctx.input(|i| i.modifiers.ctrl || i.modifiers.command);
+                    let mut hits: Vec<PathBuf> = Vec::new();
+                    for (path, rect) in &self.row_rects {
+                        if band.intersects(*rect) {
+                            hits.push(path.clone());
+                        }
+                    }
+                    if !hits.is_empty() || band.width() > 3.0 || band.height() > 3.0 {
+                        if add {
+                            let mut sel = self.current().selection.clone();
+                            for h in hits {
+                                if !sel.contains(&h) {
+                                    sel.push(h);
+                                }
+                            }
+                            self.current_mut().selection = sel;
+                        } else {
+                            self.current_mut().selection = hits;
+                        }
+                    }
+                }
+                self.band_start = None;
+            }
+        }
+
         // Drag & drop (driven by per-row responses, see `register_drop_zone`).
         if let Some(dest) = self.drop_target.take() {
             let src = self.drag_paths.clone();
@@ -858,8 +1019,19 @@ impl ExplorerApp {
                     jobs.push((s.clone(), target));
                 }
                 let tab = self.active;
-                self.start_file_job(jobs, false, tab);
-                self.status = format!("Copied {} item(s) → {}", src.len(), dest.display());
+                // Dragging is a *move*, the way Explorer does it on the same
+                // volume, and holding Ctrl is what makes it a copy.  This
+                // passed `false` unconditionally, so every drag copied and the
+                // source stayed behind - the reported bug.  Shift forces a move
+                // even across volumes; without it the job falls back to
+                // copy-then-delete, which is still a move from the user's side.
+                let copy = ctx.input(|i| i.modifiers.command || i.modifiers.ctrl);
+                self.start_file_job(jobs, !copy, tab);
+                self.status = if copy {
+                    format!("Copied {} item(s) → {}", src.len(), dest.display())
+                } else {
+                    format!("Moved {} item(s) → {}", src.len(), dest.display())
+                };
             }
             self.drag_paths.clear();
             self.drag_active = false;

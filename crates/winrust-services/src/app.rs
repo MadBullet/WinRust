@@ -16,6 +16,15 @@ use egui_extras::{Column, TableBuilder};
 use std::time::{Duration, Instant};
 use winrust_core::i18n::{self, Lang};
 use winrust_core::service::{ScManager, ServiceAction, ServiceEntry, ServiceState, StartType};
+
+/// A command picked from a service row's context menu.  `Restart` is its own
+/// case rather than "stop then start" queued twice, because the two halves need
+/// a pause between them and the second one only runs if the first succeeded.
+#[derive(Debug, Clone, Copy)]
+enum MenuCommand {
+    Action(ServiceAction),
+    Restart,
+}
 use winrust_core::user;
 use winrust_core::{t, tf, ts};
 
@@ -377,6 +386,10 @@ impl ServicesApp {
         let mut clicked: Option<String> = None;
         let mut double_clicked = false;
         let mut clicked_header: Option<SortColumn> = None;
+        // Commands collected from row context menus.  They are applied after
+        // the table closes, when `self` is free to mutate again.
+        let mut ctx_action: Vec<(String, MenuCommand)> = Vec::new();
+        let mut props_after: Option<String> = None;
 
         let mut table = TableBuilder::new(ui)
             .striped(true)
@@ -434,6 +447,60 @@ impl ServicesApp {
                     if resp.double_clicked() {
                         clicked = Some(s.name.clone());
                         double_clicked = true;
+                    }
+                    // Right-click: the same verbs as the toolbar, in a menu on
+                    // the row the user actually pointed at.  The action is
+                    // deferred through `ctx_action` because the list borrows
+                    // `self` immutably while it draws, and `do_action` needs
+                    // `&mut self`; acting inside the closure would not compile
+                    // and acting on `self.selected` would act on the *previous*
+                    // selection if the menu was opened over a different row.
+                    let mut menu_action: Option<ServiceAction> = None;
+                    let mut menu_restart = false;
+                    let mut menu_props = false;
+                    let mut menu_select = false;
+                    // Opening the menu on an unselected row selects it, so the
+                    // toolbar, the details pane and the menu all refer to the
+                    // same service.
+                    if resp.secondary_clicked() && !selected {
+                        menu_select = true;
+                    }
+                    resp.context_menu(|ui| {
+                        ui.label(RichText::new(&s.display_name).strong());
+                        ui.label(RichText::new(&s.name).small().weak());
+                        ui.separator();
+                        for action in [
+                            ServiceAction::Start,
+                            ServiceAction::Stop,
+                            ServiceAction::Pause,
+                            ServiceAction::Resume,
+                        ] {
+                            if ui.button(action.label()).clicked() {
+                                menu_action = Some(action);
+                                ui.close_menu();
+                            }
+                        }
+                        ui.separator();
+                        if ui.button(ts("Restart")).clicked() {
+                            menu_restart = true;
+                            ui.close_menu();
+                        }
+                        if ui.button(format!("{}…", t("Properties"))).clicked() {
+                            menu_select = true;
+                            menu_props = true;
+                            ui.close_menu();
+                        }
+                    });
+                    if menu_restart {
+                        ctx_action.push((s.name.clone(), MenuCommand::Restart));
+                    } else if let Some(action) = menu_action {
+                        ctx_action.push((s.name.clone(), MenuCommand::Action(action)));
+                    }
+                    if menu_select {
+                        clicked = Some(s.name.clone());
+                    }
+                    if menu_props {
+                        props_after = Some(s.name.clone());
                     }
                     resp.on_hover_text(&s.name);
                 });
@@ -495,6 +562,36 @@ impl ServicesApp {
             if double_clicked {
                 self.open_props();
             }
+        }
+        // Menu commands.  The row they came from becomes the selection first,
+        // because `do_action` and `open_props` both read `self.selected`; doing
+        // it in this order is what makes the menu act on the row the user
+        // right-clicked rather than on whatever was selected before.
+        if let Some((name, command)) = ctx_action.first().cloned() {
+            self.selected = Some(name.clone());
+            match command {
+                MenuCommand::Action(action) => self.do_action(action),
+                MenuCommand::Restart => {
+                    // Stop, wait for the service manager to settle, start.  A
+                    // service that refuses to stop leaves a message rather
+                    // than a half-restarted service with no explanation.
+                    match winrust_core::service::control(&name, ServiceAction::Stop) {
+                        Ok(()) => {
+                            std::thread::sleep(std::time::Duration::from_millis(400));
+                            match winrust_core::service::control(&name, ServiceAction::Start) {
+                                Ok(()) => self.status = ts("Service restarted").to_string(),
+                                Err(e) => self.status = format!("{}: {e}", ts("Start")),
+                            }
+                        }
+                        Err(e) => self.status = format!("{}: {e}", ts("Stop")),
+                    }
+                }
+            }
+            self.refresh();
+        }
+        if let Some(name) = props_after {
+            self.selected = Some(name);
+            self.open_props();
         }
     }
 

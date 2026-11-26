@@ -446,9 +446,10 @@ fn flyout(
     pal: winrust_ui::theme::Palette,
 ) {
     // Panels hang from the bar, under the button that opened them, and grow
-    // downwards.  `height_hint` is gone: a panel's own content decides its
-    // height, and an `Area` placed by its top edge cannot "slide up" because a
-    // guessed height was wrong.
+    // *upwards*: their bottom edge sits on the bar's top edge.  An `Area` is
+    // placed by its top-left corner, so the top has to be derived from a
+    // height - `height_hint` is that estimate.  Guessing high only moves the
+    // panel further up, which is the safe direction on a short screen.
     let width = app.tray.flyout().width();
     let anchor = app.tray.anchor();
     let screen = ctx.screen_rect();

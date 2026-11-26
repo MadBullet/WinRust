@@ -17,7 +17,7 @@ use winrust_core::{t, tf, ts};
 use super::format::{bytes_text, format_uptime, heat_color, icon_text, mb, rate};
 use super::model::{compare_rows, is_app_row, sort_rows, Metric, Row};
 use super::startup::StartupItem;
-use super::{RowFilter, SortBy, Tab, TaskManagerApp};
+use super::{RowFilter, SortBy, Tab, TaskManagerApp, UpdateInterval};
 
 impl TaskManagerApp {
     /// The stock columns as a vertical strip: icon, caption, live value.
@@ -367,7 +367,7 @@ impl TaskManagerApp {
                 self.sort_desc = !self.sort_desc;
             } else {
                 self.sort_by = key;
-                self.sort_desc = true;
+                self.sort_desc = !matches!(key, SortBy::Name | SortBy::UserName | SortBy::Path);
             }
         }
     }
@@ -574,6 +574,31 @@ impl TaskManagerApp {
             .column(Column::initial(80.0).at_least(60.0).clip(true))
             .column(Column::remainder().at_least(60.0).clip(true));
 
+        let mut interval_clicked: Option<UpdateInterval> = None;
+
+        // The right-click target for "update speed".  Windows puts it on the
+        // empty area right of the process names; taking the whole list is both
+        // easier to hit and harmless, because rows install their own menu on
+        // top of this one and win the click.
+        let list_area = ui.available_rect_before_wrap();
+        let list_resp = ui.interact(
+            list_area,
+            ui.id().with("tm_list_bg"),
+            egui::Sense::click(),
+        );
+        list_resp.context_menu(|ui| {
+            ui.label(RichText::new(ts("Update speed")).strong());
+            ui.separator();
+            for iv in UpdateInterval::ALL {
+                let ticked = self.update_interval == iv;
+                let text = format!("{} {}", if ticked { "●" } else { "○" }, iv.label());
+                if ui.button(text).clicked() {
+                    interval_clicked = Some(iv);
+                    ui.close_menu();
+                }
+            }
+        });
+
         let table = table.header(22.0, |mut header| {
             for (title, key) in &headers {
                 header.col(|ui| {
@@ -717,8 +742,15 @@ impl TaskManagerApp {
                 self.sort_desc = !self.sort_desc;
             } else {
                 self.sort_by = key;
-                self.sort_desc = true;
+                // Numeric columns read best biggest-first; a name column reads
+                // best A-Z.  0.9.0 always started descending, which made the
+                // first click on "Name" look like it did nothing.
+                self.sort_desc = !matches!(key, SortBy::Name | SortBy::UserName | SortBy::Path);
             }
+        }
+        if let Some(iv) = interval_clicked {
+            self.update_interval = iv;
+            self.shown_at = Instant::now() - iv.hold();
         }
         if let Some(pid) = end_pid {
             if let Some(r) = display.iter().find(|r| r.info.pid == pid) {
@@ -1241,10 +1273,24 @@ impl TaskManagerApp {
 
 /// One collapsible group caption: `▾ Приложения (13)` plus the aggregate CPU and
 /// memory of everything inside.  Clicking the caption toggles the group.
+/// One group header: a checkbox that shows the group, its name and size, and
+/// the group's aggregate CPU and memory.
+///
+/// The affordance used to be a bare chevron, so nothing on screen said whether
+/// the group was "included" in the view - the review asked for a checkbox, and
+/// a checkbox is also what Windows shows.  Clicking the box or the name
+/// toggles the group.
 fn group_header(ui: &mut egui::Ui, title: &str, rows: &[&Row], collapsed: &mut bool) {
     let cpu: f32 = rows.iter().map(|r| r.cpu_percent).sum();
     let mem: u64 = rows.iter().map(|r| r.info.private_bytes).sum();
     ui.horizontal(|ui| {
+        // `shown` is the opposite of `collapsed`: a ticked box means the rows
+        // are part of the list.
+        let mut shown = !*collapsed;
+        let box_resp = ui.checkbox(&mut shown, "");
+        if box_resp.changed() {
+            *collapsed = !shown;
+        }
         let arrow = if *collapsed { "▸" } else { "▾" };
         let caption = format!("{arrow} {title} ({})", rows.len());
         let resp =

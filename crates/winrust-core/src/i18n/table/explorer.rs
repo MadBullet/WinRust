@@ -1,6 +1,12 @@
 //! Strings used by the file Explorer (and the desktop shell).
 
 pub static ENTRIES: &[(&str, &str)] = &[
+    ("FAVOURITES", "ИЗБРАННОЕ"),
+    ("   drag a folder here to pin it", "   перетащите папку сюда, чтобы закрепить"),
+    ("Drop to pin", "Отпустите, чтобы закрепить"),
+    ("Right-click to unpin", "Правый клик — открепить"),
+    ("Unpinned", "Откреплено"),
+    ("folder(s) pinned", "папок закреплено"),
     // Navigation chrome
     ("New tab (Ctrl+T)", "Новая вкладка (Ctrl+T)"),
     ("Back (Alt+←)", "Назад (Alt+←)"),

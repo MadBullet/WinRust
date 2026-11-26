@@ -116,6 +116,17 @@ impl Tab {
         }
     }
 
+    /// A tab for a virtual folder ("This PC", "Network", "Recycle Bin").
+    ///
+    /// Its `path` is the `shell:` namespace string rather than a real
+    /// directory: `shell:` namespaces have no filesystem path, and the folder
+    /// list is produced by the shell instead of `read_dir`.
+    pub(super) fn special(special: Special) -> Self {
+        let mut tab = Self::new(PathBuf::from(special.shell_path()));
+        tab.special = Some(special);
+        tab
+    }
+
     pub(super) fn title(&self) -> String {
         // A virtual folder's `path` is a `shell:` namespace string, which
         // `file_name_of` would print verbatim; its own name is the title.

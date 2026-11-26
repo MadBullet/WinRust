@@ -7,6 +7,12 @@ pub static ENTRIES: &[(&str, &str)] = &[
     ("GPU engine", "Графический процессор"),
     ("Show captions", "Показать подписи"),
     ("Hide captions", "Скрыть подписи"),
+    // Update speed (right-click on the process list)
+    ("Update speed", "Скорость обновления"),
+    ("High", "Высокая"),
+    ("Normal (1 s)", "Обычная (1 с)"),
+    ("Low (3 s)", "Низкая (3 с)"),
+    ("Paused (5 s)", "Приостановлена (5 с)"),
     // Processes
     ("Apps", "Приложения"),
     ("Background processes", "Фоновые процессы"),

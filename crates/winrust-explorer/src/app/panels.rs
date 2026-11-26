@@ -362,19 +362,18 @@ impl ExplorerApp {
         let cur_path = self.current().path.clone();
         // Snapshot what the pane needs so `self` is not borrowed inside the
         // closure while it is also mutated by click handling.
-        let subfolders: Vec<(String, PathBuf)> = self
-            .current()
-            .entries
-            .iter()
-            .filter(|e| e.is_dir)
-            .take(60)
-            .map(|e| (e.name.clone(), e.path.clone()))
-            .collect();
         let mut nav_selected = self.nav_selected;
         let mut status_msg: Option<String> = None;
         let mut nav_special: Option<Special> = None;
         let mut background_cmd: Option<Command> = None;
         let drives = self.drives.clone();
+        let pinned = self.pinned.clone();
+        let mut unpin_now: Option<PathBuf> = None;
+        let mut pin_now: Vec<PathBuf> = Vec::new();
+        // Dropping a folder on the favourites area pins it.  `drag_paths` is the
+        // snapshot the right pane filled in when the drag started.
+        let dragged: Vec<PathBuf> = self.drag_paths.clone();
+        let dragging = self.drag_active;
         // The pane's own background, so a right-click in the empty strip above
         // the folder list opens the same context menu the file area has - the
         // review's "there is nowhere to right-click in the left pane".  The
@@ -473,19 +472,86 @@ impl ExplorerApp {
                 }
 
                 ui.add_space(10.0);
-                ui.label(RichText::new(t("FOLDERS IN THIS VIEW")).small().weak());
-                if subfolders.is_empty() {
-                    ui.label(RichText::new(t("   (no sub-folders)")).size(11.0).weak());
+                // Favourites, not "folders in this view".  The old list just
+                // echoed the right pane, which is what the report asked to
+                // remove; this one is the user's own and it is filled by
+                // dragging a folder from the right pane onto it.
+                ui.label(RichText::new(t("FAVOURITES")).small().weak());
+                if pinned.is_empty() {
+                    ui.label(
+                        RichText::new(t("   drag a folder here to pin it"))
+                            .size(11.0)
+                            .weak(),
+                    );
                 }
-                for (name, path) in &subfolders {
-                    if ui
-                        .add(
-                            egui::Button::new(RichText::new(format!("📁  {name}")).size(12.0))
-                                .frame(false),
-                        )
-                        .clicked()
-                    {
+                let mut unpin: Option<PathBuf> = None;
+                for path in &pinned {
+                    let name = path
+                        .file_name()
+                        .map(|n| n.to_string_lossy().to_string())
+                        .unwrap_or_else(|| path.display().to_string());
+                    let here = *path == cur_path;
+                    let resp = ui.add(
+                        egui::Button::new(RichText::new(format!("📌  {name}")).size(12.0))
+                            .frame(here),
+                    );
+                    if resp.clicked() {
                         nav = Some(path.clone());
+                    }
+                    if resp.secondary_clicked() {
+                        unpin = Some(path.clone());
+                    }
+                    resp.on_hover_text(format!(
+                        "{}\n{}",
+                        path.display(),
+                        t("Right-click to unpin")
+                    ));
+                }
+                if let Some(path) = unpin {
+                    unpin_now = Some(path);
+                }
+                // The drop target for "pin this folder".  Allocated after the
+                // entries so it can own the leftover height, which makes the
+                // whole bottom of the pane a target rather than one thin row.
+                // Expanding it by a few pixels horizontally keeps the drop
+                // alive when the pointer is right on the pane's edge.
+                let drop_rect = egui::Rect::from_min_max(
+                    ui.cursor().min,
+                    egui::pos2(
+                        ui.max_rect().right(),
+                        (ui.cursor().top() + 60.0).max(ui.max_rect().bottom()),
+                    ),
+                );
+                if dragging {
+                    let hovering = ui.rect_contains_pointer(drop_rect);
+                    ui.painter().rect_filled(
+                        drop_rect,
+                        3.0,
+                        Color32::from_rgba_unmultiplied(0, 120, 215, if hovering { 56 } else { 20 }),
+                    );
+                    ui.painter().rect_stroke(
+                        drop_rect,
+                        3.0,
+                        egui::Stroke::new(1.0_f32, Color32::from_rgb(0, 150, 255)),
+                    );
+                    if hovering {
+                        ui.painter().text(
+                            drop_rect.center(),
+                            egui::Align2::CENTER_CENTER,
+                            t("Drop to pin"),
+                            egui::FontId::proportional(11.0),
+                            Color32::from_rgb(200, 230, 255),
+                        );
+                    }
+                    // On release over the area, every dragged *folder* is
+                    // pinned.  Files are skipped: a favourites list of files is
+                    // a different feature and pinning one would be a surprise.
+                    if hovering && ui.input(|i| i.pointer.primary_released()) {
+                        for path in &dragged {
+                            if path.is_dir() && !pinned.iter().any(|p| p == path) {
+                                pin_now.push(path.clone());
+                            }
+                        }
                     }
                 }
             });
@@ -493,6 +559,19 @@ impl ExplorerApp {
         self.nav_selected = nav_selected;
         if let Some(msg) = status_msg {
             self.status = msg;
+        }
+        if let Some(p) = unpin_now {
+            self.pinned.retain(|x| x != &p);
+            self.status = format!("{}: {}", t("Unpinned"), p.display());
+        }
+        if !pin_now.is_empty() {
+            let count = pin_now.len();
+            for p in pin_now {
+                if !self.pinned.contains(&p) {
+                    self.pinned.push(p);
+                }
+            }
+            self.status = format!("{} {}", count, t("folder(s) pinned"));
         }
         if let Some(p) = nav {
             self.navigate(p);

@@ -673,6 +673,7 @@ impl eframe::App for ExplorerApp {
             folders: self.folders.clone(),
             preview_open: self.preview_open,
             sidebar_width: self.sidebar_width,
+            pinned: self.pinned.clone(),
         };
         save_state(&state);
     }
