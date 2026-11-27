@@ -3,94 +3,74 @@
 > From 0.9.3 on, every WinRust release is published in both languages:
 > English first, then Russian.
 
-Windows 10/11 system components rewritten in Rust. Release 0.9.5 answers a
-fifth review: six reports against 0.9.4, fixed at their causes.
+Windows 10/11 system components rewritten in Rust. Release 0.9.6 restores the
+window switcher the shell took with it, and leaves the tree clean.
 
-## 1. Start menu
+## 1. Alt+Tab
 
-* **The account and power lists have a surface and an outline.** Both were
-  bare `Area`s: the buttons painted straight onto whatever was behind the
-  menu, so the list read as a loose column of labels with no panel around
-  it. They now use the same `Frame::popup` the tray's flyouts use - same
-  fill, same 1 px line, same 10 px rounding.
-* **The pinned grid is free-form.** Empty slots used to be nothing at all,
-  so a tile could only be dropped on a tile and the grid could never be
-  rearranged the way Windows 11 allows. A spare row of dimmed placeholder
-  slots is drawn, every slot is a drop target, and the destination is
-  clamped to "one past the last tile" instead of being rejected.
-* **A drag has a ghost.** The tile being dragged is drawn at 40 % opacity in
-  place, and the slot under the pointer is outlined in blue, so it is
-  visible both where the tile came from and where it will land.
+* **The switcher is back, and it is ours.** Windows keeps `Alt+Tab` inside
+  `explorer.exe`, so replacing the shell removed it: the chord did nothing at
+  all. It is a module of its own now.
+* **How it behaves.** Hold `Alt`, tap `Tab` - a panel lists every open window
+  with its picture, most recently used first. `Tab` walks the selection
+  forward, `Shift+Tab` walks it back, and releasing `Alt` raises the window you
+  stopped on. A card can also be clicked to switch straight to that window, and
+  `Esc` closes the panel without switching. The panel is only up while `Alt` is
+  held, exactly like the stock one.
+* **Why it is polled, not hooked.** `Alt+Tab` is a reserved shell chord: the
+  system takes it before any window receives a key event. The module reads the
+  key state with `GetAsyncKeyState`, the same way `Win+V` and `Win+I` already
+  work from a window that does not have the focus.
 
-## 2. Taskbar
+## 2. The two things a switcher gets wrong
 
-* **Only real program windows get a button.** The window list filtered on
-  "visible with a title", which still includes helper windows programs
-  create for their own use. Owned windows, tool windows and windows that
-  refuse activation are excluded now, the way the shell excludes them.
-* **The active button is chosen by window, not by process.** Grouping is by
-  program, and a program with several windows only has one of them in front;
-  comparing process ids marked every window of a multi-process program as
-  active at once. The foreground handle is sampled every frame and matched
-  against the group's handles.
-* **Icons come from the program's own path.** Three sources, cheapest first:
-  the window's icon, the executable's icon, and - when the window list could
-  not read the image path - the process's own path asked again at drawing
-  time, then the shell's own shortcut for that program name.
-* **Clicking a grouped button raises the window you actually used.** It
-  raised whichever window the process owned, which is not necessarily the
-  one that was in front.
-* **The preview no longer disappears on the way to it.** The group being
-  previewed is remembered for a short grace period instead of being derived
-  from "is the pointer on a button", so crossing the six-pixel gap between
-  the button and the strip does not dismiss it. The strip is rebuilt
-  whenever the pointer is still around, so the hit test can run on it.
+* **The order.** `EnumWindows` hands windows back in z-order, *oldest first*,
+  so the front-most window arrives last. The list is reversed, which is what
+  makes one tap of `Tab` mean "go back where I was" instead of "go to the
+  window I have not touched in an hour".
+* **The press that opens the panel.** A single `Tab` down was doing two jobs:
+  it opened the panel *and* stepped the selection, so the first card the user
+  ever saw was already the second window. The opening press is consumed by the
+  opening itself.
 
-## 3. Explorer
+## 3. Seeing the panel at all
 
-* **Favourites can be reordered by dragging.** The dragged row was a local
-  variable, `drag_started` is true for exactly one frame, and the release
-  arrives several frames later - the two could never meet. The row index is
-  now remembered in egui's memory for the duration of the gesture, and the
-  list is reordered on release, with the insertion line drawn where the row
-  will land.
+* **The shell window had to be lifted.** The desktop window is
+  `always_on_bottom` by design - it *is* the desktop, so a normal window would
+  hide the icons and the taskbar it hosts. A panel drawn in it would have been
+  covered by the very windows it switches between. For as long as the panel is
+  up the window is raised to `AlwaysOnTop`, and it drops back to
+  `AlwaysOnBottom` when the panel closes.
+* **Pictures are taken once, on open.** A live refresh was measured against its
+  cost: `PrintWindow` on every window in the list is more than a panel that
+  lives for half a second is worth. A window that disappears loses its entry in
+  the cache, so it cannot grow for the life of the shell.
 
-## 4. Alt+Tab
+## 4. Where the new state lives
 
-* **The window switcher is ours now.** Windows keeps it inside
-  `explorer.exe`, so replacing the shell took it away. Hold `Alt`, tap `Tab`,
-  and a panel lists every open window with its picture, most recently used
-  first; `Tab` walks the selection, `Shift+Tab` walks it back, releasing
-  `Alt` raises the window you stopped on, a click on a card switches to that
-  card directly, and `Esc` dismisses the panel without switching.
-* `Alt+Tab` is a reserved shell chord - the system swallows it before any
-  window sees a key event - so it is polled with `GetAsyncKeyState`, the same
-  way `Win+V` and `Win+I` already work from an unfocused window.
-* The shell window is `always_on_bottom` by design, so it is raised to
-  `AlwaysOnTop` for as long as the panel is up and dropped back afterwards.
-  Without that the switcher would be covered by the very windows it switches
-  between.
-
-## 5. The hidden-icons flyout
-
-* **Every row has hover feedback.** The rows were frameless buttons, and an
-  egui button without a frame has no visual state at all, so the pointer
-  gave nothing back before the click. A row now paints a soft fill and an
-  accent outline while it is under the pointer.
-
-## Where the new state lives
-
-| new in 0.9.5 | owner |
+| new in 0.9.6 | owner |
 | --- | --- |
-| the program being previewed | `DesktopApp::hovered_group` |
-| how long the preview may survive a gap | `DesktopApp::preview_at` |
-| the window in front, for the active button | `DesktopApp::active_hwnd` |
-| the favourite being dragged | egui memory, `Id::new("explorer_fav_drag")` |
-| the Alt+Tab panel's whole state | `alttab::AltTab` |
-| the surface of the two footer lists | `start::popup_surface`, `popup_line` |
+| the panel, the order and the selection | `alttab::AltTab` |
+| whether the shell window is currently raised | `AltTab::raised` |
+| the pictures of the candidate windows | `DesktopApp::thumbs`, shared with the taskbar |
 
-`cargo fmt --all` and `cargo clippy` are clean on every crate; the release,
-build, fmt, clippy and test jobs are green on the tagged commit.
+The panel's state is one value with verbs, not three loose fields: a selection
+without the panel is nothing, and an order without a selection cannot be
+walked. Four of the module's nine methods are private to it.
+
+## 5. The rest of the tree
+
+* **A deslop pass over every crate, finding nothing to fix.** No file is over
+  2000 lines, no directory holds more than fifteen modules, and there are no
+  module cycles or three-node tangles anywhere in the workspace.
+* **The new module was held to the same rule.** It came out of the pass with
+  five of its nine methods public - more than the rest of the shell exposes
+  together. The ones that only serve the module's own panel are private now,
+  and the colour helpers became free functions instead of a trait with an empty
+  body, which is the shape the linter rejects.
+
+`cargo fmt --all`, `cargo build` and `cargo clippy` are clean on every crate;
+the release, build, fmt, clippy and test jobs are green on the tagged commit.
 
 ---
 
@@ -99,92 +79,72 @@ build, fmt, clippy and test jobs are green on the tagged commit.
 > сначала английский, затем русский. Английская часть заканчивается
 > разделителем `---` выше.
 
-Компоненты Windows 10/11, переписанные на Rust. Релиз 0.9.5 отвечает на
-пятое ревью: шесть замечаний по 0.9.4, исправленных по причинам.
+Компоненты Windows 10/11, переписанные на Rust. Релиз 0.9.6 возвращает
+переключатель окон, который унесла с собой замена оболочки, и оставляет дерево
+чистым.
 
-## 1. Меню «Пуск»
+## 1. Alt+Tab
 
-* **У списков пользователя и завершения работы есть фон и обводка.** Оба были
-  голыми `Area`: кнопки рисовались прямо поверх того, что было за меню,
-  поэтому список читался как рыхлая колонка подписей без панели вокруг. Теперь
-  они используют тот же `Frame::popup`, что и флайауты трея — та же заливка,
-  та же линия в 1 px, то же скругление 10 px.
-* **Сетка закреплённых стала свободной.** Пустых ячеек раньше не было вовсе,
-  поэтому плитку можно было бросить только на плитку, и переставить сетку так,
-  как это позволяет Windows 11, было нельзя. Теперь рисуется запасной ряд
-  приглушённых пустых ячеек, каждая ячейка принимает сброс, а место вставки
-  прижимается к «сразу за последней плиткой» вместо отказа.
-* **У перетаскивания есть призрак.** Перетаскиваемая плитка рисуется на месте
-  с прозрачностью 40 %, а ячейка под курсором обводится синим — видно и
-  откуда плитка, и куда она попадёт.
+* **Переключатель вернулся, и он наш.** Windows держит `Alt+Tab` внутри
+  `explorer.exe`, поэтому замена оболочки его убрала: сочетание не делало
+  ровно ничего. Теперь это отдельный модуль.
+* **Как он себя ведёт.** Зажмите `Alt`, нажмите `Tab` — появится панель со
+  всеми открытыми окнами и их снимками, последние использованные первыми.
+  `Tab` ведёт выделение вперёд, `Shift+Tab` назад, отпускание `Alt` поднимает
+  то окно, на котором вы остановились. По карточке можно щёлкнуть, чтобы
+  переключиться сразу на это окно, а `Esc` закрывает панель без переключения.
+  Панель видна только пока зажат `Alt` — ровно как штатная.
+* **Почему опрос, а не хук.** `Alt+Tab` — зарезервированное системное
+  сочетание: система забирает его раньше, чем какое-либо окно получит событие
+  клавиши. Модуль читает состояние клавиш через `GetAsyncKeyState` — так же,
+  как уже работают `Win+V` и `Win+I` из окна без фокуса.
 
-## 2. Панель задач
+## 2. Две вещи, которые переключатель делает не так
 
-* **Кнопку получают только настоящие окна программ.** Список окон фильтровался
-  по «видимо и с заголовком», а под это попадают и служебные окна, которые
-  программы создают для себя. Теперь окна с владельцем, инструментальные окна
-  и окна, отказывающиеся от активации, исключены — так же, как это делает
-  оболочка Windows.
-* **Активная кнопка выбирается по окну, а не по процессу.** Группировка идёт по
-  программе, а у программы с несколькими окнами впереди только одно; сравнение
-  идентификаторов процессов помечало активными все окна такой программы сразу.
-  Хэндл переднего окна снимается каждый кадр и сверяется с хэндлами группы.
-* **Значки берутся из пути самой программы.** Три источника, от дешёвого:
-  значок окна, значок исполняемого файла и — когда список окон не смог прочитать
-  путь образа — повторный запрос пути у процесса в момент отрисовки, а затем
-  ярлык этой программы из поставки оболочки.
-* **Нажатие на сгруппированную кнопку поднимает то окно, которым вы
-  пользовались.** Раньше поднималось то окно процесса, которое попалось, — не
-  обязательно то, что было впереди.
-* **Превью больше не пропадает по дороге к нему.** Показываемая группа
-  запоминается на короткий льготный период вместо того, чтобы выводиться из
-  «курсор на кнопке», поэтому переход через шестипиксельный зазор между кнопкой
-  и полосой не закрывает превью. Полоса перестраивается, пока курсор рядом, —
-  значит, проверка попадания по ней успевает сработать.
+* **Порядок.** `EnumWindows` возвращает окна в z-порядке, *старейшие первыми*,
+  поэтому переднее окно приходит последним. Список разворачивается — именно
+  это делает одно нажатие `Tab` означающим «верни меня туда, где я был», а не
+  «перейди к окну, которое я не трогал час».
+* **Нажатие, открывающее панель.** Одно нажатие `Tab` делало две работы:
+  открывало панель *и* сдвигало выделение, поэтому первая же увиденная
+  карточка была уже вторым окном. Нажатие, открывшее панель, поглощается
+  самим открытием.
 
-## 3. Проводник
+## 3. Как эту панель вообще увидеть
 
-* **«Избранное» переставляется перетаскиванием.** Перетаскиваемая строка была
-  локальной переменной, `drag_started` истинно ровно один кадр, а отпускание
-  приходит несколькими кадрами позже — эти два события не могли встретиться.
-  Теперь номер строки на время жеста хранится в памяти egui, а список
-  переставляется при отпускании; линия вставки рисуется там, куда строка
-  попадёт.
+* **Окно оболочки пришлось поднять.** Окно рабочего стола по замыслу
+  `always_on_bottom` — это и *есть* рабочий стол, поэтому обычное окно скрыло
+  бы значки и панель задач, которые оно содержит. Панель, нарисованная в нём,
+  была бы закрыта теми самыми окнами, между которыми она переключает. Пока
+  панель видна, окно поднимается в `AlwaysOnTop`, а при её закрытии
+  возвращается в `AlwaysOnBottom`.
+* **Снимки делаются один раз, при открытии.** Живое обновление было сверено со
+  своей ценой: `PrintWindow` для каждого окна из списка — больше, чем стоит
+  панель, живущая полсекунды. Исчезнувшее окно теряет свою запись в кэше,
+  поэтому он не может расти всё время жизни оболочки.
 
-## 4. Alt+Tab
+## 4. Где живёт новое состояние
 
-* **Переключатель окон теперь наш.** Windows держит его внутри
-  `explorer.exe`, поэтому замена оболочки унесла его с собой. Зажмите `Alt`,
-  нажмите `Tab` — появится панель со всеми открытыми окнами и их снимками,
-  последние использованные первыми; `Tab` ведёт выделение вперёд, `Shift+Tab`
-  назад, отпускание `Alt` поднимает выбранное окно, щелчок по карточке
-  переключает сразу на неё, `Esc` закрывает панель без переключения.
-* `Alt+Tab` — зарезервированное системное сочетание: система перехватывает его
-  раньше, чем какое-либо окно получит событие клавиши, поэтому оно
-  опрашивается через `GetAsyncKeyState` — так же, как уже работают `Win+V` и
-  `Win+I` из окна без фокуса.
-* Окно оболочки по замыслу `always_on_bottom`, поэтому на время показа панели
-  оно поднимается в `AlwaysOnTop` и возвращается обратно после. Без этого
-  переключатель был бы закрыт теми самыми окнами, между которыми он
-  переключает.
-
-## 5. Панель скрытых значков
-
-* **У каждой строки есть отклик на наведение.** Строки были кнопками без рамки,
-  а кнопка egui без рамки не имеет визуальных состояний вовсе — до щелчка
-  курсор ничего не сообщал. Теперь строка под курсором получает мягкую заливку
-  и обводку цветом акцента.
-
-## Где живёт новое состояние
-
-| новое в 0.9.5 | владелец |
+| новое в 0.9.6 | владелец |
 | --- | --- |
-| программа, чьё превью показывается | `DesktopApp::hovered_group` |
-| сколько превью может пережить разрыв | `DesktopApp::preview_at` |
-| окно впереди, для активной кнопки | `DesktopApp::active_hwnd` |
-| перетаскиваемая строка «Избранного» | память egui, `Id::new("explorer_fav_drag")` |
-| всё состояние панели Alt+Tab | `alttab::AltTab` |
-| фон двух нижних списков «Пуска» | `start::popup_surface`, `popup_line` |
+| панель, порядок и выделение | `alttab::AltTab` |
+| поднято ли сейчас окно оболочки | `AltTab::raised` |
+| снимки окон-кандидатов | `DesktopApp::thumbs`, общий с панелью задач |
 
-`cargo fmt --all` и `cargo clippy` чисты во всех крейтах; задачи release,
-build, fmt, clippy и test зелёные на коммите с тегом.
+Состояние панели — одно значение с глаголами, а не три отдельных поля:
+выделение без панели — ничто, а по порядку без выделения нельзя идти. Четыре
+из девяти методов модуля приватны для него.
+
+## 5. Остальное дерево
+
+* **Прогон deslop по всем крейтам, и чинить оказалось нечего.** Ни один файл
+  не длиннее 2000 строк, ни один каталог не держит больше пятнадцати модулей,
+  циклов и трёхузловых запутанностей по всему рабочему пространству нет.
+* **Новый модуль держали по тому же правилу.** Из прогона он вышел с пятью
+  публичными методами из девяти — больше, чем остальная оболочка выставляет
+  вместе. Те, что нужны только собственной панели модуля, стали приватными, а
+  цветовые хелперы стали свободными функциями вместо трейта с пустым телом —
+  именно эту форму линтер и отвергает.
+
+`cargo fmt --all`, `cargo build` и `cargo clippy` чисты на каждом крейте;
+задания release, build, fmt, clippy и test зелёные на отмеченном коммите.
